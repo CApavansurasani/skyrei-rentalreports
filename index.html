@@ -2,10 +2,69 @@
 <html>
 <head>
 <meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
 <title>SKY REI · Portfolio Reports</title>
-<meta http-equiv="refresh" content="0; url=PL%20Story%20-%20Main.dc.html">
+<style>
+body{margin:0;background:#EFEDE7;font-family:"Libre Franklin",system-ui,sans-serif;color:#16233A}
+.nav a{text-decoration:none;font-size:12px;font-weight:600;color:#8A96AD;white-space:nowrap}
+.nav a:hover{color:#C9A45C}
+.nav a.on{font-weight:700;color:#E9EDF5;border-bottom:2px solid #C9A45C;padding-bottom:2px}
+.card{background:#FFFFFF;border:1px solid #E5E3DC;border-radius:16px;padding:26px 28px;display:block;text-decoration:none;color:#16233A;transition:border-color .15s}
+a.card:hover{border-color:#C9A45C}
+.tag{display:inline-block;padding:3px 10px;border-radius:99px;font-size:9.5px;font-weight:700;letter-spacing:0.1em}
+</style>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Libre+Franklin:wght@400;500;600;700&family=Source+Serif+4:opsz,wght@8..60,400;8..60,600;8..60,700&display=swap" rel="stylesheet">
 </head>
-<body style="font-family:system-ui,sans-serif;background:#EFEDE7;color:#16233A;display:flex;align-items:center;justify-content:center;height:100vh;margin:0">
-<p>Opening the P&amp;L dashboard… <a href="PL%20Story%20-%20Main.dc.html">click here if it doesn't redirect</a>.</p>
+<body>
+<div style="background:#0A1226;border-bottom:1px solid rgba(201,164,92,0.25)">
+  <div class="nav" style="max-width:1320px;margin:0 auto;padding:10px 40px;display:flex;align-items:center;gap:22px;flex-wrap:wrap">
+    <a href="./index.html" style="font-family:'Source Serif 4',Georgia,serif;font-size:13px;font-weight:700;letter-spacing:0.06em;color:#C9A45C">SKY&nbsp;REI</a>
+    <span style="width:1px;height:14px;background:rgba(233,237,245,0.2)"></span>
+    <a class="" href="./executive-summary.dc.html">Executive Summary</a>
+    <a class="" href="./PL%20Story%20-%20Main.dc.html">P&amp;L</a>
+    <a class="" href="./investments.dc.html">Investments &amp; Balance Sheet</a>
+    <a class="" href="./cashflow.dc.html">Cash Flow</a>
+    <span style="margin-left:auto;font-size:10px;letter-spacing:0.28em;font-weight:700;color:#5E6B82">PORTFOLIO&nbsp;INTELLIGENCE</span>
+  </div>
+</div>
+<div style="background:#0E1830;padding:34px 40px">
+  <div style="max-width:1320px;margin:0 auto">
+    <div style="font-family:'Source Serif 4',Georgia,serif;font-size:15px;font-weight:700;letter-spacing:0.06em;color:#C9A45C">SKY&nbsp;REI</div>
+    <div style="margin-top:6px;font-family:'Source Serif 4',Georgia,serif;font-size:30px;font-weight:600;color:#E9EDF5">Portfolio Reports</div>
+    <div style="margin-top:7px;font-size:12.5px;color:#8A96AD">Four views of the portfolio, one source of truth — updated from the general ledger.</div>
+  </div>
+</div>
+<div style="max-width:1320px;margin:0 auto;padding:28px 40px 64px">
+  <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(280px,1fr));gap:16px">
+
+    <div class="card" style="opacity:0.75">
+      <span class="tag" style="background:#F6ECD9;color:#96742F">IN BUILD</span>
+      <div style="margin-top:12px;font-family:'Source Serif 4',Georgia,serif;font-size:19px;font-weight:600">Executive Summary</div>
+      <div style="margin-top:6px;font-size:12.5px;color:#5E6B82;line-height:1.55">The one-screen management view: portfolio value, debt &amp; equity, returns, cash, and what needs attention — with links into every detail.</div>
+    </div>
+
+    <a class="card" href="./PL%20Story%20-%20Main.dc.html">
+      <span class="tag" style="background:#E3EEE7;color:#2F7351">LIVE</span>
+      <div style="margin-top:12px;font-family:'Source Serif 4',Georgia,serif;font-size:19px;font-weight:600">P&amp;L</div>
+      <div style="margin-top:6px;font-size:12.5px;color:#5E6B82;line-height:1.55">Income, expenses, NOI and net income by month, entity and door — with the story of why each month changed, reconciled to the ledger.</div>
+      <div style="margin-top:14px;font-size:12px;font-weight:700;color:#96742F">Open the P&amp;L →</div>
+    </a>
+
+    <div class="card" style="opacity:0.75">
+      <span class="tag" style="background:#F6ECD9;color:#96742F">IN BUILD</span>
+      <div style="margin-top:12px;font-family:'Source Serif 4',Georgia,serif;font-size:19px;font-weight:600">Investments &amp; Balance Sheet</div>
+      <div style="margin-top:6px;font-size:12.5px;color:#5E6B82;line-height:1.55">Assets, loans and equity per door — LTV, cap rates, cash-on-cash, DSCR, appreciation and total returns since acquisition.</div>
+    </div>
+
+    <div class="card" style="opacity:0.75">
+      <span class="tag" style="background:#F6ECD9;color:#96742F">IN BUILD</span>
+      <div style="margin-top:12px;font-family:'Source Serif 4',Georgia,serif;font-size:19px;font-weight:600">Cash Flow</div>
+      <div style="margin-top:6px;font-size:12.5px;color:#5E6B82;line-height:1.55">From NOI to cash actually kept — full debt service, CapEx and distributions, tied to bank balances every month.</div>
+    </div>
+
+  </div>
+  <div style="margin-top:22px;font-size:11px;color:#9AA3B5">Data is published from the general ledger through validation gates; every publish is versioned. Sections marked IN BUILD activate as they are delivered.</div>
+</div>
 </body>
 </html>
