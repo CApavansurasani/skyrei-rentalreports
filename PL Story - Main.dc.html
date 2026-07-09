@@ -828,6 +828,20 @@ class Component extends DCLogic {
     const get = a => byAcct[a] || Z0;
     const sumK = keys => { const t = zeros(); for (const k of keys) { const v = get(k); for (let i = 0; i < N; i++) t[i] += v[i]; } return t; };
 
+    // ---- door activity in the SELECTED period: a door counts only if it has any
+    // ---- non-zero GL value in the chosen months (acquisitions/sales move the count)
+    const doorActivity = new Map();
+    for (const a in byAcctProp) {
+      for (const [p, pv] of byAcctProp[a]) {
+        if (OVERHEAD.has(p)) continue;
+        let s = doorActivity.get(p) || 0;
+        for (const i of selM) s += Math.abs(pv[i]);
+        doorActivity.set(p, s);
+      }
+    }
+    const isActiveDoor = p => (doorActivity.get(p) || 0) > 0.005;
+    const activeDoorCount = [...doorActivity.values()].filter(v => v > 0.005).length;
+
     // ---- filter dropdowns (all multi-select) ----
     const monthNames = MNY;
     const selMSet = new Set(selM);
@@ -1024,7 +1038,7 @@ class Component extends DCLogic {
     const margin = cInc ? cNoi / cInc : 0;
     const dNet = hasPrev ? netM[B] - netM[A] : 0;
     const niMargin = cInc ? cNet / cInc : 0;
-    const nProps = props.length;
+    const nProps = activeDoorCount;
     const scopeName = !coActive ? 'the portfolio' : coSel.join(' + ');
     const scopeDoors = !doorActive ? ' across ' + nProps + ' doors' : (doorSel.length === 1 ? ' at ' + doorSel[0] : ' across ' + doorSel.length + ' selected doors');
 
@@ -1694,7 +1708,7 @@ class Component extends DCLogic {
       const addTo = (keys, sign) => {
         for (const k of keys) {
           const pmm = byAcctProp[k]; if (!pmm) continue;
-          for (const [p, pv] of pmm) { if (OVERHEAD.has(p)) continue; pNoiMap.set(p, (pNoiMap.get(p) || 0) + sign * per(pv)); }
+          for (const [p, pv] of pmm) { if (OVERHEAD.has(p) || !isActiveDoor(p)) continue; pNoiMap.set(p, (pNoiMap.get(p) || 0) + sign * per(pv)); }
         }
       };
       addTo([...G.rent, ...G.vac, ...G.other, ...G.sdf, ...G.ins], 1);
@@ -1852,7 +1866,8 @@ class Component extends DCLogic {
       attEmptyMsg = flagged.length === 0
         ? 'No doors tripped any attention rule in ' + periodShort + ' — a clean period.'
         : 'No doors flagged for this rule in ' + periodShort + '. Switch to All flags.';
-      attSub = flagged.length + ' of ' + pAgg.size + ' doors flagged · ' + periodShort;
+      const attDen = [...pAgg.keys()].filter(isActiveDoor).length;
+      attSub = flagged.length + ' of ' + attDen + ' doors flagged · ' + periodShort;
     }
 
     // ---- full statement table ----
