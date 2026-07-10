@@ -1,0 +1,221 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet data-dc-atomics="">
+<title>SKY REI · Property Index</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Libre+Franklin:wght@400;500;600;700&amp;family=Source+Serif+4:opsz,wght@8..60,400;8..60,600;8..60,700&amp;display=swap" rel="stylesheet">
+<style>
+body{margin:0;background:#EFEDE7;font-family:"Libre Franklin",system-ui,sans-serif;color:#16233A}
+a{color:#1F3A6E}a:hover{color:#C9A45C}
+input:focus{outline:2px solid #C9A45C;outline-offset:1px}
+</style>
+</helmet>
+
+<div data-screen-label="Property Index" style="min-height:100vh;background:#EFEDE7;padding-bottom:64px">
+
+  <!-- ══ Section navigation ══ -->
+  <div style="background:#0A1226;border-bottom:1px solid rgba(201,164,92,0.25)">
+    <div style="max-width:1320px;margin:0 auto;padding:10px 40px;display:flex;align-items:center;gap:22px;flex-wrap:wrap">
+      <a href="./index.html" style="text-decoration:none;font-family:'Source Serif 4',Georgia,serif;font-size:13px;font-weight:700;letter-spacing:0.06em;color:#C9A45C">SKY&nbsp;REI</a>
+      <span style="width:1px;height:14px;background:rgba(233,237,245,0.2)"></span>
+      <a href="./executive-summary.dc.html" style-hover="color:#C9A45C" style="text-decoration:none;font-size:12px;font-weight:600;color:#8A96AD;white-space:nowrap">Executive Summary</a>
+      <a href="./PL%20Story%20-%20Main.dc.html" style-hover="color:#C9A45C" style="text-decoration:none;font-size:12px;font-weight:600;color:#8A96AD;white-space:nowrap">P&amp;L</a>
+      <a href="./investments.dc.html" style-hover="color:#C9A45C" style="text-decoration:none;font-size:12px;font-weight:600;color:#8A96AD;white-space:nowrap">Investments &amp; Balance Sheet</a>
+      <a href="./cashflow.dc.html" style-hover="color:#C9A45C" style="text-decoration:none;font-size:12px;font-weight:600;color:#8A96AD;white-space:nowrap">Cash Flow</a>
+      <a href="./property-index.dc.html" style="text-decoration:none;font-size:12px;font-weight:700;color:#E9EDF5;border-bottom:2px solid #C9A45C;padding-bottom:2px;white-space:nowrap">Property Index</a>
+      <span style="margin-left:auto;font-size:10px;letter-spacing:0.28em;font-weight:700;color:#5E6B82">PORTFOLIO&nbsp;INTELLIGENCE</span>
+    </div>
+  </div>
+
+  <!-- ══ Header ══ -->
+  <div style="background:#0E1830;padding:26px 40px 24px">
+    <div style="max-width:1320px;margin:0 auto">
+      <div style="font-family:'Source Serif 4',Georgia,serif;font-size:15px;font-weight:700;letter-spacing:0.06em;color:#C9A45C">SKY&nbsp;REI</div>
+      <div style="margin-top:6px;font-family:'Source Serif 4',Georgia,serif;font-size:32px;font-weight:600;color:#E9EDF5;line-height:1.1">Property Index</div>
+      <div style="margin-top:7px;font-size:12.5px;color:#8A96AD">{{ scopeLine }}</div>
+    </div>
+  </div>
+
+  <div style="max-width:1320px;margin:0 auto;padding:0 40px">
+
+    <sc-if value="{{ ready }}" hint-placeholder-val="{{ false }}">
+
+    <!-- ══ Controls ══ -->
+    <div style="margin-top:20px;display:flex;justify-content:space-between;align-items:center;gap:14px;flex-wrap:wrap">
+      <div style="display:flex;gap:6px;flex-wrap:wrap">
+        <sc-for list="{{ statusChips }}" as="c" hint-placeholder-count="5">
+          <div onClick="{{ c.onClick }}" style-hover="border-color:#C9A45C" style="padding:7px 14px;border-radius:99px;font-size:12px;font-weight:600;cursor:pointer;border:1px solid {{ c.bd }};background:{{ c.bg }};color:{{ c.col }};white-space:nowrap">{{ c.label }}</div>
+        </sc-for>
+      </div>
+      <div style="display:flex;gap:10px;align-items:center;flex-wrap:wrap">
+        <div style="display:flex;gap:6px;flex-wrap:wrap">
+          <sc-for list="{{ entChips }}" as="c" hint-placeholder-count="7">
+            <div onClick="{{ c.onClick }}" style-hover="border-color:#C9A45C" style="padding:6px 12px;border-radius:99px;font-size:11.5px;font-weight:600;cursor:pointer;border:1px solid {{ c.bd }};background:{{ c.bg }};color:{{ c.col }};white-space:nowrap">{{ c.label }}</div>
+          </sc-for>
+        </div>
+        <input value="{{ q }}" onChange="{{ onQ }}" placeholder="Search any property…" style="width:240px;box-sizing:border-box;padding:9px 13px;border-radius:9px;border:1px solid #D8D4C8;font-family:'Libre Franklin',system-ui,sans-serif;font-size:13px;color:#16233A;background:#FFFFFF">
+      </div>
+    </div>
+
+    <!-- ══ Directory ══ -->
+    <div style="margin-top:16px;background:#FFFFFF;border:1px solid #E5E3DC;border-radius:16px">
+      <div style="display:grid;grid-template-columns:minmax(220px,2fr) 90px 110px 110px 86px 86px 100px 150px;gap:8px;padding:12px 24px;background:#F6F5F1;border-bottom:1px solid #E5E3DC;border-radius:16px 16px 0 0">
+        <div style="font-size:10.5px;letter-spacing:0.1em;font-weight:700;color:#5E6B82">PROPERTY</div>
+        <div style="font-size:10.5px;letter-spacing:0.1em;font-weight:700;color:#5E6B82">ENTITY</div>
+        <div style="font-size:10.5px;letter-spacing:0.1em;font-weight:700;color:#5E6B82">TYPE</div>
+        <div style="font-size:10.5px;letter-spacing:0.1em;font-weight:700;color:#5E6B82">STATUS</div>
+        <div style="font-size:10.5px;letter-spacing:0.1em;font-weight:700;color:#5E6B82;text-align:right">IN USE</div>
+        <div style="font-size:10.5px;letter-spacing:0.1em;font-weight:700;color:#5E6B82;text-align:right">VALUE</div>
+        <div style="font-size:10.5px;letter-spacing:0.1em;font-weight:700;color:#5E6B82;text-align:right">RENT /MO</div>
+        <div style="font-size:10.5px;letter-spacing:0.1em;font-weight:700;color:#5E6B82;text-align:right">OPEN IN</div>
+      </div>
+      <div style="max-height:640px;overflow-y:auto;padding:0 24px 10px">
+        <sc-for list="{{ rows }}" as="r" hint-placeholder-count="14">
+          <div style="display:grid;grid-template-columns:minmax(220px,2fr) 90px 110px 110px 86px 86px 100px 150px;gap:8px;padding:9px 0;border-top:1px solid #F0EEE7;align-items:baseline">
+            <div style="min-width:0;font-size:13px;font-weight:500;color:#16233A;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">{{ r.door }}</div>
+            <div style="font-size:11.5px;color:#5E6B82">{{ r.ent }}</div>
+            <div style="font-size:11.5px;color:#5E6B82;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">{{ r.btype }}</div>
+            <div><span style="padding:2px 8px;border-radius:5px;font-size:9.5px;font-weight:700;background:{{ r.stBg }};color:{{ r.stCol }};white-space:nowrap">{{ r.status }}</span></div>
+            <div style="font-size:11.5px;color:#5E6B82;text-align:right;font-variant-numeric:tabular-nums">{{ r.inUse }}</div>
+            <div style="font-size:12px;font-weight:600;color:#2A3550;text-align:right;font-variant-numeric:tabular-nums">{{ r.val }}</div>
+            <div style="font-size:12px;font-weight:600;color:{{ r.rentCol }};text-align:right;font-variant-numeric:tabular-nums">{{ r.rent }}</div>
+            <div style="text-align:right;white-space:nowrap">
+              <a href="{{ r.plHref }}" style="font-size:11px;font-weight:700;color:#96742F;text-decoration:none">P&amp;L</a>
+              <span style="color:#D8D4C8"> · </span>
+              <a href="{{ r.invHref }}" style="font-size:11px;font-weight:700;color:#96742F;text-decoration:none">Investments</a>
+            </div>
+          </div>
+        </sc-for>
+        <sc-if value="{{ empty }}" hint-placeholder-val="{{ false }}">
+          <div style="padding:24px;font-size:12.5px;color:#8A93A6;text-align:center">No properties match this filter.</div>
+        </sc-if>
+      </div>
+    </div>
+    <div style="margin-top:12px;font-size:11px;color:#9AA3B5;line-height:1.6">{{ foot }}</div>
+
+    </sc-if>
+
+    <sc-if value="{{ loading }}" hint-placeholder-val="{{ true }}">
+      <div style="margin-top:18px;background:#FFFFFF;border:1px solid #E5E3DC;border-radius:16px;padding:48px;text-align:center;font-size:13px;color:#8A93A6">Loading the portfolio index…</div>
+    </sc-if>
+
+    <sc-if value="{{ loadError }}" hint-placeholder-val="{{ false }}">
+      <div style="margin-top:18px;background:#FFFFFF;border:1px solid #E5C9BE;border-radius:16px;padding:40px;text-align:center">
+        <div style="font-family:'Source Serif 4',Georgia,serif;font-size:18px;font-weight:600;color:#A03E28">Couldn&#8217;t load the index</div>
+        <div style="margin-top:8px;font-size:12.5px;color:#5E6B82">{{ loadError }}</div>
+        <div style="margin-top:16px;display:flex;justify-content:center">
+          <div onClick="{{ retryLoad }}" style-hover="background:#16233A;color:#FFFFFF;border-color:#16233A" style="display:inline-flex;padding:9px 18px;border-radius:9px;border:1px solid #D8D4C8;background:#FFFFFF;color:#16233A;font-size:12.5px;font-weight:700;cursor:pointer">Retry</div>
+        </div>
+      </div>
+    </sc-if>
+
+  </div>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script>
+class Component extends DCLogic {
+  state = { bs: null, gl: null, loadError: null, q: '', statusSel: 'all', ent: null };
+
+  loadData() {
+    this.setState({ loadError: null });
+    const get = (u) => fetch(u).then(r => { if (!r.ok) throw new Error('HTTP ' + r.status + ' fetching ' + u); return r.json(); });
+    Promise.all([get('./bs-data.json'), get('./pl-data.json')])
+      .then(([bs, gl]) => {
+        if (!bs || !Array.isArray(bs.properties)) throw new Error('bs-data.json is not valid');
+        if (!gl || !Array.isArray(gl.rows)) throw new Error('pl-data.json is not valid');
+        this.setState({ bs, gl });
+      })
+      .catch(e => this.setState({ loadError: (e && e.message ? e.message : String(e)) }));
+  }
+  componentDidMount() {
+    this.loadData();
+    try {
+      if (typeof location !== 'undefined' && location.search) {
+        const u = new URLSearchParams(location.search);
+        if (u.get('door')) this.setState({ q: u.get('door') });
+        if (u.get('entity')) this.setState({ ent: u.get('entity') });
+      }
+    } catch (e) {}
+  }
+
+  renderVals() {
+    const S = this.state;
+    const MUT = '#5E6B82';
+    if (!S.bs || !S.gl) return {
+      ready: false, loading: !S.loadError, loadError: S.loadError || false,
+      retryLoad: () => this.loadData(), scopeLine: S.loadError ? 'Failed to load' : 'Loading…',
+    };
+    const fK = n => { const a = Math.abs(n); if (a >= 1e6) return '$' + (a / 1e6).toFixed(2) + 'M'; if (a >= 1000) return '$' + Math.round(a / 1000) + 'K'; return '$' + Math.round(a); };
+    const P = S.gl.periods, NP = P.length, LAST = NP - 1;
+
+    // latest-month scheduled rent per door from the GL
+    const rentNow = new Map();
+    for (const [ent, door, acct, vals] of S.gl.rows) {
+      if (acct === 'Rental Income' || acct === 'Increase/(Decrease) in Rent')
+        rentNow.set(door, (rentNow.get(door) || 0) + vals[LAST]);
+    }
+
+    const ALLP = S.bs.properties;
+    const entities = [...new Set(ALLP.map(p => p.entity))].sort();
+    const STATUSES = ['all', 'Rented', 'Held for Sale', 'Sold', 'Office'];
+    const stSel = STATUSES.includes(S.statusSel) ? S.statusSel : 'all';
+    const entSel = entities.includes(S.ent) ? S.ent : null;
+    const q = (S.q || '').trim().toLowerCase();
+
+    const streetKey = p => (p.replace(/^[^A-Za-z]+/, '') || p).toLowerCase();
+    const pool = ALLP
+      .filter(p => stSel === 'all' || p.status === stSel)
+      .filter(p => !entSel || p.entity === entSel)
+      .filter(p => !q || p.door.toLowerCase().includes(q))
+      .sort((a, b) => streetKey(a.door).localeCompare(streetKey(b.door)) || a.door.localeCompare(b.door));
+
+    const stStyle = s => s === 'Rented' ? ['#E3EEE7', '#2F7351'] : s === 'Sold' ? ['#F3E2DB', '#A03E28'] : s === 'Held for Sale' ? ['#F6ECD9', '#96742F'] : ['#E2E7F0', '#2E3E5E'];
+    const rows = pool.map(p => {
+      const [bg, col] = stStyle(p.status);
+      const rent = rentNow.get(p.door);
+      return {
+        door: p.door, ent: p.entity, btype: p.btype, status: p.status.toUpperCase(),
+        stBg: bg, stCol: col,
+        inUse: p.putToUse ? p.putToUse.slice(0, 7) : '—',
+        val: p.value > 0 ? fK(p.value) : '—',
+        rent: p.status === 'Sold' ? '—' : (rent && rent > 0.5 ? '$' + Math.round(rent).toLocaleString('en-US') : '—'),
+        rentCol: rent && rent > 0.5 ? '#2A3550' : '#B7BDCB',
+        plHref: './PL%20Story%20-%20Main.dc.html?door=' + encodeURIComponent(p.door),
+        invHref: './investments.dc.html?door=' + encodeURIComponent(p.door),
+      };
+    });
+
+    const statusChips = STATUSES.map(s => {
+      const n = s === 'all' ? ALLP.length : ALLP.filter(p => p.status === s).length;
+      return {
+        label: (s === 'all' ? 'All' : s) + ' · ' + n,
+        onClick: () => this.setState({ statusSel: s }),
+        bg: s === stSel ? '#16233A' : '#FFFFFF', col: s === stSel ? '#FFFFFF' : MUT, bd: s === stSel ? '#16233A' : '#D8D4C8',
+      };
+    });
+    const entChips = [{ label: 'All', v: null }, ...entities.map(e => ({ label: e, v: e }))].map(o => ({
+      label: o.label,
+      onClick: () => this.setState({ ent: o.v }),
+      bg: (o.v === entSel) ? '#16233A' : '#FFFFFF', col: (o.v === entSel) ? '#FFFFFF' : MUT, bd: (o.v === entSel) ? '#16233A' : '#D8D4C8',
+    }));
+
+    return {
+      ready: true, loading: false, loadError: false, retryLoad: () => this.loadData(),
+      scopeLine: ALLP.length + ' properties across ' + entities.length + ' entities · rent from ' + P[LAST] + ' ledger · every row links into the other dashboards',
+      statusChips, entChips,
+      q: S.q, onQ: e => this.setState({ q: e.target.value }),
+      rows, empty: rows.length === 0,
+      foot: 'Showing ' + rows.length + ' of ' + ALLP.length + ' properties. Value follows the ARV-first policy; RENT /MO is the latest ledger month’s scheduled rent. The P&L link opens that dashboard pre-filtered to the door; Investments opens its by-door explorer on the same door.',
+    };
+  }
+}
+</script>
+</body>
+</html>

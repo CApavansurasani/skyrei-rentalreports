@@ -29,6 +29,7 @@ input:focus{outline:2px solid #C9A45C;outline-offset:1px}
       <a href="./PL%20Story%20-%20Main.dc.html" style="text-decoration:none;font-size:12px;font-weight:700;color:#E9EDF5;border-bottom:2px solid #C9A45C;padding-bottom:2px;white-space:nowrap">P&amp;L</a>
       <a href="./investments.dc.html" style-hover="color:#C9A45C" style="text-decoration:none;font-size:12px;font-weight:600;color:#8A96AD;white-space:nowrap">Investments &amp; Balance Sheet</a>
       <a href="./cashflow.dc.html" style-hover="color:#C9A45C" style="text-decoration:none;font-size:12px;font-weight:600;color:#8A96AD;white-space:nowrap">Cash Flow</a>
+      <a href="./property-index.dc.html" style-hover="color:#C9A45C" style="text-decoration:none;font-size:12px;font-weight:600;color:#8A96AD;white-space:nowrap">Property Index</a>
       <span style="margin-left:auto;font-size:10px;letter-spacing:0.28em;font-weight:700;color:#5E6B82">PORTFOLIO&nbsp;INTELLIGENCE</span>
     </div>
   </div>
@@ -748,6 +749,15 @@ class Component extends DCLogic {
 
   componentDidMount() {
     this.loadData();
+    try {
+      if (typeof location !== 'undefined' && location.search) {
+        const q = new URLSearchParams(location.search);
+        const patch = {};
+        if (q.get('door')) patch.doors = [q.get('door')];
+        if (q.get('entity')) patch.cos = [q.get('entity')];
+        if (Object.keys(patch).length) this.setState(patch);
+      }
+    } catch (e) {}
     this._doc = () => {
       const s = this.state;
       if (s.monthOpen || s.coOpen || s.propOpen || s.tselOpen || s.othersOpen) this.setState({ monthOpen: false, coOpen: false, propOpen: false, tselOpen: false, othersOpen: false, monthQ: '', coQ: '', propQ: '' });
