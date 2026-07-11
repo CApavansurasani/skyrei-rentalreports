@@ -1,0 +1,494 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet data-dc-atomics="">
+<title>SKY REI · Loans</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Libre+Franklin:wght@400;500;600;700&amp;family=Source+Serif+4:opsz,wght@8..60,400;8..60,600;8..60,700&amp;display=swap" rel="stylesheet">
+<style>
+body{margin:0;background:#EFEDE7;font-family:"Libre Franklin",system-ui,sans-serif;color:#16233A}
+a{color:#1F3A6E}a:hover{color:#C9A45C}
+input:focus{outline:2px solid #C9A45C;outline-offset:1px}
+</style>
+</helmet>
+
+<div data-screen-label="Loans" style="min-height:100vh;background:#EFEDE7;padding-bottom:64px">
+
+  <!-- ══ Section navigation ══ -->
+  <div style="background:#0A1226;border-bottom:1px solid rgba(201,164,92,0.25)">
+    <div style="max-width:1320px;margin:0 auto;padding:10px 40px;display:flex;align-items:center;gap:22px;flex-wrap:wrap">
+      <a href="./index.html" style="text-decoration:none;font-family:'Source Serif 4',Georgia,serif;font-size:13px;font-weight:700;letter-spacing:0.06em;color:#C9A45C">SKY&nbsp;REI</a>
+      <span style="width:1px;height:14px;background:rgba(233,237,245,0.2)"></span>
+      <a href="./executive-summary.dc.html" style-hover="color:#C9A45C" style="text-decoration:none;font-size:12px;font-weight:600;color:#8A96AD;white-space:nowrap">Executive Summary</a>
+      <a href="./PL%20Story%20-%20Main.dc.html" style-hover="color:#C9A45C" style="text-decoration:none;font-size:12px;font-weight:600;color:#8A96AD;white-space:nowrap">P&amp;L</a>
+      <a href="./investments.dc.html" style-hover="color:#C9A45C" style="text-decoration:none;font-size:12px;font-weight:600;color:#8A96AD;white-space:nowrap">Investments &amp; Balance Sheet</a>
+      <a href="./cashflow.dc.html" style-hover="color:#C9A45C" style="text-decoration:none;font-size:12px;font-weight:600;color:#8A96AD;white-space:nowrap">Cash Flow</a>
+      <a href="./loans.dc.html" style="text-decoration:none;font-size:12px;font-weight:700;color:#E9EDF5;border-bottom:2px solid #C9A45C;padding-bottom:2px;white-space:nowrap">Loans</a>
+      <a href="./property-index.dc.html" style-hover="color:#C9A45C" style="text-decoration:none;font-size:12px;font-weight:600;color:#8A96AD;white-space:nowrap">Property Index</a>
+      <span style="margin-left:auto;font-size:10px;letter-spacing:0.28em;font-weight:700;color:#5E6B82">PORTFOLIO&nbsp;INTELLIGENCE</span>
+    </div>
+  </div>
+
+  <!-- ══ Header ══ -->
+  <div style="background:#0E1830;padding:26px 40px 24px;overflow:hidden">
+    <div style="max-width:1320px;margin:0 auto">
+      <div style="display:flex;justify-content:space-between;align-items:flex-end;gap:16px;flex-wrap:wrap;row-gap:14px">
+        <div>
+          <div style="font-family:'Source Serif 4',Georgia,serif;font-size:15px;font-weight:700;letter-spacing:0.06em;color:#C9A45C">SKY&nbsp;REI</div>
+          <div style="margin-top:6px;font-family:'Source Serif 4',Georgia,serif;font-size:32px;font-weight:600;color:#E9EDF5;line-height:1.1">Loan Amortization</div>
+          <div style="margin-top:7px;font-size:12.5px;color:#8A96AD">{{ scopeLine }}</div>
+        </div>
+        <div style="display:flex;flex-direction:column;align-items:center;padding-right:6px">
+          <svg width="216" height="62" viewBox="0 0 216 62" style="display:block">
+            <g stroke="#C9A45C" stroke-width="1.3" opacity="0.85">
+              <line x1="24" y1="46" x2="60" y2="34"></line><line x1="60" y1="34" x2="96" y2="38"></line>
+              <line x1="96" y1="38" x2="132" y2="22"></line><line x1="132" y1="22" x2="168" y2="26"></line>
+              <line x1="168" y1="26" x2="196" y2="12"></line>
+            </g>
+            <g fill="#C9A45C">
+              <circle cx="24" cy="46" r="3.5"></circle><circle cx="60" cy="34" r="3.5"></circle>
+              <circle cx="96" cy="38" r="3.5"></circle><circle cx="132" cy="22" r="3.5"></circle>
+              <circle cx="168" cy="26" r="3.5"></circle><circle cx="196" cy="12" r="4.5"></circle>
+            </g>
+            <line x1="14" y1="54" x2="202" y2="54" stroke="#C9A45C" stroke-width="1.5"></line>
+          </svg>
+          <div style="margin-top:6px;font-size:9px;letter-spacing:0.34em;font-weight:700;color:#8A96AD;text-align:center">PORTFOLIO&nbsp;INTELLIGENCE</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div style="max-width:1320px;margin:0 auto;padding:0 40px">
+
+    <sc-if value="{{ ready }}" hint-placeholder-val="{{ false }}">
+
+    <!-- ══ KPI cards ══ -->
+    <div style="margin-top:18px;display:grid;grid-template-columns:repeat(4,1fr);gap:14px">
+      <sc-for list="{{ kpis }}" as="k" hint-placeholder-count="4">
+        <div style="background:#FFFFFF;border:1px solid #E5E3DC;border-radius:16px;padding:18px 20px">
+          <div style="font-size:11px;letter-spacing:0.08em;font-weight:700;color:#5E6B82;text-transform:uppercase">{{ k.label }}</div>
+          <div style="margin-top:8px;font-family:'Source Serif 4',Georgia,serif;font-size:24px;font-weight:600;color:{{ k.col }}">{{ k.value }}</div>
+          <div style="margin-top:6px;font-size:11px;color:#8A93A6">{{ k.sub }}</div>
+        </div>
+      </sc-for>
+    </div>
+
+    <!-- ══ Loan register ══ -->
+    <div style="margin-top:16px;background:#FFFFFF;border:1px solid #E5E3DC;border-radius:16px;padding:20px 24px">
+      <div style="display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:10px">
+        <div style="font-family:'Source Serif 4',Georgia,serif;font-size:18px;font-weight:600;color:#16233A">Loan register</div>
+        <div style="display:flex;gap:6px;flex-wrap:wrap">
+          <sc-for list="{{ typeChips }}" as="c" hint-placeholder-count="4">
+            <div onClick="{{ c.onClick }}" style-hover="border-color:#C9A45C" style="padding:6px 13px;border-radius:99px;font-size:11.5px;font-weight:600;cursor:pointer;border:1px solid {{ c.bd }};background:{{ c.bg }};color:{{ c.col }};white-space:nowrap">{{ c.label }}</div>
+          </sc-for>
+        </div>
+      </div>
+      <div style="margin-top:12px;overflow-x:auto">
+        <div style="min-width:980px">
+          <div style="display:grid;grid-template-columns:1.5fr 1.1fr 0.9fr 64px 82px 110px 100px 92px 120px 92px;gap:8px;padding:8px 10px;font-size:10px;letter-spacing:0.07em;font-weight:700;color:#5E6B82;text-transform:uppercase;border-bottom:1px solid #E5E3DC">
+            <div>Loan</div><div>Lender</div><div>Type</div><div style="text-align:right">Rate</div><div style="text-align:right">First pay</div><div style="text-align:right">Note</div><div style="text-align:right">Payment</div><div style="text-align:right">Escrow</div><div style="text-align:right">Outstanding</div><div style="text-align:right">Status</div>
+          </div>
+          <sc-for list="{{ regRows }}" as="r" hint-placeholder-count="12">
+            <div onClick="{{ r.onClick }}" style-hover="background:#F6F4EC" style="display:grid;grid-template-columns:1.5fr 1.1fr 0.9fr 64px 82px 110px 100px 92px 120px 92px;gap:8px;padding:9px 10px;align-items:center;border-bottom:1px solid #F0EEE6;cursor:pointer;background:{{ r.bg }};border-left:3px solid {{ r.sel }}">
+              <div style="font-size:12.5px;font-weight:700;color:#1F3A6E;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">{{ r.id }}</div>
+              <div style="font-size:12px;color:#2A3550;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">{{ r.lender }}</div>
+              <div style="font-size:11.5px;color:#5E6B82">{{ r.type }}</div>
+              <div style="text-align:right;font-variant-numeric:tabular-nums;font-size:12px;color:#2A3550">{{ r.rate }}</div>
+              <div style="text-align:right;font-variant-numeric:tabular-nums;font-size:12px;color:#2A3550">{{ r.firstPay }}</div>
+              <div style="text-align:right;font-variant-numeric:tabular-nums;font-size:12px;color:#2A3550">{{ r.orig }}</div>
+              <div style="text-align:right;font-variant-numeric:tabular-nums;font-size:12px;color:#2A3550">{{ r.pay }}</div>
+              <div style="text-align:right;font-variant-numeric:tabular-nums;font-size:12px;color:#8A93A6">{{ r.escrow }}</div>
+              <div style="text-align:right;font-variant-numeric:tabular-nums;font-size:12.5px;font-weight:700;color:#16233A">{{ r.out }}</div>
+              <div style="text-align:right"><span style="display:inline-block;padding:2px 9px;border-radius:99px;font-size:9px;font-weight:700;letter-spacing:0.08em;background:{{ r.tagBg }};color:{{ r.tagCol }}">{{ r.tag }}</span></div>
+            </div>
+          </sc-for>
+          <div style="display:grid;grid-template-columns:1.5fr 1.1fr 0.9fr 64px 82px 110px 100px 92px 120px 92px;gap:8px;padding:10px 10px;border-top:2px solid #16233A">
+            <div style="font-size:12px;font-weight:700;color:#16233A">TOTAL · {{ regCount }}</div><div></div><div></div><div></div><div></div>
+            <div style="text-align:right;font-variant-numeric:tabular-nums;font-size:12px;font-weight:700;color:#16233A">{{ regOrig }}</div>
+            <div style="text-align:right;font-variant-numeric:tabular-nums;font-size:12px;font-weight:700;color:#16233A">{{ regPay }}</div>
+            <div style="text-align:right;font-variant-numeric:tabular-nums;font-size:12px;font-weight:700;color:#8A93A6">{{ regEsc }}</div>
+            <div style="text-align:right;font-variant-numeric:tabular-nums;font-size:12.5px;font-weight:700;color:#16233A">{{ regOut }}</div><div></div>
+          </div>
+        </div>
+      </div>
+      <div style="margin-top:10px;font-size:11px;color:#9AA3B5">Click a loan to open its full schedule, releases and per-property split. Payment is computed from the note terms; the sheet&#8217;s P&amp;I column is carried separately as escrow.</div>
+    </div>
+
+    <!-- ══ Selected loan detail ══ -->
+    <sc-if value="{{ hasSel }}" hint-placeholder-val="{{ false }}">
+      <div style="margin-top:16px;background:#FFFFFF;border:1px solid #E5E3DC;border-radius:16px;padding:20px 24px">
+        <div style="display:flex;justify-content:space-between;align-items:baseline;flex-wrap:wrap;gap:8px">
+          <div style="font-family:'Source Serif 4',Georgia,serif;font-size:18px;font-weight:600;color:#16233A">Loan {{ selId }} <span style="font-size:12px;font-weight:600;color:#8A93A6">· {{ selLender }}</span></div>
+          <div style="font-size:11px;color:#8A93A6">{{ selSub }}</div>
+        </div>
+
+        <div style="margin-top:12px;display:grid;grid-template-columns:repeat(auto-fit,minmax(140px,1fr));gap:10px">
+          <sc-for list="{{ selFacts }}" as="ft" hint-placeholder-count="6">
+            <div style="background:#F9F8F3;border:1px solid #EDEBE2;border-radius:10px;padding:10px 12px">
+              <div style="font-size:9.5px;letter-spacing:0.08em;font-weight:700;color:#5E6B82;text-transform:uppercase">{{ ft.k }}</div>
+              <div style="margin-top:4px;font-size:14px;font-weight:700;color:#16233A;font-variant-numeric:tabular-nums">{{ ft.v }}</div>
+            </div>
+          </sc-for>
+        </div>
+
+        <sc-if value="{{ selHasRel }}" hint-placeholder-val="{{ false }}">
+          <div style="margin-top:16px;font-size:12px;font-weight:700;color:#96742F;letter-spacing:0.06em;text-transform:uppercase">Releases &amp; extra principal</div>
+          <div style="margin-top:8px;overflow-x:auto"><div style="min-width:700px">
+            <div style="display:grid;grid-template-columns:80px 1.6fr 130px 130px 130px;gap:8px;padding:6px 10px;font-size:10px;letter-spacing:0.07em;font-weight:700;color:#5E6B82;text-transform:uppercase;border-bottom:1px solid #E5E3DC">
+              <div>Month</div><div>Property</div><div style="text-align:right">Paid</div><div style="text-align:right">Prev-month slice</div><div style="text-align:right">Excess to survivors</div>
+            </div>
+            <sc-for list="{{ selRel }}" as="rr" hint-placeholder-count="3">
+              <div style="display:grid;grid-template-columns:80px 1.6fr 130px 130px 130px;gap:8px;padding:8px 10px;border-bottom:1px solid #F0EEE6;font-size:12px">
+                <div style="font-variant-numeric:tabular-nums;color:#5E6B82">{{ rr.m }}</div>
+                <div style="font-weight:600;color:#2A3550">{{ rr.prop }}</div>
+                <div style="text-align:right;font-variant-numeric:tabular-nums;color:#16233A;font-weight:700">{{ rr.paid }}</div>
+                <div style="text-align:right;font-variant-numeric:tabular-nums;color:#2A3550">{{ rr.base }}</div>
+                <div style="text-align:right;font-variant-numeric:tabular-nums;color:#96742F;font-weight:700">{{ rr.excess }}</div>
+              </div>
+            </sc-for>
+          </div></div>
+        </sc-if>
+
+        <sc-if value="{{ selHasSlices }}" hint-placeholder-val="{{ false }}">
+          <div style="margin-top:16px;font-size:12px;font-weight:700;color:#5E6B82;letter-spacing:0.06em;text-transform:uppercase">Per-property outstanding · {{ selSliceSub }}</div>
+          <div style="margin-top:8px;overflow-x:auto"><div style="min-width:760px">
+            <div style="display:grid;grid-template-columns:1.7fr 78px repeat({{ selWinN }},110px);gap:8px;padding:6px 10px;font-size:10px;letter-spacing:0.07em;font-weight:700;color:#5E6B82;text-transform:uppercase;border-bottom:1px solid #E5E3DC">
+              <div>Property</div><div style="text-align:right">Orig %</div>
+              <sc-for list="{{ selWinCols }}" as="wc" hint-placeholder-count="5"><div style="text-align:right">{{ wc }}</div></sc-for>
+            </div>
+            <sc-for list="{{ selSliceRows }}" as="sr" hint-placeholder-count="8">
+              <div style="display:grid;grid-template-columns:1.7fr 78px repeat({{ selWinN }},110px);gap:8px;padding:8px 10px;border-bottom:1px solid #F0EEE6;font-size:12px;align-items:center">
+                <div style="font-weight:600;color:#1F3A6E;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">{{ sr.door }}</div>
+                <div style="text-align:right;font-variant-numeric:tabular-nums;color:#5E6B82">{{ sr.pct }}</div>
+                <sc-for list="{{ sr.cells }}" as="cc" hint-placeholder-count="5">
+                  <div style="text-align:right;font-variant-numeric:tabular-nums;color:{{ cc.col }};font-weight:{{ cc.fw }}">{{ cc.t }}</div>
+                </sc-for>
+              </div>
+            </sc-for>
+          </div></div>
+        </sc-if>
+
+        <div style="margin-top:16px;display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:8px">
+          <div style="font-size:12px;font-weight:700;color:#5E6B82;letter-spacing:0.06em;text-transform:uppercase">Monthly schedule</div>
+          <div onClick="{{ selToggleSched }}" style-hover="border-color:#C9A45C" style="padding:6px 13px;border-radius:99px;font-size:11.5px;font-weight:600;cursor:pointer;border:1px solid #D8D4C8;background:#FFFFFF;color:#2A3550">{{ selSchedBtn }}</div>
+        </div>
+        <div style="margin-top:8px;overflow-x:auto"><div style="min-width:760px">
+          <div style="display:grid;grid-template-columns:90px 1fr 1fr 1fr 1fr 1fr;gap:8px;padding:6px 10px;font-size:10px;letter-spacing:0.07em;font-weight:700;color:#5E6B82;text-transform:uppercase;border-bottom:1px solid #E5E3DC">
+            <div>Month</div><div style="text-align:right">Opening</div><div style="text-align:right">Interest</div><div style="text-align:right">Principal</div><div style="text-align:right">Releases / extra</div><div style="text-align:right">Closing</div>
+          </div>
+          <sc-for list="{{ selSched }}" as="sc" hint-placeholder-count="12">
+            <div style="display:grid;grid-template-columns:90px 1fr 1fr 1fr 1fr 1fr;gap:8px;padding:7px 10px;border-bottom:1px solid #F0EEE6;font-size:12px;background:{{ sc.bg }}">
+              <div style="font-variant-numeric:tabular-nums;font-weight:{{ sc.fw }};color:#2A3550">{{ sc.m }}</div>
+              <div style="text-align:right;font-variant-numeric:tabular-nums;color:#5E6B82">{{ sc.open }}</div>
+              <div style="text-align:right;font-variant-numeric:tabular-nums;color:#B04A33">{{ sc.int }}</div>
+              <div style="text-align:right;font-variant-numeric:tabular-nums;color:#3E8E63">{{ sc.prin }}</div>
+              <div style="text-align:right;font-variant-numeric:tabular-nums;color:#96742F;font-weight:{{ sc.evfw }}">{{ sc.ev }}</div>
+              <div style="text-align:right;font-variant-numeric:tabular-nums;font-weight:700;color:#16233A">{{ sc.close }}</div>
+            </div>
+          </sc-for>
+          <div style="display:grid;grid-template-columns:90px 1fr 1fr 1fr 1fr 1fr;gap:8px;padding:9px 10px;border-top:2px solid #16233A;font-size:12px">
+            <div style="font-weight:700;color:#16233A">SHOWN</div><div></div>
+            <div style="text-align:right;font-variant-numeric:tabular-nums;font-weight:700;color:#B04A33">{{ selSchedInt }}</div>
+            <div style="text-align:right;font-variant-numeric:tabular-nums;font-weight:700;color:#3E8E63">{{ selSchedPrin }}</div>
+            <div style="text-align:right;font-variant-numeric:tabular-nums;font-weight:700;color:#96742F">{{ selSchedEv }}</div><div></div>
+          </div>
+        </div></div>
+      </div>
+    </sc-if>
+
+    <!-- ══ GL cross-check ══ -->
+    <div style="margin-top:16px;background:#FFFFFF;border:1px solid #E5E3DC;border-radius:16px;padding:20px 24px">
+      <div style="display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:10px">
+        <div>
+          <div style="font-family:'Source Serif 4',Georgia,serif;font-size:18px;font-weight:600;color:#16233A">Ledger cross-check — interest by door &amp; month</div>
+          <div style="margin-top:4px;font-size:11px;color:#8A93A6">{{ xSub }}</div>
+        </div>
+        <div style="display:flex;gap:6px;flex-wrap:wrap;align-items:center">
+          <sc-for list="{{ xChips }}" as="c" hint-placeholder-count="3">
+            <div onClick="{{ c.onClick }}" style-hover="border-color:#C9A45C" style="padding:6px 13px;border-radius:99px;font-size:11.5px;font-weight:600;cursor:pointer;border:1px solid {{ c.bd }};background:{{ c.bg }};color:{{ c.col }};white-space:nowrap">{{ c.label }}</div>
+          </sc-for>
+          <input value="{{ xq }}" onInput="{{ onXq }}" placeholder="Search a property…" style="padding:7px 12px;border-radius:9px;border:1px solid #D8D4C8;background:#FFFFFF;font-size:12px;font-family:inherit;color:#16233A;width:180px">
+        </div>
+      </div>
+      <div style="margin-top:12px;overflow-x:auto"><div style="min-width:760px">
+        <div style="display:grid;grid-template-columns:1.8fr 80px 130px 130px 130px;gap:8px;padding:6px 10px;font-size:10px;letter-spacing:0.07em;font-weight:700;color:#5E6B82;text-transform:uppercase;border-bottom:1px solid #E5E3DC">
+          <div>Property</div><div>Month</div><div style="text-align:right">Engine interest</div><div style="text-align:right">Ledger interest</div><div style="text-align:right">Difference</div>
+        </div>
+        <sc-for list="{{ xRows }}" as="x" hint-placeholder-count="12">
+          <div style="display:grid;grid-template-columns:1.8fr 80px 130px 130px 130px;gap:8px;padding:7px 10px;border-bottom:1px solid #F0EEE6;font-size:12px;align-items:center">
+            <div style="font-weight:600;color:#1F3A6E;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">{{ x.door }}</div>
+            <div style="font-variant-numeric:tabular-nums;color:#5E6B82">{{ x.m }}</div>
+            <div style="text-align:right;font-variant-numeric:tabular-nums;color:#2A3550">{{ x.eng }}</div>
+            <div style="text-align:right;font-variant-numeric:tabular-nums;color:#2A3550">{{ x.gl }}</div>
+            <div style="text-align:right;font-variant-numeric:tabular-nums;font-weight:700;color:{{ x.dcol }}">{{ x.delta }}</div>
+          </div>
+        </sc-for>
+        <sc-if value="{{ xEmpty }}" hint-placeholder-val="{{ false }}">
+          <div style="padding:18px 10px;font-size:12.5px;color:#5E6B82">Nothing matches this filter — every compared door-month is within the tolerance.</div>
+        </sc-if>
+      </div></div>
+      <div style="margin-top:10px;font-size:11px;color:#9AA3B5">{{ xFoot }}</div>
+    </div>
+
+    <!-- ══ Conventions ══ -->
+    <div style="margin-top:16px;background:#FFFFFF;border:1px solid #E5E3DC;border-radius:16px;padding:18px 24px">
+      <div style="font-family:'Source Serif 4',Georgia,serif;font-size:15px;font-weight:600;color:#16233A">How these schedules are computed</div>
+      <div style="margin-top:8px;font-size:12px;color:#5E6B82;line-height:1.7">{{ convFoot }}</div>
+    </div>
+
+    </sc-if>
+
+    <sc-if value="{{ loading }}" hint-placeholder-val="{{ true }}">
+      <div style="margin-top:18px;background:#FFFFFF;border:1px solid #E5E3DC;border-radius:16px;padding:40px;text-align:center">
+        <div style="font-family:'Source Serif 4',Georgia,serif;font-size:18px;font-weight:600;color:#5E6B82">Loading loan schedules…</div>
+      </div>
+    </sc-if>
+    <sc-if value="{{ loadError }}" hint-placeholder-val="{{ false }}">
+      <div style="margin-top:18px;background:#FFFFFF;border:1px solid #E5C9BE;border-radius:16px;padding:40px;text-align:center">
+        <div style="font-family:'Source Serif 4',Georgia,serif;font-size:18px;font-weight:600;color:#A03E28">Couldn&#8217;t load the data</div>
+        <div style="margin-top:8px;font-size:12.5px;color:#5E6B82;line-height:1.6;max-width:560px;margin-left:auto;margin-right:auto">{{ loadError }}</div>
+        <div style="margin-top:16px;display:flex;justify-content:center">
+          <div onClick="{{ retryLoad }}" style-hover="background:#16233A;color:#FFFFFF;border-color:#16233A" style="display:inline-flex;padding:9px 18px;border-radius:9px;border:1px solid #D8D4C8;background:#FFFFFF;color:#16233A;font-size:12.5px;font-weight:700;cursor:pointer">Retry</div>
+        </div>
+      </div>
+    </sc-if>
+
+  </div>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script>
+class Component extends DCLogic {
+  state = {
+    data: null, gl: null, loadError: null,
+    sel: null, schedAll: false, typeSel: 'all', xmode: 'flag', xq: '',
+  };
+
+  loadData() {
+    this.setState({ loadError: null });
+    const get = (u) => fetch(u).then(r => { if (!r.ok) throw new Error('HTTP ' + r.status + ' fetching ' + u); return r.json(); });
+    Promise.all([get('./loans-data.json'), get('./pl-data.json')])
+      .then(([data, gl]) => {
+        if (!data || data.schema !== 'loans.v2' || !Array.isArray(data.loans)) throw new Error('loans-data.json is not a valid loans.v2 file');
+        if (!gl || !Array.isArray(gl.rows) || !Array.isArray(gl.periods)) throw new Error('pl-data.json is not a valid ledger file');
+        this.setState({ data, gl }, () => this.applyQuery());
+      })
+      .catch(e => this.setState({ data: null, gl: null, loadError: (e && e.message ? e.message : String(e)) }));
+  }
+
+  applyQuery() {
+    try {
+      if (typeof location === 'undefined' || !location.search || !this.state.data) return;
+      const q = new URLSearchParams(location.search);
+      const patch = {};
+      if (q.get('loan')) {
+        const L = this.state.data.loans.find(l => l.displayId === q.get('loan') || l.id === q.get('loan'));
+        if (L) patch.sel = L.id;
+      }
+      if (q.get('door')) { patch.xq = q.get('door'); patch.xmode = 'all'; }
+      if (Object.keys(patch).length) this.setState(patch);
+    } catch (e) {}
+  }
+
+  componentDidMount() { this.loadData(); }
+
+  renderVals() {
+    const S = this.state;
+    const stopProp = e => e.stopPropagation();
+    if (!S.data || !S.gl) return {
+      ready: false, loading: !S.loadError, loadError: S.loadError || false,
+      retryLoad: () => this.loadData(),
+      scopeLine: S.loadError ? 'Data failed to load' : 'Loading…',
+      kpis: [], typeChips: [], regRows: [], xChips: [], xRows: [], stopProp,
+    };
+
+    const fN = n => { const r = Math.round(n); const s = '$' + Math.abs(r).toLocaleString('en-US'); return r < 0 ? '(' + s + ')' : s; };
+    const fC = n => { const s = '$' + Math.abs(n).toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 }); return n < 0 ? '(' + s + ')' : s; };
+    const fK = n => { const a = Math.abs(n), s = n < 0; let t; if (a >= 1e6) t = '$' + (a / 1e6).toFixed(2) + 'M'; else if (a >= 1000) t = '$' + (a / 1000).toFixed(1) + 'K'; else t = '$' + Math.round(a); return s ? '(' + t + ')' : t; };
+
+    const M = S.data.meta, LNS = S.data.loans, DOORS = S.data.doors || {};
+    const [W0, W1] = M.glWindow || [null, null];
+    const winMonths = (S.gl.periods || []).filter(p => (!W0 || p >= W0) && (!W1 || p <= W1));
+
+    // ---- loan status ----
+    const statusOf = l => {
+      if (!l.schedule.length) return { tag: 'UPCOMING', bg: '#EDEBE2', col: '#5E6B82' };
+      if (l.outstanding <= 0.005) return { tag: 'PAID OFF', bg: '#E3EEE7', col: '#2F7351' };
+      if (l.io && l.term) {
+        let mat = l.start, y = +mat.slice(0, 4), mm = +mat.slice(5, 7);
+        mm += l.term; y += Math.floor((mm - 1) / 12); mm = (mm - 1) % 12 + 1;
+        const matS = String(y).padStart(4, '0') + '-' + String(mm).padStart(2, '0');
+        if (M.horizonEnd >= matS) return { tag: 'MATURED', bg: '#F3E2DB', col: '#A03E28' };
+      }
+      return { tag: 'ACTIVE', bg: '#F6ECD9', col: '#96742F' };
+    };
+
+    // ---- KPIs ----
+    const active = LNS.filter(l => l.outstanding > 0.005 && l.schedule.length);
+    const wRate = active.reduce((s, l) => s + l.rate * l.outstanding, 0) / (active.reduce((s, l) => s + l.outstanding, 0) || 1);
+    let winInt = 0, winPrin = 0;
+    for (const l of LNS) for (const r of l.schedule) if (winMonths.includes(r.m)) { winInt += r.interest; winPrin += r.principal + r.events; }
+    const byType = Object.entries(M.byType || {}).filter(([, v]) => v > 0).map(([k, v]) => k + ' ' + fK(v)).join(' · ');
+    const kpis = [
+      { label: 'Outstanding · ' + M.horizonEnd, value: fN(M.totalOutstanding), col: '#16233A', sub: byType },
+      { label: 'Monthly debt service', value: fN(M.monthlyDebtService || 0), col: '#16233A', sub: 'level P&I on amortizing notes + current interest on hard money' },
+      { label: 'Monthly escrow', value: fN(M.monthlyEscrow || 0), col: '#16233A', sub: 'tax & insurance as entered — kept separate from P&I' },
+      { label: 'Weighted avg rate', value: (wRate * 100).toFixed(2) + '%', col: '#16233A', sub: active.length + ' active notes · ' + fK(winInt) + ' interest / ' + fK(winPrin) + ' principal paid ' + (W0 || '') + '→' + (W1 || '') },
+    ];
+
+    // ---- register ----
+    const TYPES = [['all', 'All'], ['Portfolio', 'Portfolio'], ['Single Property', 'Single property'], ['Hard Money', 'Hard money']];
+    const typeChips = TYPES.map(([id, label]) => {
+      const on = S.typeSel === id;
+      const n = id === 'all' ? LNS.length : LNS.filter(l => l.type === id).length;
+      return { label: label + ' · ' + n, on, bd: on ? '#16233A' : '#D8D4C8', bg: on ? '#16233A' : '#FFFFFF', col: on ? '#FFFFFF' : '#2A3550', onClick: () => this.setState({ typeSel: id }) };
+    });
+    const inType = LNS.filter(l => S.typeSel === 'all' || l.type === S.typeSel)
+      .sort((a, b) => b.outstanding - a.outstanding || String(a.displayId).localeCompare(String(b.displayId)));
+    const regRows = inType.map(l => {
+      const st = statusOf(l);
+      const isSel = S.sel === l.id;
+      return {
+        id: l.displayId, lender: l.lender || '—', type: l.type, rate: (l.rate * 100).toFixed(2) + '%',
+        firstPay: l.firstPay || '—', orig: fN(l.orig),
+        pay: l.io ? (l.schedule.length ? fN(l.schedule[l.schedule.length - 1].interest) + ' io' : '—') : fN(l.payment),
+        escrow: l.escrow ? fN(l.escrow) : '—',
+        out: fN(l.outstanding), tag: st.tag, tagBg: st.bg, tagCol: st.col,
+        bg: isSel ? '#F6F4EC' : 'transparent', sel: isSel ? '#C9A45C' : 'transparent',
+        onClick: () => this.setState({ sel: isSel ? null : l.id, schedAll: false }),
+      };
+    });
+    const regCount = inType.length + ' notes';
+    const regOrig = fN(inType.reduce((s, l) => s + l.orig, 0));
+    const regPay = fN(inType.reduce((s, l) => s + (l.io ? (l.outstanding > 0.005 && l.schedule.length ? l.schedule[l.schedule.length - 1].interest : 0) : (l.outstanding > 0.005 ? l.payment : 0)), 0));
+    const regEsc = fN(inType.reduce((s, l) => s + (l.outstanding > 0.005 ? l.escrow : 0), 0));
+    const regOut = fN(inType.reduce((s, l) => s + l.outstanding, 0));
+
+    // ---- selected loan ----
+    const sel = LNS.find(l => l.id === S.sel) || null;
+    let selVals = { hasSel: false };
+    if (sel) {
+      const st = statusOf(sel);
+      const selFacts = [
+        { k: 'Origination', v: sel.start }, { k: 'First payment', v: sel.firstPay || '—' },
+        { k: 'Note amount', v: fC(sel.orig) },
+        { k: 'Rate', v: (sel.rate * 100).toFixed(2) + '% · ' + (sel.term ? sel.term + ' mo' : 'no term') },
+        { k: sel.io ? 'Type' : 'Payment', v: sel.io ? 'Interest-only' : fC(sel.payment) },
+        { k: 'Outstanding · ' + M.horizonEnd, v: fC(sel.outstanding) },
+      ];
+      const selRel = (sel.releases || []).map(r => ({
+        m: r.m, prop: r.prop || '(all properties)', paid: fC(r.paid),
+        base: r.base == null ? 'already-revised' : fC(r.base),
+        excess: r.excess == null ? '—' : fC(r.excess),
+      }));
+      // property slices across the GL window
+      const selDoors = Object.keys(DOORS).filter(d => (DOORS[d].loans || []).includes(sel.id));
+      const selSliceRows = selDoors.map(d => {
+        const rec = DOORS[d];
+        const cells = winMonths.map(m => {
+          const v = rec.monthly && rec.monthly[m];
+          if (!v) return { t: '—', col: '#C4CBD8', fw: 400 };
+          return { t: fN(v.close), col: v.close === 0 ? '#A03E28' : '#2A3550', fw: v.close === 0 ? 700 : 400 };
+        });
+        return { door: d, pct: sel.origProps && sel.origProps[d] != null ? (sel.origProps[d] * 100).toFixed(2) + '%' : '—', cells,
+                 _last: rec.monthly && Object.keys(rec.monthly).length ? rec.monthly[Object.keys(rec.monthly).sort().pop()].close : 0 };
+      }).sort((a, b) => b._last - a._last || a.door.localeCompare(b.door));
+      // schedule (window by default)
+      const schedSrc = sel.schedule.filter(r => S.schedAll || winMonths.includes(r.m) || !winMonths.length);
+      const relMonths = new Set((sel.releases || []).map(r => r.m));
+      const selSched = schedSrc.map(r => ({
+        m: r.m, open: fC(r.open), int: fC(r.interest), prin: fC(r.principal),
+        ev: r.events ? fC(r.events) : '—', evfw: r.events ? 700 : 400,
+        close: fC(r.close), bg: relMonths.has(r.m) ? '#FBF6EA' : 'transparent', fw: relMonths.has(r.m) ? 700 : 600,
+      }));
+      selVals = {
+        hasSel: true, selId: sel.displayId, selLender: (sel.lender || '—') + ' · ' + sel.type,
+        selSub: st.tag + (sel.preRevised ? ' · slices seeded from already-revised proportions' : '') + ' · schedules verified against the lender convention',
+        selFacts, selHasRel: selRel.length > 0, selRel,
+        selHasSlices: selSliceRows.length > 1,
+        selSliceSub: 'closing balance by month, ' + (W0 || '') + ' → ' + (W1 || ''),
+        selWinN: winMonths.length, selWinCols: winMonths, selSliceRows,
+        selToggleSched: () => this.setState({ schedAll: !S.schedAll }),
+        selSchedBtn: S.schedAll ? 'Show ' + (W0 || '') + ' → ' + (W1 || '') + ' only' : 'Show full history · ' + sel.schedule.length + ' months',
+        selSched,
+        selSchedInt: fC(schedSrc.reduce((s, r) => s + r.interest, 0)),
+        selSchedPrin: fC(schedSrc.reduce((s, r) => s + r.principal, 0)),
+        selSchedEv: fC(schedSrc.reduce((s, r) => s + r.events, 0)),
+      };
+    }
+
+    // ---- GL cross-check ----
+    const glInt = {};
+    for (const row of S.gl.rows) {
+      if (row[2] !== 'Interest Cost') continue;
+      const d = row[1], vals = row[3];
+      for (let i = 0; i < vals.length; i++) {
+        if (Math.abs(vals[i]) <= 0.005) continue;
+        const m = S.gl.periods[i];
+        if (!glInt[d]) glInt[d] = {};
+        glInt[d][m] = (glInt[d][m] || 0) + vals[i];
+      }
+    }
+    const xAll = [];
+    const engDoors = new Set();
+    for (const d of Object.keys(DOORS)) {
+      const mon = DOORS[d].monthly || {};
+      for (const m of Object.keys(mon)) {
+        engDoors.add(d);
+        const g = glInt[d] && glInt[d][m] != null ? glInt[d][m] : null;
+        const e = mon[m].interest;
+        if (g == null) { xAll.push({ door: d, m, eng: e, gl: null, delta: e }); continue; }
+        xAll.push({ door: d, m, eng: e, gl: g, delta: e - g });
+      }
+    }
+    const glOnly = [];
+    for (const d of Object.keys(glInt)) if (!engDoors.has(d)) for (const m of Object.keys(glInt[d])) glOnly.push({ door: d, m, eng: null, gl: glInt[d][m], delta: -glInt[d][m] });
+    const compared = xAll.filter(x => x.gl != null);
+    const flagged = compared.filter(x => Math.abs(x.delta) > 25);
+    const XM = [
+      ['flag', 'Flagged > $25 · ' + flagged.length],
+      ['all', 'All compared · ' + compared.length],
+      ['gap', 'One side only · ' + (xAll.length - compared.length + glOnly.length)],
+    ];
+    const xChips = XM.map(([id, label]) => {
+      const on = S.xmode === id;
+      return { label, on, bd: on ? '#16233A' : '#D8D4C8', bg: on ? '#16233A' : '#FFFFFF', col: on ? '#FFFFFF' : '#2A3550', onClick: () => this.setState({ xmode: id }) };
+    });
+    let pool = S.xmode === 'flag' ? flagged : S.xmode === 'all' ? compared : xAll.filter(x => x.gl == null).concat(glOnly);
+    const q = (S.xq || '').trim().toLowerCase();
+    if (q) pool = pool.filter(x => x.door.toLowerCase().includes(q));
+    pool = pool.slice().sort((a, b) => Math.abs(b.delta) - Math.abs(a.delta) || a.door.localeCompare(b.door) || a.m.localeCompare(b.m));
+    const CAP = 150;
+    const xRows = pool.slice(0, CAP).map(x => ({
+      door: x.door, m: x.m,
+      eng: x.eng == null ? 'not in engine' : fC(x.eng),
+      gl: x.gl == null ? 'not in ledger' : fC(x.gl),
+      delta: fC(x.delta), dcol: Math.abs(x.delta) > 25 ? '#A03E28' : Math.abs(x.delta) > 1 ? '#96742F' : '#3E8E63',
+    }));
+    const rec = M.reconciliation || {};
+    const xSub = (rec.comparisons || compared.length) + ' door-months compared · total gap ' + fK(rec.totalAbsDiff || 0) + ' · ' + flagged.length + ' beyond $25';
+    const xFoot = 'Engine interest is attributed to the ledger month it is booked in. Differences are HIGHLIGHTS for case-by-case review — the engine never alters ledger data. ' + (pool.length > CAP ? 'Showing the ' + CAP + ' largest of ' + pool.length + ' rows — narrow with search. ' : '') + '“One side only” lists engine months with no ledger interest and ledger interest on doors the loan file doesn&#8217;t cover yet.';
+
+    const scopeLine = M.loans + ' notes · ' + fK(M.totalOutstanding) + ' outstanding at ' + M.horizonEnd + ' · schedules verified to the lender convention to the cent · published ' + (M.published || '');
+    const convFoot = 'The sheet&#8217;s Loan Start Date is the first payment date; origination is one month earlier. Payments are level annuities computed from each note&#8217;s amount, rate and term (the sheet&#8217;s P&amp;I column is escrow, shown separately). Interest on amortizing notes is charged in arrears — each payment carries the previous month&#8217;s accrual, day-weighted 30/360 around mid-month events, matching the lender&#8217;s own schedule for note 8242 to the penny. Hard-money interest belongs to the month it accrues, prorated from the funding day. When a property is released, its slice retires at the previous month-end balance and the excess paid reduces the surviving properties in their original proportions (renormalized); the loan then runs on the revised proportions. Same-month releases share the base month and leave together. Notes marked already-revised carry the owner&#8217;s post-release proportions until original data arrives.';
+
+    return {
+      ready: true, loading: false, loadError: false, retryLoad: () => this.loadData(), stopProp,
+      scopeLine, kpis, typeChips,
+      regRows, regCount, regOrig, regPay, regEsc, regOut,
+      ...{ hasSel: false, selId: '', selLender: '', selSub: '', selFacts: [], selHasRel: false, selRel: [], selHasSlices: false, selSliceSub: '', selWinN: winMonths.length, selWinCols: winMonths, selSliceRows: [], selToggleSched: () => {}, selSchedBtn: '', selSched: [], selSchedInt: '', selSchedPrin: '', selSchedEv: '' },
+      ...selVals,
+      xChips, xRows, xEmpty: xRows.length === 0, xSub, xFoot, xq: S.xq,
+      onXq: e => this.setState({ xq: e.target.value }),
+      convFoot,
+    };
+  }
+}
+</script>
+</body>
+</html>

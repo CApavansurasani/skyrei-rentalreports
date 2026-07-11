@@ -29,6 +29,7 @@ input:focus{outline:2px solid #C9A45C;outline-offset:1px}
       <a href="./PL%20Story%20-%20Main.dc.html" style-hover="color:#C9A45C" style="text-decoration:none;font-size:12px;font-weight:600;color:#8A96AD;white-space:nowrap">P&amp;L</a>
       <a href="./investments.dc.html" style-hover="color:#C9A45C" style="text-decoration:none;font-size:12px;font-weight:600;color:#8A96AD;white-space:nowrap">Investments &amp; Balance Sheet</a>
       <a href="./cashflow.dc.html" style-hover="color:#C9A45C" style="text-decoration:none;font-size:12px;font-weight:600;color:#8A96AD;white-space:nowrap">Cash Flow</a>
+      <a href="./loans.dc.html" style-hover="color:#C9A45C" style="text-decoration:none;font-size:12px;font-weight:600;color:#8A96AD;white-space:nowrap">Loans</a>
       <a href="./property-index.dc.html" style="text-decoration:none;font-size:12px;font-weight:700;color:#E9EDF5;border-bottom:2px solid #C9A45C;padding-bottom:2px;white-space:nowrap">Property Index</a>
       <span style="margin-left:auto;font-size:10px;letter-spacing:0.28em;font-weight:700;color:#5E6B82">PORTFOLIO&nbsp;INTELLIGENCE</span>
     </div>
@@ -164,7 +165,7 @@ class Component extends DCLogic {
 
     const ALLP = S.bs.properties;
     const entities = [...new Set(ALLP.map(p => p.entity))].sort();
-    const STATUSES = ['all', 'Rented', 'Held for Sale', 'Sold', 'Office'];
+    const STATUSES = ['all', 'Rented', 'Held for Sale', 'On Hold', 'Sold', 'Office'];
     const stSel = STATUSES.includes(S.statusSel) ? S.statusSel : 'all';
     const entSel = entities.includes(S.ent) ? S.ent : null;
     const q = (S.q || '').trim().toLowerCase();
@@ -176,7 +177,7 @@ class Component extends DCLogic {
       .filter(p => !q || p.door.toLowerCase().includes(q))
       .sort((a, b) => streetKey(a.door).localeCompare(streetKey(b.door)) || a.door.localeCompare(b.door));
 
-    const stStyle = s => s === 'Rented' ? ['#E3EEE7', '#2F7351'] : s === 'Sold' ? ['#F3E2DB', '#A03E28'] : s === 'Held for Sale' ? ['#F6ECD9', '#96742F'] : ['#E2E7F0', '#2E3E5E'];
+    const stStyle = s => s === 'Rented' ? ['#E3EEE7', '#2F7351'] : s === 'Sold' ? ['#F3E2DB', '#A03E28'] : s === 'Held for Sale' ? ['#F6ECD9', '#96742F'] : s === 'On Hold' ? ['#F0EBDD', '#7A6A4F'] : ['#E2E7F0', '#2E3E5E'];
     const rows = pool.map(p => {
       const [bg, col] = stStyle(p.status);
       const rent = rentNow.get(p.door);

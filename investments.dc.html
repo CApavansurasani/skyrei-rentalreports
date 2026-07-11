@@ -29,6 +29,7 @@ input:focus{outline:2px solid #C9A45C;outline-offset:1px}
       <a href="./PL%20Story%20-%20Main.dc.html" style-hover="color:#C9A45C" style="text-decoration:none;font-size:12px;font-weight:600;color:#8A96AD;white-space:nowrap">P&amp;L</a>
       <a href="./investments.dc.html" style="text-decoration:none;font-size:12px;font-weight:700;color:#E9EDF5;border-bottom:2px solid #C9A45C;padding-bottom:2px;white-space:nowrap">Investments &amp; Balance Sheet</a>
       <a href="./cashflow.dc.html" style-hover="color:#C9A45C" style="text-decoration:none;font-size:12px;font-weight:600;color:#8A96AD;white-space:nowrap">Cash Flow</a>
+      <a href="./loans.dc.html" style-hover="color:#C9A45C" style="text-decoration:none;font-size:12px;font-weight:600;color:#8A96AD;white-space:nowrap">Loans</a>
       <a href="./property-index.dc.html" style-hover="color:#C9A45C" style="text-decoration:none;font-size:12px;font-weight:600;color:#8A96AD;white-space:nowrap">Property Index</a>
       <span style="margin-left:auto;font-size:10px;letter-spacing:0.28em;font-weight:700;color:#5E6B82">PORTFOLIO&nbsp;INTELLIGENCE</span>
     </div>
@@ -360,6 +361,13 @@ class Component extends DCLogic {
       if (acct === 'Rental Income') rentBy.set(door, (rentBy.get(door) || 0) + tot);
     }
     const ann = v => v / NP * 12;
+    const monthsIn = p => {
+      if (!p.putToUse || !/^\d{4}-\d{2}/.test(p.putToUse)) return NP;
+      const s = p.putToUse.slice(0, 7), e = (p.exit && /^\d{4}-\d{2}/.test(p.exit)) ? p.exit.slice(0, 7) : null;
+      let n = 0; for (const per of P) if (per >= s && (!e || per <= e)) n++;
+      return n > 0 ? n : NP;
+    };
+    const annD = (v, p) => v / monthsIn(p) * 12;
 
     // ---- scope filters ----
     const ALLP = S.bs.properties;
@@ -370,6 +378,7 @@ class Component extends DCLogic {
       { id: 'owned', label: 'Owned', test: p => p.status !== 'Sold' },
       { id: 'rented', label: 'Rented', test: p => p.status === 'Rented' },
       { id: 'hfs', label: 'Held for sale', test: p => p.status === 'Held for Sale' },
+      { id: 'onhold', label: 'On hold', test: p => p.status === 'On Hold' },
       { id: 'sold', label: 'Sold', test: p => p.status === 'Sold' },
       { id: 'all', label: 'All incl. sold', test: () => true },
     ];
@@ -494,8 +503,8 @@ class Component extends DCLogic {
       { id: 'debt', label: 'Debt', f: p => p.refi, fmt: fK, bar: 'abs', col: () => BRICK, need: p => p.refi > 0 },
       { id: 'ltv', label: 'LTV', f: p => p.refi / p.value * 100, fmt: v => v.toFixed(1) + '%', bar: 'pct100', col: v => v > 75 ? RED : NAVY, need: p => p.value > 0 && p.refi > 0 },
       { id: 'appr', label: 'Appreciation', f: p => p.value - p.cost, fmt: fK, bar: 'abs', col: v => v < 0 ? RED : '#2A6F4E', need: p => p.cost > 0 && p.value > 0 },
-      { id: 'cap', label: 'Cap rate', f: p => ann(noiBy.get(p.door)) / p.value * 100, fmt: v => v.toFixed(2) + '%', bar: 'abs', col: v => v < 0 ? RED : NAVY, need: p => p.value > 0 && noiBy.has(p.door) },
-      { id: 'yoc', label: 'Yield on cost', f: p => ann(noiBy.get(p.door)) / p.cost * 100, fmt: v => v.toFixed(2) + '%', bar: 'abs', col: v => v < 0 ? RED : NAVY, need: p => p.cost > 0 && noiBy.has(p.door) },
+      { id: 'cap', label: 'Cap rate', f: p => annD(noiBy.get(p.door), p) / p.value * 100, fmt: v => v.toFixed(2) + '%', bar: 'abs', col: v => v < 0 ? RED : NAVY, need: p => p.value > 0 && noiBy.has(p.door) },
+      { id: 'yoc', label: 'Yield on cost', f: p => annD(noiBy.get(p.door), p) / p.cost * 100, fmt: v => v.toFixed(2) + '%', bar: 'abs', col: v => v < 0 ? RED : NAVY, need: p => p.cost > 0 && noiBy.has(p.door) },
       { id: 'dscr', label: 'DSCR (interest-only)', f: p => noiBy.get(p.door) / intBy.get(p.door), fmt: v => v.toFixed(2) + '×', bar: 'abs', col: v => v < 1 ? RED : NAVY, need: p => noiBy.has(p.door) && (intBy.get(p.door) || 0) > 1, asc: true },
       { id: 'cash', label: 'Cash in deal', f: p => p.cost - p.refi, fmt: fK, bar: 'abs', col: v => v < 0 ? '#2A6F4E' : NAVY, need: p => p.cost > 0 },
     ];
@@ -527,7 +536,7 @@ class Component extends DCLogic {
       label: S.showAll ? '← Back to top ' + TOPN : 'Show all ' + rowsQ.length + ' doors →',
       onClick: () => this.setState(p => ({ showAll: !p.showAll })),
     };
-    const expFoot = 'Cap rate & yield use annualized ledger NOI (' + P[0] + ' → ' + P[NP - 1] + '); DSCR is interest-only until amortization data arrives; cash in deal = cost − initial refinance (negative = cash-out beyond basis). Doors lacking a required input for the selected lens are excluded and counted above.';
+    const expFoot = 'Cap rate & yield annualize each door\u2019s ledger NOI over its in-service months within ' + P[0] + ' → ' + P[NP - 1] + ' (per the Property Index put-to-use/exit dates); DSCR is interest-only until amortization data arrives; cash in deal = cost − initial refinance (negative = cash-out beyond basis). Doors lacking a required input for the selected lens are excluded and counted above.';
 
     // ---- lifecycle ----
     const years = {};

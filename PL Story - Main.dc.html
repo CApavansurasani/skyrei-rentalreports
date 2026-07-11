@@ -29,6 +29,7 @@ input:focus{outline:2px solid #C9A45C;outline-offset:1px}
       <a href="./PL%20Story%20-%20Main.dc.html" style="text-decoration:none;font-size:12px;font-weight:700;color:#E9EDF5;border-bottom:2px solid #C9A45C;padding-bottom:2px;white-space:nowrap">P&amp;L</a>
       <a href="./investments.dc.html" style-hover="color:#C9A45C" style="text-decoration:none;font-size:12px;font-weight:600;color:#8A96AD;white-space:nowrap">Investments &amp; Balance Sheet</a>
       <a href="./cashflow.dc.html" style-hover="color:#C9A45C" style="text-decoration:none;font-size:12px;font-weight:600;color:#8A96AD;white-space:nowrap">Cash Flow</a>
+      <a href="./loans.dc.html" style-hover="color:#C9A45C" style="text-decoration:none;font-size:12px;font-weight:600;color:#8A96AD;white-space:nowrap">Loans</a>
       <a href="./property-index.dc.html" style-hover="color:#C9A45C" style="text-decoration:none;font-size:12px;font-weight:600;color:#8A96AD;white-space:nowrap">Property Index</a>
       <span style="margin-left:auto;font-size:10px;letter-spacing:0.28em;font-weight:700;color:#5E6B82">PORTFOLIO&nbsp;INTELLIGENCE</span>
     </div>
@@ -849,8 +850,28 @@ class Component extends DCLogic {
         doorActivity.set(p, s);
       }
     }
-    const isActiveDoor = p => (doorActivity.get(p) || 0) > 0.005;
-    const activeDoorCount = [...doorActivity.values()].filter(v => v > 0.005).length;
+    // Active = in service per the Property Index: put-to-use → exit window overlapping
+    // the selected months. Doors with no parseable window fall back to GL activity.
+    const WINDOWS = (S.data.meta && S.data.meta.doorWindows) || null;
+    const selPeriods = selM.map(i => PERIODS[i]);
+    const winActive = w => selPeriods.some(per => w[0] <= per && (!w[1] || per <= w[1]));
+    const isActiveDoor = p => {
+      if (WINDOWS && WINDOWS[p] && WINDOWS[p][0]) return winActive(WINDOWS[p]);
+      return (doorActivity.get(p) || 0) > 0.005;
+    };
+    let activeDoorCount = 0;
+    if (WINDOWS) {
+      const seen = new Set();
+      for (const d in WINDOWS) {
+        const w = WINDOWS[d];
+        if (coActive && !coSel.includes(w[2] || '')) continue;
+        seen.add(d);
+        if (w[0] ? winActive(w) : (doorActivity.get(d) || 0) > 0.005) activeDoorCount++;
+      }
+      for (const [d, act] of doorActivity) if (!seen.has(d) && act > 0.005) activeDoorCount++;
+    } else {
+      activeDoorCount = [...doorActivity.values()].filter(v => v > 0.005).length;
+    }
 
     // ---- filter dropdowns (all multi-select) ----
     const monthNames = MNY;
