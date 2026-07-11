@@ -378,9 +378,12 @@ class Component extends DCLogic {
         { k: 'Origination', v: sel.start }, { k: 'First payment', v: sel.firstPay || '—' },
         { k: 'Note amount', v: fC(sel.orig) },
         { k: 'Rate', v: (sel.rate * 100).toFixed(2) + '% · ' + (sel.term ? sel.term + ' mo' : 'no term') },
-        { k: sel.io ? 'Type' : 'Payment', v: sel.io ? 'Interest-only' : fC(sel.payment) },
+        { k: sel.io ? 'Type' : 'Payment', v: sel.io ? 'Interest-only' : fC(sel.payment) + (sel.payOverride ? ' (lender)' : '') },
         { k: 'Outstanding · ' + M.horizonEnd, v: fC(sel.outstanding) },
       ];
+      if (sel.dayCount && sel.dayCount !== '30/360') selFacts.push({ k: 'Day count', v: sel.dayCount });
+      for (const pc of (sel.paymentChanges || []))
+        selFacts.push({ k: 'EMI recast · ' + pc.m, v: fC(pc.from) + ' → ' + fC(pc.to) });
       const selRel = (sel.releases || []).map(r => ({
         m: r.m, prop: r.prop || '(all properties)', paid: fC(r.paid),
         base: r.base == null ? 'already-revised' : fC(r.base),
@@ -475,7 +478,7 @@ class Component extends DCLogic {
     const xFoot = 'Engine interest is attributed to the ledger month it is booked in. Differences are HIGHLIGHTS for case-by-case review — the engine never alters ledger data. ' + (pool.length > CAP ? 'Showing the ' + CAP + ' largest of ' + pool.length + ' rows — narrow with search. ' : '') + '“One side only” lists engine months with no ledger interest and ledger interest on doors the loan file doesn&#8217;t cover yet.';
 
     const scopeLine = M.loans + ' notes · ' + fK(M.totalOutstanding) + ' outstanding at ' + M.horizonEnd + ' · schedules verified to the lender convention to the cent · published ' + (M.published || '');
-    const convFoot = 'The sheet&#8217;s Loan Start Date is the first payment date; origination is one month earlier. Payments are level annuities computed from each note&#8217;s amount, rate and term (the sheet&#8217;s P&amp;I column is escrow, shown separately). Interest on amortizing notes is charged in arrears — each payment carries the previous month&#8217;s accrual, day-weighted 30/360 around mid-month events, matching the lender&#8217;s own schedule for note 8242 to the penny. Hard-money interest belongs to the month it accrues, prorated from the funding day. When a property is released, its slice retires at the previous month-end balance and the excess paid reduces the surviving properties in their original proportions (renormalized); the loan then runs on the revised proportions. Same-month releases share the base month and leave together. Notes marked already-revised carry the owner&#8217;s post-release proportions until original data arrives.';
+    const convFoot = 'The sheet&#8217;s Loan Start Date is the first payment date; origination is one month earlier. Payments are level annuities computed from each note&#8217;s amount, rate and term, unless the lender&#8217;s exact payment is entered as an override (the sheet&#8217;s P&amp;I column is escrow, shown separately). Interest on amortizing notes is charged in arrears — 30/360 day-weighted by default (matching lender 8242&#8217;s schedule to the penny), or on actual calendar days over 360 for notes marked Actual/360 (matching the Pinnacle refi schedule to the penny, leap days included). Hard-money interest belongs to the month it accrues, prorated from the funding day. An extra principal payment flagged in Notes as reducing the EMI recasts the payment — the balance re-levels over the remaining original term, tenure preserved. When a property is released, its slice retires at the previous month-end balance and the excess paid reduces the surviving properties in their original proportions (renormalized); the loan then runs on the revised proportions. Same-month releases share the base month and leave together. Notes marked already-revised carry the owner&#8217;s post-release proportions until original data arrives.';
 
     return {
       ready: true, loading: false, loadError: false, retryLoad: () => this.loadData(), stopProp,
