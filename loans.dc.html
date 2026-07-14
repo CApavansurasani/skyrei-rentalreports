@@ -505,7 +505,17 @@ input:focus{outline:2px solid #C9A45C;outline-offset:1px}
         <sc-for list="{{ rcChips }}" as="rc" hint-placeholder-count="6">
           <div onClick="{{ rc.onClick }}" style-hover="border-color:#C9A45C" style="padding:7px 14px;border-radius:99px;font-size:12px;font-weight:700;cursor:pointer;border:1.5px solid {{ rc.bd }};background:{{ rc.bg }};color:{{ rc.col }};white-space:nowrap">{{ rc.label }}</div>
         </sc-for>
+        <span style="font-size:10px;letter-spacing:0.08em;font-weight:700;color:#C9C4B6;margin-left:4px">· OR TODAY’S RATE</span>
+        <input value="{{ rateQ }}" onInput="{{ onRateQ }}" onKeyDown="{{ onRateKey }}" placeholder="5.5" style="width:62px;padding:7px 10px;border-radius:99px;border:1.5px solid {{ rateBd }};background:#FFFFFF;font-size:12px;font-weight:700;font-family:inherit;color:#16233A;text-align:center">
+        <span style="font-size:12px;font-weight:700;color:#5E6B82;margin-left:-3px">%</span>
+        <div onClick="{{ onRateCalc }}" style-hover="background:#F6F4EC" style="padding:7px 16px;border-radius:99px;font-size:12px;font-weight:700;cursor:pointer;border:1.5px solid #16233A;background:#FFFFFF;color:#16233A;white-space:nowrap">Calculate</div>
+        <sc-if value="{{ rateActive }}" hint-placeholder-val="{{ false }}">
+          <div onClick="{{ onRateClear }}" style-hover="opacity:0.88" style="padding:7px 14px;border-radius:99px;font-size:11px;letter-spacing:0.04em;font-weight:700;cursor:pointer;background:#16233A;border:1.5px solid #16233A;color:#FFFFFF;white-space:nowrap">{{ rateLabel }} &nbsp;✕</div>
+        </sc-if>
       </div>
+      <sc-if value="{{ rateErrShow }}" hint-placeholder-val="{{ false }}">
+        <div style="margin-top:8px;font-size:11.5px;color:#A03E28;font-weight:600">{{ rateErr }}</div>
+      </sc-if>
       <sc-if value="{{ ppPendingBanner }}" hint-placeholder-val="{{ false }}">
         <div style="margin-top:12px;background:#FBF6EA;border:1px dashed #EAD9C0;border-radius:10px;padding:10px 14px;font-size:12px;color:#96742F;font-weight:600">{{ ppPendingText }}</div>
       </sc-if>
@@ -573,7 +583,7 @@ input:focus{outline:2px solid #C9A45C;outline-offset:1px}
         </sc-for>
         <sc-if value="{{ ppHasTot }}" hint-placeholder-val="{{ false }}">
           <div style="display:grid;grid-template-columns:24px 1.5fr 64px 116px 130px 104px 110px 116px 100px 110px;gap:8px;padding:9px 10px;border-top:2px solid #16233A;font-size:12px;font-weight:700">
-            <div></div><div>TOTAL · notes with terms</div><div></div>
+            <div></div><div>{{ ppTotLbl }}</div><div></div>
             <div style="text-align:right;font-variant-numeric:tabular-nums">{{ ppTotOut }}</div><div></div>
             <div style="text-align:right;font-variant-numeric:tabular-nums;color:#B04A33">{{ ppTotPen }}</div>
             <div style="text-align:right;font-variant-numeric:tabular-nums;color:#B04A33">{{ ppTotFee }}</div>
@@ -654,7 +664,7 @@ class Component extends DCLogic {
     trendYear: null, showInt: true, showPrin: true, trendShowAll: false,
     topQ: '', topSel: null,
     evYear: 'all', evSel: null, evKind: 'all',
-    refiCut: 0.5, ppSel: null,
+    refiCut: 0.5, ppSel: null, rateQ: '', refiRate: null, rateErr: '',
     xmode: 'flag',
   };
 
@@ -727,7 +737,8 @@ class Component extends DCLogic {
       chartVB: '0 0 460 188', chartRight: '450', zeroY: '150', trName: '', trTotal: '', trFoot: '', trFocusOn: false, trFocusName: '', trUnfocus: () => {},
       topTitle: '', topSub: '', topEmpty: false, topListMax: 'none', topListOv: 'visible', topBtnShow: false, topBtnClick: () => {}, topBtnLabel: '',
       evYears: [], evTiles: [], evGroups: [], evEmpty: false,
-      rcChips: [], ppTiles: [], ppRows: [], ppPendingBanner: false, ppPendingText: '', ppHasTot: false, ppTotOut: '', ppTotPen: '', ppTotFee: '', ppTotSav: '', ppTotBe: '', ppFoot: '',
+      rcChips: [], ppTiles: [], ppRows: [], ppPendingBanner: false, ppPendingText: '', ppHasTot: false, ppTotOut: '', ppTotPen: '', ppTotFee: '', ppTotSav: '', ppTotBe: '', ppFoot: '', ppTotLbl: '',
+      rateQ: '', onRateQ: () => {}, onRateCalc: () => {}, onRateKey: () => {}, onRateClear: () => {}, rateActive: false, rateLabel: '', rateErr: '', rateErrShow: false, rateBd: '#D8D4C8',
     };
 
     const fN = n => { const r = Math.round(n); const s = '$' + Math.abs(r).toLocaleString('en-US'); return r < 0 ? '(' + s + ')' : s; };
@@ -1327,12 +1338,31 @@ class Component extends DCLogic {
     // ---------- prepayment penalty & refinance breakeven ----------
     const CUTS = [0.25, 0.5, 0.75, 1.0, 1.5, 2.0];
     const refiCut = CUTS.includes(S.refiCut) ? S.refiCut : 0.5;
+    const target = (typeof S.refiRate === 'number' && isFinite(S.refiRate)) ? S.refiRate : null; // custom market-rate mode
+    const tLbl = target !== null ? target.toFixed(2) + '%' : '';
     const rcChips = CUTS.map(c2 => ({
       label: '\u2212' + c2.toFixed(2) + '%',
-      bd: c2 === refiCut ? '#16233A' : '#D8D4C8', bg: c2 === refiCut ? '#16233A' : '#FFFFFF',
-      col: c2 === refiCut ? '#FFFFFF' : '#2A3550',
-      onClick: () => this.setState({ refiCut: c2 }),
+      bd: (target === null && c2 === refiCut) ? '#16233A' : '#D8D4C8', bg: (target === null && c2 === refiCut) ? '#16233A' : '#FFFFFF',
+      col: (target === null && c2 === refiCut) ? '#FFFFFF' : '#2A3550',
+      onClick: () => this.setState({ refiCut: c2, refiRate: null, rateErr: '' }),
     }));
+    const onRateQ = e => this.setState({ rateQ: e.target.value, rateErr: '' });
+    const onRateCalc = () => {
+      const t = parseFloat(String(this.state.rateQ).replace('%', '').trim());
+      if (!isFinite(t) || t <= 0 || t >= 25) {
+        this.setState({ refiRate: null, rateErr: 'Enter today\u2019s refinance rate as a plain number between 0 and 25 \u2014 e.g. 5.5 \u2014 then Calculate.' });
+        return;
+      }
+      this.setState({ refiRate: Math.round(t * 1000) / 1000, rateErr: '' });
+    };
+    const onRateKey = e => { if (e.key === 'Enter') onRateCalc(); };
+    const onRateClear = () => this.setState({ refiRate: null, rateErr: '' });
+    const rateActive = target !== null;
+    const rateLabel = 'BREAKEVEN AT ' + tLbl;
+    const rateErr = S.rateErr || ''; const rateErrShow = !!rateErr;
+    const rateBd = rateActive ? '#16233A' : '#D8D4C8';
+    // effective rate cut for a note: uniform scenario cut, or note rate minus the entered market rate
+    const effOf = r => target !== null ? Math.max(0, r * 100 - target) : Math.min(refiCut, r * 100);
     const ppPct = (l, m) => {
       const pp = l.prepay || { known: false, steps: [] };
       if (!pp.known) return null;
@@ -1357,7 +1387,7 @@ class Component extends DCLogic {
     const ppLoans = inLoans.filter(l => !l.io && loanCloseAt(l, lastM) > 0.005)
       .sort((a, b) => loanCloseAt(b, lastM) - loanCloseAt(a, lastM));
     const nPend = ppLoans.filter(l => ppPct(l, lastM) === null).length;
-    let tpOut = 0, tpPen = 0, tpFee = 0, tpSav = 0;
+    let tpOut = 0, tpPen = 0, tpFee = 0, tpSav = 0, tpPenAll = 0, nKeep = 0, nScope = 0;
     const ppRows = ppLoans.map(l => {
       const out = loanCloseAt(l, lastM);
       const pctNow = ppPct(l, lastM);
@@ -1365,11 +1395,14 @@ class Component extends DCLogic {
       const pen = pending ? 0 : out * pctNow / 100;
       const fee = out * 0.01;
       const cost = pen + fee;
-      const eff = Math.min(refiCut, l.rate * 100);
+      const eff = effOf(l.rate);
+      const keep = target !== null && eff <= 1e-9; // note already at/below the entered rate — penalty terms irrelevant
       const sav = out * eff / 100;
       const be = pending ? NaN : (sav > 0 ? cost / sav : Infinity);
-      if (!pending) { tpOut += out; tpPen += pen; tpFee += fee; tpSav += sav; }
-      const v = verdictOf(be, pending);
+      if (!pending) { tpPenAll += pen; }
+      if (!pending && !keep) { tpOut += out; tpPen += pen; tpFee += fee; tpSav += sav; nScope += 1; }
+      if (keep) nKeep += 1;
+      const v = keep ? { t: 'KEEP', bg: '#E8ECF3', c: '#33456B' } : verdictOf(be, pending);
       const isExp = S.ppSel === l.id;
       const props = Object.keys(l.origProps || {});
       let ex = {};
@@ -1384,22 +1417,31 @@ class Component extends DCLogic {
           col: i2 === curYr ? '#96742F' : '#2A3550',
         }));
         const freeY = fy + steps.length, freeM = String(fmo).padStart(2, '0');
-        const beMax = Math.max(...CUTS.map(c2 => { const b2 = beOf(cost, out, l.rate, c2); return isFinite(b2) ? b2 : 0; }), 1);
+        const beMax = Math.max(...CUTS.map(c2 => { const b2 = beOf(cost, out, l.rate, c2); return isFinite(b2) ? b2 : 0; }), isFinite(be) ? be : 0, 1);
+        const ladder = (target !== null ? [{
+          cut: '@ ' + tLbl, be: keep ? 'keep' : fYr(be),
+          col: keep ? '#33456B' : verdictOf(be, false).c, bg: keep ? '#8A93A6' : verdictOf(be, false).c,
+          w: (isFinite(be) && !keep ? Math.min(be / beMax * 100, 100) : 100).toFixed(1) + '%',
+        }] : []).concat(CUTS.map(c2 => {
+          const b2 = beOf(cost, out, l.rate, c2);
+          const v2 = verdictOf(b2, false);
+          return { cut: '\u2212' + c2.toFixed(2) + '%', be: fYr(b2), col: v2.c,
+                   bg: v2.c, w: (isFinite(b2) ? Math.min(b2 / beMax * 100, 100) : 100).toFixed(1) + '%' };
+        }));
         ex = {
           steps: stepCards,
           freeFrom: l.prepay.steps.length > 1
             ? 'Penalty-free from ' + mmyy(freeY + '-' + freeM) + ' \u2014 refinancing after that costs only the 1% fee'
             : (l.prepay.steps.length === 1 ? 'Flat ' + steps[0].toFixed(2) + '% until maturity' : 'No penalty \u2014 only the 1% fee applies'),
-          cuts: CUTS.map(c2 => {
-            const b2 = beOf(cost, out, l.rate, c2);
-            const v2 = verdictOf(b2, false);
-            return { cut: '\u2212' + c2.toFixed(2) + '%', be: fYr(b2), col: v2.c,
-                     bg: v2.c, w: (isFinite(b2) ? Math.min(b2 / beMax * 100, 100) : 100).toFixed(1) + '%' };
-          }),
-          expFoot: 'Cost held at today\u2019s ' + fC(cost) + ' (penalty ' + fC(pen) + ' + fee ' + fC(fee) + '); benefit = balance \u00d7 cut, capped at the note\u2019s ' + (l.rate * 100).toFixed(2) + '% rate.',
+          cuts: ladder,
+          expFoot: 'Cost held at today\u2019s ' + fC(cost) + ' (penalty ' + fC(pen) + ' + fee ' + fC(fee) + '); ' + (target !== null
+            ? 'benefit = the note\u2019s ' + (l.rate * 100).toFixed(2) + '% minus ' + tLbl + ' on the balance' + (keep ? ' \u2014 this note is already at or below ' + tLbl + ', keep it' : '') + '.'
+            : 'benefit = balance \u00d7 cut, capped at the note\u2019s ' + (l.rate * 100).toFixed(2) + '% rate.'),
         };
       } else if (isExp && pending) {
-        ex = { steps: [], freeFrom: 'Add this note\u2019s penalty terms in the Prepay Penalty column of Loans.xlsx \u2014 step-down \u201c5,4,3,2,1\u201d, flat \u201c3\u201d, or \u201cnone\u201d.', cuts: [], expFoot: '' };
+        ex = { steps: [], freeFrom: keep
+          ? 'This note is already at or below ' + tLbl + ' \u2014 no refinance benefit, so its penalty terms don\u2019t matter here.'
+          : 'Add this note\u2019s penalty terms in the Prepay Penalty column of Loans.xlsx \u2014 step-down \u201c5,4,3,2,1\u201d, flat \u201c3\u201d, or \u201cnone\u201d.', cuts: [], expFoot: '' };
       }
       return {
         id: l.displayId, lead: props[0] || '\u2014', lender: (l.lender || '') + ' \u00b7 ' + l.type,
@@ -1408,7 +1450,7 @@ class Component extends DCLogic {
         terms: pending ? 'PENDING' : (l.prepay.steps.length > 1 ? l.prepay.steps.join('-') : (l.prepay.steps.length === 1 ? 'flat ' + l.prepay.steps[0] + '%' : 'none')),
         termsCol: pending ? '#96742F' : '#2A3550', termsFw: pending ? 700 : 500,
         pen: pending ? '\u2014' : fN(pen), fee: fN(fee),
-        sav: fN(sav) + '/yr', be: pending ? '\u2014' : fYr(be),
+        sav: keep ? '\u2014' : fN(sav) + '/yr', be: (pending || keep) ? '\u2014' : fYr(be),
         verdict: v.t, vBg: v.bg, vCol: v.c,
         caret: isExp ? '\u25be' : '\u25b8',
         bg: isExp ? '#FBFAF6' : 'transparent', selBd: isExp ? '#C9A45C' : 'transparent',
@@ -1421,23 +1463,28 @@ class Component extends DCLogic {
     const tpCost = tpPen + tpFee;
     const tpBe = tpSav > 0 ? tpCost / tpSav : Infinity;
     const ppTiles = [
-      { label: 'Penalty today', col: '#B04A33', value: nPend === ppLoans.length ? '\u2014' : fN(tpPen), sub: (ppLoans.length - nPend) + ' of ' + ppLoans.length + ' notes with terms' },
-      { label: '1% origination fee', col: '#B04A33', value: fN(tpFee), sub: 'on ' + fK(tpOut) + ' refinanced (notes with terms)' },
-      { label: 'Yearly benefit at \u2212' + refiCut.toFixed(2) + '%', col: '#3E8E63', value: fN(tpSav), sub: 'rate saved on the outstanding balance' },
-      { label: 'Portfolio breakeven', col: '#16233A', value: fYr(tpBe), sub: 'total cost \u00f7 yearly benefit at \u2212' + refiCut.toFixed(2) + '%' },
+      { label: 'Penalty today', col: '#B04A33', value: nScope === 0 ? '\u2014' : fN(tpPen),
+        sub: target !== null
+          ? nScope + ' note' + (nScope === 1 ? '' : 's') + ' with terms above ' + tLbl + (nKeep > 0 ? ' \u00b7 ' + nKeep + ' kept' : '')
+          : (ppLoans.length - nPend) + ' of ' + ppLoans.length + ' notes with terms' },
+      { label: '1% origination fee', col: '#B04A33', value: fN(tpFee), sub: 'on ' + fK(tpOut) + ' refinanced' + (target !== null ? ' (notes above ' + tLbl + ')' : ' (notes with terms)') },
+      { label: target !== null ? 'Yearly benefit at ' + tLbl : 'Yearly benefit at \u2212' + refiCut.toFixed(2) + '%', col: '#3E8E63', value: fN(tpSav),
+        sub: target !== null ? 'each note\u2019s rate minus ' + tLbl + ' on its balance' : 'rate saved on the outstanding balance' },
+      { label: 'Portfolio breakeven', col: '#16233A', value: fYr(tpBe), sub: 'total cost \u00f7 yearly benefit at ' + (target !== null ? tLbl : '\u2212' + refiCut.toFixed(2) + '%') },
     ];
     const ppPendingBanner = nPend > 0;
     const ppPendingText = nPend === ppLoans.length
       ? 'Placeholder ready \u2014 all ' + nPend + ' amortizing notes await penalty terms. Fill the Prepay Penalty column in Loans.xlsx: step-down \u201c5,4,3,2,1\u201d (% of balance by loan year), flat \u201c3\u201d, or \u201cnone\u201d \u2014 then publish loans.'
       : nPend + ' note' + (nPend === 1 ? '' : 's') + ' still pending penalty terms \u2014 they are excluded from the totals until filled.';
-    const ppHasTot = ppLoans.length - nPend > 0;
+    const ppHasTot = nScope > 0;
     const ppTotOut = fN(tpOut); const ppTotPen = fN(tpPen); const ppTotFee = fN(tpFee);
     const ppTotSav = fN(tpSav) + '/yr'; const ppTotBe = fYr(tpBe);
-    const ppFoot = 'Hard-money notes are excluded \u2014 they are bridge debt, refinanced by design. Penalty % applies to the balance at ' + mmyy(lastM) + ' by loan year from first payment. Verdicts: \u22642 yr attractive \u00b7 \u22645 yr watch \u00b7 beyond that long. All figures react to the scope and month filters.';
+    const ppTotLbl = target !== null ? 'TOTAL \u00b7 notes above ' + tLbl : 'TOTAL \u00b7 notes with terms';
+    const ppFoot = 'Hard-money notes are excluded \u2014 they are bridge debt, refinanced by design. Penalty % applies to the balance at ' + mmyy(lastM) + ' by loan year from first payment. Verdicts: \u22642 yr attractive \u00b7 \u22645 yr watch \u00b7 beyond that long.' + (target !== null ? ' Notes already at or below ' + tLbl + ' are marked KEEP and left out of every total.' : '') + ' All figures react to the scope and month filters.';
 
     kpis.push({
       label: 'Current prepayment penalty', tag: 'to refinance scope', col: '#B04A33',
-      value: (ppLoans.length - nPend) > 0 ? fN(tpPen) : '\u2014',
+      value: (ppLoans.length - nPend) > 0 ? fN(tpPenAll) : '\u2014',
       hasBar: false, hasBar2: false, hasSpark: false,
       sub: (ppLoans.length - nPend) > 0
         ? (ppLoans.length - nPend) + ' of ' + ppLoans.length + ' amortizing notes with terms \u00b7 breakeven analysis below'
@@ -1508,7 +1555,8 @@ class Component extends DCLogic {
       topTitle, topSub, topRows, topEmpty: topRows.length === 0, topQ: S.topQ, onTopQ,
       topListMax, topListOv, topBtnShow, topBtnClick, topBtnLabel,
       evYears, evTiles, evGroups, evEmpty,
-      rcChips, ppTiles, ppRows, ppPendingBanner, ppPendingText, ppHasTot, ppTotOut, ppTotPen, ppTotFee, ppTotSav, ppTotBe, ppFoot,
+      rcChips, ppTiles, ppRows, ppPendingBanner, ppPendingText, ppHasTot, ppTotOut, ppTotPen, ppTotFee, ppTotSav, ppTotBe, ppFoot, ppTotLbl,
+      rateQ: S.rateQ, onRateQ, onRateCalc, onRateKey, onRateClear, rateActive, rateLabel, rateErr, rateErrShow, rateBd,
       xChips, xRows, xEmpty: xRows.length === 0, xSub, xFoot,
       convFoot,
     };
