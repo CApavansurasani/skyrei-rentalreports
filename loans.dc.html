@@ -139,11 +139,11 @@ input:focus{outline:2px solid #C9A45C;outline-offset:1px}
             </div>
           </sc-if>
           <sc-if value="{{ k.hasSpark }}" hint-placeholder-val="{{ false }}">
-            <svg viewBox="0 0 220 44" style="margin-top:8px;width:100%;display:block">
-              <path d="{{ k.sparkArea }}" fill="#3D64A8" opacity="0.08"></path>
-              <path d="{{ k.sparkPath }}" fill="none" stroke="#3D64A8" stroke-width="2" stroke-linejoin="round" stroke-linecap="round"></path>
+            <svg viewBox="0 0 220 48" style="margin-top:8px;width:100%;display:block;overflow:visible">
+              <path d="{{ k.sparkArea }}" fill="#C0763F" opacity="0.10"></path>
+              <path d="{{ k.sparkPath }}" fill="none" stroke="#C0763F" stroke-width="2.5" stroke-linejoin="round" stroke-linecap="round"></path>
               <sc-for list="{{ k.cols }}" as="kc" hint-placeholder-count="5">
-                <circle cx="{{ kc.cx }}" cy="{{ kc.cy }}" r="{{ kc.r }}" fill="{{ kc.fill }}" stroke="#3D64A8" stroke-width="1.6"><title>{{ kc.t }}</title></circle>
+                <circle cx="{{ kc.cx }}" cy="{{ kc.cy }}" r="{{ kc.r }}" fill="{{ kc.fill }}" stroke="#C0763F" stroke-width="2"><title>{{ kc.t }}</title></circle>
                 <circle onClick="{{ kc.onClick }}" cx="{{ kc.cx }}" cy="{{ kc.cy }}" r="10" fill="transparent" style="cursor:pointer"><title>{{ kc.t }}</title></circle>
               </sc-for>
             </svg>
@@ -746,18 +746,20 @@ class Component extends DCLogic {
     const upToLast = monthsAll.filter(m => m <= lastM);
     const sparkM = upToLast.slice(-12);
     const spark = sparkM.map(m => scopeDoors.reduce((s, d) => s + closeAt(d, m), 0));
-    const spMax = Math.max(...spark, 1), spMin = Math.min(...spark, 0);
+    const spMax = Math.max(...spark, 1), spMinRaw = Math.min(...spark);
+    const spPad = (spMax - spMinRaw) * 0.08;
+    const spMin = spMax === spMinRaw ? spMinRaw - 1 : spMinRaw - spPad;
     const spRange = (spMax - spMin) || 1;
     const spX = i => 8 + (spark.length > 1 ? i * 204 / (spark.length - 1) : 102);
-    const spY = v => 6 + (spMax - v) / spRange * 32;
+    const spY = v => 7 + (spMax - v) / spRange * 34;
     const sparkPath = spark.map((v, i) => (i === 0 ? 'M' : 'L') + spX(i).toFixed(1) + ' ' + spY(v).toFixed(1)).join(' ');
-    const sparkArea = spark.length ? ('M' + spX(0).toFixed(1) + ' 42 ' + spark.map((v, i) => 'L' + spX(i).toFixed(1) + ' ' + spY(v).toFixed(1)).join(' ') + ' L' + spX(spark.length - 1).toFixed(1) + ' 42 Z') : '';
+    const sparkArea = spark.length ? ('M' + spX(0).toFixed(1) + ' 45 ' + spark.map((v, i) => 'L' + spX(i).toFixed(1) + ' ' + spY(v).toFixed(1)).join(' ') + ' L' + spX(spark.length - 1).toFixed(1) + ' 45 Z') : '';
     const sparkCols = spark.map((v, i) => {
       const cur = S.fm.includes(sparkM[i]) || (!S.fm.length && i === spark.length - 1);
       return {
         cx: spX(i).toFixed(1), cy: spY(v).toFixed(1),
-        r: cur ? 3.6 : 2.4,
-        fill: cur ? '#3D64A8' : '#FFFFFF',
+        r: cur ? 4.6 : 3.4,
+        fill: cur ? '#C0763F' : '#FFFFFF',
         fw: cur ? 700 : 400, lc: cur ? '#16233A' : '#9AA3B5',
         t: mmyy(sparkM[i]) + ': ' + fK(v) + ' (' + fN(v) + ') — click to view this month',
         lab: (spark.length > 8 && !cur && i % 2 === 0) ? '' : mmyy(sparkM[i]),
