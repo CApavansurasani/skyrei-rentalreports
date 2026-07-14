@@ -91,6 +91,8 @@ input:focus{outline:2px solid #C9A45C;outline-offset:1px}
               <a href="{{ r.plHref }}" style="font-size:11px;font-weight:700;color:#96742F;text-decoration:none">P&amp;L</a>
               <span style="color:#D8D4C8"> · </span>
               <a href="{{ r.invHref }}" style="font-size:11px;font-weight:700;color:#96742F;text-decoration:none">Investments</a>
+              <span style="color:#D8D4C8">·</span>
+              <a href="{{ r.loansHref }}" style="font-size:11px;font-weight:700;color:#96742F;text-decoration:none">Loans</a>
             </div>
           </div>
         </sc-for>
@@ -190,6 +192,7 @@ class Component extends DCLogic {
         rentCol: rent && rent > 0.5 ? '#2A3550' : '#B7BDCB',
         plHref: './PL%20Story%20-%20Main.dc.html?door=' + encodeURIComponent(p.door),
         invHref: './investments.dc.html?door=' + encodeURIComponent(p.door),
+        loansHref: './loans.dc.html?door=' + encodeURIComponent(p.door),
       };
     });
 
