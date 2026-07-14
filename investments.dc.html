@@ -126,6 +126,21 @@ input:focus{outline:2px solid #C9A45C;outline-offset:1px}
                 </sc-for>
               </div>
             </sc-if>
+            <sc-if value="{{ k.hasSpark }}" hint-placeholder-val="{{ false }}">
+              <svg viewBox="0 0 220 48" style="margin-top:8px;width:100%;display:block;overflow:visible">
+                <path d="{{ k.sparkArea }}" fill="{{ k.spCol }}" opacity="0.10"></path>
+                <path d="{{ k.sparkPath }}" fill="none" stroke="{{ k.spCol }}" stroke-width="2.5" stroke-linejoin="round" stroke-linecap="round"></path>
+                <sc-for list="{{ k.cols }}" as="kc" hint-placeholder-count="5">
+                  <circle cx="{{ kc.cx }}" cy="{{ kc.cy }}" r="{{ kc.r }}" fill="{{ kc.fill }}" stroke="{{ k.spCol }}" stroke-width="2"><title>{{ kc.t }}</title></circle>
+                  <circle onClick="{{ kc.onClick }}" cx="{{ kc.cx }}" cy="{{ kc.cy }}" r="10" fill="transparent" style="cursor:pointer"><title>{{ kc.t }}</title></circle>
+                </sc-for>
+              </svg>
+              <div style="margin-top:3px;display:flex">
+                <sc-for list="{{ k.cols }}" as="kc" hint-placeholder-count="5">
+                  <div style="flex:1;text-align:center;font-size:8.5px;font-weight:{{ kc.fw }};color:{{ kc.lc }};font-variant-numeric:tabular-nums;white-space:nowrap;overflow:hidden">{{ kc.lab }}</div>
+                </sc-for>
+              </div>
+            </sc-if>
             <div style="margin-top:5px;font-size:10.5px;line-height:1.45;color:#8A93A6">{{ k.sub }}</div>
           </div>
         </sc-for>
@@ -171,32 +186,53 @@ input:focus{outline:2px solid #C9A45C;outline-offset:1px}
         <div style="font-size:11.5px;color:#8A93A6">how much cushion sits between the portfolio and its debt · {{ mosAsOf }}</div>
       </div>
 
-      <!-- portfolio bridge -->
-      <div style="margin-top:16px;background:#16233A;border-radius:14px;padding:20px 24px">
-        <div style="display:flex;justify-content:space-between;align-items:baseline;gap:14px;flex-wrap:wrap">
+      <!-- the exit story: cost → value → cash → profit -->
+      <div style="margin-top:16px;background:#16233A;border-radius:14px;padding:20px 24px 16px">
+        <div style="display:flex;justify-content:space-between;align-items:flex-start;gap:14px;flex-wrap:wrap">
           <div>
             <span style="font-size:10.5px;letter-spacing:0.1em;font-weight:700;color:#C9A45C">MARGIN OF SAFETY</span>
+            <sc-if value="{{ mosFiltOn }}" hint-placeholder-val="{{ false }}">
+              <span onClick="{{ onMosClear }}" style-hover="opacity:0.85" style="margin-left:10px;padding:3px 10px;border-radius:99px;background:#C9A45C;color:#16233A;font-size:9.5px;font-weight:800;letter-spacing:0.05em;cursor:pointer;white-space:nowrap">{{ mosFiltTag }}</span>
+            </sc-if>
             <div style="margin-top:6px;display:flex;align-items:baseline;gap:12px;flex-wrap:wrap">
-              <span style="font-family:'Source Serif 4',Georgia,serif;font-size:38px;font-weight:600;line-height:1;color:#6FBF8F">{{ mosPct }}</span>
-              <span style="font-size:12.5px;font-weight:600;color:#8A96AD">of value is yours — {{ mosEq }} equity on {{ mosVal }}</span>
+              <span style="font-family:'Source Serif 4',Georgia,serif;font-size:38px;font-weight:600;line-height:1;color:{{ mosPctCol }}">{{ mosPct }}</span>
+              <span style="font-size:12.5px;font-weight:600;color:#8A96AD">of value is yours — {{ mosEq }} on {{ mosVal }}</span>
             </div>
           </div>
-          <div style="text-align:right;font-size:11.5px;color:#8A96AD;line-height:1.7">
-            <div>value could fall <span style="font-weight:700;color:#E9EDF5">{{ mosDrop }}</span> before debt is touched</div>
-            <div>appreciation held at cost: <span style="font-weight:700;color:#7FC29B">{{ mosAppr }}</span> ({{ mosApprPct }} on known cost)</div>
+          <div style="display:flex;gap:26px;text-align:right">
+            <div>
+              <div style="font-size:9.5px;letter-spacing:0.09em;font-weight:700;color:#8A96AD">CASH IF SOLD TODAY</div>
+              <div style="margin-top:4px;font-family:'Source Serif 4',Georgia,serif;font-size:24px;font-weight:600;color:#F5D9A8">{{ mosCash }}</div>
+            </div>
+            <div>
+              <div style="font-size:9.5px;letter-spacing:0.09em;font-weight:700;color:#8A96AD">PROFIT IF SOLD</div>
+              <div style="margin-top:4px;font-family:'Source Serif 4',Georgia,serif;font-size:24px;font-weight:600;color:{{ mosProfitCol }}">{{ mosProfit }}</div>
+              <div style="font-size:10px;color:#8A96AD">{{ mosProfitPct }} on capital in deal</div>
+            </div>
           </div>
         </div>
-        <div style="margin-top:14px;height:20px;border-radius:10px;overflow:hidden;display:flex;background:rgba(233,237,245,0.10)">
-          <div style="width:{{ brDebtW }};height:20px;background:#B04A33;opacity:0.85" title="debt"></div>
-          <div style="width:{{ brCostW }};height:20px;background:#3D64A8" title="equity at cost"></div>
-          <div style="width:{{ brApprW }};height:20px;background:#3E8E63" title="appreciation"></div>
+        <div style="position:relative;height:216px;margin-top:16px">
+          <sc-for list="{{ wfConn }}" as="wc" hint-placeholder-count="6">
+            <div style="position:absolute;left:{{ wc.l }};width:{{ wc.w }};top:{{ wc.t }};border-top:1.5px dashed rgba(233,237,245,0.35)"></div>
+          </sc-for>
+          <div style="display:flex;height:216px">
+            <sc-for list="{{ wfCols }}" as="wf" hint-placeholder-count="7">
+              <div style="flex:1;position:relative" title="{{ wf.tip }}">
+                <div style="position:absolute;bottom:{{ wf.vB }};left:0;right:0;text-align:center;font-size:12.5px;font-weight:700;color:{{ wf.vc }};font-variant-numeric:tabular-nums;white-space:nowrap">{{ wf.val }}</div>
+                <div style="position:absolute;bottom:{{ wf.b }};height:{{ wf.h }};left:20%;width:60%;background:{{ wf.bg }};border-radius:5px"></div>
+              </div>
+            </sc-for>
+          </div>
         </div>
-        <div style="margin-top:8px;display:flex;justify-content:space-between;flex-wrap:wrap;gap:8px;font-size:10.5px;color:#8A96AD">
-          <span><span style="display:inline-block;width:8px;height:8px;border-radius:2px;background:#B04A33;opacity:0.85;margin-right:5px"></span>Debt today {{ brDebt }}</span>
-          <span><span style="display:inline-block;width:8px;height:8px;border-radius:2px;background:#3D64A8;margin-right:5px"></span>Equity at cost {{ brCost }}</span>
-          <span><span style="display:inline-block;width:8px;height:8px;border-radius:2px;background:#3E8E63;margin-right:5px"></span>Appreciation {{ brAppr }}</span>
-          <span style="font-weight:700;color:#E9EDF5">= {{ mosVal }} portfolio value</span>
+        <div style="display:flex;margin-top:8px">
+          <sc-for list="{{ wfCols }}" as="wf" hint-placeholder-count="7">
+            <div style="flex:1;text-align:center;min-width:0">
+              <div style="font-size:9px;letter-spacing:0.05em;font-weight:800;color:#C9D2E4;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">{{ wf.label }}</div>
+              <div style="margin-top:2px;font-size:9px;color:#8A96AD;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">{{ wf.cap }}</div>
+            </div>
+          </sc-for>
         </div>
+        <div style="margin-top:12px;padding-top:10px;border-top:1px solid rgba(233,237,245,0.12);font-size:10.5px;color:#8A96AD">{{ wfFoot }}</div>
       </div>
 
       <!-- risk buckets -->
@@ -219,7 +255,7 @@ input:focus{outline:2px solid #C9A45C;outline-offset:1px}
         <input value="{{ mosQ }}" onInput="{{ onMosQ }}" placeholder="Search property…" style="width:210px;box-sizing:border-box;padding:8px 12px;border-radius:9px;border:1.5px solid #D8D4C8;font-family:inherit;font-size:12px;color:#16233A;background:#FFFFFF">
       </div>
       <div style="margin-top:8px;display:grid;grid-template-columns:24px minmax(170px,1.35fr) 3fr 64px 106px;gap:8px;padding:7px 8px;font-size:10px;letter-spacing:0.07em;font-weight:700;color:#5E6B82;text-transform:uppercase;border-bottom:1px solid #E5E3DC">
-        <div></div><div>Property</div><div>Debt · equity at cost · appreciation — share of value</div><div style="text-align:right">LTV</div><div style="text-align:right">Equity</div>
+        <div></div><div>Property</div><div>Debt · equity at cost · appreciation — share of value</div><div style="text-align:right">LTV</div><div style="text-align:right">Cash if sold</div>
       </div>
       <div class="scr" style="max-height:430px;overflow-y:auto;padding-right:4px">
         <sc-for list="{{ ladder }}" as="lr" hint-placeholder-count="10">
@@ -490,8 +526,9 @@ class Component extends DCLogic {
       filters: [], hasActive: false, onReset: () => {}, asOfLine: '',
       invSub: '', kpis: [], invFoot: '',
       tieBadge: '', tieBg: '', tieCol: '', tieLine: '', recon: [],
-      mosAsOf: '', mosPct: '', mosEq: '', mosVal: '', mosDrop: '', mosAppr: '', mosApprPct: '',
-      brDebtW: '0%', brCostW: '0%', brApprW: '0%', brDebt: '', brCost: '', brAppr: '',
+      mosAsOf: '', mosPct: '', mosEq: '', mosVal: '',
+      mosCash: '', mosProfit: '', mosProfitPct: '', mosPctCol: '#6FBF8F', mosProfitCol: '#7FC29B', mosFiltTag: '', mosFiltOn: false, onMosClear: () => {},
+      wfCols: [], wfConn: [], wfFoot: '',
       buckets: [], mosNote: '', mosQ: '', onMosQ: () => {}, ladder: [], mosEmpty: false, mosFoot: '',
       bsRows: [], bsSub: '', bsFormula: '',
       entHeads: [], entRows: [], entSub: '',
@@ -579,15 +616,17 @@ class Component extends DCLogic {
     const fpAct = (S.fp || []);
     const fsAct = (S.fs || []).filter(s => statuses.includes(s));
     const exitMonth = p => (p.exit && /^\d{4}-\d{2}/.test(p.exit)) ? p.exit.slice(0, 7) : null;
-    const timeOk = p => {
+    const timeOkAt = (p, m) => {
       if (p.status !== 'Sold' && p.status !== 'Held for Sale') return true;
       const em = exitMonth(p);
-      return !!em && lastM < em; // still owned/for-rent as of the viewed month
+      return !!em && m < em; // still owned/for-rent as of the viewed month
     };
-    const inScope = p =>
+    const timeOk = p => timeOkAt(p, lastM);
+    const inScopeAt = (p, m) =>
       (feAct.length ? feAct.includes(p.entity) : true) &&
       (fpAct.length ? fpAct.includes(p.door) : true) &&
-      (fsAct.length ? fsAct.includes(p.status) : timeOk(p));
+      (fsAct.length ? fsAct.includes(p.status) : timeOkAt(p, m));
+    const inScope = p => inScopeAt(p, lastM);
     const scope = ALLP.filter(inScope);
     const nScope = scope.length;
     const scopeSet = new Set(scope.map(p => p.door));
@@ -644,20 +683,25 @@ class Component extends DCLogic {
     const OVERHEAD = new Set((S.gl.meta && S.gl.meta.overheadDoors) || []);
     const INC = new Set(['Rental Income', 'Increase/(Decrease) in Rent', 'Vacancy Loss', 'Other Income', 'SD - Forfeit Income', 'Insurance Claim']);
     const OPX = new Set(['Property Tax', 'Insurance', 'HOA Fee', 'Property Management Expense', 'Utilities', "Renter's Insurance", 'Other Misc Cost', 'Repairs - Payroll', 'Repairs - Materials', 'Repairs - Contractors', 'Rent Ready - Payroll', 'Rent Ready - Materials', 'Rent Ready - Contractors', 'Capex - HVAC', 'Capex - Appliances']);
-    const noiBy = new Map(), intBy = new Map();
-    let noiOver = 0, intOver = 0;
-    for (const [ent, door, acct, vals] of S.gl.rows) {
-      const tot = glIdx.reduce((s, i) => s + (vals[i] || 0), 0);
-      if (acct === 'Interest Cost') {
-        if (OVERHEAD.has(door)) intOver += tot; else intBy.set(door, (intBy.get(door) || 0) + tot);
-        continue;
+    const glAgg = (idxArr) => {
+      const noiBy = new Map(), intBy = new Map();
+      let noiOver = 0, intOver = 0;
+      for (const [ent, door, acct, vals] of S.gl.rows) {
+        const tot = idxArr.reduce((s, i) => s + (vals[i] || 0), 0);
+        if (acct === 'Interest Cost') {
+          if (OVERHEAD.has(door)) intOver += tot; else intBy.set(door, (intBy.get(door) || 0) + tot);
+          continue;
+        }
+        let d = null;
+        if (INC.has(acct)) d = tot;
+        else if (acct === 'Collection Loss' || OPX.has(acct)) d = -tot;
+        if (d === null) continue;
+        if (OVERHEAD.has(door)) noiOver += d; else noiBy.set(door, (noiBy.get(door) || 0) + d);
       }
-      let d = null;
-      if (INC.has(acct)) d = tot;
-      else if (acct === 'Collection Loss' || OPX.has(acct)) d = -tot;
-      if (d === null) continue;
-      if (OVERHEAD.has(door)) noiOver += d; else noiBy.set(door, (noiBy.get(door) || 0) + d);
-    }
+      return { noiBy, intBy, noiOver, intOver };
+    };
+    const agg = glAgg(glIdx);
+    const noiBy = agg.noiBy, intBy = agg.intBy, noiOver = agg.noiOver, intOver = agg.intOver;
     const ovAdd = !feAct.length && !fpAct.length; // company-level overhead belongs to portfolio-wide views
     const glScope = scope.filter(p => noiBy.has(p.door));
     const noiWin = glScope.reduce((s, p) => s + noiBy.get(p.door), 0) + (ovAdd ? noiOver : 0);
@@ -688,6 +732,55 @@ class Component extends DCLogic {
     const niRoi = tCap > 0 && nWin ? annNi / tCap * 100 : null;
     const excludedDebt = excluded.reduce((s, p) => s + debtAt(p.door, lastM), 0);
 
+    // ---- trailing monthly return series (loans-style clickable lines; grows as GL history lands) ----
+    // always the trailing 12 ledger months — a navigator, so a single selected month highlights
+    // a point but never collapses the line (owner's standing rule)
+    const seriesM = glP.slice(-12);
+    const series = seriesM.map(g => {
+      const a = glAgg([glP.indexOf(g)]);
+      const sc = ALLP.filter(p => inScopeAt(p, g));
+      const ss = new Set(sc.map(p => p.door));
+      const cost = sc.reduce((s, p) => s + p.cost, 0);
+      const inv = cost - sc.reduce((s, p) => s + p.refi, 0);
+      const rep = sc.reduce((s, p) => s + doorCalc(p.door, g).owner, 0);
+      let noi = ovAdd ? a.noiOver : 0, intx = ovAdd ? a.intOver : 0;
+      for (const [d2, x] of a.noiBy) if (ss.has(d2)) noi += x;
+      for (const [d2, x] of a.intBy) if (ss.has(d2)) intx += x;
+      return {
+        m: g,
+        cap: cost > 0 ? noi * 12 / cost * 100 : null,
+        roi: (inv + rep) > 0 ? (noi - intx) * 12 / (inv + rep) * 100 : null,
+      };
+    });
+    const mkSpark = (key, col) => {
+      const pts = series.filter(s2 => s2[key] !== null && isFinite(s2[key]));
+      if (pts.length < 2) return { hasSpark: false, spCol: col, sparkPath: '', sparkArea: '', cols: [] };
+      const vals2 = pts.map(s2 => s2[key]);
+      const mx2 = Math.max(...vals2), mnRaw = Math.min(...vals2);
+      const pad2 = (mx2 - mnRaw) * 0.08;
+      const mn2 = mx2 === mnRaw ? mnRaw - 1 : mnRaw - pad2;
+      const rg2 = (mx2 - mn2) || 1;
+      const sx = i => 8 + (pts.length > 1 ? i * 204 / (pts.length - 1) : 102);
+      const sy = v => 7 + (mx2 - v) / rg2 * 34;
+      const sparkPath = vals2.map((v, i) => (i === 0 ? 'M' : 'L') + sx(i).toFixed(1) + ' ' + sy(v).toFixed(1)).join(' ');
+      const sparkArea = 'M' + sx(0).toFixed(1) + ' 45 ' + vals2.map((v, i) => 'L' + sx(i).toFixed(1) + ' ' + sy(v).toFixed(1)).join(' ') + ' L' + sx(pts.length - 1).toFixed(1) + ' 45 Z';
+      const cols = vals2.map((v, i) => {
+        const mv = pts[i].m;
+        const cur = S.fm.includes(mv) || (!S.fm.length && i === pts.length - 1);
+        return {
+          cx: sx(i).toFixed(1), cy: sy(v).toFixed(1),
+          r: cur ? 4.6 : 3.4, fill: cur ? col : '#FFFFFF',
+          fw: cur ? 700 : 400, lc: cur ? '#16233A' : '#9AA3B5',
+          t: mmyy(mv) + ': ' + v.toFixed(2) + '% annualized — click to view this month',
+          lab: (pts.length > 8 && !cur && i % 2 === 0) ? '' : mmyy(mv),
+          onClick: ((m2) => () => this.setFilter({ fm: S.fm.length === 1 && S.fm[0] === m2 ? [] : [m2] }))(mv),
+        };
+      });
+      return { hasSpark: true, spCol: col, sparkPath, sparkArea, cols };
+    };
+    const capSpark = mkSpark('cap', '#C0763F');
+    const roiSpark = mkSpark('roi', '#3E8E63');
+
     const kpis = [
       { label: 'Cost basis', value: fN(tCost), col: NAVY, bg: '#FFFFFF', bd: '#E5E3DC', hasLegs: false, legs: [],
         sub: nScope + ' properties in scope' + (zeroCostN ? ' · ' + zeroCostN + ' pending cost data' : '') },
@@ -700,13 +793,13 @@ class Component extends DCLogic {
       { label: 'Capital in deal', value: fN(tCap), col: NAVY, bg: '#F9F8F3', bd: '#EDEBE2', hasLegs: true,
         legs: [{ bg: NAVY, txt: 'Invested ' + fK(tInv) }, { bg: GREEN, txt: 'Principal ' + fK(tRepaid) }],
         sub: 'initial investment + principal repaid — the denominator for net-income ROI' },
-      { label: 'NOI cap rate · on cost', value: capCost === null ? '—' : capCost.toFixed(2) + '%', col: capCost !== null && capCost < 0 ? RED : NAVY, bg: '#FFFFFF', bd: '#E5E3DC', hasLegs: false, legs: [],
-        sub: nWin ? 'annualized NOI ' + fK(annNoi) + ' ÷ cost basis' : 'no ledger months in the selection (ledger ' + mmyy(glP[0]) + ' → ' + mmyy(glP[glP.length - 1]) + ')' },
-      { label: 'Net income ROI', value: niRoi === null ? '—' : niRoi.toFixed(2) + '%', col: niRoi !== null && niRoi < 0 ? RED : '#2A6F4E', bg: '#FFFFFF', bd: '#E5E3DC', hasLegs: false, legs: [],
-        sub: nWin ? 'annualized net income ' + fK(annNi) + ' (NOI − interest) ÷ capital in deal' : 'needs ledger months in the selection' },
+      { label: 'NOI cap rate · on cost', value: capCost === null ? '—' : capCost.toFixed(2) + '%', col: capCost !== null && capCost < 0 ? RED : NAVY, bg: '#FFFFFF', bd: '#E5E3DC', hasLegs: false, legs: [], ...capSpark,
+        sub: (nWin ? 'annualized NOI ' + fK(annNoi) + ' ÷ cost basis' : 'no ledger months in the selection (ledger ' + mmyy(glP[0]) + ' → ' + mmyy(glP[glP.length - 1]) + ')') + (capSpark.hasSpark ? ' · monthly trail — click a point for that month' : '') },
+      { label: 'Net income ROI', value: niRoi === null ? '—' : niRoi.toFixed(2) + '%', col: niRoi !== null && niRoi < 0 ? RED : '#2A6F4E', bg: '#FFFFFF', bd: '#E5E3DC', hasLegs: false, legs: [], ...roiSpark,
+        sub: (nWin ? 'annualized net income ' + fK(annNi) + ' (NOI − interest) ÷ capital in deal' : 'needs ledger months in the selection') + (roiSpark.hasSpark ? ' · monthly trail into ' + mmyy(seriesM[seriesM.length - 1]) : '') },
       { label: 'Cash-on-cash ROI', value: '—', col: MUT, bg: '#FBF6EA', bd: '#EAD9C0', hasLegs: false, legs: [],
-        sub: 'PENDING — needs actual cash flow (Cash Flow phase); will divide by initial investment' },
-    ];
+        sub: 'PENDING — needs actual cash flow (Cash Flow phase); will divide by initial investment. Its trail line lights up alongside the other two once cash-flow months land.' },
+    ].map(k => ({ hasSpark: false, spCol: '', sparkPath: '', sparkArea: '', cols: [], ...k }));
     const invSub = 'ownership costs & returns for the selected scope · balances at ' + mmyy(lastM);
     const invFoot = 'Common-sense scope: properties sold or moved to held-for-sale drop out of every figure from their event month (' + excluded.length + ' excluded here' + (excludedDebt > 0.005 ? ', still carrying ' + fK(excludedDebt) + ' of debt — see checks below' : '') + ') — select their status in the STATUS filter to bring them back. Principal repaid counts only money you paid: scheduled principal + extra principal + the excess paid on releases; the released door’s own slice (settled from sale proceeds) and the ' + fK(56774) + ' refinance-funded payoff on 410 Virginia Dr are not counted. Returns annualize the selected ledger window' + (nWin ? ' ' + mmyy(glWin[0]) + ' → ' + mmyy(glWin[nWin - 1]) : '') + '.';
 
@@ -764,24 +857,9 @@ class Component extends DCLogic {
     const tieCol = identOk && !sliceGateBad ? (warnN ? '#96742F' : '#2F7351') : '#A03E28';
     const tieLine = 'every figure above is cross-checked against Loans.xlsx and the ledger on each publish — click a line for detail';
 
-    // ══════════ Section B: margin of safety ══════════
+    // ══════════ Section B: margin of safety — the exit story ══════════
     const valued = scope.filter(p => p.value > 0);
     const noVal = scope.filter(p => !(p.value > 0));
-    const vVal = valued.reduce((s, p) => s + p.value, 0);
-    const vDebt = valued.reduce((s, p) => s + calcBy.get(p.door).close, 0);
-    const vEq = vVal - vDebt;
-    const vCostKnown = valued.filter(p => p.cost > 0);
-    const apprBase = vCostKnown.reduce((s, p) => s + p.cost, 0);
-    const apprVal = vCostKnown.reduce((s, p) => s + p.value, 0);
-    const tAppr = apprVal - apprBase;
-    const mosPct = vVal > 0 ? fP(vEq, vVal) : '—';
-    // value decomposed as debt | equity-at-cost | appreciation; when cash-out leverage exceeds cost,
-    // the remaining equity is appreciation-derived, so appreciation is capped at the equity that exists
-    const brDebtPct = vVal > 0 ? Math.min(vDebt / vVal * 100, 100) : 0;
-    const brApprPct = vVal > 0 ? Math.min(Math.max(tAppr, 0) / vVal * 100, Math.max(100 - brDebtPct, 0)) : 0;
-    const brCostPct = Math.max(0, 100 - brDebtPct - brApprPct);
-    const brDebtW = brDebtPct.toFixed(2) + '%', brApprW = brApprPct.toFixed(2) + '%', brCostW = brCostPct.toFixed(2) + '%';
-    const eqAtCost = vVal * brCostPct / 100;
     const BUCKETS = [
       { id: 'hi', label: 'LTV ≥ 80%', test: (ltv, dbt) => dbt > 0 && ltv >= 80, col: RED, labCol: RED },
       { id: 'mid', label: 'LTV 65–80%', test: (ltv, dbt) => dbt > 0 && ltv >= 65 && ltv < 80, col: GOLDD, labCol: GOLDD },
@@ -792,14 +870,15 @@ class Component extends DCLogic {
     const ladderAll = valued.map(p => {
       const c = calcBy.get(p.door);
       const ltv = p.value > 0 ? c.close / p.value * 100 : 0;
-      return { p, c, ltv, eq: p.value - c.close, appr: p.cost > 0 ? p.value - p.cost : 0 };
+      const cap = (p.cost > 0 ? p.cost - p.refi : 0) + c.owner;
+      return { p, c, ltv, eq: p.value - c.close, appr: p.cost > 0 ? p.value - p.cost : 0, cap };
     });
     const buckets = BUCKETS.map(b => {
       const rs = ladderAll.filter(r => b.test(r.ltv, r.c.close));
       const on = S.mosBucket === b.id;
       return {
         label: b.label, labCol: on ? '#96742F' : b.labCol, n: String(rs.length),
-        sub: fK(rs.reduce((s, r) => s + r.eq, 0)) + ' equity',
+        sub: fK(rs.reduce((s, r) => s + r.eq, 0)) + ' cash if sold',
         col: b.col, filtTag: on ? 'FILTERING ✕' : '',
         bd: on ? '#C9A45C' : '#E5E3DC', bg: on ? '#FBF6EA' : '#FFFFFF',
         onClick: () => this.setState({ mosBucket: on ? null : b.id, mosSel: null }),
@@ -811,6 +890,52 @@ class Component extends DCLogic {
       .filter(r => !bSel || bSel.test(r.ltv, r.c.close))
       .filter(r => !mq || r.p.door.toLowerCase().includes(mq) || r.p.entity.toLowerCase().includes(mq))
       .sort((a, b) => b.ltv - a.ltv);
+    // the WHOLE section — headline, waterfall, ladder — describes this working set,
+    // so bucket clicks and search drill everything together (owner's interactivity rule)
+    const story = ladderF.filter(r => r.p.cost > 0);   // full money story needs cost
+    const noCost = ladderF.filter(r => !(r.p.cost > 0));
+    const wCost = story.reduce((s, r) => s + r.p.cost, 0);
+    const wVal = story.reduce((s, r) => s + r.p.value, 0);
+    const wAppr = wVal - wCost;
+    const wDebt = story.reduce((s, r) => s + r.c.close, 0);
+    const wCash = wVal - wDebt;
+    const wInv = story.reduce((s, r) => s + (r.p.cost - r.p.refi), 0);
+    const wRep = story.reduce((s, r) => s + r.c.owner, 0);
+    const wCap = wInv + wRep;
+    const wProfit = wCash - wCap;
+    const mosPct = wVal > 0 ? fP(wCash, wVal) : '—';
+    const mosFiltTag = (bSel || mq) ? ((bSel ? bSel.label : '') + (bSel && mq ? ' · ' : '') + (mq ? '“' + S.mosQ.trim() + '”' : '') + '  ✕ clear') : '';
+    const onMosClear = () => this.setState({ mosBucket: null, mosQ: '', mosSel: null });
+    // waterfall: cost → +appreciation → value → −debt → cash if sold → −capital → profit
+    const wfMax = Math.max(wVal, wCost, Math.max(wCash, 0), 1) * 1.06;
+    const wpct = v => Math.max(0, Math.min(v / wfMax * 100, 100));
+    const lvVal = wpct(wVal), lvCost = wpct(wCost), lvCash = wpct(Math.max(wCash, 0)), lvProf = wpct(Math.max(wProfit, 0));
+    const sgn = v => (v >= 0 ? '+' : '−') + fK(Math.abs(v));
+    const mkWf = (label, cap2, val, vc, b, h, bg) => ({
+      label, cap: cap2, val, vc, bg,
+      b: b.toFixed(2) + '%', h: Math.max(h, 1).toFixed(2) + '%', vB: Math.min(b + Math.max(h, 1) + 3, 94).toFixed(2) + '%',
+      tip: label + ': ' + val,
+    });
+    const wfCols = [
+      mkWf('COST BASIS', 'what went in', fK(wCost), '#E9EDF5', 0, lvCost, '#3D64A8'),
+      wAppr >= 0
+        ? mkWf('+ APPRECIATION', 'value built', sgn(wAppr), '#7FC29B', lvCost, lvVal - lvCost, '#57A773')
+        : mkWf('− BELOW COST', 'value gap', sgn(wAppr), '#E8A896', lvVal, lvCost - lvVal, '#B04A33'),
+      mkWf('MARKET VALUE', 'ARV-first policy', fK(wVal), '#E9EDF5', 0, lvVal, '#8A96AD'),
+      mkWf('− DEBT TODAY', 'loans engine · ' + mmyy(lastM), sgn(-wDebt), '#E8A896', lvCash, Math.max(lvVal - lvCash, 0), '#C4573C'),
+      mkWf('CASH IF SOLD', 'value − debt', fK(wCash), wCash < 0 ? '#E8A896' : '#F5D9A8', 0, lvCash, '#C9A45C'),
+      mkWf('− CAPITAL IN DEAL', 'investment + principal', sgn(-wCap), '#AEB9D6', lvProf, Math.max(lvCash - lvProf, 0), '#7A89B8'),
+      mkWf('PROFIT IF SOLD', wCap > 0 ? fP(wProfit, wCap) + ' on capital in deal' : 'vs capital in deal', fK(wProfit), wProfit < 0 ? '#E8A896' : '#7FC29B', 0, lvProf, wProfit < 0 ? '#B04A33' : '#3E8E63'),
+    ];
+    const SLOT = 100 / 7;
+    const wfConn = [lvCost, lvVal, lvVal, lvCash, lvCash, lvProf].map((lv, i) => ({
+      l: (i * SLOT + SLOT * 0.62).toFixed(2) + '%', w: (SLOT * 0.76).toFixed(2) + '%',
+      t: (100 - lv).toFixed(2) + '%',
+    }));
+    const wfFoot = story.length + ' properties in this story (value and cost both known)'
+      + (noCost.length ? ' · ' + noCost.length + ' with value but no cost yet — their ' + fK(noCost.reduce((s, r) => s + r.eq, 0)) + ' cash-if-sold joins when cost lands' : '')
+      + (noVal.length ? ' · ' + noVal.length + ' without valuation excluded' : '')
+      + ' · selling costs & taxes not modeled';
     const ladder = ladderF.map(r => {
       const isExp = S.mosSel === r.p.door;
       const wD = Math.min(r.ltv, 100), wA = Math.max(0, Math.min(r.appr / r.p.value * 100, 100 - wD));
@@ -822,7 +947,9 @@ class Component extends DCLogic {
         { k: 'Principal repaid', v: fN(r.c.owner), col: GREEN },
         { k: 'Value (' + (r.p.valueSource === 'arv' ? 'ARV' : r.p.valueSource) + ')', v: fN(r.p.value), col: NAVY },
         { k: 'Appreciation', v: r.p.cost > 0 ? fN(r.appr) + ' (' + fP(r.appr, r.p.cost) + ')' : '—', col: r.appr < 0 ? RED : '#2A6F4E' },
-        { k: 'Equity', v: fN(r.eq), col: r.eq < 0 ? RED : '#2A6F4E' },
+        { k: 'Cash if sold', v: fN(r.eq), col: r.eq < 0 ? RED : '#2A6F4E' },
+        { k: 'Capital in deal', v: r.p.cost > 0 ? fN(r.cap) : '—', col: NAVY },
+        { k: 'Profit if sold', v: r.p.cost > 0 ? fN(r.eq - r.cap) : 'needs cost', col: (r.eq - r.cap) < 0 ? RED : '#2A6F4E' },
         { k: 'Margin of safety', v: r.p.value > 0 ? fP(r.eq, r.p.value) : '—', col: NAVY },
       ] : [];
       return {
@@ -841,7 +968,7 @@ class Component extends DCLogic {
       };
     });
     const mosNote = ladderF.length + ' of ' + valued.length + ' valued properties · riskiest first' + (bSel ? ' · ' + bSel.label + ' only' : '') + (noVal.length ? ' · ' + noVal.length + ' without valuation excluded' : '');
-    const mosFoot = 'Each bar is one property’s value split into debt at ' + mmyy(lastM) + ' (brick), the equity you put in at cost (blue), and appreciation above cost (green — pink when value sits below cost). Margin of safety = equity ÷ value: the drop the portfolio can absorb before your capital is impaired. Doors without a valuation (' + noVal.length + ') are excluded from value-based figures; appreciation is measured only on doors with known cost.' + (bSel ? ' Bucket filter applies to this section only.' : '');
+    const mosFoot = 'The waterfall and headline retell the story for exactly what you see in the list — the scope filters above, the LTV tiles and the search all drill the whole section together. Each list bar is one property’s value split into debt at ' + mmyy(lastM) + ' (brick), equity at cost (blue) and appreciation (green — pink when value sits below cost). Cash if sold = value − debt; profit if sold = cash − capital in deal (initial investment + principal repaid); selling costs and taxes are not modeled. County-fallback valuations can understate ARV — the underwater cluster is mostly county-valued.';
 
     const scopeLine = nScope + ' properties · balances at ' + mmyy(lastM) + ' · debt from the loans engine, income from the ledger, values from the balance sheet — all cross-checked below';
 
@@ -999,11 +1126,11 @@ class Component extends DCLogic {
       invSub, kpis, invFoot,
       tieBadge, tieBg, tieCol, tieLine, recon,
       mosAsOf: 'debt at ' + mmyy(lastM) + ' · values as published',
-      mosPct, mosEq: fK(vEq), mosVal: fK(vVal),
-      mosDrop: vVal > 0 ? fK(vEq) + ' (' + fP(vEq, vVal) + ')' : '—',
-      mosAppr: (tAppr >= 0 ? '+' : '−') + fK(Math.abs(tAppr)), mosApprPct: apprBase > 0 ? fP(tAppr, apprBase) : '—',
-      brDebtW, brCostW, brApprW,
-      brDebt: fK(vDebt), brCost: fK(eqAtCost), brAppr: fK(vVal * brApprPct / 100),
+      mosPct, mosEq: fK(wCash), mosVal: fK(wVal),
+      mosCash: fK(wCash), mosProfit: fK(wProfit), mosProfitPct: wCap > 0 ? fP(wProfit, wCap) : '—',
+      mosPctCol: wCash < 0 ? '#E8A896' : '#6FBF8F', mosProfitCol: wProfit < 0 ? '#E8A896' : '#7FC29B',
+      mosFiltTag, mosFiltOn: !!mosFiltTag, onMosClear,
+      wfCols, wfConn, wfFoot,
       buckets, mosNote, mosQ: S.mosQ, onMosQ: e => this.setState({ mosQ: e.target.value }),
       ladder, mosEmpty: ladder.length === 0, mosFoot,
       bsRows, bsSub, bsFormula,
