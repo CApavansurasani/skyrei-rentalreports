@@ -15,6 +15,8 @@
 body{margin:0;background:#EFEDE7;font-family:"Libre Franklin",system-ui,sans-serif;color:#16233A}
 a{color:#1F3A6E}a:hover{color:#C9A45C}
 input:focus{outline:2px solid #C9A45C;outline-offset:1px}
+.scr::-webkit-scrollbar{width:8px;height:8px}
+.scr::-webkit-scrollbar-thumb{background:#D8D4C8;border-radius:4px}
 </style>
 </helmet>
 
@@ -84,7 +86,7 @@ input:focus{outline:2px solid #C9A45C;outline-offset:1px}
                 <input value="{{ fb.q }}" onInput="{{ fb.onQ }}" placeholder="Type to search…" style="margin:2px 2px 6px;padding:7px 10px;border-radius:8px;border:1px solid #D8D4C8;font-size:12px;font-family:inherit;color:#16233A">
               </sc-if>
               <div onClick="{{ fb.onClear }}" style-hover="background:#F6F4EC" style="padding:7px 10px;border-radius:7px;font-size:12px;font-weight:700;color:#96742F;cursor:pointer;display:flex;justify-content:space-between"><span>All {{ fb.allLabel }}</span><span>{{ fb.allCheck }}</span></div>
-              <div style="overflow-y:auto;flex:1">
+              <div class="scr" style="overflow-y:auto;flex:1">
                 <sc-for list="{{ fb.opts }}" as="op" hint-placeholder-count="6">
                   <div onClick="{{ op.onClick }}" style-hover="background:#F6F4EC" style="padding:7px 10px;border-radius:7px;font-size:12.5px;font-weight:{{ op.fw }};color:#2A3550;cursor:pointer;background:{{ op.bg }};display:flex;justify-content:space-between;align-items:center;gap:10px">
                     <span style="white-space:nowrap;overflow:hidden;text-overflow:ellipsis">{{ op.label }}</span>
@@ -99,7 +101,7 @@ input:focus{outline:2px solid #C9A45C;outline-offset:1px}
       <div onClick="{{ clearAll }}" style-hover="color:#A03E28" style="margin-left:auto;font-size:11.5px;font-weight:700;color:{{ clearCol }};cursor:pointer;white-space:nowrap">{{ clearLabel }}</div>
     </div>
 
-    <!-- ══ KPI band (owner's order) ══ -->
+    <!-- ══ KPI band ══ -->
     <div style="margin-top:14px;display:grid;grid-template-columns:repeat(3,1fr);gap:14px">
       <sc-for list="{{ kpis }}" as="k" hint-placeholder-count="6">
         <div style="background:#FFFFFF;border:1px solid #E5E3DC;border-radius:16px;padding:16px 20px 14px">
@@ -109,14 +111,28 @@ input:focus{outline:2px solid #C9A45C;outline-offset:1px}
           </div>
           <div style="margin-top:7px;font-family:'Source Serif 4',Georgia,serif;font-size:25px;font-weight:600;color:{{ k.col }}">{{ k.value }}</div>
           <sc-if value="{{ k.hasBar }}" hint-placeholder-val="{{ false }}">
-            <div style="margin-top:9px;display:flex;height:9px;border-radius:5px;overflow:hidden;background:#F0EEE6">
-              <div style="width:{{ k.w1 }};background:{{ k.c1 }};border-radius:5px 0 0 5px"></div>
-              <div style="width:2px;background:#FFFFFF"></div>
-              <div style="width:{{ k.w2 }};background:{{ k.c2 }};border-radius:0 5px 5px 0"></div>
+            <div style="margin-top:9px;display:flex;gap:2px;height:9px;border-radius:5px;overflow:hidden;background:#F0EEE6">
+              <sc-for list="{{ k.segs }}" as="sg" hint-placeholder-count="3">
+                <div style="width:{{ sg.w }};background:{{ sg.bg }}"></div>
+              </sc-for>
             </div>
-            <div style="margin-top:6px;display:flex;justify-content:space-between;gap:8px;flex-wrap:wrap">
-              <span style="font-size:10.5px;color:#5E6B82;display:flex;align-items:center;gap:5px"><span style="width:8px;height:8px;border-radius:2.5px;background:{{ k.c1 }}"></span>{{ k.l1 }}</span>
-              <span style="font-size:10.5px;color:#5E6B82;display:flex;align-items:center;gap:5px"><span style="width:8px;height:8px;border-radius:2.5px;background:{{ k.c2 }}"></span>{{ k.l2 }}</span>
+            <div style="margin-top:6px;display:flex;justify-content:space-between;gap:6px;flex-wrap:wrap">
+              <sc-for list="{{ k.legs }}" as="lg" hint-placeholder-count="3">
+                <span style="font-size:10px;color:#5E6B82;display:flex;align-items:center;gap:4px"><span style="width:8px;height:8px;border-radius:2.5px;background:{{ lg.bg }}"></span>{{ lg.txt }}</span>
+              </sc-for>
+            </div>
+          </sc-if>
+          <sc-if value="{{ k.hasBar2 }}" hint-placeholder-val="{{ false }}">
+            <div style="margin-top:8px;font-size:9px;letter-spacing:0.08em;font-weight:700;color:#8A93A6;text-transform:uppercase">Principal composition</div>
+            <div style="margin-top:4px;display:flex;gap:2px;height:7px;border-radius:4px;overflow:hidden;background:#F0EEE6">
+              <sc-for list="{{ k.segs2 }}" as="sg" hint-placeholder-count="3">
+                <div style="width:{{ sg.w }};background:{{ sg.bg }}"></div>
+              </sc-for>
+            </div>
+            <div style="margin-top:5px;display:flex;justify-content:space-between;gap:6px;flex-wrap:wrap">
+              <sc-for list="{{ k.legs2 }}" as="lg" hint-placeholder-count="3">
+                <span style="font-size:10px;color:#5E6B82;display:flex;align-items:center;gap:4px"><span style="width:8px;height:8px;border-radius:2.5px;background:{{ lg.bg }}"></span>{{ lg.txt }}</span>
+              </sc-for>
             </div>
           </sc-if>
           <sc-if value="{{ k.hasSpark }}" hint-placeholder-val="{{ false }}">
@@ -127,7 +143,7 @@ input:focus{outline:2px solid #C9A45C;outline-offset:1px}
             </div>
             <div style="margin-top:4px;display:flex;gap:3px">
               <sc-for list="{{ k.cols }}" as="kc" hint-placeholder-count="5">
-                <div style="flex:1;text-align:center;font-size:8.5px;color:#9AA3B5;font-variant-numeric:tabular-nums">{{ kc.lab }}</div>
+                <div style="flex:1;text-align:center;font-size:8.5px;color:#9AA3B5;font-variant-numeric:tabular-nums;white-space:nowrap;overflow:hidden">{{ kc.lab }}</div>
               </sc-for>
             </div>
           </sc-if>
@@ -151,20 +167,42 @@ input:focus{outline:2px solid #C9A45C;outline-offset:1px}
       </div>
     </sc-if>
 
-    <!-- ══ Loan register, grouped by lender ══ -->
-    <div style="margin-top:14px;background:#FFFFFF;border:1px solid #E5E3DC;border-radius:16px;padding:20px 24px">
-      <div style="display:flex;justify-content:space-between;align-items:baseline;flex-wrap:wrap;gap:8px">
-        <div style="font-family:'Source Serif 4',Georgia,serif;font-size:18px;font-weight:600;color:#16233A">Loan register <span style="font-size:12px;font-weight:600;color:#8A93A6">· grouped by lender</span></div>
-        <div style="font-size:11px;color:#8A93A6">{{ regSub }}</div>
+    <!-- ══ Loan register ══ -->
+    <div style="margin-top:14px;background:#FFFFFF;border:1px solid #E5E3DC;border-radius:16px;padding:20px 24px;position:relative;z-index:30">
+      <div style="display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:10px" onClick="{{ stopProp }}">
+        <div>
+          <div style="font-family:'Source Serif 4',Georgia,serif;font-size:18px;font-weight:600;color:#16233A">Loan register <span style="font-size:12px;font-weight:600;color:#8A93A6">· grouped by lender</span></div>
+          <div style="margin-top:3px;font-size:11px;color:#8A93A6">{{ regSub }}</div>
+        </div>
+        <div style="display:flex;gap:8px;align-items:center;flex-wrap:wrap">
+          <div style="position:relative">
+            <div onClick="{{ rm.onToggle }}" style-hover="border-color:#C9A45C" style="display:flex;align-items:center;gap:7px;padding:7px 12px;border-radius:10px;border:1.5px solid {{ rm.bd }};background:{{ rm.bg }};font-size:11.5px;font-weight:600;color:#16233A;cursor:pointer;white-space:nowrap">
+              <span style="font-size:9px;letter-spacing:0.07em;font-weight:700;color:#5E6B82">MONTH</span>
+              <span>{{ rm.value }}</span><span style="font-size:8.5px;color:#5E6B82">▾</span>
+            </div>
+            <sc-if value="{{ rm.open }}" hint-placeholder-val="{{ false }}">
+              <div style="position:absolute;top:40px;right:0;width:190px;background:#FFFFFF;border:1px solid #D8D4C8;border-radius:12px;box-shadow:0 14px 36px rgba(14,24,48,0.20);z-index:80;padding:6px;max-height:320px;display:flex;flex-direction:column">
+                <input value="{{ rm.q }}" onInput="{{ rm.onQ }}" placeholder="Search…" style="margin:2px 2px 6px;padding:6px 10px;border-radius:8px;border:1px solid #D8D4C8;font-size:12px;font-family:inherit;color:#16233A">
+                <div onClick="{{ rm.onClear }}" style-hover="background:#F6F4EC" style="padding:6px 10px;border-radius:7px;font-size:11.5px;font-weight:700;color:#96742F;cursor:pointer;display:flex;justify-content:space-between"><span>All months</span><span>{{ rm.allCheck }}</span></div>
+                <div class="scr" style="overflow-y:auto;flex:1">
+                  <sc-for list="{{ rm.opts }}" as="op" hint-placeholder-count="6">
+                    <div onClick="{{ op.onClick }}" style-hover="background:#F6F4EC" style="padding:6px 10px;border-radius:7px;font-size:12px;font-weight:{{ op.fw }};color:#2A3550;cursor:pointer;background:{{ op.bg }};display:flex;justify-content:space-between;align-items:center"><span>{{ op.label }}</span><span style="color:#96742F;font-weight:700;width:12px">{{ op.check }}</span></div>
+                  </sc-for>
+                </div>
+              </div>
+            </sc-if>
+          </div>
+          <input value="{{ regQ }}" onInput="{{ onRegQ }}" placeholder="Find a property or note…" style="padding:8px 12px;border-radius:10px;border:1.5px solid #D8D4C8;background:#FFFFFF;font-size:12px;font-family:inherit;color:#16233A;width:200px">
+        </div>
       </div>
 
-      <div style="margin-top:12px;overflow-x:auto"><div style="min-width:1060px">
-        <div style="display:grid;grid-template-columns:26px 1.9fr 0.85fr 62px 116px 150px 120px 116px 86px;gap:8px;padding:7px 10px;font-size:10px;letter-spacing:0.07em;font-weight:700;color:#5E6B82;text-transform:uppercase;border-bottom:1px solid #E5E3DC">
+      <div style="margin-top:12px;overflow-x:auto"><div style="min-width:1100px">
+        <div style="display:grid;grid-template-columns:26px 1.9fr 0.8fr 60px 112px 148px 118px 112px 84px;gap:8px;padding:7px 10px;font-size:10px;letter-spacing:0.07em;font-weight:700;color:#5E6B82;text-transform:uppercase;border-bottom:1px solid #E5E3DC">
           <div></div><div>Loan · lead property</div><div>Type</div><div style="text-align:right">Rate</div><div style="text-align:right">Initial refinance</div><div style="text-align:right">Principal repaid</div><div style="text-align:right">Outstanding</div><div style="text-align:right">Payment /mo</div><div style="text-align:right">Status</div>
         </div>
 
         <sc-for list="{{ groups }}" as="g" hint-placeholder-count="4">
-          <div style="display:grid;grid-template-columns:26px 1.9fr 0.85fr 62px 116px 150px 120px 116px 86px;gap:8px;padding:9px 10px 7px;align-items:center;background:#F9F8F3;border-bottom:1px solid #EDEBE2;margin-top:6px;border-radius:8px 8px 0 0">
+          <div style="display:grid;grid-template-columns:26px 1.9fr 0.8fr 60px 112px 148px 118px 112px 84px;gap:8px;padding:9px 10px 7px;align-items:center;background:#F9F8F3;border-bottom:1px solid #EDEBE2;margin-top:6px;border-radius:8px 8px 0 0">
             <div></div>
             <div style="font-size:12px;font-weight:700;color:#16233A;letter-spacing:0.03em">{{ g.lender }} <span style="font-weight:600;color:#8A93A6">· {{ g.n }}</span></div>
             <div></div><div></div>
@@ -176,7 +214,7 @@ input:focus{outline:2px solid #C9A45C;outline-offset:1px}
           </div>
 
           <sc-for list="{{ g.rows }}" as="r" hint-placeholder-count="4">
-            <div onClick="{{ r.onClick }}" style-hover="background:#F6F4EC" style="display:grid;grid-template-columns:26px 1.9fr 0.85fr 62px 116px 150px 120px 116px 86px;gap:8px;padding:9px 10px;align-items:center;border-bottom:1px solid #F0EEE6;cursor:pointer;background:{{ r.bg }};border-left:3px solid {{ r.selBd }}">
+            <div onClick="{{ r.onClick }}" style-hover="background:#F6F4EC" style="display:grid;grid-template-columns:26px 1.9fr 0.8fr 60px 112px 148px 118px 112px 84px;gap:8px;padding:9px 10px;align-items:center;border-bottom:1px solid #F0EEE6;cursor:pointer;background:{{ r.bg }};border-left:3px solid {{ r.selBd }}">
               <div style="font-size:10px;color:#96742F;font-weight:700">{{ r.caret }}</div>
               <div style="min-width:0">
                 <div style="font-size:12.5px;font-weight:700;color:#1F3A6E;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">{{ r.id }} <span style="font-weight:500;color:#5E6B82">· {{ r.lead }}</span></div>
@@ -187,8 +225,10 @@ input:focus{outline:2px solid #C9A45C;outline-offset:1px}
               <div style="text-align:right;font-variant-numeric:tabular-nums;font-size:12px;color:#2A3550">{{ r.orig }}</div>
               <div>
                 <div style="text-align:right;font-variant-numeric:tabular-nums;font-size:12px;color:#2A3550">{{ r.repaid }} <span style="font-size:10px;color:#8A93A6">{{ r.repaidPct }}</span></div>
-                <div style="margin-top:3px;display:flex;height:5px;border-radius:3px;overflow:hidden;background:#F0EEE6">
-                  <div style="width:{{ r.w1 }};background:#3D64A8"></div><div style="width:{{ r.wGap }};background:#FFFFFF"></div><div style="width:{{ r.w2 }};background:#C9A45C"></div>
+                <div style="margin-top:3px;display:flex;gap:1px;height:5px;border-radius:3px;overflow:hidden;background:#F0EEE6">
+                  <sc-for list="{{ r.rsegs }}" as="sg" hint-placeholder-count="3">
+                    <div style="width:{{ sg.w }};background:{{ sg.bg }}"></div>
+                  </sc-for>
                 </div>
               </div>
               <div style="text-align:right;font-variant-numeric:tabular-nums;font-size:12.5px;font-weight:700;color:#16233A">{{ r.out }}</div>
@@ -208,22 +248,31 @@ input:focus{outline:2px solid #C9A45C;outline-offset:1px}
                 </div>
 
                 <div style="margin-top:14px;font-size:11px;letter-spacing:0.07em;font-weight:700;color:#5E6B82;text-transform:uppercase">Properties on this note · {{ r.propSub }}</div>
-                <div style="margin-top:7px;overflow-x:auto"><div style="min-width:940px">
-                  <div style="display:grid;grid-template-columns:1.7fr 0.7fr 108px 116px 116px 108px 108px 120px;gap:8px;padding:6px 8px;font-size:9.5px;letter-spacing:0.06em;font-weight:700;color:#5E6B82;text-transform:uppercase;border-bottom:1px solid #E5E3DC">
-                    <div>Property</div><div>Entity</div><div style="text-align:right">Orig share</div><div style="text-align:right">Initial slice</div><div style="text-align:right">Outstanding</div><div style="text-align:right">Interest · period</div><div style="text-align:right">Principal · period</div><div style="text-align:right">Status</div>
+                <div style="margin-top:7px;overflow-x:auto"><div style="min-width:1020px">
+                  <div style="display:grid;grid-template-columns:1.6fr 0.65fr 92px 110px 110px 96px 102px 102px 112px;gap:8px;padding:6px 8px;font-size:9.5px;letter-spacing:0.06em;font-weight:700;color:#5E6B82;text-transform:uppercase;border-bottom:1px solid #E5E3DC">
+                    <div>Property</div><div>Entity</div><div style="text-align:right">Share now</div><div style="text-align:right">Initial slice</div><div style="text-align:right">Outstanding</div><div style="text-align:right">EMI /mo</div><div style="text-align:right">Interest · period</div><div style="text-align:right">Principal · period</div><div style="text-align:right">Status</div>
                   </div>
                   <sc-for list="{{ r.props }}" as="pr" hint-placeholder-count="6">
-                    <div style="display:grid;grid-template-columns:1.7fr 0.7fr 108px 116px 116px 108px 108px 120px;gap:8px;padding:7px 8px;border-bottom:1px solid #F0EEE6;font-size:12px;align-items:center;background:{{ pr.bg }}">
+                    <div style="display:grid;grid-template-columns:1.6fr 0.65fr 92px 110px 110px 96px 102px 102px 112px;gap:8px;padding:7px 8px;border-bottom:1px solid #F0EEE6;font-size:12px;align-items:center;background:{{ pr.bg }}">
                       <div style="min-width:0;white-space:nowrap;overflow:hidden;text-overflow:ellipsis"><a href="{{ pr.link }}" onClick="{{ stopProp }}" style="font-weight:600;text-decoration:none">{{ pr.door }}</a></div>
                       <div style="font-size:11px;color:#5E6B82">{{ pr.ent }}</div>
                       <div style="text-align:right;font-variant-numeric:tabular-nums;color:#5E6B82">{{ pr.share }}</div>
                       <div style="text-align:right;font-variant-numeric:tabular-nums;color:#2A3550">{{ pr.init }}</div>
                       <div style="text-align:right;font-variant-numeric:tabular-nums;font-weight:700;color:{{ pr.outCol }}">{{ pr.out }}</div>
+                      <div style="text-align:right;font-variant-numeric:tabular-nums;font-weight:700;color:#16233A">{{ pr.emi }}</div>
                       <div style="text-align:right;font-variant-numeric:tabular-nums;color:#B04A33">{{ pr.int }}</div>
                       <div style="text-align:right;font-variant-numeric:tabular-nums;color:#3E8E63">{{ pr.prin }}</div>
                       <div style="text-align:right;font-size:10px;font-weight:700;color:{{ pr.stCol }}">{{ pr.st }}</div>
                     </div>
                   </sc-for>
+                  <div style="display:grid;grid-template-columns:1.6fr 0.65fr 92px 110px 110px 96px 102px 102px 112px;gap:8px;padding:7px 8px;border-top:1.5px solid #16233A;font-size:11.5px;font-weight:700">
+                    <div>NOTE TOTAL</div><div></div><div></div>
+                    <div style="text-align:right;font-variant-numeric:tabular-nums">{{ r.pInit }}</div>
+                    <div style="text-align:right;font-variant-numeric:tabular-nums">{{ r.pOut }}</div>
+                    <div style="text-align:right;font-variant-numeric:tabular-nums">{{ r.pEmi }}</div>
+                    <div style="text-align:right;font-variant-numeric:tabular-nums;color:#B04A33">{{ r.pInt }}</div>
+                    <div style="text-align:right;font-variant-numeric:tabular-nums;color:#3E8E63">{{ r.pPrin }}</div><div></div>
+                  </div>
                 </div></div>
 
                 <sc-if value="{{ r.hasRel }}" hint-placeholder-val="{{ false }}">
@@ -239,8 +288,8 @@ input:focus{outline:2px solid #C9A45C;outline-offset:1px}
                   <div style="font-size:11px;letter-spacing:0.07em;font-weight:700;color:#5E6B82;text-transform:uppercase">Monthly schedule</div>
                   <div onClick="{{ r.onSched }}" style-hover="border-color:#C9A45C" style="padding:5px 12px;border-radius:99px;font-size:11px;font-weight:600;cursor:pointer;border:1px solid #D8D4C8;background:#FFFFFF;color:#2A3550">{{ r.schedBtn }}</div>
                 </div>
-                <div style="margin-top:6px;overflow-x:auto"><div style="min-width:760px">
-                  <div style="display:grid;grid-template-columns:86px 1fr 1fr 1fr 1fr 1fr;gap:8px;padding:5px 8px;font-size:9.5px;letter-spacing:0.06em;font-weight:700;color:#5E6B82;text-transform:uppercase;border-bottom:1px solid #E5E3DC">
+                <div class="scr" style="margin-top:6px;overflow-x:auto;max-height:340px;overflow-y:auto"><div style="min-width:760px">
+                  <div style="display:grid;grid-template-columns:86px 1fr 1fr 1fr 1fr 1fr;gap:8px;padding:5px 8px;font-size:9.5px;letter-spacing:0.06em;font-weight:700;color:#5E6B82;text-transform:uppercase;border-bottom:1px solid #E5E3DC;position:sticky;top:0;background:#FBFAF6">
                     <div>Month</div><div style="text-align:right">Opening</div><div style="text-align:right">Interest</div><div style="text-align:right">Principal</div><div style="text-align:right">Releases / extra</div><div style="text-align:right">Closing</div>
                   </div>
                   <sc-for list="{{ r.sched }}" as="sc" hint-placeholder-count="6">
@@ -259,7 +308,7 @@ input:focus{outline:2px solid #C9A45C;outline-offset:1px}
           </sc-for>
         </sc-for>
 
-        <div style="display:grid;grid-template-columns:26px 1.9fr 0.85fr 62px 116px 150px 120px 116px 86px;gap:8px;padding:10px;border-top:2px solid #16233A;margin-top:4px">
+        <div style="display:grid;grid-template-columns:26px 1.9fr 0.8fr 60px 112px 148px 118px 112px 84px;gap:8px;padding:10px;border-top:2px solid #16233A;margin-top:4px">
           <div></div>
           <div style="font-size:12px;font-weight:700;color:#16233A">TOTAL · {{ totCount }}</div>
           <div></div><div></div>
@@ -270,7 +319,99 @@ input:focus{outline:2px solid #C9A45C;outline-offset:1px}
           <div></div>
         </div>
       </div></div>
-      <div style="margin-top:10px;font-size:11px;color:#9AA3B5">Click any note to open its properties, releases and full schedule. Repaid bars: <span style="color:#3D64A8;font-weight:700">monthly payments &amp; prepayments</span> · <span style="color:#96742F;font-weight:700">property-release payoffs</span>. Payment column shows the current level payment (after any recast); "esc" is owner-entered escrow, kept separate.</div>
+      <div style="margin-top:10px;font-size:11px;color:#9AA3B5">Click any note to open its properties, releases and full schedule. Repaid bars: <span style="color:#3D64A8;font-weight:700">monthly payments</span> · <span style="color:#3E8E63;font-weight:700">prepayments</span> · <span style="color:#96742F;font-weight:700">release payoffs</span>. EMI /mo splits the note&#8217;s current payment across properties by their live proportions (released properties carry none). "esc" is owner-entered escrow, kept separate.</div>
+    </div>
+
+    <!-- ══ Debt service trends & properties (one integrated section) ══ -->
+    <div style="margin-top:14px;background:#FFFFFF;border:1px solid #E5E3DC;border-radius:16px;padding:22px 26px" onClick="{{ stopProp }}">
+      <div style="display:flex;justify-content:space-between;align-items:baseline;flex-wrap:wrap;gap:8px">
+        <div style="font-family:'Source Serif 4',Georgia,serif;font-size:18px;font-weight:600;color:#16233A">Interest &amp; principal trends, month on month</div>
+        <div style="font-size:12px;color:#8A93A6">Pick a year and series, then drill into the properties behind them — click a property to focus its line</div>
+      </div>
+      <div style="margin-top:14px;display:flex;gap:8px;flex-wrap:wrap;align-items:center">
+        <sc-for list="{{ trYears }}" as="yc" hint-placeholder-count="4">
+          <div onClick="{{ yc.onClick }}" style-hover="border-color:#C9A45C" style="padding:7px 14px;border-radius:99px;font-size:12px;font-weight:600;cursor:pointer;border:1px solid {{ yc.bd }};background:{{ yc.bg }};color:{{ yc.col }};white-space:nowrap">{{ yc.label }}</div>
+        </sc-for>
+        <span style="width:1px;height:16px;background:#E5E3DC"></span>
+        <sc-for list="{{ trToggles }}" as="tt" hint-placeholder-count="2">
+          <div onClick="{{ tt.onClick }}" style-hover="border-color:#C9A45C" style="display:flex;align-items:center;gap:6px;padding:7px 14px;border-radius:99px;font-size:12px;font-weight:600;cursor:pointer;border:1px solid {{ tt.bd }};background:{{ tt.bgc }};color:{{ tt.col }};white-space:nowrap"><span style="width:8px;height:8px;border-radius:2.5px;background:{{ tt.dot }}"></span>{{ tt.label }}</div>
+        </sc-for>
+        <sc-if value="{{ trFocusOn }}" hint-placeholder-val="{{ false }}">
+          <div onClick="{{ trUnfocus }}" style-hover="border-color:#A03E28;color:#A03E28" style="display:flex;align-items:center;gap:6px;padding:7px 14px;border-radius:99px;font-size:12px;font-weight:700;cursor:pointer;border:1.5px solid #C9A45C;background:#FBF6EA;color:#96742F;white-space:nowrap">Focused: {{ trFocusName }} ✕</div>
+        </sc-if>
+      </div>
+      <div style="margin-top:18px;display:grid;grid-template-columns:1fr 1fr;gap:28px;align-items:start">
+        <div>
+          <div style="display:flex;justify-content:space-between;align-items:baseline">
+            <span style="font-size:12.5px;font-weight:600;color:#2A3550">{{ trName }}</span>
+            <span style="font-family:'Source Serif 4',Georgia,serif;font-size:19px;font-weight:600;color:#16233A">{{ trTotal }}</span>
+          </div>
+          <div style="position:relative;margin-top:12px">
+            <svg viewBox="{{ chartVB }}" style="width:100%;display:block">
+              <line x1="10" y1="{{ zeroY }}" x2="{{ chartRight }}" y2="{{ zeroY }}" stroke="#E0DDD1" stroke-width="1" stroke-dasharray="3 3"></line>
+              <sc-for list="{{ trLines }}" as="ln" hint-placeholder-count="2">
+                <path d="{{ ln.area }}" fill="{{ ln.col }}" opacity="0.07"></path>
+                <path d="{{ ln.path }}" fill="none" stroke="{{ ln.col }}" stroke-width="2.5" stroke-linejoin="round" stroke-linecap="round"></path>
+              </sc-for>
+              <sc-for list="{{ trLines }}" as="ln" hint-placeholder-count="2">
+                <sc-for list="{{ ln.pts }}" as="pt" hint-placeholder-count="12">
+                  <circle cx="{{ pt.cx }}" cy="{{ pt.cy }}" r="3.5" fill="#FFFFFF" stroke="{{ ln.col }}" stroke-width="2"><title>{{ pt.tip }}</title></circle>
+                  <circle cx="{{ pt.cx }}" cy="{{ pt.cy }}" r="14" fill="transparent" style="cursor:pointer"><title>{{ pt.tip }}</title></circle>
+                </sc-for>
+              </sc-for>
+            </svg>
+            <sc-for list="{{ trLines }}" as="ln" hint-placeholder-count="2">
+              <sc-for list="{{ ln.pts }}" as="pt" hint-placeholder-count="12">
+                <div title="{{ pt.tip }}" style="position:absolute;left:{{ pt.leftPct }};top:{{ pt.topPct }};transform:translate(-50%,{{ pt.shift }});font-size:9.5px;font-weight:700;color:{{ ln.col }};white-space:nowrap;font-variant-numeric:tabular-nums;pointer-events:none">{{ pt.lab }}</div>
+              </sc-for>
+            </sc-for>
+          </div>
+          <div style="margin-top:4px;display:flex">
+            <sc-for list="{{ trMonths }}" as="tm" hint-placeholder-count="12">
+              <div style="flex:1;text-align:center;font-size:10.5px;font-weight:600;color:#8A93A6">{{ tm }}</div>
+            </sc-for>
+          </div>
+          <div style="margin-top:10px;font-size:11.5px;color:#8A93A6;line-height:1.5">{{ trFoot }}</div>
+        </div>
+        <div>
+          <div style="display:flex;justify-content:space-between;align-items:baseline;gap:10px;flex-wrap:wrap">
+            <span style="font-size:12.5px;font-weight:600;color:#2A3550">{{ topTitle }}</span>
+            <input value="{{ topQ }}" onInput="{{ onTopQ }}" placeholder="Search property…" style="padding:6px 11px;border-radius:9px;border:1.5px solid #D8D4C8;background:#FFFFFF;font-size:11.5px;font-family:inherit;color:#16233A;width:150px">
+          </div>
+          <div style="margin-top:3px;font-size:11.5px;color:#96742F;font-weight:600">{{ topSub }}</div>
+          <div class="scr" style="margin-top:12px;display:flex;flex-direction:column;gap:8px;max-height:{{ topListMax }};overflow-y:{{ topListOv }};padding-right:4px">
+            <sc-for list="{{ topRows }}" as="tp" hint-placeholder-count="7">
+              <div onClick="{{ tp.onClick }}" style-hover="background:#F6F4EC" style="display:grid;grid-template-columns:20px 1fr;gap:9px;align-items:center;cursor:pointer;padding:5px 6px;border-radius:8px;background:{{ tp.bg }};border:1px solid {{ tp.bd }}">
+                <span style="font-size:11px;font-weight:700;color:#B0A688;font-variant-numeric:tabular-nums;text-align:right">{{ tp.rank }}</span>
+                <div style="min-width:0">
+                  <div style="display:flex;justify-content:space-between;font-size:12px;color:#2A3550;gap:10px">
+                    <span style="font-weight:{{ tp.fw }};white-space:nowrap;overflow:hidden;text-overflow:ellipsis;min-width:0;flex:1">{{ tp.door }}</span>
+                    <span style="flex:none;font-variant-numeric:tabular-nums;color:#8A93A6;font-weight:600">{{ tp.share }}</span>
+                    <span style="font-weight:700;font-variant-numeric:tabular-nums;flex:none;min-width:56px;text-align:right;color:#2A3550">{{ tp.val }}</span>
+                  </div>
+                  <div style="margin-top:4px;height:6px;background:#F4F2EA;border-radius:3px;overflow:hidden;display:flex">
+                    <div style="width:{{ tp.wInt }};height:6px;background:#B04A33"></div><div style="width:{{ tp.wPrin }};height:6px;background:#3E8E63"></div>
+                  </div>
+                  <sc-if value="{{ tp.sel }}" hint-placeholder-val="{{ false }}">
+                    <div style="margin-top:6px;font-size:10.5px;color:#5E6B82;display:flex;gap:10px;flex-wrap:wrap;align-items:center">
+                      <span>{{ tp.det }}</span>
+                      <a href="{{ tp.plLink }}" onClick="{{ stopProp }}" style="font-weight:700;color:#96742F;text-decoration:none">P&amp;L →</a>
+                      <a href="{{ tp.invLink }}" onClick="{{ stopProp }}" style="font-weight:700;color:#96742F;text-decoration:none">Investments →</a>
+                      <span onClick="{{ tp.onScope }}" style="font-weight:700;color:#3D64A8;cursor:pointer">Scope page →</span>
+                    </div>
+                  </sc-if>
+                </div>
+              </div>
+            </sc-for>
+            <sc-if value="{{ topEmpty }}" hint-placeholder-val="{{ false }}">
+              <div style="padding:12px 6px;font-size:12px;color:#5E6B82">No financed property matches that search.</div>
+            </sc-if>
+          </div>
+          <sc-if value="{{ topBtnShow }}" hint-placeholder-val="{{ false }}">
+            <div onClick="{{ topBtnClick }}" style-hover="background:#16233A;color:#FFFFFF;border-color:#16233A" style="margin-top:12px;display:inline-flex;padding:8px 15px;border-radius:9px;border:1px solid #D8D4C8;background:#FFFFFF;color:#16233A;font-size:12px;font-weight:700;cursor:pointer">{{ topBtnLabel }}</div>
+          </sc-if>
+        </div>
+      </div>
     </div>
 
     <!-- ══ Ledger cross-check ══ -->
@@ -337,8 +478,10 @@ class Component extends DCLogic {
   state = {
     data: null, gl: null, bs: null, bsMiss: false, loadError: null,
     fm: [], fe: [], fd: [], fl: [], ft: [],
-    ddOpen: null, doorQ: '',
+    ddOpen: null, fq: '', regQ: '',
     exp: null, schedFull: false,
+    trendYear: null, showInt: true, showPrin: true, trendShowAll: false,
+    topQ: '', topSel: null,
     xmode: 'flag',
   };
 
@@ -389,7 +532,7 @@ class Component extends DCLogic {
     } catch (e) {}
   }
 
-  setFilter(key, patch) { this.setState(patch, () => this.syncUrl()); }
+  setFilter(patch) { this.setState(patch, () => this.syncUrl()); }
 
   componentDidMount() {
     this.loadData();
@@ -406,24 +549,35 @@ class Component extends DCLogic {
       retryLoad: () => this.loadData(), stopProp,
       scopeLine: S.loadError ? 'Data failed to load' : 'Loading…',
       filters: [], kpis: [], groups: [], xChips: [], xRows: [], attn: [], hasAttn: false,
+      rm: { open: false, opts: [], value: '', q: '', onToggle: () => {}, onClear: () => {}, onQ: () => {}, bd: '', bg: '', allCheck: '' },
+      regQ: '', onRegQ: () => {}, trYears: [], trToggles: [], trLines: [], trMonths: [], topRows: [], topQ: '', onTopQ: () => {},
+      chartVB: '0 0 460 188', chartRight: '450', zeroY: '150', trName: '', trTotal: '', trFoot: '', trFocusOn: false, trFocusName: '', trUnfocus: () => {},
+      topTitle: '', topSub: '', topEmpty: false, topListMax: 'none', topListOv: 'visible', topBtnShow: false, topBtnClick: () => {}, topBtnLabel: '',
     };
 
     const fN = n => { const r = Math.round(n); const s = '$' + Math.abs(r).toLocaleString('en-US'); return r < 0 ? '(' + s + ')' : s; };
     const fC = n => { const s = '$' + Math.abs(n).toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 }); return n < 0 ? '(' + s + ')' : s; };
     const fK = n => { const a = Math.abs(n), sg = n < 0; let t; if (a >= 1e6) t = '$' + (a / 1e6).toFixed(2) + 'M'; else if (a >= 1000) t = '$' + (a / 1000).toFixed(1) + 'K'; else t = '$' + Math.round(a); return sg ? '(' + t + ')' : t; };
     const pct = (a, b) => b > 0 ? (a / b * 100).toFixed(1) + '%' : '—';
+    const MMM = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
+    const mmyy = m => MMM[+m.slice(5, 7) - 1] + '-' + m.slice(2, 4);
 
     const M = S.data.meta, LNS = S.data.loans, DOORS = S.data.doors || {};
     const DW = (S.gl.meta && S.gl.meta.doorWindows) || {};
-    const entOf = d => (DW[d] && DW[d][2]) || '—';
-    const tcat = l => l.type === 'Hard Money' ? 'Hard Money' : 'Traditional';
-    const months = (S.gl.periods || []).filter(p => p >= M.glWindow[0] && p <= M.glWindow[1]);
     const bsBy = {};
     if (S.bs && Array.isArray(S.bs.properties)) for (const p of S.bs.properties) bsBy[p.door] = p;
+    const entOf = d => (DW[d] && DW[d][2]) || (bsBy[d] && bsBy[d].entity) || '—';
+    const tcat = l => l.type === 'Hard Money' ? 'Hard Money' : 'Traditional';
 
-    // ---------- scope resolution ----------
-    const selM = (S.fm.length ? months.filter(m => S.fm.includes(m)) : months);
-    const lastM = selM[selM.length - 1] || months[months.length - 1];
+    // all months across every schedule (origination → horizon)
+    const mset = new Set();
+    for (const l of LNS) for (const rw of l.schedule) mset.add(rw.m);
+    const monthsAll = [...mset].sort();
+    const glMonths = (S.gl.periods || []).filter(p => p >= M.glWindow[0] && p <= M.glWindow[1]);
+
+    // ---------- scope ----------
+    const selM = (S.fm.length ? monthsAll.filter(m => S.fm.includes(m)) : monthsAll);
+    const lastM = selM[selM.length - 1] || monthsAll[monthsAll.length - 1];
     const doorOk = d => (!S.fe.length || S.fe.includes(entOf(d))) && (!S.fd.length || S.fd.includes(d));
     const loanPre = l => (!S.fl.length || S.fl.includes(l.lender || '—')) && (!S.ft.length || S.ft.includes(tcat(l)));
     const doorsOfLoan = {};
@@ -434,23 +588,21 @@ class Component extends DCLogic {
     const inLoans = LNS.filter(loanOk);
     const inLoanIds = new Set(inLoans.map(l => l.id));
     const scopeDoors = Object.keys(DOORS).filter(d => doorOk(d) && DOORS[d].loans.some(k => inLoanIds.has(k)));
+    const scopeSet = new Set(scopeDoors);
 
-    // door helpers
-    const dMin = {}, dMax = {};
+    const dMin = {};
     for (const d of Object.keys(DOORS)) {
       const ks = Object.keys(DOORS[d].monthly);
       dMin[d] = ks.length ? ks.reduce((a, b) => a < b ? a : b) : null;
-      dMax[d] = ks.length ? ks.reduce((a, b) => a > b ? a : b) : null;
     }
-    const originatedBy = (d, m) => dMin[d] === null || dMin[d] <= m;   // empty monthly = pre-window history
+    const originatedBy = (d, m) => dMin[d] === null || dMin[d] <= m;
     const closeAt = (d, m) => {
       const rec = DOORS[d];
       if (rec.monthly[m]) return rec.monthly[m].close;
-      if (dMin[d] === null) return 0;               // released before the window
-      if (m < dMin[d]) return 0;                     // not yet originated
-      return 0;                                      // paid off / released earlier in window
+      if (dMin[d] !== null && m >= dMin[d]) return 0;   // paid off / released
+      return 0;                                          // pre-origination or pre-window release
     };
-    // release payoffs & excess cuts per door through month m (from in-scope loans)
+    // cumulative release principal to door d through month m (in-scope loans)
     const relTo = (d, m) => {
       let v = 0;
       for (const l of LNS) {
@@ -463,100 +615,134 @@ class Component extends DCLogic {
       }
       return v;
     };
+    const prepTo = (d, m) => {
+      let v = 0;
+      for (const l of LNS) {
+        if (!inLoanIds.has(l.id)) continue;
+        for (const pv of (l.prepays || [])) if (pv.m <= m && pv.cuts[d] != null) v += pv.cuts[d];
+      }
+      return v;
+    };
 
-    // ---------- KPIs (owner's order) ----------
-    let tInit = 0, tOut = 0, tRepaid = 0, tRel = 0;
-    let ltvInitNum = 0, ltvInitDen = 0, apprN = 0;
-    let ltvCurNum = 0, ltvCurDen = 0, valN = 0;
+    // ---------- KPIs ----------
+    let tInit = 0, tOut = 0, tRepaid = 0, tRel = 0, tPrep = 0;
+    let ltvInitNum = 0, ltvInitDen = 0, apprN = 0, ltvCurNum = 0, ltvCurDen = 0, valN = 0;
     for (const d of scopeDoors) {
       if (!originatedBy(d, lastM)) continue;
       const init = DOORS[d].initial || 0;
       const cl = closeAt(d, lastM);
-      tInit += init; tOut += cl; tRepaid += init - cl;
-      tRel += Math.min(relTo(d, lastM), Math.max(init - cl, 0));
+      const rep = Math.max(init - cl, 0);
+      tInit += init; tOut += cl; tRepaid += rep;
+      tRel += Math.min(relTo(d, lastM), rep);
+      tPrep += Math.min(prepTo(d, lastM), Math.max(rep - Math.min(relTo(d, lastM), rep), 0));
       const b = bsBy[d];
       if (b && b.appraisal > 0) { ltvInitNum += init; ltvInitDen += b.appraisal; apprN++; }
       if (b && b.value > 0) { ltvCurNum += cl; ltvCurDen += b.value; valN++; }
     }
-    const tSch = Math.max(tRepaid - tRel, 0);
-    let pInt = 0, pPrin = 0, pRel = 0;
+    const tSch = Math.max(tRepaid - tRel - tPrep, 0);
+    let pInt = 0, pPrin = 0;
     for (const d of scopeDoors) for (const m of selM) {
       const v = DOORS[d].monthly[m];
-      if (!v) continue;
-      pInt += v.interest; pPrin += v.principal;
+      if (v) { pInt += v.interest; pPrin += v.principal; }
     }
-    for (const l of inLoans) for (const r of l.releases) {
-      if (!selM.includes(r.m)) continue;
-      if (r.base != null && doorOk(r.prop)) pRel += r.base;
-      if (r.cuts) for (const [d2, v2] of Object.entries(r.cuts)) if (doorOk(d2) && scopeDoors.includes(d2)) pRel += v2;
+    let pRel = 0, pPrep = 0;
+    for (const l of inLoans) {
+      for (const r of l.releases) {
+        if (!selM.includes(r.m)) continue;
+        if (r.base != null && scopeSet.has(r.prop)) pRel += r.base;
+        if (r.cuts) for (const [d2, v2] of Object.entries(r.cuts)) if (scopeSet.has(d2)) pRel += v2;
+      }
+      for (const pv of (l.prepays || [])) {
+        if (!selM.includes(pv.m)) continue;
+        for (const [d2, v2] of Object.entries(pv.cuts)) if (scopeSet.has(d2)) pPrep += v2;
+      }
     }
-    const spark = selM.map(m => scopeDoors.reduce((s, d) => s + closeAt(d, m), 0));
-    const sMax = Math.max(...spark, 1);
+    const pSched = Math.max(pPrin - pRel - pPrep, 0);
+    const sparkM = selM.length > 12 ? selM.filter((_, i) => i >= selM.length - 12) : selM;
+    const spark = sparkM.map(m => scopeDoors.reduce((s, d) => s + closeAt(d, m), 0));
+    const sMax2 = Math.max(...spark, 1);
     const sparkCols = spark.map((v, i) => ({
-      h: Math.max(v / sMax * 100, 2).toFixed(1) + '%',
+      h: Math.max(v / sMax2 * 100, 2).toFixed(1) + '%',
       bg: i === spark.length - 1 ? '#3D64A8' : '#B9C6E0',
-      t: selM[i] + ': ' + fN(v), lab: selM[i].slice(5),
+      t: mmyy(sparkM[i]) + ': ' + fN(v), lab: mmyy(sparkM[i]),
     }));
-    const periodTag = selM.length === months.length ? months[0] + ' → ' + months[months.length - 1] : (selM.length === 1 ? selM[0] : selM.length + ' months');
-
-    const rp = tInit > 0 ? tRepaid / tInit : 0;
+    const periodTag = selM.length === monthsAll.length ? 'all history' : (selM.length === 1 ? mmyy(selM[0]) : selM.length + ' months');
+    const C_SCH = '#3D64A8', C_PREP = '#57A773', C_REL = '#C9A45C';
+    const seg3 = (a, b2, c2) => {
+      const t = a + b2 + c2;
+      if (t <= 0) return [];
+      return [{ w: (a / t * 100).toFixed(1) + '%', bg: C_SCH }, { w: (b2 / t * 100).toFixed(1) + '%', bg: C_PREP }, { w: (c2 / t * 100).toFixed(1) + '%', bg: C_REL }].filter(s => parseFloat(s.w) > 0);
+    };
     const kpis = [
-      { label: 'Initial refinance', tag: 'note originations', value: fN(tInit), col: '#16233A', hasBar: false, hasSpark: false,
+      { label: 'Initial refinance', tag: 'note originations', value: fN(tInit), col: '#16233A', hasBar: false, hasBar2: false, hasSpark: false,
         sub: scopeDoors.length + ' propert' + (scopeDoors.length === 1 ? 'y' : 'ies') + ' financed in scope · each note’s original amount, per allocation slices' },
-      { label: 'Principal repaid', tag: 'through ' + lastM, value: fN(tRepaid), col: '#3E8E63', hasBar: true, hasSpark: false,
-        w1: (tRepaid > 0 ? (tSch / tRepaid * 100) : 0).toFixed(1) + '%', w2: (tRepaid > 0 ? (tRel / tRepaid * 100) : 0).toFixed(1) + '%',
-        c1: '#3D64A8', c2: '#C9A45C',
-        l1: 'Monthly & prepay ' + fK(tSch), l2: 'Release payoffs ' + fK(tRel),
+      { label: 'Principal repaid', tag: 'through ' + mmyy(lastM), value: fN(tRepaid), col: '#3E8E63', hasBar: true, hasBar2: false, hasSpark: false,
+        segs: seg3(tSch, tPrep, tRel),
+        legs: [{ bg: C_SCH, txt: 'Monthly ' + fK(tSch) }, { bg: C_PREP, txt: 'Prepay ' + fK(tPrep) }, { bg: C_REL, txt: 'Releases ' + fK(tRel) }],
         sub: pct(tRepaid, tInit) + ' of initial refinance repaid' },
-      { label: 'Outstanding loan', tag: 'at ' + lastM, value: fN(tOut), col: '#16233A', hasBar: false, hasSpark: true,
+      { label: 'Outstanding loan', tag: 'at ' + mmyy(lastM), value: fN(tOut), col: '#16233A', hasBar: false, hasBar2: false, hasSpark: true,
         cols: sparkCols,
-        sub: 'month-end balance across the selected months · ' + inLoans.filter(l => l.outstanding > 0.005).length + ' active notes in scope' },
-      { label: 'Initial LTV', tag: 'on bank appraisal', value: ltvInitDen > 0 ? (ltvInitNum / ltvInitDen * 100).toFixed(1) + '%' : '—', col: '#16233A', hasBar: false, hasSpark: false,
+        sub: 'month-end balance' + (selM.length > 12 ? ' · last 12 selected months shown' : ' across the selected months') + ' · ' + inLoans.filter(l => l.outstanding > 0.005).length + ' active notes in scope' },
+      { label: 'Initial LTV', tag: 'on bank appraisal', value: ltvInitDen > 0 ? (ltvInitNum / ltvInitDen * 100).toFixed(1) + '%' : '—', col: '#16233A', hasBar: false, hasBar2: false, hasSpark: false,
         sub: S.bsMiss ? 'bs-data.json not loaded — appraisals unavailable' : (ltvInitDen > 0 ? fK(ltvInitNum) + ' initial on ' + fK(ltvInitDen) + ' appraised · ' + apprN + ' doors covered' : 'no appraised values in scope') },
-      { label: 'Current LTV', tag: 'on ARV', value: ltvCurDen > 0 ? (ltvCurNum / ltvCurDen * 100).toFixed(1) + '%' : '—', col: '#16233A', hasBar: false, hasSpark: false,
+      { label: 'Current LTV', tag: 'on ARV', value: ltvCurDen > 0 ? (ltvCurNum / ltvCurDen * 100).toFixed(1) + '%' : '—', col: '#16233A', hasBar: false, hasBar2: false, hasSpark: false,
         sub: S.bsMiss ? 'bs-data.json not loaded — values unavailable' : (ltvCurDen > 0 ? fK(ltvCurNum) + ' outstanding on ' + fK(ltvCurDen) + ' value (ARV-primary policy) · ' + valN + ' doors' : 'no ARV values in scope') },
-      { label: 'Payment · selected period', tag: periodTag, value: fN(pInt + pPrin), col: '#16233A', hasBar: true, hasSpark: false,
-        w1: (pInt + pPrin > 0 ? (pInt / (pInt + pPrin) * 100) : 0).toFixed(1) + '%', w2: (pInt + pPrin > 0 ? (pPrin / (pInt + pPrin) * 100) : 0).toFixed(1) + '%',
-        c1: '#B04A33', c2: '#3E8E63',
-        l1: 'Interest ' + fK(pInt), l2: 'Principal ' + fK(pPrin),
-        sub: (pRel > 0 ? fK(pRel) + ' of the principal came from release payoffs & excess. ' : '') + 'Escrow is tracked separately.' },
+      { label: 'Payment · selected period', tag: periodTag, value: fN(pInt + pPrin), col: '#16233A', hasBar: true, hasBar2: true, hasSpark: false,
+        segs: (pInt + pPrin > 0 ? [{ w: (pInt / (pInt + pPrin) * 100).toFixed(1) + '%', bg: '#B04A33' }, { w: (pPrin / (pInt + pPrin) * 100).toFixed(1) + '%', bg: '#3E8E63' }] : []),
+        legs: [{ bg: '#B04A33', txt: 'Interest ' + fK(pInt) }, { bg: '#3E8E63', txt: 'Principal ' + fK(pPrin) }],
+        segs2: seg3(pSched, pPrep, pRel),
+        legs2: [{ bg: C_SCH, txt: 'Monthly ' + fK(pSched) }, { bg: C_PREP, txt: 'Prepay ' + fK(pPrep) }, { bg: C_REL, txt: 'Releases ' + fK(pRel) }],
+        sub: 'Escrow is tracked separately.' },
     ];
 
     // ---------- filters ----------
     const mk = (key, label, allLabel, opts, sel, w, hasSearch) => {
-      const set = v => { const cur = new Set(sel); cur.has(v) ? cur.delete(v) : cur.add(v); this.setFilter(key, { [key]: [...cur] }); };
+      const set = v => { const cur = new Set(sel); cur.has(v) ? cur.delete(v) : cur.add(v); this.setFilter({ [key]: [...cur] }); };
+      const q = (S.ddOpen === key ? S.fq : '').toLowerCase();
+      const shown = q ? opts.filter(o => (o.label || o.v).toLowerCase().includes(q) || o.v.toLowerCase().includes(q)) : opts;
       return {
-        label, allLabel, w: w || '230px', hasSearch: !!hasSearch, q: S.doorQ,
-        onQ: e => this.setState({ doorQ: e.target.value }),
+        label, allLabel, w: w || '230px', hasSearch: !!hasSearch, q: S.ddOpen === key ? S.fq : '',
+        onQ: e => this.setState({ fq: e.target.value }),
         open: S.ddOpen === key,
-        onToggle: () => this.setState({ ddOpen: S.ddOpen === key ? null : key }),
-        onClear: () => this.setFilter(key, { [key]: [] }),
+        onToggle: () => this.setState({ ddOpen: S.ddOpen === key ? null : key, fq: '' }),
+        onClear: () => this.setFilter({ [key]: [] }),
         allCheck: sel.length ? '' : '✓',
-        value: sel.length ? (sel.length === 1 ? sel[0] : sel.length + ' selected') : 'All',
+        value: sel.length ? (sel.length === 1 ? (opts.find(o => o.v === sel[0]) || { label: sel[0] }).label || sel[0] : sel.length + ' selected') : 'All',
         bd: sel.length ? '#C9A45C' : '#D8D4C8', bg: sel.length ? '#FBF6EA' : '#FFFFFF',
-        opts: opts.map(o => ({
-          label: o.v, n: o.n, on: sel.includes(o.v),
+        opts: shown.slice(0, 400).map(o => ({
+          label: o.label || o.v, n: o.n, on: sel.includes(o.v),
           check: sel.includes(o.v) ? '✓' : '', fw: sel.includes(o.v) ? 700 : 500,
           bg: sel.includes(o.v) ? '#FBF6EA' : 'transparent',
           onClick: () => set(o.v),
         })),
       };
     };
-    const entities = [...new Set(Object.keys(DOORS).map(entOf))].sort();
+    const entities = [...new Set([
+      ...Object.keys(DOORS).map(entOf),
+      ...Object.values(bsBy).map(p => p.entity),
+    ].filter(e => e && e !== '—'))].sort();
+    const entOpts = (entities.length ? entities : ['—']).map(v => ({ v, n: Object.keys(DOORS).filter(d => entOf(d) === v).length }));
     const lenders = [...new Set(LNS.map(l => l.lender || '—'))].sort();
     const allDoors = Object.keys(DOORS).sort();
-    const dq = (S.doorQ || '').toLowerCase();
+    const monthOpts = monthsAll.slice().reverse().map(v => ({ v, label: mmyy(v), n: '' }));
     const filters = [
-      mk('fm', 'MONTH', 'months', months.map(v => ({ v, n: '' })), S.fm, '190px'),
-      mk('fe', 'ENTITY', 'entities', entities.map(v => ({ v, n: Object.keys(DOORS).filter(d => entOf(d) === v).length })), S.fe, '220px'),
-      mk('fd', 'DOORS', 'properties', allDoors.filter(d => !dq || d.toLowerCase().includes(dq)).slice(0, 400).map(v => ({ v, n: '' })), S.fd, '300px', true),
+      mk('fm', 'MONTH', 'months', monthOpts, S.fm, '200px', true),
+      mk('fe', 'ENTITY', 'entities', entOpts, S.fe, '220px'),
+      mk('fd', 'DOORS', 'properties', allDoors.map(v => ({ v, n: '' })), S.fd, '300px', true),
       mk('fl', 'LENDER', 'lenders', lenders.map(v => ({ v, n: LNS.filter(l => (l.lender || '—') === v).length })), S.fl, '240px'),
       mk('ft', 'LOAN TYPE', 'types', ['Traditional', 'Hard Money'].map(v => ({ v, n: LNS.filter(l => tcat(l) === v).length })), S.ft, '210px'),
     ];
+    const rm = mk('fm2', 'MONTH', 'months', monthOpts, S.fm, '190px', true);
+    {  // the register control drives the SAME month selection
+      const set = v => { const cur = new Set(S.fm); cur.has(v) ? cur.delete(v) : cur.add(v); this.setFilter({ fm: [...cur] }); };
+      rm.opts = rm.opts.map(o => ({ ...o }));
+      rm.onClear = () => this.setFilter({ fm: [] });
+      rm.value = S.fm.length ? (S.fm.length === 1 ? mmyy(S.fm[0]) : S.fm.length + ' sel.') : 'All';
+    }
     const nAct = S.fm.length + S.fe.length + S.fd.length + S.fl.length + S.ft.length;
-    const clearAll = () => this.setFilter('fm', { fm: [], fe: [], fd: [], fl: [], ft: [], doorQ: '' });
+    const clearAll = () => this.setFilter({ fm: [], fe: [], fd: [], fl: [], ft: [], fq: '' });
 
-    // ---------- needs attention ----------
+    // ---------- attention ----------
     const attn = [];
     for (const l of inLoans) {
       if (l.io && l.term && l.outstanding > 0.005 && l.schedule.length) {
@@ -564,22 +750,22 @@ class Component extends DCLogic {
         y += Math.floor((mo - 1) / 12); mo = (mo - 1) % 12 + 1;
         const mat = String(y).padStart(4, '0') + '-' + String(mo).padStart(2, '0');
         if (mat <= M.horizonEnd) attn.push({ icon: '⚠', col: '#A03E28', bg: '#FBF1EC', bd: '#EAD1C6',
-          text: 'Note ' + l.displayId + ' (' + (l.lender || '') + ') matured ' + mat + ' with ' + fK(l.outstanding) + ' outstanding — add a payoff or extension row' });
+          text: 'Note ' + l.displayId + ' (' + (l.lender || '') + ') matured ' + mmyy(mat) + ' with ' + fK(l.outstanding) + ' outstanding — add a payoff or extension row' });
         else if (mat <= '2026-08') attn.push({ icon: '◔', col: '#96742F', bg: '#FBF6EA', bd: '#EADFC4',
-          text: 'Note ' + l.displayId + ' matures ' + mat + ' (' + fK(l.outstanding) + ')' });
+          text: 'Note ' + l.displayId + ' matures ' + mmyy(mat) + ' (' + fK(l.outstanding) + ')' });
       }
       for (const pc of (l.paymentChanges || [])) if (selM.includes(pc.m))
         attn.push({ icon: '↻', col: '#3D64A8', bg: '#EFF3FA', bd: '#D3DDF0',
-          text: 'Note ' + l.displayId + ' EMI recast in ' + pc.m + ': ' + fC(pc.from) + ' → ' + fC(pc.to) });
-      for (const r of l.releases) if (selM.includes(r.m) && r.prop && doorOk(r.prop))
+          text: 'Note ' + l.displayId + ' EMI recast in ' + mmyy(pc.m) + ': ' + fC(pc.from) + ' → ' + fC(pc.to) });
+      for (const r of l.releases) if (selM.includes(r.m) && r.prop && doorOk(r.prop) && selM.length < monthsAll.length)
         attn.push({ icon: '⤴', col: '#96742F', bg: '#FBF6EA', bd: '#EADFC4',
-          text: r.prop + ' released in ' + r.m + ' — paid ' + fK(r.paid)
+          text: r.prop + ' released in ' + mmyy(r.m) + ' — paid ' + fK(r.paid)
             + (r.cuts ? ' (' + fK(r.excess) + ' excess to survivors)'
                : (r.excess != null && r.excess < -1 ? ' (note settled; the month’s payment covered the ' + fK(-r.excess) + ' difference)' : '')) });
     }
     const seen = new Set(); const attnU = attn.filter(a => !seen.has(a.text) && seen.add(a.text)).slice(0, 8);
 
-    // ---------- register, grouped by lender (month-aware: balances at lastM) ----------
+    // ---------- register (month-aware, lender-grouped, locally searchable) ----------
     const loanCloseAt = (l, mm) => {
       if (!l.schedule.length) return 0;
       if (mm < l.schedule[0].m) return 0;
@@ -604,76 +790,107 @@ class Component extends DCLogic {
       }
       return { tag: 'ACTIVE', bg: '#F6ECD9', col: '#96742F' };
     };
+    const rq = (S.regQ || '').trim().toLowerCase();
+    const regLoans = inLoans.filter(l => !rq ||
+      String(l.displayId).toLowerCase().includes(rq) ||
+      (l.lender || '').toLowerCase().includes(rq) ||
+      Object.keys(l.origProps || {}).some(d => d.toLowerCase().includes(rq)));
     const byLender = {};
-    for (const l of inLoans) (byLender[l.lender || '—'] = byLender[l.lender || '—'] || []).push(l);
+    for (const l of regLoans) (byLender[l.lender || '—'] = byLender[l.lender || '—'] || []).push(l);
     const gOut = Object.entries(byLender).map(([lender, ls]) => ({ lender, ls, out: ls.reduce((s, l) => s + loanCloseAt(l, lastM), 0) }))
       .sort((a, b) => b.out - a.out || a.lender.localeCompare(b.lender));
     const totOutAll = gOut.reduce((s, g) => s + g.out, 0);
 
-    const relMonthsOf = l => new Set(l.releases.map(r => r.m));
+    const loanRelThrough = (l, mm) => l.releases.reduce((s, r) => s + (r.m <= mm && r.prop && r.base != null ? r.paid : 0), 0);
+    const loanPrepThrough = (l, mm) => (l.prepays || []).reduce((s, pv) => s + (pv.m <= mm ? pv.amt : 0), 0);
+    const relMonthsOf = l => new Set(l.releases.map(r => r.m).concat((l.prepays || []).map(pv => pv.m)));
+
     const groups = gOut.map(({ lender, ls, out }) => {
       const rows = ls.slice().sort((a, b) => loanCloseAt(b, lastM) - loanCloseAt(a, lastM) || String(a.displayId).localeCompare(String(b.displayId))).map(l => {
         const st = statusOf(l);
         const props = Object.keys(l.origProps || {});
         const isExp = S.exp === l.id;
         const lOut = loanCloseAt(l, lastM);
-        const rep = (l.schedule.length && l.start <= lastM) ? Math.max(l.orig - lOut, 0) : 0;
-        const rel = Math.min(l.releases.reduce((s, r) => s + (r.m <= lastM && r.prop ? r.paid : 0), 0), rep);
-        const sch = rep - rel;
-        const w1 = l.orig > 0 ? (sch / l.orig * 100) : 0, w2 = l.orig > 0 ? (rel / l.orig * 100) : 0;
-        // expanded content
+        const started = l.schedule.length && l.start <= lastM;
+        const rep = started ? Math.max(l.orig - lOut, 0) : 0;
+        const rel = Math.min(loanRelThrough(l, lastM), rep);
+        const prep = Math.min(loanPrepThrough(l, lastM), Math.max(rep - rel, 0));
+        const sch = Math.max(rep - rel - prep, 0);
         let ex = {};
         if (isExp) {
           const relByProp = {};
           for (const r of l.releases) if (r.prop) relByProp[r.prop] = r;
-          const prRows = props.map(d => {
-            const rec = DOORS[d]; const shr = l.origProps[d] || 0;
-            const initSlice = Math.round(shr * l.orig * 100) / 100;
+          const curPay = l.io ? ((l.schedule.find(rw => rw.m === lastM) || l.schedule[l.schedule.length - 1] || { interest: 0 }).interest) : loanPayAt(l, lastM);
+          // live shares from door closes at lastM (fallback: original proportions)
+          const dcl = {}; let dsum = 0;
+          for (const d of props) { const c2 = DOORS[d] ? closeAt(d, lastM) : 0; dcl[d] = c2; dsum += c2; }
+          const wts = dsum > 0.01 ? dcl : (props.reduce((o, d) => (o[d] = l.origProps[d], o), {}));
+          const wsum = Object.values(wts).reduce((s, x) => s + x, 0) || 1;
+          const emiRaw = props.map(d => (lOut > 0.005 ? curPay * (wts[d] / wsum) : 0));
+          const emiR = emiRaw.map(x => Math.round(x * 100) / 100);
+          const drift = Math.round(((lOut > 0.005 ? curPay : 0) - emiR.reduce((s, x) => s + x, 0)) * 100) / 100;
+          if (emiR.length && Math.abs(drift) >= 0.01) {
+            let bi = 0; for (let i2 = 1; i2 < emiR.length; i2++) if (emiR[i2] > emiR[bi]) bi = i2;
+            emiR[bi] = Math.round((emiR[bi] + drift) * 100) / 100;
+          }
+          const prRows = props.map((d, i2) => {
+            const rec = DOORS[d];
+            const initSlice = Math.round((l.origProps[d] || 0) * l.orig * 100) / 100;
             const multi = rec && rec.loans.length > 1;
             const cl = rec ? closeAt(d, lastM) : null;
             let pi = 0, pp = 0;
             if (rec) for (const m of selM) { const v = rec.monthly[m]; if (v) { pi += v.interest; pp += v.principal; } }
             const rl = relByProp[d];
-            return { door: d, ent: entOf(d), share: (shr * 100).toFixed(2) + '%',
+            const share = dsum > 0.01 ? (cl || 0) / dsum : (l.origProps[d] || 0);
+            return { door: d, ent: entOf(d),
+              share: (share * 100).toFixed(2) + '%',
               init: fC(initSlice),
               out: rec ? fC(cl) + (multi ? '*' : '') : '—', outCol: rl ? '#A03E28' : '#16233A',
+              emi: emiR[i2] > 0 ? fC(emiR[i2]) : '—',
               int: rec && (pi || pp) ? fC(pi) : '—', prin: rec && (pi || pp) ? fC(pp) : '—',
-              st: rl ? 'RELEASED ' + rl.m : (st.tag === 'UPCOMING' ? 'FROM ' + l.firstPay : 'ACTIVE'),
-              stCol: rl ? '#A03E28' : '#3E8E63',
+              st: rl ? 'RELEASED ' + mmyy(rl.m) : (st.tag === 'UPCOMING' ? 'FROM ' + mmyy(l.firstPay) : (cl > 0.005 ? 'ACTIVE' : 'SETTLED')),
+              stCol: rl ? '#A03E28' : (cl > 0.005 ? '#3E8E63' : '#8A93A6'),
               bg: rl ? '#FBF6EA' : 'transparent',
               link: './loans.dc.html?door=' + encodeURIComponent(d),
-              _o: cl || 0 };
+              _o: cl || 0, _pi: pi, _pp: pp, _emi: emiR[i2] };
           }).sort((a, b) => b._o - a._o || a.door.localeCompare(b.door));
           const rels = l.releases.map(r => ({
-            text: r.m + ' · ' + (r.prop || 'all properties') + ' — paid ' + fC(r.paid)
+            text: mmyy(r.m) + ' · ' + (r.prop || 'all properties') + ' — paid ' + fC(r.paid)
               + (r.base != null ? ' against a ' + fC(r.base) + ' prev-month slice; excess ' + fC(r.excess) + ' to survivors by original proportions' : '')
               + (r.preRevised ? ' (already-revised proportions)' : ''),
           }));
-          for (const pc of (l.paymentChanges || [])) rels.push({ text: pc.m + ' · EMI recast — payment ' + fC(pc.from) + ' → ' + fC(pc.to) + ' (tenure preserved)' });
+          for (const pv of (l.prepays || [])) rels.push({ text: mmyy(pv.m) + ' · extra principal ' + fC(pv.amt) + ' split across ' + Object.keys(pv.cuts).length + ' propert' + (Object.keys(pv.cuts).length === 1 ? 'y' : 'ies') + ' by live proportions' });
+          for (const pc of (l.paymentChanges || [])) rels.push({ text: mmyy(pc.m) + ' · EMI recast — payment ' + fC(pc.from) + ' → ' + fC(pc.to) + ' (tenure preserved)' });
           const schedSrc = l.schedule.filter(rw => S.schedFull || selM.includes(rw.m));
-          const rm = relMonthsOf(l);
+          const rmk = relMonthsOf(l);
           ex = {
             facts: [
-              { k: 'Origination', v: l.start }, { k: 'First payment', v: l.firstPay || '—' },
+              { k: 'Origination', v: mmyy(l.start) }, { k: 'First payment', v: l.firstPay ? mmyy(l.firstPay) : '—' },
               { k: 'Note amount', v: fC(l.orig) },
               { k: 'Rate · term', v: (l.rate * 100).toFixed(2) + '% · ' + (l.term ? l.term + ' mo' : '—') + (l.dayCount !== '30/360' ? ' · ' + l.dayCount : '') },
               { k: l.io ? 'Type' : 'Payment', v: l.io ? 'Interest-only' : fC(loanPayAt(l, lastM)) + (l.payOverride ? ' (lender)' : '') },
               { k: 'Escrow /mo', v: l.escrow ? fC(l.escrow) : '—' },
-              { k: 'Outstanding · ' + lastM, v: fC(lOut) },
-              { k: 'Repaid through ' + lastM, v: fC(rep) },
+              { k: 'Outstanding · ' + mmyy(lastM), v: fC(lOut) },
+              { k: 'Repaid through ' + mmyy(lastM), v: fC(rep) },
             ],
-            propSub: props.length + ' propert' + (props.length === 1 ? 'y' : 'ies') + ' · outstanding at ' + lastM + ' · interest/principal over ' + periodTag,
+            propSub: props.length + ' propert' + (props.length === 1 ? 'y' : 'ies') + ' · balances at ' + mmyy(lastM) + ' · flows over ' + periodTag,
             props: prRows,
+            pInit: fC(prRows.reduce((s, x) => s + (parseFloat(String(x.init).replace(/[^0-9.]/g, '')) || 0), 0)),
+            pOut: fC(prRows.reduce((s, x) => s + x._o, 0)),
+            pEmi: fC(prRows.reduce((s, x) => s + x._emi, 0)),
+            pInt: fC(prRows.reduce((s, x) => s + x._pi, 0)),
+            pPrin: fC(prRows.reduce((s, x) => s + x._pp, 0)),
             hasRel: rels.length > 0, rels,
             onSched: (e) => { e.stopPropagation(); this.setState({ schedFull: !S.schedFull }); },
             schedBtn: S.schedFull ? 'Show selected months only' : 'Show full history · ' + l.schedule.length + ' months',
             sched: schedSrc.map(rw => ({
-              m: rw.m, open: fC(rw.open), int: fC(rw.interest), prin: fC(rw.principal),
+              m: mmyy(rw.m), open: fC(rw.open), int: fC(rw.interest), prin: fC(rw.principal),
               ev: rw.events ? fC(rw.events) : '—', evfw: rw.events ? 700 : 400,
-              close: fC(rw.close), bg: rm.has(rw.m) ? '#FBF6EA' : 'transparent', fw: rm.has(rw.m) ? 700 : 600,
+              close: fC(rw.close), bg: rmk.has(rw.m) ? '#FBF6EA' : 'transparent', fw: rmk.has(rw.m) ? 700 : 600,
             })),
           };
         }
+        const tRep = Math.max(sch + prep + rel, 0.0001);
         return {
           id: l.displayId, lead: props[0] || '—',
           subLead: props.length > 1 ? '+ ' + (props.length - 1) + ' more properties' : (l.lender || ''),
@@ -682,7 +899,7 @@ class Component extends DCLogic {
           rate: (l.rate * 100).toFixed(2) + '%',
           orig: fN(l.orig),
           repaid: fN(rep), repaidPct: l.orig > 0 ? Math.round(rep / l.orig * 100) + '%' : '',
-          w1: w1.toFixed(1) + '%', w2: w2.toFixed(1) + '%', wGap: (rel > 0 && sch > 0) ? '2px' : '0px',
+          rsegs: rep > 0 ? [{ w: (sch / l.orig * 100).toFixed(1) + '%', bg: C_SCH }, { w: (prep / l.orig * 100).toFixed(1) + '%', bg: C_PREP }, { w: (rel / l.orig * 100).toFixed(1) + '%', bg: C_REL }].filter(s2 => parseFloat(s2.w) > 0) : [],
           out: fN(lOut),
           pay: l.io ? (lOut > 0.005 ? fN((l.schedule.find(rw => rw.m === lastM) || l.schedule[l.schedule.length - 1] || { interest: 0 }).interest) : '—') : fN(loanPayAt(l, lastM)),
           paySub: l.io ? 'interest-only' : (l.escrow ? '+' + fN(l.escrow) + ' esc' : ''),
@@ -702,18 +919,121 @@ class Component extends DCLogic {
         rows,
       };
     });
-    const totCount = inLoans.length + ' notes';
-    const totOrig = fN(inLoans.reduce((s, l) => s + l.orig, 0));
-    const totRepaid = fN(inLoans.reduce((s, l) => s + ((l.schedule.length && l.start <= lastM) ? Math.max(l.orig - loanCloseAt(l, lastM), 0) : 0), 0));
+    const totCount = regLoans.length + ' notes';
+    const totOrig = fN(regLoans.reduce((s, l) => s + l.orig, 0));
+    const totRepaid = fN(regLoans.reduce((s, l) => s + ((l.schedule.length && l.start <= lastM) ? Math.max(l.orig - loanCloseAt(l, lastM), 0) : 0), 0));
     const totOut = fN(totOutAll);
-    const totPay = fN(inLoans.reduce((s, l) => {
+    const totPay = fN(regLoans.reduce((s, l) => {
       const lo = loanCloseAt(l, lastM);
       if (lo <= 0.005) return s;
       return s + (l.io ? (l.schedule.find(rw => rw.m === lastM) || { interest: 0 }).interest : loanPayAt(l, lastM));
     }, 0));
-    const regSub = inLoans.length + ' of ' + LNS.length + ' notes in scope · sorted by lender share of outstanding';
+    const regSub = regLoans.length + ' of ' + LNS.length + ' notes' + (rq ? ' matching “' + S.regQ + '”' : ' in scope') + ' · balances at ' + mmyy(lastM);
+    const onRegQ = e => this.setState({ regQ: e.target.value });
 
-    // ---------- ledger cross-check (scope-aware) ----------
+    // ---------- integrated trends & properties (P&L trend-explorer pattern) ----------
+    const trYearsAll = [...new Set(monthsAll.map(m => m.slice(0, 4)))].sort();
+    const trendYear = S.trendYear && trYearsAll.includes(S.trendYear) ? S.trendYear : trYearsAll[trYearsAll.length - 1];
+    const trYears = trYearsAll.map(y => ({
+      label: y, bd: y === trendYear ? '#16233A' : '#D8D4C8', bg: y === trendYear ? '#16233A' : '#FFFFFF',
+      col: y === trendYear ? '#FFFFFF' : '#2A3550', onClick: () => this.setState({ trendYear: y }),
+    }));
+    const trToggles = [
+      { label: 'Interest', on: S.showInt, dot: '#B04A33', bd: S.showInt ? '#B04A33' : '#D8D4C8', bgc: S.showInt ? '#FBF1EC' : '#FFFFFF', col: S.showInt ? '#B04A33' : '#8A93A6', onClick: () => this.setState({ showInt: !S.showInt }) },
+      { label: 'Principal', on: S.showPrin, dot: '#3E8E63', bd: S.showPrin ? '#3E8E63' : '#D8D4C8', bgc: S.showPrin ? '#EDF6F0' : '#FFFFFF', col: S.showPrin ? '#3E8E63' : '#8A93A6', onClick: () => this.setState({ showPrin: !S.showPrin }) },
+    ];
+    const focus = S.topSel && DOORS[S.topSel] && scopeSet.has(S.topSel) ? S.topSel : null;
+    const chartDoors = focus ? [focus] : scopeDoors;
+    const yMonths = monthsAll.filter(m => m.slice(0, 4) === trendYear);
+    const byM = {};
+    for (const m of yMonths) byM[m] = { i: 0, p: 0 };
+    for (const d of chartDoors) {
+      const mon = DOORS[d].monthly;
+      for (const m of yMonths) { const v = mon[m]; if (v) { byM[m].i += v.interest; byM[m].p += v.principal; } }
+    }
+    const SERIES = [
+      ...(S.showInt ? [{ key: 'i', name: 'Interest', col: '#B04A33', shift: '-150%' }] : []),
+      ...(S.showPrin ? [{ key: 'p', name: 'Principal', col: '#3E8E63', shift: '58%' }] : []),
+    ];
+    const CW = 460, CH = 188, padL = 10, padR = 10, padT = 30, padB = 24;
+    const innerW = CW - padL - padR, innerH = CH - padT - padB;
+    const allVals = yMonths.flatMap(m => SERIES.map(s => byM[m][s.key]));
+    const vmax = Math.max(...allVals, 0), vmin = Math.min(...allVals, 0);
+    const vrange = (vmax - vmin) || 1;
+    const cx = i => padL + (yMonths.length > 1 ? i * innerW / (yMonths.length - 1) : innerW / 2);
+    const cy = v => padT + (vmax - v) / vrange * innerH;
+    const zeroY = cy(0).toFixed(1);
+    const trLines = SERIES.map(s => {
+      const vals = yMonths.map(m => byM[m][s.key]);
+      const path = vals.map((v, i) => (i === 0 ? 'M' : 'L') + cx(i).toFixed(1) + ' ' + cy(v).toFixed(1)).join(' ');
+      const area = 'M' + cx(0).toFixed(1) + ' ' + zeroY + ' ' +
+        vals.map((v, i) => 'L' + cx(i).toFixed(1) + ' ' + cy(v).toFixed(1)).join(' ') +
+        ' L' + cx(vals.length - 1).toFixed(1) + ' ' + zeroY + ' Z';
+      const dense = yMonths.length * SERIES.length > 14;
+      const pts = vals.map((v, i) => ({
+        cx: cx(i).toFixed(1), cy: cy(v).toFixed(1),
+        leftPct: (cx(i) / CW * 100).toFixed(2) + '%', topPct: (cy(v) / CH * 100).toFixed(2) + '%',
+        shift: s.shift,
+        lab: dense && i % 2 === 1 ? '' : fK(v),
+        tip: s.name + ' · ' + mmyy(yMonths[i]) + ': ' + fK(v) + ' (' + fC(v) + ')',
+      }));
+      return { col: s.col, path, area, pts };
+    });
+    const trMonths = yMonths.map(m => MMM[+m.slice(5, 7) - 1]);
+    const chartVB = '0 0 ' + CW + ' ' + CH;
+    const chartRight = (CW - padR).toFixed(0);
+    const yInt = yMonths.reduce((s, m) => s + byM[m].i, 0), yPrin = yMonths.reduce((s, m) => s + byM[m].p, 0);
+    const trName = (focus ? focus : 'Scope total') + ' · ' + trendYear + ' monthly trend';
+    const trTotal = fK((S.showInt ? yInt : 0) + (S.showPrin ? yPrin : 0));
+    const trFoot = trendYear + (focus ? ' for ' + focus : ' in scope') + ': ' + fK(yInt) + ' interest · ' + fK(yPrin) + ' principal (incl. prepayments & release payoffs). Values in thousands — hover any point for the exact figure. Independent of the month filter.';
+    const trFocusOn = !!focus;
+    const trFocusName = focus || '';
+    const trUnfocus = () => this.setState({ topSel: null });
+
+    // right half: properties ranked by their debt service in the chosen year
+    const tq = (S.topQ || '').trim().toLowerCase();
+    const finDoors = scopeDoors.filter(d => originatedBy(d, lastM) && (DOORS[d].initial || 0) > 0);
+    const svc = {};
+    for (const d of finDoors) {
+      let i2 = 0, p2 = 0;
+      const mon = DOORS[d].monthly;
+      for (const m of yMonths) { const v = mon[m]; if (v) { i2 += v.interest; p2 += v.principal; } }
+      svc[d] = { i: i2, p: p2, t: (S.showInt ? i2 : 0) + (S.showPrin ? p2 : 0) };
+    }
+    const rankSrc = finDoors.filter(d => svc[d].t > 0.005 || tq).sort((a, b) => svc[b].t - svc[a].t || a.localeCompare(b));
+    const matches = tq ? rankSrc.filter(d => d.toLowerCase().includes(tq)) : rankSrc;
+    const TOPN = 7;
+    const shownRows = (tq || S.trendShowAll) ? matches : matches.slice(0, TOPN);
+    const svcMax = Math.max(...matches.map(d => svc[d].t), 1);
+    const svcTot = matches.reduce((s, d) => s + svc[d].t, 0) || 1;
+    const topRows = shownRows.map((d, i) => {
+      const isSel = focus === d;
+      const lids = DOORS[d].loans.map(k => (LNS.find(l => l.id === k) || {}).displayId).filter(Boolean);
+      return {
+        rank: i + 1, door: d,
+        val: fK(svc[d].t), share: Math.round(svc[d].t / svcTot * 100) + '%',
+        wInt: Math.max(svc[d].t > 0 ? (S.showInt ? svc[d].i : 0) / svcMax * 100 : 0, 0).toFixed(1) + '%',
+        wPrin: Math.max(svc[d].t > 0 ? (S.showPrin ? svc[d].p : 0) / svcMax * 100 : 0, 0).toFixed(1) + '%',
+        sel: isSel, fw: isSel ? 700 : 500,
+        bg: isSel ? '#FBF6EA' : 'transparent', bd: isSel ? '#EAD9C0' : 'transparent',
+        onClick: () => this.setState({ topSel: isSel ? null : d }),
+        det: entOf(d) + ' · note ' + lids.join(', ') + ' · ' + trendYear + ': ' + fK(svc[d].i) + ' interest + ' + fK(svc[d].p) + ' principal · outstanding ' + fK(closeAt(d, lastM)),
+        plLink: './PL%20Story%20-%20Main.dc.html?door=' + encodeURIComponent(d),
+        invLink: './investments.dc.html?door=' + encodeURIComponent(d),
+        onScope: (e) => { e.stopPropagation(); this.setFilter({ fd: [d] }); },
+      };
+    });
+    const topTitle = 'By property · ' + trendYear;
+    const topSub = (tq ? matches.length + ' match' + (matches.length === 1 ? '' : 'es') : 'top ' + Math.min(TOPN, matches.length) + ' of ' + matches.length + ' properties carry ' +
+      Math.round(matches.slice(0, TOPN).reduce((s, d) => s + svc[d].t, 0) / svcTot * 100) + '% of the year’s debt service') + ' · click to focus the chart';
+    const onTopQ = e => this.setState({ topQ: e.target.value });
+    const topListMax = (tq || S.trendShowAll) ? '332px' : 'none';
+    const topListOv = (tq || S.trendShowAll) ? 'auto' : 'visible';
+    const topBtnShow = !tq && matches.length > TOPN;
+    const topBtnClick = () => this.setState({ trendShowAll: !S.trendShowAll });
+    const topBtnLabel = S.trendShowAll ? 'Show top ' + TOPN + ' only' : 'Show all ' + matches.length + ' properties';
+
+    // ---------- ledger cross-check ----------
     const glInt = {};
     for (const row of S.gl.rows) {
       if (row[2] !== 'Interest Cost') continue;
@@ -724,13 +1044,13 @@ class Component extends DCLogic {
         (glInt[d] = glInt[d] || {})[m] = (glInt[d][m] || 0) + vals[i];
       }
     }
-    const scopeSet = new Set(scopeDoors);
+    const xSelM = selM.filter(m => glMonths.includes(m));
     const xAll = [], engDoors = new Set();
     for (const d of Object.keys(DOORS)) {
       if (!scopeSet.has(d)) continue;
       engDoors.add(d);
       for (const m of Object.keys(DOORS[d].monthly)) {
-        if (!selM.includes(m)) continue;
+        if (!xSelM.includes(m)) continue;
         const g = glInt[d] && glInt[d][m] != null ? glInt[d][m] : null;
         const e = DOORS[d].monthly[m].interest;
         xAll.push({ door: d, m, eng: e, gl: g, delta: g == null ? e : e - g });
@@ -739,7 +1059,7 @@ class Component extends DCLogic {
     const glOnly = [];
     for (const d of Object.keys(glInt)) {
       if (engDoors.has(d) || !doorOk(d)) continue;
-      for (const m of Object.keys(glInt[d])) if (selM.includes(m)) glOnly.push({ door: d, m, eng: null, gl: glInt[d][m], delta: -glInt[d][m] });
+      for (const m of Object.keys(glInt[d])) if (xSelM.includes(m)) glOnly.push({ door: d, m, eng: null, gl: glInt[d][m], delta: -glInt[d][m] });
     }
     const compared = xAll.filter(x => x.gl != null);
     const flagged = compared.filter(x => Math.abs(x.delta) > 25);
@@ -753,16 +1073,16 @@ class Component extends DCLogic {
     pool = pool.slice().sort((a, b) => Math.abs(b.delta) - Math.abs(a.delta) || a.door.localeCompare(b.door) || a.m.localeCompare(b.m));
     const CAP = 150;
     const xRows = pool.slice(0, CAP).map(x => ({
-      door: x.door, m: x.m,
+      door: x.door, m: mmyy(x.m),
       eng: x.eng == null ? 'not in engine' : fC(x.eng),
       gl: x.gl == null ? 'not in ledger' : fC(x.gl),
       delta: fC(x.delta), dcol: Math.abs(x.delta) > 25 ? '#A03E28' : Math.abs(x.delta) > 1 ? '#96742F' : '#3E8E63',
     }));
-    const xSub = compared.length + ' door-months compared in scope · ' + flagged.length + ' beyond $25';
+    const xSub = compared.length + ' door-months compared in scope (ledger covers ' + (glMonths.length ? mmyy(glMonths[0]) + ' → ' + mmyy(glMonths[glMonths.length - 1]) : '—') + ') · ' + flagged.length + ' beyond $25';
     const xFoot = 'Differences are HIGHLIGHTS for case-by-case review — the engine never alters ledger data. ' + (pool.length > CAP ? 'Showing the ' + CAP + ' largest of ' + pool.length + ' rows — narrow the scope. ' : '') + '“One side only” lists engine months with no ledger interest and ledger interest the loan file doesn’t cover.';
 
-    const scopeLine = (nAct ? 'Filtered view · ' : '') + inLoans.length + ' notes · ' + fK(tOut) + ' outstanding at ' + lastM + ' · ' + scopeDoors.length + ' financed properties · published ' + (M.published || '');
-    const convFoot = 'Scope: a note is in scope when it passes the lender and loan-type filters and finances at least one in-scope property; all figures then sum over in-scope properties, and money columns respect the month filter (balances at the last selected month, flows across all selected months). Initial refinance is each note’s original amount, split by allocation slices; a property financed more than once (e.g. a balloon later refinanced) counts each note, and its repaid figure spans them. Principal repaid = initial − outstanding, split between monthly payments & prepayments and property-release payoffs (a released slice retires at its previous month-end; the excess paid reduces survivors by original proportions). Initial LTV divides initial refinance by bank-appraised values; current LTV divides outstanding by ARV-primary values — both only over properties carrying that value, with coverage noted. Payments are level annuities from note terms (or the lender’s exact payment where entered); interest is in arrears, 30/360 day-weighted, or on actual/360 calendar days where marked — each verified to the penny against a lender schedule. The sheet’s P&I column is escrow, always separate. Doors marked * carry more than one note; their balances are shown combined.';
+    const scopeLine = (nAct ? 'Filtered view · ' : '') + inLoans.length + ' notes · ' + fK(tOut) + ' outstanding at ' + mmyy(lastM) + ' · ' + scopeDoors.length + ' financed properties · published ' + (M.published || '');
+    const convFoot = 'Scope: a note is in scope when it passes the lender and loan-type filters and finances at least one in-scope property; all figures then sum over in-scope properties, and money columns respect the month filter (balances at the last selected month, flows across all selected months — any month since the first origination can be selected). Initial refinance is each note’s original amount, split by allocation slices; a property financed more than once counts each note, and its repaid figure spans them. Principal repaid = initial − outstanding, split three ways: monthly scheduled payments, prepayments (extra principal, including EMI recasts), and property-release payoffs (a released slice retires at its previous month-end; the excess paid reduces survivors by original proportions). The per-property EMI splits each note’s current payment by live proportions — after a release, survivors carry the payment in their renormalized shares. Initial LTV divides initial refinance by bank-appraised values; current LTV divides outstanding by ARV-primary values — both only over properties carrying that value. Payments are level annuities from note terms (or the lender’s exact payment where entered); interest is in arrears, 30/360 day-weighted, or actual/360 where marked — each verified to the penny against a lender schedule. The ledger cross-check covers the months the ledger itself covers. The sheet’s P&I column is escrow, always separate. Doors marked * carry more than one note; their balances are shown combined.';
 
     return {
       ready: true, loading: false, loadError: false, retryLoad: () => this.loadData(), stopProp,
@@ -770,7 +1090,12 @@ class Component extends DCLogic {
       clearLabel: nAct ? 'Clear all filters (' + nAct + ')' : 'No filters applied',
       clearCol: nAct ? '#96742F' : '#C4CBD8',
       kpis, hasAttn: attnU.length > 0, attn: attnU,
+      rm, regQ: S.regQ, onRegQ,
       groups, regSub, totCount, totOrig, totRepaid, totOut, totPay,
+      trYears, trToggles, trLines, trMonths, chartVB, chartRight, zeroY,
+      trName, trTotal, trFoot, trFocusOn, trFocusName, trUnfocus,
+      topTitle, topSub, topRows, topEmpty: topRows.length === 0, topQ: S.topQ, onTopQ,
+      topListMax, topListOv, topBtnShow, topBtnClick, topBtnLabel,
       xChips, xRows, xEmpty: xRows.length === 0, xSub, xFoot,
       convFoot,
     };
