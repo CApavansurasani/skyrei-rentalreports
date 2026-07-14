@@ -494,6 +494,97 @@ input:focus{outline:2px solid #C9A45C;outline-offset:1px}
       </div>
     </div>
 
+    <!-- ══ Prepayment penalty & refinance breakeven ══ -->
+    <div style="margin-top:14px;background:#FFFFFF;border:1px solid #E5E3DC;border-radius:16px;padding:22px 26px" onClick="{{ stopProp }}">
+      <div style="display:flex;justify-content:space-between;align-items:baseline;flex-wrap:wrap;gap:8px">
+        <div style="font-family:'Source Serif 4',Georgia,serif;font-size:18px;font-weight:600;color:#16233A">Prepayment penalty &amp; refinance breakeven</div>
+        <div style="font-size:12px;color:#8A93A6">Cost = penalty + 1% origination fee &nbsp;·&nbsp; benefit = rate saved on the balance &nbsp;·&nbsp; breakeven = cost ÷ yearly benefit</div>
+      </div>
+      <div style="margin-top:14px;display:flex;gap:8px;flex-wrap:wrap;align-items:center">
+        <span style="font-size:10px;letter-spacing:0.08em;font-weight:700;color:#5E6B82">IF RATES DROP BY</span>
+        <sc-for list="{{ rcChips }}" as="rc" hint-placeholder-count="6">
+          <div onClick="{{ rc.onClick }}" style-hover="border-color:#C9A45C" style="padding:7px 14px;border-radius:99px;font-size:12px;font-weight:700;cursor:pointer;border:1.5px solid {{ rc.bd }};background:{{ rc.bg }};color:{{ rc.col }};white-space:nowrap">{{ rc.label }}</div>
+        </sc-for>
+      </div>
+      <sc-if value="{{ ppPendingBanner }}" hint-placeholder-val="{{ false }}">
+        <div style="margin-top:12px;background:#FBF6EA;border:1px dashed #EAD9C0;border-radius:10px;padding:10px 14px;font-size:12px;color:#96742F;font-weight:600">{{ ppPendingText }}</div>
+      </sc-if>
+      <div style="margin-top:14px;display:grid;grid-template-columns:repeat(4,1fr);gap:12px">
+        <sc-for list="{{ ppTiles }}" as="k" hint-placeholder-count="4">
+          <div style="background:#F9F8F3;border:1px solid #EDEBE2;border-radius:12px;padding:12px 16px">
+            <div style="font-size:10.5px;letter-spacing:0.08em;font-weight:700;color:#5E6B82;text-transform:uppercase">{{ k.label }}</div>
+            <div style="margin-top:6px;font-family:'Source Serif 4',Georgia,serif;font-size:21px;font-weight:600;color:{{ k.col }}">{{ k.value }}</div>
+            <div style="margin-top:4px;font-size:10.5px;color:#8A93A6">{{ k.sub }}</div>
+          </div>
+        </sc-for>
+      </div>
+      <div style="margin-top:12px;overflow-x:auto"><div style="min-width:1020px">
+        <div style="display:grid;grid-template-columns:24px 1.5fr 64px 116px 130px 104px 110px 116px 100px 110px;gap:8px;padding:7px 10px;font-size:10px;letter-spacing:0.07em;font-weight:700;color:#5E6B82;text-transform:uppercase;border-bottom:1px solid #E5E3DC">
+          <div></div><div>Note</div><div style="text-align:right">Rate</div><div style="text-align:right">Outstanding</div><div style="text-align:right">Penalty terms</div><div style="text-align:right">Penalty now</div><div style="text-align:right">+1% orig. fee</div><div style="text-align:right">Yearly benefit</div><div style="text-align:right">Breakeven</div><div style="text-align:right">Verdict</div>
+        </div>
+        <sc-for list="{{ ppRows }}" as="ppr" hint-placeholder-count="8">
+          <div onClick="{{ ppr.onClick }}" style-hover="background:#F6F4EC" style="display:grid;grid-template-columns:24px 1.5fr 64px 116px 130px 104px 110px 116px 100px 110px;gap:8px;padding:8px 10px;align-items:center;border-bottom:1px solid #F0EEE6;cursor:pointer;background:{{ ppr.bg }};border-left:3px solid {{ ppr.selBd }}">
+          <div style="font-size:10px;color:#96742F;font-weight:700">{{ ppr.caret }}</div>
+            <div style="min-width:0">
+              <div style="font-size:12.5px;font-weight:700;color:#1F3A6E;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">{{ ppr.id }} <span style="font-weight:500;color:#5E6B82">· {{ ppr.lead }}</span></div>
+              <div style="font-size:10px;color:#8A93A6">{{ ppr.lender }}</div>
+            </div>
+            <div style="text-align:right;font-variant-numeric:tabular-nums;font-size:12px;color:#2A3550">{{ ppr.rate }}</div>
+            <div style="text-align:right;font-variant-numeric:tabular-nums;font-size:12px;font-weight:700;color:#16233A">{{ ppr.out }}</div>
+            <div style="text-align:right;font-variant-numeric:tabular-nums;font-size:11.5px;color:{{ ppr.termsCol }};font-weight:{{ ppr.termsFw }}">{{ ppr.terms }}</div>
+            <div style="text-align:right;font-variant-numeric:tabular-nums;font-size:12px;color:#B04A33">{{ ppr.pen }}</div>
+            <div style="text-align:right;font-variant-numeric:tabular-nums;font-size:12px;color:#B04A33">{{ ppr.fee }}</div>
+            <div style="text-align:right;font-variant-numeric:tabular-nums;font-size:12px;color:#3E8E63">{{ ppr.sav }}</div>
+            <div style="text-align:right;font-variant-numeric:tabular-nums;font-size:12.5px;font-weight:700;color:#16233A">{{ ppr.be }}</div>
+            <div style="text-align:right"><span style="display:inline-block;padding:2px 9px;border-radius:99px;font-size:9px;font-weight:700;letter-spacing:0.06em;background:{{ ppr.vBg }};color:{{ ppr.vCol }}">{{ ppr.verdict }}</span></div>
+          </div>
+          <sc-if value="{{ ppr.exp }}" hint-placeholder-val="{{ false }}">
+            <div style="border-left:3px solid #C9A45C;border-bottom:1px solid #E5E3DC;background:#FBFAF6;padding:12px 16px">
+              <div style="display:grid;grid-template-columns:1fr 1fr;gap:18px;align-items:start">
+                <div>
+                  <div style="font-size:10px;letter-spacing:0.07em;font-weight:700;color:#5E6B82;text-transform:uppercase">Penalty step-down · % of balance by loan year</div>
+                  <div style="margin-top:7px;display:flex;gap:5px;flex-wrap:wrap">
+                    <sc-for list="{{ ppr.steps }}" as="ps" hint-placeholder-count="5">
+                      <div style="min-width:74px;background:{{ ps.bg }};border:1.5px solid {{ ps.bd }};border-radius:9px;padding:6px 9px;text-align:center">
+                        <div style="font-size:9px;font-weight:700;color:#8A93A6">{{ ps.yr }}</div>
+                        <div style="font-size:13.5px;font-weight:700;color:{{ ps.col }};font-variant-numeric:tabular-nums">{{ ps.pct }}</div>
+                        <div style="font-size:9px;color:#8A93A6;font-variant-numeric:tabular-nums">{{ ps.amt }}</div>
+                      </div>
+                    </sc-for>
+                  </div>
+                  <div style="margin-top:8px;font-size:11px;color:#96742F;font-weight:600">{{ ppr.freeFrom }}</div>
+                </div>
+                <div>
+                  <div style="font-size:10px;letter-spacing:0.07em;font-weight:700;color:#5E6B82;text-transform:uppercase">Breakeven at each rate cut</div>
+                  <div style="margin-top:7px;display:flex;flex-direction:column;gap:4px">
+                    <sc-for list="{{ ppr.cuts }}" as="bc" hint-placeholder-count="5">
+                      <div style="display:grid;grid-template-columns:70px 1fr 90px;gap:10px;align-items:center;font-size:11.5px">
+                        <span style="font-weight:700;color:#2A3550;font-variant-numeric:tabular-nums">{{ bc.cut }}</span>
+                        <div style="height:6px;background:#F0EEE6;border-radius:3px;overflow:hidden"><div style="width:{{ bc.w }};height:6px;background:{{ bc.bg }}"></div></div>
+                        <span style="text-align:right;font-weight:700;color:{{ bc.col }};font-variant-numeric:tabular-nums">{{ bc.be }}</span>
+                      </div>
+                    </sc-for>
+                  </div>
+                  <div style="margin-top:8px;font-size:10.5px;color:#8A93A6">{{ ppr.expFoot }}</div>
+                </div>
+              </div>
+            </div>
+          </sc-if>
+        </sc-for>
+        <sc-if value="{{ ppHasTot }}" hint-placeholder-val="{{ false }}">
+          <div style="display:grid;grid-template-columns:24px 1.5fr 64px 116px 130px 104px 110px 116px 100px 110px;gap:8px;padding:9px 10px;border-top:2px solid #16233A;font-size:12px;font-weight:700">
+            <div></div><div>TOTAL · notes with terms</div><div></div>
+            <div style="text-align:right;font-variant-numeric:tabular-nums">{{ ppTotOut }}</div><div></div>
+            <div style="text-align:right;font-variant-numeric:tabular-nums;color:#B04A33">{{ ppTotPen }}</div>
+            <div style="text-align:right;font-variant-numeric:tabular-nums;color:#B04A33">{{ ppTotFee }}</div>
+            <div style="text-align:right;font-variant-numeric:tabular-nums;color:#3E8E63">{{ ppTotSav }}</div>
+            <div style="text-align:right;font-variant-numeric:tabular-nums">{{ ppTotBe }}</div><div></div>
+          </div>
+        </sc-if>
+      </div></div>
+      <div style="margin-top:10px;font-size:11px;color:#9AA3B5">{{ ppFoot }}</div>
+    </div>
+
     <!-- ══ Ledger cross-check ══ -->
     <div style="margin-top:14px;background:#FFFFFF;border:1px solid #E5E3DC;border-radius:16px;padding:20px 24px">
       <div style="display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:10px">
@@ -563,6 +654,7 @@ class Component extends DCLogic {
     trendYear: null, showInt: true, showPrin: true, trendShowAll: false,
     topQ: '', topSel: null,
     evYear: 'all', evSel: null, evKind: 'all',
+    refiCut: 0.5, ppSel: null,
     xmode: 'flag',
   };
 
@@ -635,6 +727,7 @@ class Component extends DCLogic {
       chartVB: '0 0 460 188', chartRight: '450', zeroY: '150', trName: '', trTotal: '', trFoot: '', trFocusOn: false, trFocusName: '', trUnfocus: () => {},
       topTitle: '', topSub: '', topEmpty: false, topListMax: 'none', topListOv: 'visible', topBtnShow: false, topBtnClick: () => {}, topBtnLabel: '',
       evYears: [], evTiles: [], evGroups: [], evEmpty: false,
+      rcChips: [], ppTiles: [], ppRows: [], ppPendingBanner: false, ppPendingText: '', ppHasTot: false, ppTotOut: '', ppTotPen: '', ppTotFee: '', ppTotSav: '', ppTotBe: '', ppFoot: '',
     };
 
     const fN = n => { const r = Math.round(n); const s = '$' + Math.abs(r).toLocaleString('en-US'); return r < 0 ? '(' + s + ')' : s; };
@@ -1231,6 +1324,126 @@ class Component extends DCLogic {
     });
     const evEmpty = evF.length === 0;
 
+    // ---------- prepayment penalty & refinance breakeven ----------
+    const CUTS = [0.25, 0.5, 0.75, 1.0, 1.5, 2.0];
+    const refiCut = CUTS.includes(S.refiCut) ? S.refiCut : 0.5;
+    const rcChips = CUTS.map(c2 => ({
+      label: '\u2212' + c2.toFixed(2) + '%',
+      bd: c2 === refiCut ? '#16233A' : '#D8D4C8', bg: c2 === refiCut ? '#16233A' : '#FFFFFF',
+      col: c2 === refiCut ? '#FFFFFF' : '#2A3550',
+      onClick: () => this.setState({ refiCut: c2 }),
+    }));
+    const ppPct = (l, m) => {
+      const pp = l.prepay || { known: false, steps: [] };
+      if (!pp.known) return null;
+      if (!pp.steps.length) return 0;
+      if (pp.steps.length === 1) return pp.steps[0];
+      const fy = +l.firstPay.slice(0, 4), fmo = +l.firstPay.slice(5, 7);
+      const yr = Math.floor(((+m.slice(0, 4)) - fy) * 12 + ((+m.slice(5, 7)) - fmo)) / 12;
+      const y0 = Math.floor(((+m.slice(0, 4)) - fy) * 12 + ((+m.slice(5, 7)) - fmo)) >= 0 ? Math.floor((((+m.slice(0, 4)) - fy) * 12 + ((+m.slice(5, 7)) - fmo)) / 12) : 0;
+      return y0 < pp.steps.length ? pp.steps[y0] : 0;
+    };
+    const beOf = (cost, out, rate, cutPct) => {
+      const eff = Math.min(cutPct, rate * 100);
+      const sav = out * eff / 100;
+      return sav > 0 ? cost / sav : Infinity;
+    };
+    const fYr = y => !isFinite(y) ? '\u2014' : (y < 0.05 ? 'now' : y.toFixed(1) + ' yr');
+    const verdictOf = (y, pending) => pending ? { t: 'PENDING', bg: '#EDEBE2', c: '#5E6B82' }
+      : !isFinite(y) ? { t: 'NO BENEFIT', bg: '#EDEBE2', c: '#5E6B82' }
+      : y <= 2 ? { t: 'ATTRACTIVE', bg: '#E3EEE7', c: '#2F7351' }
+      : y <= 5 ? { t: 'WATCH', bg: '#F6ECD9', c: '#96742F' }
+      : { t: 'LONG', bg: '#F3E2DB', c: '#A03E28' };
+    const ppLoans = inLoans.filter(l => !l.io && loanCloseAt(l, lastM) > 0.005)
+      .sort((a, b) => loanCloseAt(b, lastM) - loanCloseAt(a, lastM));
+    const nPend = ppLoans.filter(l => ppPct(l, lastM) === null).length;
+    let tpOut = 0, tpPen = 0, tpFee = 0, tpSav = 0;
+    const ppRows = ppLoans.map(l => {
+      const out = loanCloseAt(l, lastM);
+      const pctNow = ppPct(l, lastM);
+      const pending = pctNow === null;
+      const pen = pending ? 0 : out * pctNow / 100;
+      const fee = out * 0.01;
+      const cost = pen + fee;
+      const eff = Math.min(refiCut, l.rate * 100);
+      const sav = out * eff / 100;
+      const be = pending ? NaN : (sav > 0 ? cost / sav : Infinity);
+      if (!pending) { tpOut += out; tpPen += pen; tpFee += fee; tpSav += sav; }
+      const v = verdictOf(be, pending);
+      const isExp = S.ppSel === l.id;
+      const props = Object.keys(l.origProps || {});
+      let ex = {};
+      if (isExp && !pending) {
+        const steps = (l.prepay.steps.length ? l.prepay.steps : [0]);
+        const fy = +l.firstPay.slice(0, 4), fmo = +l.firstPay.slice(5, 7);
+        const curYr = Math.max(Math.floor((((+lastM.slice(0, 4)) - fy) * 12 + ((+lastM.slice(5, 7)) - fmo)) / 12), 0);
+        const stepCards = steps.map((p2, i2) => ({
+          yr: 'YEAR ' + (i2 + 1), pct: p2.toFixed(2) + '%',
+          amt: fK(out * p2 / 100),
+          bg: i2 === curYr ? '#FBF6EA' : '#FFFFFF', bd: i2 === curYr ? '#C9A45C' : '#EDEBE2',
+          col: i2 === curYr ? '#96742F' : '#2A3550',
+        }));
+        const freeY = fy + steps.length, freeM = String(fmo).padStart(2, '0');
+        const beMax = Math.max(...CUTS.map(c2 => { const b2 = beOf(cost, out, l.rate, c2); return isFinite(b2) ? b2 : 0; }), 1);
+        ex = {
+          steps: stepCards,
+          freeFrom: l.prepay.steps.length > 1
+            ? 'Penalty-free from ' + mmyy(freeY + '-' + freeM) + ' \u2014 refinancing after that costs only the 1% fee'
+            : (l.prepay.steps.length === 1 ? 'Flat ' + steps[0].toFixed(2) + '% until maturity' : 'No penalty \u2014 only the 1% fee applies'),
+          cuts: CUTS.map(c2 => {
+            const b2 = beOf(cost, out, l.rate, c2);
+            const v2 = verdictOf(b2, false);
+            return { cut: '\u2212' + c2.toFixed(2) + '%', be: fYr(b2), col: v2.c,
+                     bg: v2.c, w: (isFinite(b2) ? Math.min(b2 / beMax * 100, 100) : 100).toFixed(1) + '%' };
+          }),
+          expFoot: 'Cost held at today\u2019s ' + fC(cost) + ' (penalty ' + fC(pen) + ' + fee ' + fC(fee) + '); benefit = balance \u00d7 cut, capped at the note\u2019s ' + (l.rate * 100).toFixed(2) + '% rate.',
+        };
+      } else if (isExp && pending) {
+        ex = { steps: [], freeFrom: 'Add this note\u2019s penalty terms in the Prepay Penalty column of Loans.xlsx \u2014 step-down \u201c5,4,3,2,1\u201d, flat \u201c3\u201d, or \u201cnone\u201d.', cuts: [], expFoot: '' };
+      }
+      return {
+        id: l.displayId, lead: props[0] || '\u2014', lender: (l.lender || '') + ' \u00b7 ' + l.type,
+        rate: (l.rate * 100).toFixed(2) + '%',
+        out: fN(out),
+        terms: pending ? 'PENDING' : (l.prepay.steps.length > 1 ? l.prepay.steps.join('-') : (l.prepay.steps.length === 1 ? 'flat ' + l.prepay.steps[0] + '%' : 'none')),
+        termsCol: pending ? '#96742F' : '#2A3550', termsFw: pending ? 700 : 500,
+        pen: pending ? '\u2014' : fN(pen), fee: fN(fee),
+        sav: fN(sav) + '/yr', be: pending ? '\u2014' : fYr(be),
+        verdict: v.t, vBg: v.bg, vCol: v.c,
+        caret: isExp ? '\u25be' : '\u25b8',
+        bg: isExp ? '#FBFAF6' : 'transparent', selBd: isExp ? '#C9A45C' : 'transparent',
+        exp: isExp,
+        onClick: () => this.setState({ ppSel: isExp ? null : l.id }),
+        steps: [], freeFrom: '', cuts: [], expFoot: '',
+        ...ex,
+      };
+    });
+    const tpCost = tpPen + tpFee;
+    const tpBe = tpSav > 0 ? tpCost / tpSav : Infinity;
+    const ppTiles = [
+      { label: 'Penalty today', col: '#B04A33', value: nPend === ppLoans.length ? '\u2014' : fN(tpPen), sub: (ppLoans.length - nPend) + ' of ' + ppLoans.length + ' notes with terms' },
+      { label: '1% origination fee', col: '#B04A33', value: fN(tpFee), sub: 'on ' + fK(tpOut) + ' refinanced (notes with terms)' },
+      { label: 'Yearly benefit at \u2212' + refiCut.toFixed(2) + '%', col: '#3E8E63', value: fN(tpSav), sub: 'rate saved on the outstanding balance' },
+      { label: 'Portfolio breakeven', col: '#16233A', value: fYr(tpBe), sub: 'total cost \u00f7 yearly benefit at \u2212' + refiCut.toFixed(2) + '%' },
+    ];
+    const ppPendingBanner = nPend > 0;
+    const ppPendingText = nPend === ppLoans.length
+      ? 'Placeholder ready \u2014 all ' + nPend + ' amortizing notes await penalty terms. Fill the Prepay Penalty column in Loans.xlsx: step-down \u201c5,4,3,2,1\u201d (% of balance by loan year), flat \u201c3\u201d, or \u201cnone\u201d \u2014 then publish loans.'
+      : nPend + ' note' + (nPend === 1 ? '' : 's') + ' still pending penalty terms \u2014 they are excluded from the totals until filled.';
+    const ppHasTot = ppLoans.length - nPend > 0;
+    const ppTotOut = fN(tpOut); const ppTotPen = fN(tpPen); const ppTotFee = fN(tpFee);
+    const ppTotSav = fN(tpSav) + '/yr'; const ppTotBe = fYr(tpBe);
+    const ppFoot = 'Hard-money notes are excluded \u2014 they are bridge debt, refinanced by design. Penalty % applies to the balance at ' + mmyy(lastM) + ' by loan year from first payment. Verdicts: \u22642 yr attractive \u00b7 \u22645 yr watch \u00b7 beyond that long. All figures react to the scope and month filters.';
+
+    kpis.push({
+      label: 'Current prepayment penalty', tag: 'to refinance scope', col: '#B04A33',
+      value: (ppLoans.length - nPend) > 0 ? fN(tpPen) : '\u2014',
+      hasBar: false, hasBar2: false, hasSpark: false,
+      sub: (ppLoans.length - nPend) > 0
+        ? (ppLoans.length - nPend) + ' of ' + ppLoans.length + ' amortizing notes with terms \u00b7 breakeven analysis below'
+        : 'terms pending for all ' + ppLoans.length + ' amortizing notes \u2014 fill the Prepay Penalty column, analysis section below',
+    });
+
     // ---------- ledger cross-check ----------
     const glInt = {};
     for (const row of S.gl.rows) {
@@ -1295,6 +1508,7 @@ class Component extends DCLogic {
       topTitle, topSub, topRows, topEmpty: topRows.length === 0, topQ: S.topQ, onTopQ,
       topListMax, topListOv, topBtnShow, topBtnClick, topBtnLabel,
       evYears, evTiles, evGroups, evEmpty,
+      rcChips, ppTiles, ppRows, ppPendingBanner, ppPendingText, ppHasTot, ppTotOut, ppTotPen, ppTotFee, ppTotSav, ppTotBe, ppFoot,
       xChips, xRows, xEmpty: xRows.length === 0, xSub, xFoot,
       convFoot,
     };
