@@ -15,6 +15,8 @@
 body{margin:0;background:#EFEDE7;font-family:"Libre Franklin",system-ui,sans-serif;color:#16233A}
 a{color:#1F3A6E}a:hover{color:#C9A45C}
 input:focus{outline:2px solid #C9A45C;outline-offset:1px}
+.scr::-webkit-scrollbar{width:8px;height:8px}
+.scr::-webkit-scrollbar-thumb{background:#D8D4C8;border-radius:4px}
 </style>
 </helmet>
 
@@ -67,87 +69,212 @@ input:focus{outline:2px solid #C9A45C;outline-offset:1px}
 
   <div style="max-width:1320px;margin:0 auto;padding:0 40px">
 
-    <!-- ══ Controls ══ -->
-    <div style="margin-top:20px;display:flex;justify-content:space-between;align-items:center;gap:16px;flex-wrap:wrap">
-      <div style="display:flex;gap:6px;flex-wrap:wrap">
-        <sc-for list="{{ statusChips }}" as="c" hint-placeholder-count="5">
-          <div onClick="{{ c.onClick }}" style-hover="border-color:#C9A45C" style="padding:7px 14px;border-radius:99px;font-size:12px;font-weight:600;cursor:pointer;border:1px solid {{ c.bd }};background:{{ c.bg }};color:{{ c.col }};white-space:nowrap">{{ c.label }}</div>
-        </sc-for>
-      </div>
-      <div style="position:relative" onClick="{{ stopProp }}">
-        <div onClick="{{ entChip.onToggle }}" style-hover="border-color:#C9A45C" style="display:flex;align-items:center;gap:8px;padding:9px 14px;border-radius:10px;border:1px solid #D8D4C8;background:#FFFFFF;font-size:13px;font-weight:500;color:#16233A;cursor:pointer">
-          <span style="font-size:10px;letter-spacing:0.08em;font-weight:700;color:#96742F">ENTITY</span>
-          <span style="white-space:nowrap;overflow:hidden;text-overflow:ellipsis;max-width:200px">{{ entChip.value }}</span>
-          <span style="font-size:9px;color:#5E6B82">▾</span>
-        </div>
-        <sc-if value="{{ entChip.open }}" hint-placeholder-val="{{ false }}">
-          <div style="position:absolute;top:44px;right:0;width:240px;background:#FFFFFF;border:1px solid #D8D4C8;border-radius:12px;box-shadow:0 12px 32px rgba(14,24,48,0.18);z-index:60;overflow:hidden;padding:6px">
-            <sc-for list="{{ entChip.opts }}" as="o" hint-placeholder-count="7">
-              <div onClick="{{ o.onClick }}" style-hover="background:#F6F4EC" style="padding:8px 10px;border-radius:7px;font-size:12.5px;font-weight:{{ o.fw }};color:#2A3550;cursor:pointer;background:{{ o.bg }};display:flex;justify-content:space-between;align-items:center;gap:8px">
-                <span>{{ o.label }}</span><span style="color:#96742F;font-weight:700">{{ o.check }}</span>
-              </div>
-            </sc-for>
-          </div>
-        </sc-if>
-      </div>
-    </div>
-
     <sc-if value="{{ ready }}" hint-placeholder-val="{{ false }}">
 
-    <!-- ══ KPI cards ══ -->
-    <div style="margin-top:18px;display:grid;grid-template-columns:repeat(4,1fr);gap:14px">
-      <sc-for list="{{ kpis }}" as="k" hint-placeholder-count="8">
-        <div style="background:#FFFFFF;border:1px solid #E5E3DC;border-radius:16px;padding:18px 20px">
-          <div style="font-size:11px;letter-spacing:0.08em;font-weight:700;color:#5E6B82;text-transform:uppercase">{{ k.label }}</div>
-          <div style="margin-top:8px;font-family:'Source Serif 4',Georgia,serif;font-size:24px;font-weight:600;color:{{ k.col }}">{{ k.value }}</div>
-          <div style="margin-top:6px;font-size:11px;color:#8A93A6">{{ k.sub }}</div>
+    <!-- ══ Filter bar ══ -->
+    <div style="margin-top:18px;background:#FFFFFF;border:1px solid #E5E3DC;border-radius:16px;padding:12px 16px;display:flex;align-items:center;gap:8px;flex-wrap:wrap;position:relative;z-index:50" onClick="{{ stopProp }}">
+      <span style="font-size:10px;letter-spacing:0.1em;font-weight:700;color:#96742F;margin-right:2px">SCOPE</span>
+      <sc-for list="{{ filters }}" as="fb" hint-placeholder-count="4">
+        <div style="position:relative">
+          <div onClick="{{ fb.onToggle }}" style-hover="border-color:#C9A45C" style="display:flex;align-items:center;gap:7px;padding:8px 13px;border-radius:10px;border:1.5px solid {{ fb.bd }};background:{{ fb.bg }};font-size:12px;font-weight:600;color:#16233A;cursor:pointer;white-space:nowrap">
+            <span style="font-size:9.5px;letter-spacing:0.07em;font-weight:700;color:#5E6B82">{{ fb.label }}</span>
+            <span style="max-width:150px;overflow:hidden;text-overflow:ellipsis">{{ fb.value }}</span>
+            <span style="font-size:8.5px;color:#5E6B82">▾</span>
+          </div>
+          <sc-if value="{{ fb.open }}" hint-placeholder-val="{{ false }}">
+            <div style="position:absolute;top:42px;left:0;width:{{ fb.w }};background:#FFFFFF;border:1px solid #D8D4C8;border-radius:12px;box-shadow:0 14px 36px rgba(14,24,48,0.20);z-index:80;padding:6px;max-height:340px;display:flex;flex-direction:column">
+              <sc-if value="{{ fb.hasSearch }}" hint-placeholder-val="{{ false }}">
+                <input value="{{ fb.q }}" onInput="{{ fb.onQ }}" placeholder="Type to search…" style="margin:2px 2px 6px;padding:7px 10px;border-radius:8px;border:1px solid #D8D4C8;font-size:12px;font-family:inherit;color:#16233A">
+              </sc-if>
+              <div onClick="{{ fb.onClear }}" style-hover="background:#F6F4EC" style="padding:7px 10px;border-radius:7px;font-size:12px;font-weight:700;color:#96742F;cursor:pointer;display:flex;justify-content:space-between"><span>All {{ fb.allLabel }}</span><span>{{ fb.allCheck }}</span></div>
+              <sc-if value="{{ fb.selAllShow }}" hint-placeholder-val="{{ false }}">
+                <div onClick="{{ fb.onSelAll }}" style-hover="background:#EFF3FA" style="padding:7px 10px;border-radius:7px;font-size:12px;font-weight:700;color:#3D64A8;cursor:pointer;display:flex;justify-content:space-between;border:1px dashed #C7D3EA"><span>{{ fb.selAllLabel }}</span><span>⇩</span></div>
+              </sc-if>
+              <div class="scr" style="overflow-y:auto;flex:1">
+                <sc-for list="{{ fb.opts }}" as="op" hint-placeholder-count="6">
+                  <div onClick="{{ op.onClick }}" style-hover="background:#F6F4EC" style="padding:7px 10px;border-radius:7px;font-size:12.5px;font-weight:{{ op.fw }};color:#2A3550;cursor:pointer;background:{{ op.bg }};display:flex;justify-content:space-between;align-items:center;gap:10px">
+                    <span style="white-space:nowrap;overflow:hidden;text-overflow:ellipsis">{{ op.label }}</span>
+                    <span style="display:flex;gap:8px;align-items:center"><span style="font-size:10.5px;color:#8A93A6">{{ op.n }}</span><span style="color:#96742F;font-weight:700;width:12px">{{ op.check }}</span></span>
+                  </div>
+                </sc-for>
+              </div>
+            </div>
+          </sc-if>
         </div>
       </sc-for>
+      <sc-if value="{{ hasActive }}" hint-placeholder-val="{{ false }}">
+        <div onClick="{{ onReset }}" style-hover="background:#16233A;color:#FFFFFF" style="margin-left:2px;padding:8px 13px;border-radius:10px;background:#F3E2DB;color:#A03E28;font-size:11.5px;font-weight:700;cursor:pointer;white-space:nowrap">Reset ✕</div>
+      </sc-if>
+      <span style="margin-left:auto;font-size:11px;color:#8A93A6;white-space:nowrap">{{ asOfLine }}</span>
     </div>
 
-    <!-- ══ Balance sheet + equity split ══ -->
-    <div style="margin-top:16px;display:grid;grid-template-columns:7fr 5fr;gap:16px">
-      <div style="background:#FFFFFF;border:1px solid #E5E3DC;border-radius:16px;padding:20px 24px">
-        <div style="display:flex;justify-content:space-between;align-items:baseline;flex-wrap:wrap;gap:8px">
-          <div style="font-family:'Source Serif 4',Georgia,serif;font-size:18px;font-weight:600;color:#16233A">Balance sheet</div>
-          <div style="font-size:11px;color:#8A93A6">{{ bsSub }}</div>
-        </div>
-        <div style="margin-top:12px;display:flex;flex-direction:column">
-          <sc-for list="{{ bsRows }}" as="r" hint-placeholder-count="9">
-            <div style="display:grid;grid-template-columns:14px 1fr 130px;gap:8px;align-items:center;padding:{{ r.pad }};border-top:{{ r.bt }};background:{{ r.bg }};border-radius:{{ r.rad }}">
-              <div style="width:9px;height:9px;border-radius:{{ r.dotR }};background:{{ r.dot }}"></div>
-              <div style="font-size:{{ r.fs }}px;font-weight:{{ r.fw }};color:{{ r.col }}">{{ r.label }}</div>
-              <div style="text-align:right;font-variant-numeric:tabular-nums;font-size:{{ r.fs }}px;font-weight:{{ r.vfw }};color:{{ r.vcol }}">{{ r.val }}</div>
+    <!-- ══ Income on investment ══ -->
+    <div style="margin-top:16px;background:#FFFFFF;border:1px solid #E5E3DC;border-radius:16px;padding:22px 26px">
+      <div style="display:flex;justify-content:space-between;align-items:baseline;flex-wrap:wrap;gap:8px">
+        <div style="font-family:'Source Serif 4',Georgia,serif;font-size:18px;font-weight:600;color:#16233A">Income on investment</div>
+        <div style="font-size:11.5px;color:#8A93A6">{{ invSub }}</div>
+      </div>
+      <div style="margin-top:14px;display:grid;grid-template-columns:repeat(4,1fr);gap:12px">
+        <sc-for list="{{ kpis }}" as="k" hint-placeholder-count="8">
+          <div style="background:{{ k.bg }};border:1px solid {{ k.bd }};border-radius:14px;padding:15px 18px">
+            <div style="font-size:10.5px;letter-spacing:0.08em;font-weight:700;color:#5E6B82;text-transform:uppercase">{{ k.label }}</div>
+            <div style="margin-top:7px;font-family:'Source Serif 4',Georgia,serif;font-size:22px;font-weight:600;color:{{ k.col }}">{{ k.value }}</div>
+            <sc-if value="{{ k.hasLegs }}" hint-placeholder-val="{{ false }}">
+              <div style="margin-top:6px;display:flex;gap:10px;flex-wrap:wrap">
+                <sc-for list="{{ k.legs }}" as="lg" hint-placeholder-count="3">
+                  <span style="font-size:10px;color:#5E6B82;white-space:nowrap"><span style="display:inline-block;width:7px;height:7px;border-radius:2px;background:{{ lg.bg }};margin-right:4px"></span>{{ lg.txt }}</span>
+                </sc-for>
+              </div>
+            </sc-if>
+            <div style="margin-top:5px;font-size:10.5px;line-height:1.45;color:#8A93A6">{{ k.sub }}</div>
+          </div>
+        </sc-for>
+      </div>
+      <div style="margin-top:12px;font-size:11px;color:#9AA3B5;line-height:1.6">{{ invFoot }}</div>
+    </div>
+
+    <!-- ══ Cross-sheet ties & attention ══ -->
+    <div style="margin-top:14px;background:#FFFDF6;border:1px solid #EAD9C0;border-radius:16px;padding:16px 22px" onClick="{{ stopProp }}">
+      <div style="display:flex;align-items:center;gap:10px;flex-wrap:wrap">
+        <div style="font-family:'Source Serif 4',Georgia,serif;font-size:15px;font-weight:600;color:#16233A">Checks &amp; balances</div>
+        <div style="padding:3px 10px;border-radius:99px;background:{{ tieBg }};color:{{ tieCol }};font-size:10px;font-weight:700;letter-spacing:0.07em;white-space:nowrap">{{ tieBadge }}</div>
+        <div style="font-size:11px;color:#8A93A6">{{ tieLine }}</div>
+      </div>
+      <div style="margin-top:10px;display:flex;flex-direction:column;gap:6px">
+        <sc-for list="{{ recon }}" as="rb" hint-placeholder-count="4">
+          <div onClick="{{ rb.onClick }}" style-hover="background:#FBF6EA" style="border:1px solid {{ rb.bd }};border-radius:10px;padding:9px 13px;cursor:pointer;background:{{ rb.bg }}">
+            <div style="display:flex;align-items:baseline;gap:9px">
+              <span style="width:17px;height:17px;border-radius:50%;background:{{ rb.iconBg }};color:{{ rb.iconCol }};font-size:10px;font-weight:800;display:inline-flex;align-items:center;justify-content:center;flex:none;transform:translateY(2px)">{{ rb.icon }}</span>
+              <span style="font-size:12.5px;font-weight:700;color:#16233A">{{ rb.t }}</span>
+              <span style="font-size:11.5px;color:#5E6B82;min-width:0">{{ rb.s }}</span>
+              <span style="margin-left:auto;font-size:10px;color:#96742F;font-weight:700;white-space:nowrap">{{ rb.caret }}</span>
             </div>
-          </sc-for>
-        </div>
-        <div style="margin-top:12px;padding:9px 12px;background:#16233A;border-radius:8px;font-size:10.5px;font-weight:600;color:#E9EDF5;text-align:center;line-height:1.5">{{ bsFormula }}</div>
+            <sc-if value="{{ rb.exp }}" hint-placeholder-val="{{ false }}">
+              <div style="margin-top:8px;padding-top:8px;border-top:1px dashed #EAD9C0;display:flex;flex-direction:column;gap:3px">
+                <sc-for list="{{ rb.rows }}" as="rr" hint-placeholder-count="5">
+                  <div style="display:flex;justify-content:space-between;gap:12px;font-size:11.5px;padding:2px 2px">
+                    <span style="color:#2A3550">{{ rr.l }}</span>
+                    <span style="color:#5E6B82;font-variant-numeric:tabular-nums;white-space:nowrap">{{ rr.r }}</span>
+                  </div>
+                </sc-for>
+              </div>
+            </sc-if>
+          </div>
+        </sc-for>
+      </div>
+    </div>
+
+    <!-- ══ Margin of safety ══ -->
+    <div style="margin-top:16px;background:#FFFFFF;border:1px solid #E5E3DC;border-radius:16px;padding:22px 26px" onClick="{{ stopProp }}">
+      <div style="display:flex;justify-content:space-between;align-items:baseline;flex-wrap:wrap;gap:8px">
+        <div style="font-family:'Source Serif 4',Georgia,serif;font-size:18px;font-weight:600;color:#16233A">Margin of safety — equity, value &amp; appreciation</div>
+        <div style="font-size:11.5px;color:#8A93A6">how much cushion sits between the portfolio and its debt · {{ mosAsOf }}</div>
       </div>
 
-      <div style="background:#16233A;border-radius:16px;padding:26px 30px;display:flex;flex-direction:column;justify-content:space-between">
-        <div>
-          <div style="font-size:11px;letter-spacing:0.12em;font-weight:700;color:#C9A45C">OWNER EQUITY</div>
-          <div style="margin-top:10px;display:flex;align-items:baseline;gap:14px;flex-wrap:wrap">
-            <span style="font-family:'Source Serif 4',Georgia,serif;font-size:46px;font-weight:600;line-height:1;color:#6FBF8F">{{ eqBig }}</span>
-            <span style="font-size:13px;font-weight:700;color:#8A96AD">{{ eqPct }} of value</span>
+      <!-- portfolio bridge -->
+      <div style="margin-top:16px;background:#16233A;border-radius:14px;padding:20px 24px">
+        <div style="display:flex;justify-content:space-between;align-items:baseline;gap:14px;flex-wrap:wrap">
+          <div>
+            <span style="font-size:10.5px;letter-spacing:0.1em;font-weight:700;color:#C9A45C">MARGIN OF SAFETY</span>
+            <div style="margin-top:6px;display:flex;align-items:baseline;gap:12px;flex-wrap:wrap">
+              <span style="font-family:'Source Serif 4',Georgia,serif;font-size:38px;font-weight:600;line-height:1;color:#6FBF8F">{{ mosPct }}</span>
+              <span style="font-size:12.5px;font-weight:600;color:#8A96AD">of value is yours — {{ mosEq }} equity on {{ mosVal }}</span>
+            </div>
+          </div>
+          <div style="text-align:right;font-size:11.5px;color:#8A96AD;line-height:1.7">
+            <div>value could fall <span style="font-weight:700;color:#E9EDF5">{{ mosDrop }}</span> before debt is touched</div>
+            <div>appreciation held at cost: <span style="font-weight:700;color:#7FC29B">{{ mosAppr }}</span> ({{ mosApprPct }} on known cost)</div>
           </div>
         </div>
-        <div style="margin-top:18px">
-          <div style="display:flex;justify-content:space-between;font-size:12px;color:#8A96AD"><span>Every dollar of property value</span><span style="font-weight:700;color:#E9EDF5">{{ eqCents }} yours</span></div>
-          <div style="margin-top:8px;height:14px;background:rgba(233,237,245,0.12);border-radius:7px;overflow:hidden;display:flex">
-            <div style="width:{{ eqW }};height:14px;background:#3E8E63"></div>
-            <div style="width:{{ debtW }};height:14px;background:#B04A33;opacity:0.75"></div>
-          </div>
-          <div style="margin-top:6px;display:flex;justify-content:space-between;font-size:10.5px;color:#8A96AD">
-            <span><span style="display:inline-block;width:8px;height:8px;border-radius:2px;background:#3E8E63;margin-right:5px"></span>Equity {{ eqSmall }}</span>
-            <span><span style="display:inline-block;width:8px;height:8px;border-radius:2px;background:#B04A33;opacity:0.75;margin-right:5px"></span>Debt {{ debtSmall }}</span>
-          </div>
+        <div style="margin-top:14px;height:20px;border-radius:10px;overflow:hidden;display:flex;background:rgba(233,237,245,0.10)">
+          <div style="width:{{ brDebtW }};height:20px;background:#B04A33;opacity:0.85" title="debt"></div>
+          <div style="width:{{ brCostW }};height:20px;background:#3D64A8" title="equity at cost"></div>
+          <div style="width:{{ brApprW }};height:20px;background:#3E8E63" title="appreciation"></div>
         </div>
-        <div style="margin-top:18px;display:flex;justify-content:space-between;font-size:12.5px;color:#8A96AD">
-          <span>Cost basis <span style="font-weight:700;color:#E9EDF5">{{ costBig }}</span></span>
-          <span>Appreciation <span style="font-weight:700;color:{{ apprCol }}">{{ apprBig }}</span></span>
+        <div style="margin-top:8px;display:flex;justify-content:space-between;flex-wrap:wrap;gap:8px;font-size:10.5px;color:#8A96AD">
+          <span><span style="display:inline-block;width:8px;height:8px;border-radius:2px;background:#B04A33;opacity:0.85;margin-right:5px"></span>Debt today {{ brDebt }}</span>
+          <span><span style="display:inline-block;width:8px;height:8px;border-radius:2px;background:#3D64A8;margin-right:5px"></span>Equity at cost {{ brCost }}</span>
+          <span><span style="display:inline-block;width:8px;height:8px;border-radius:2px;background:#3E8E63;margin-right:5px"></span>Appreciation {{ brAppr }}</span>
+          <span style="font-weight:700;color:#E9EDF5">= {{ mosVal }} portfolio value</span>
         </div>
       </div>
+
+      <!-- risk buckets -->
+      <div style="margin-top:14px;display:grid;grid-template-columns:repeat(5,1fr);gap:10px">
+        <sc-for list="{{ buckets }}" as="bk" hint-placeholder-count="5">
+          <div onClick="{{ bk.onClick }}" style-hover="border-color:#C9A45C" style="border:1.5px solid {{ bk.bd }};background:{{ bk.bg }};border-radius:12px;padding:11px 14px;cursor:pointer">
+            <div style="display:flex;justify-content:space-between;align-items:baseline">
+              <span style="font-size:10px;letter-spacing:0.06em;font-weight:700;color:{{ bk.labCol }}">{{ bk.label }}</span>
+              <span style="font-size:9px;font-weight:700;color:#96742F">{{ bk.filtTag }}</span>
+            </div>
+            <div style="margin-top:5px;font-family:'Source Serif 4',Georgia,serif;font-size:20px;font-weight:600;color:{{ bk.col }}">{{ bk.n }}</div>
+            <div style="margin-top:2px;font-size:10px;color:#8A93A6">{{ bk.sub }}</div>
+          </div>
+        </sc-for>
+      </div>
+
+      <!-- safety ladder -->
+      <div style="margin-top:14px;display:flex;justify-content:space-between;align-items:center;gap:12px;flex-wrap:wrap">
+        <div style="font-size:11.5px;color:#96742F;font-weight:600">{{ mosNote }}</div>
+        <input value="{{ mosQ }}" onInput="{{ onMosQ }}" placeholder="Search property…" style="width:210px;box-sizing:border-box;padding:8px 12px;border-radius:9px;border:1.5px solid #D8D4C8;font-family:inherit;font-size:12px;color:#16233A;background:#FFFFFF">
+      </div>
+      <div style="margin-top:8px;display:grid;grid-template-columns:24px minmax(170px,1.35fr) 3fr 64px 106px;gap:8px;padding:7px 8px;font-size:10px;letter-spacing:0.07em;font-weight:700;color:#5E6B82;text-transform:uppercase;border-bottom:1px solid #E5E3DC">
+        <div></div><div>Property</div><div>Debt · equity at cost · appreciation — share of value</div><div style="text-align:right">LTV</div><div style="text-align:right">Equity</div>
+      </div>
+      <div class="scr" style="max-height:430px;overflow-y:auto;padding-right:4px">
+        <sc-for list="{{ ladder }}" as="lr" hint-placeholder-count="10">
+          <div onClick="{{ lr.onClick }}" style-hover="background:#F6F4EC" style="display:grid;grid-template-columns:24px minmax(170px,1.35fr) 3fr 64px 106px;gap:8px;padding:7px 8px;align-items:center;border-bottom:1px solid #F0EEE6;cursor:pointer;background:{{ lr.bg }};border-left:3px solid {{ lr.selBd }}">
+            <div style="font-size:10px;color:#96742F;font-weight:700">{{ lr.caret }}</div>
+            <div style="min-width:0">
+              <div style="font-size:12px;font-weight:600;color:#1F3A6E;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">{{ lr.door }}</div>
+              <div style="font-size:9.5px;color:#8A93A6">{{ lr.ent }}</div>
+            </div>
+            <div style="height:13px;border-radius:7px;overflow:hidden;display:flex;background:#F4F2EA">
+              <div style="width:{{ lr.wD }};height:13px;background:#B04A33;opacity:0.85"></div>
+              <div style="width:{{ lr.wC }};height:13px;background:#3D64A8"></div>
+              <div style="width:{{ lr.wA }};height:13px;background:{{ lr.aBg }}"></div>
+            </div>
+            <div style="text-align:right;font-variant-numeric:tabular-nums;font-size:11.5px;font-weight:700;color:{{ lr.ltvCol }}">{{ lr.ltv }}</div>
+            <div style="text-align:right;font-variant-numeric:tabular-nums;font-size:12px;font-weight:700;color:{{ lr.eqCol }}">{{ lr.eq }}</div>
+          </div>
+          <sc-if value="{{ lr.exp }}" hint-placeholder-val="{{ false }}">
+            <div style="border-left:3px solid #C9A45C;border-bottom:1px solid #E5E3DC;background:#FBFAF6;padding:12px 16px">
+              <div style="display:grid;grid-template-columns:repeat(4,1fr);gap:10px 18px">
+                <sc-for list="{{ lr.facts }}" as="dt" hint-placeholder-count="8">
+                  <div>
+                    <div style="font-size:9.5px;letter-spacing:0.06em;font-weight:700;color:#8A93A6;text-transform:uppercase">{{ dt.k }}</div>
+                    <div style="margin-top:2px;font-size:13px;font-weight:700;color:{{ dt.col }};font-variant-numeric:tabular-nums">{{ dt.v }}</div>
+                  </div>
+                </sc-for>
+              </div>
+              <div style="margin-top:10px;display:flex;gap:14px;flex-wrap:wrap;font-size:11px">
+                <a href="{{ lr.hrefPl }}" style="font-weight:700">Open in P&amp;L →</a>
+                <sc-if value="{{ lr.hasLoan }}" hint-placeholder-val="{{ false }}"><a href="{{ lr.hrefLoan }}" style="font-weight:700">Open its note in Loans →</a></sc-if>
+              </div>
+            </div>
+          </sc-if>
+        </sc-for>
+      </div>
+      <sc-if value="{{ mosEmpty }}" hint-placeholder-val="{{ false }}"><div style="padding:14px;font-size:12px;color:#8A93A6">No properties match this view.</div></sc-if>
+      <div style="margin-top:10px;font-size:11px;color:#9AA3B5;line-height:1.6">{{ mosFoot }}</div>
+    </div>
+
+    <!-- ══ Balance sheet ══ -->
+    <div style="margin-top:16px;background:#FFFFFF;border:1px solid #E5E3DC;border-radius:16px;padding:20px 24px">
+      <div style="display:flex;justify-content:space-between;align-items:baseline;flex-wrap:wrap;gap:8px">
+        <div style="font-family:'Source Serif 4',Georgia,serif;font-size:18px;font-weight:600;color:#16233A">Balance sheet</div>
+        <div style="font-size:11px;color:#8A93A6">{{ bsSub }}</div>
+      </div>
+      <div style="margin-top:12px;display:flex;flex-direction:column">
+        <sc-for list="{{ bsRows }}" as="r" hint-placeholder-count="9">
+          <div style="display:grid;grid-template-columns:14px 1fr 150px;gap:8px;align-items:center;padding:{{ r.pad }};border-top:{{ r.bt }};background:{{ r.bg }};border-radius:{{ r.rad }}">
+            <div style="width:9px;height:9px;border-radius:{{ r.dotR }};background:{{ r.dot }}"></div>
+            <div style="font-size:{{ r.fs }}px;font-weight:{{ r.fw }};color:{{ r.col }}">{{ r.label }}</div>
+            <div style="text-align:right;font-variant-numeric:tabular-nums;font-size:{{ r.fs }}px;font-weight:{{ r.vfw }};color:{{ r.vcol }}">{{ r.val }}</div>
+          </div>
+        </sc-for>
+      </div>
+      <div style="margin-top:12px;padding:9px 12px;background:#16233A;border-radius:8px;font-size:10.5px;font-weight:600;color:#E9EDF5;text-align:center;line-height:1.5">{{ bsFormula }}</div>
     </div>
 
     <!-- ══ Entity table ══ -->
@@ -157,16 +284,16 @@ input:focus{outline:2px solid #C9A45C;outline-offset:1px}
         <div style="font-size:12px;color:#8A93A6">{{ entSub }}</div>
       </div>
       <div style="margin-top:10px;overflow-x:auto">
-        <div style="display:grid;grid-template-columns:minmax(120px,1.4fr) repeat(7,minmax(88px,1fr));padding:9px 0;background:#F6F5F1;border-top:1px solid #E5E3DC;border-bottom:1px solid #E5E3DC">
+        <div style="display:grid;grid-template-columns:minmax(120px,1.4fr) repeat(8,minmax(84px,1fr));padding:9px 0;background:#F6F5F1;border-top:1px solid #E5E3DC;border-bottom:1px solid #E5E3DC">
           <div style="font-size:10.5px;letter-spacing:0.1em;font-weight:700;color:#5E6B82;padding-left:8px">ENTITY</div>
-          <sc-for list="{{ entHeads }}" as="h" hint-placeholder-count="7">
+          <sc-for list="{{ entHeads }}" as="h" hint-placeholder-count="8">
             <div style="font-size:10.5px;letter-spacing:0.1em;font-weight:700;color:#5E6B82;text-align:right">{{ h }}</div>
           </sc-for>
         </div>
         <sc-for list="{{ entRows }}" as="r" hint-placeholder-count="7">
-          <div style="display:grid;grid-template-columns:minmax(120px,1.4fr) repeat(7,minmax(88px,1fr));padding:10px 0;border-top:{{ r.bt }};background:{{ r.bg }};border-radius:{{ r.rad }}">
+          <div style="display:grid;grid-template-columns:minmax(120px,1.4fr) repeat(8,minmax(84px,1fr));padding:10px 0;border-top:{{ r.bt }};background:{{ r.bg }};border-radius:{{ r.rad }}">
             <div style="font-size:12.5px;font-weight:{{ r.fw }};color:{{ r.col }};padding-left:8px">{{ r.name }}</div>
-            <sc-for list="{{ r.cells }}" as="c" hint-placeholder-count="7">
+            <sc-for list="{{ r.cells }}" as="c" hint-placeholder-count="8">
               <div style="text-align:right;font-variant-numeric:tabular-nums;font-size:12.5px;font-weight:{{ r.fw }};color:{{ c.col }}">{{ c.t }}</div>
             </sc-for>
           </div>
@@ -189,7 +316,7 @@ input:focus{outline:2px solid #C9A45C;outline-offset:1px}
         <div style="font-size:11.5px;color:#96742F;font-weight:600">{{ expNote }}</div>
         <input value="{{ expQ }}" onChange="{{ onExpQ }}" placeholder="Search doors…" style="width:220px;box-sizing:border-box;padding:8px 12px;border-radius:8px;border:1px solid #D8D4C8;font-family:'Libre Franklin',system-ui,sans-serif;font-size:12.5px;color:#16233A;background:#FFFFFF">
       </div>
-      <div style="margin-top:12px;display:grid;grid-template-columns:1fr 1fr;gap:0 44px;align-items:start;max-height:{{ expMax }};overflow-y:{{ expOv }};padding-right:4px">
+      <div class="scr" style="margin-top:12px;display:grid;grid-template-columns:1fr 1fr;gap:0 44px;align-items:start;max-height:{{ expMax }};overflow-y:{{ expOv }};padding-right:4px">
         <sc-for list="{{ expRows }}" as="p" hint-placeholder-count="8">
           <div style="padding:8px 0;border-top:1px solid #F0EEE7">
             <div style="display:flex;justify-content:space-between;font-size:12.5px;color:#2A3550;gap:10px;align-items:baseline">
@@ -230,21 +357,23 @@ input:focus{outline:2px solid #C9A45C;outline-offset:1px}
           <div style="font-family:'Source Serif 4',Georgia,serif;font-size:17px;font-weight:600;color:#16233A">Exits &amp; doors held for sale</div>
           <div style="font-size:12px;color:#8A93A6">{{ exitSub }}</div>
         </div>
-        <div style="margin-top:10px;max-height:340px;overflow-y:auto;padding-right:4px">
-          <div style="display:grid;grid-template-columns:minmax(150px,1.6fr) 70px 90px 90px 70px;gap:8px;padding:8px 0;border-bottom:1px solid #E5E3DC">
+        <div class="scr" style="margin-top:10px;max-height:340px;overflow-y:auto;padding-right:4px">
+          <div style="display:grid;grid-template-columns:minmax(150px,1.6fr) 66px 78px 78px 62px 92px;gap:8px;padding:8px 0;border-bottom:1px solid #E5E3DC">
             <div style="font-size:10.5px;letter-spacing:0.08em;font-weight:700;color:#5E6B82">DOOR</div>
             <div style="font-size:10.5px;letter-spacing:0.08em;font-weight:700;color:#5E6B82">ENTITY</div>
             <div style="font-size:10.5px;letter-spacing:0.08em;font-weight:700;color:#5E6B82;text-align:right">IN USE</div>
-            <div style="font-size:10.5px;letter-spacing:0.08em;font-weight:700;color:#5E6B82;text-align:right">EXITED</div>
+            <div style="font-size:10.5px;letter-spacing:0.08em;font-weight:700;color:#5E6B82;text-align:right">EVENT</div>
             <div style="font-size:10.5px;letter-spacing:0.08em;font-weight:700;color:#5E6B82;text-align:right">HELD</div>
+            <div style="font-size:10.5px;letter-spacing:0.08em;font-weight:700;color:#5E6B82;text-align:right">DEBT LEFT</div>
           </div>
           <sc-for list="{{ exitRows }}" as="x" hint-placeholder-count="8">
-            <div style="display:grid;grid-template-columns:minmax(150px,1.6fr) 70px 90px 90px 70px;gap:8px;padding:8px 0;border-top:1px solid #F0EEE7;align-items:baseline">
+            <div style="display:grid;grid-template-columns:minmax(150px,1.6fr) 66px 78px 78px 62px 92px;gap:8px;padding:8px 0;border-top:1px solid #F0EEE7;align-items:baseline">
               <div style="min-width:0"><span style="font-size:12.5px;font-weight:500;color:#2A3550">{{ x.door }}</span> <span style="margin-left:6px;padding:2px 7px;border-radius:5px;font-size:9px;font-weight:700;background:{{ x.tagBg }};color:{{ x.tagCol }};white-space:nowrap">{{ x.tag }}</span></div>
               <div style="font-size:11.5px;color:#5E6B82">{{ x.ent }}</div>
               <div style="font-size:11.5px;color:#5E6B82;text-align:right;font-variant-numeric:tabular-nums">{{ x.inUse }}</div>
               <div style="font-size:11.5px;color:#5E6B82;text-align:right;font-variant-numeric:tabular-nums">{{ x.exited }}</div>
               <div style="font-size:11.5px;font-weight:700;color:#2A3550;text-align:right;font-variant-numeric:tabular-nums">{{ x.held }}</div>
+              <div style="font-size:11.5px;font-weight:700;color:{{ x.debtCol }};text-align:right;font-variant-numeric:tabular-nums">{{ x.debt }}</div>
             </div>
           </sc-for>
         </div>
@@ -274,7 +403,7 @@ input:focus{outline:2px solid #C9A45C;outline-offset:1px}
     </sc-if>
 
     <sc-if value="{{ loading }}" hint-placeholder-val="{{ true }}">
-      <div style="margin-top:18px;background:#FFFFFF;border:1px solid #E5E3DC;border-radius:16px;padding:48px;text-align:center;font-size:13px;color:#8A93A6">Loading balance sheet &amp; ledger…</div>
+      <div style="margin-top:18px;background:#FFFFFF;border:1px solid #E5E3DC;border-radius:16px;padding:48px;text-align:center;font-size:13px;color:#8A93A6">Loading balance sheet, ledger &amp; loans…</div>
     </sc-if>
 
     <sc-if value="{{ loadError }}" hint-placeholder-val="{{ false }}">
@@ -293,218 +422,498 @@ input:focus{outline:2px solid #C9A45C;outline-offset:1px}
 <script type="text/x-dc" data-dc-script>
 class Component extends DCLogic {
   state = {
-    bs: null, gl: null, loadError: null,
-    cos: [], statusSel: 'owned', metric: 'equity',
-    expQ: '', showAll: false, entOpen: false,
+    bs: null, gl: null, ld: null, loadError: null,
+    fm: [], fe: [], fp: [], fs: [],
+    ddOpen: null, fq: '',
+    metric: 'equity', expQ: '', showAll: false,
+    mosBucket: null, mosQ: '', mosSel: null,
+    reconSel: null,
   };
 
   loadData() {
     this.setState({ loadError: null });
     const get = (u) => fetch(u).then(r => { if (!r.ok) throw new Error('HTTP ' + r.status + ' fetching ' + u); return r.json(); });
-    Promise.all([get('./bs-data.json'), get('./pl-data.json')])
-      .then(([bs, gl]) => {
+    Promise.all([get('./bs-data.json'), get('./pl-data.json'), get('./loans-data.json')])
+      .then(([bs, gl, ld]) => {
         if (!bs || bs.schema !== 'bs.v1' || !Array.isArray(bs.properties)) throw new Error('bs-data.json is not a valid bs.v1 file');
         if (!gl || !Array.isArray(gl.rows) || !Array.isArray(gl.periods)) throw new Error('pl-data.json is not a valid ledger file');
-        this.setState({ bs, gl });
+        if (!ld || ld.schema !== 'loans.v2' || !Array.isArray(ld.loans) || !ld.doors) throw new Error('loans-data.json is not a valid loans.v2 file');
+        this.setState({ bs, gl, ld }, () => this.applyQuery());
       })
-      .catch(e => this.setState({ bs: null, gl: null, loadError: (e && e.message ? e.message : String(e)) }));
+      .catch(e => this.setState({ bs: null, gl: null, ld: null, loadError: (e && e.message ? e.message : String(e)) }));
   }
+
+  applyQuery() {
+    try {
+      if (typeof location === 'undefined' || !location.search || !this.state.bs) return;
+      const q = new URLSearchParams(location.search);
+      const li = (k) => (q.get(k) || '').split(',').map(s => s.trim()).filter(Boolean);
+      const patch = {};
+      if (q.get('m')) patch.fm = li('m');
+      if (q.get('entity')) patch.fe = li('entity');
+      if (q.get('door')) patch.fp = li('door');
+      if (q.get('status')) patch.fs = li('status');
+      if (Object.keys(patch).length) this.setState(patch);
+    } catch (e) {}
+  }
+
+  syncUrl() {
+    try {
+      if (typeof history === 'undefined' || typeof location === 'undefined') return;
+      const S = this.state, q = new URLSearchParams();
+      if (S.fm.length) q.set('m', S.fm.join(','));
+      if (S.fe.length) q.set('entity', S.fe.join(','));
+      if (S.fp.length) q.set('door', S.fp.join(','));
+      if (S.fs.length) q.set('status', S.fs.join(','));
+      const s = q.toString();
+      history.replaceState(null, '', location.pathname + (s ? '?' + s : ''));
+    } catch (e) {}
+  }
+
+  setFilter(patch) { this.setState(patch, () => this.syncUrl()); }
 
   componentDidMount() {
     this.loadData();
-    try {
-      if (typeof location !== 'undefined' && location.search) {
-        const q = new URLSearchParams(location.search);
-        const patch = {};
-        if (q.get('door')) { patch.expQ = q.get('door'); patch.showAll = true; }
-        if (q.get('entity')) patch.cos = [q.get('entity')];
-        if (Object.keys(patch).length) this.setState(patch);
-      }
-    } catch (e) {}
-    this._doc = () => { if (this.state.entOpen) this.setState({ entOpen: false }); };
+    this._doc = () => { if (this.state.ddOpen) this.setState({ ddOpen: null }); };
     document.addEventListener('click', this._doc);
   }
   componentWillUnmount() { document.removeEventListener('click', this._doc); }
 
   renderVals() {
     const S = this.state;
-    const NAVY = '#16233A', MUT = '#5E6B82', RED = '#B04A33', GREEN = '#3E8E63', GOLD = '#C9A45C', GOLDD = '#96742F', INK = '#2A3550', BRICK = '#C0763F';
+    const NAVY = '#16233A', MUT = '#5E6B82', RED = '#B04A33', GREEN = '#3E8E63', GOLD = '#C9A45C', GOLDD = '#96742F', INK = '#2A3550', BRICK = '#C0763F', BLUE = '#3D64A8';
     const stopProp = e => e.stopPropagation();
-    if (!S.bs || !S.gl) return {
+    if (!S.bs || !S.gl || !S.ld) return {
       ready: false, loading: !S.loadError, loadError: S.loadError || false,
-      retryLoad: () => this.loadData(),
+      retryLoad: () => this.loadData(), stopProp,
       scopeLine: S.loadError ? 'Data failed to load' : 'Loading…',
-      statusChips: [], entChip: { value: '', open: false, opts: [], onToggle: () => {} }, stopProp,
+      filters: [], hasActive: false, onReset: () => {}, asOfLine: '',
+      invSub: '', kpis: [], invFoot: '',
+      tieBadge: '', tieBg: '', tieCol: '', tieLine: '', recon: [],
+      mosAsOf: '', mosPct: '', mosEq: '', mosVal: '', mosDrop: '', mosAppr: '', mosApprPct: '',
+      brDebtW: '0%', brCostW: '0%', brApprW: '0%', brDebt: '', brCost: '', brAppr: '',
+      buckets: [], mosNote: '', mosQ: '', onMosQ: () => {}, ladder: [], mosEmpty: false, mosFoot: '',
+      bsRows: [], bsSub: '', bsFormula: '',
+      entHeads: [], entRows: [], entSub: '',
+      metricChips: [], expNote: '', expQ: '', onExpQ: () => {}, expRows: [], expEmpty: false, expBtn: { show: false, label: '', onClick: () => {} }, expFoot: '', expMax: 'none', expOv: 'visible',
+      vinRows: [], vinSub: '', vinNote: '', exitRows: [], exitSub: '', covChecks: [], discFoot: '',
     };
 
     const fK = n => { const a = Math.abs(n), s = n < 0; let t; if (a >= 1e6) t = '$' + (a / 1e6).toFixed(2) + 'M'; else if (a >= 100000) t = '$' + Math.round(a / 1000) + 'K'; else if (a >= 1000) t = '$' + (a / 1000).toFixed(1) + 'K'; else t = '$' + Math.round(a); return s ? '(' + t + ')' : t; };
     const fN = n => { const r = Math.round(n); const s = '$' + Math.abs(r).toLocaleString('en-US'); return r < 0 ? '(' + s + ')' : s; };
     const fP = (n, d) => (n / (d || 1) * 100).toFixed(1) + '%';
+    const MMM = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
+    const mmyy = m => MMM[+m.slice(5, 7) - 1] + '-' + m.slice(2, 4);
 
-    // ---- GL joins: annualized NOI & interest per door over all loaded periods ----
-    const P = this.state.gl.periods, NP = P.length;
+    // ══════════ month model ══════════
+    const glP = S.gl.periods;
+    const monthSet = new Set(glP);
+    for (const d in S.ld.doors) for (const m in S.ld.doors[d].monthly) monthSet.add(m);
+    const monthsAll = [...monthSet].sort();
+    const selM = (S.fm || []).filter(m => monthSet.has(m)).sort();
+    const lastM = selM.length ? selM[selM.length - 1] : monthsAll[monthsAll.length - 1];
+    const glWin = selM.length ? glP.filter(m => selM.includes(m)) : glP;
+    const glIdx = glWin.map(m => glP.indexOf(m));
+    const nWin = glWin.length;
+
+    // ══════════ loans join: owner-paid principal engine ══════════
+    const LDD = S.ld.doors;
+    const loansOk = S.ld.loans.filter(l => l.schedule && l.schedule.length);
+    const loansSkipped = S.ld.loans.length - loansOk.length;
+    const noteFirst = {}, noteP0 = {};
+    for (const l of loansOk) { noteFirst[l.id] = l.schedule[0].m; noteP0[l.id] = l.schedule[0].open || l.schedule[0].close; }
+    const noteCloseAt = (l, m) => { let c = null; for (const r of l.schedule) { if (r.m <= m) c = r.close; else break; } return c === null ? 0 : c; };
+    const doorNotes = {}; // door -> [{l, slice}]
+    for (const l of loansOk) for (const d in l.origProps) (doorNotes[d] = doorNotes[d] || []).push({ l, slice: l.origProps[d] * noteP0[l.id] });
+    let sliceGateBad = 0;
+    for (const d in doorNotes) {
+      const dd = LDD[d]; if (!dd) continue;
+      const s = doorNotes[d].reduce((a, x) => a + x.slice, 0);
+      if (s > 0 && Math.abs(s - dd.initial) <= 0.05) { const f = dd.initial / s; doorNotes[d].forEach(x => { x.slice *= f; }); }
+      else if (Math.abs(s - dd.initial) > 0.05) sliceGateBad++;
+    }
+    const relByDoor = {};
+    for (const l of loansOk) for (const r of (l.releases || [])) (relByDoor[r.prop] = relByDoor[r.prop] || []).push({ lid: l.id, m: r.m, base: r.base });
+    const doorKeys = {};
+    for (const d in LDD) doorKeys[d] = Object.keys(LDD[d].monthly).sort();
+    const debtAt = (d, m) => {
+      const dd = LDD[d]; if (!dd) return 0;
+      const ks = doorKeys[d]; let c = 0;
+      for (const k of ks) { if (k <= m) c = dd.monthly[k].close; else break; }
+      return c;
+    };
+    const refiFunded = (d, l, mB) => {
+      for (const x of doorNotes[d]) {
+        const l2 = x.l;
+        if (l2.id === l.id || noteFirst[l2.id] >= mB) continue;
+        let prev = null; for (const r of l2.schedule) { if (r.m < mB) prev = r.m; else break; }
+        if (!prev) continue;
+        if (noteCloseAt(l2, mB) <= 0.005 && noteCloseAt(l2, prev) > 0.005) {
+          const sale = (relByDoor[d] || []).some(r => r.lid === l2.id && r.m === mB);
+          if (!sale) return true;
+        }
+      }
+      return false;
+    };
+    const doorCalc = (d, m) => {
+      const ns = doorNotes[d] || [];
+      if (!ns.length) return { owner: 0, init: 0, close: 0, refiF: 0, saleF: 0 };
+      let firstAll = null; for (const x of ns) if (firstAll === null || noteFirst[x.l.id] < firstAll) firstAll = noteFirst[x.l.id];
+      let init = 0, refiF = 0;
+      for (const x of ns) {
+        const f = noteFirst[x.l.id];
+        if (f > m) continue;
+        init += x.slice;
+        if (f !== firstAll && refiFunded(d, x.l, f)) refiF += x.slice;
+      }
+      const close = debtAt(d, m);
+      const saleF = (relByDoor[d] || []).reduce((a, r) => a + (r.m <= m ? r.base : 0), 0);
+      return { owner: init - close - refiF - saleF, init, close, refiF, saleF };
+    };
+
+    // ══════════ scope model ══════════
+    const ALLP = S.bs.properties;
+    const entities = [...new Set(ALLP.map(p => p.entity))].sort();
+    const statuses = [...new Set(ALLP.map(p => p.status))].sort();
+    const feAct = (S.fe || []).filter(e => entities.includes(e));
+    const fpAct = (S.fp || []);
+    const fsAct = (S.fs || []).filter(s => statuses.includes(s));
+    const exitMonth = p => (p.exit && /^\d{4}-\d{2}/.test(p.exit)) ? p.exit.slice(0, 7) : null;
+    const timeOk = p => {
+      if (p.status !== 'Sold' && p.status !== 'Held for Sale') return true;
+      const em = exitMonth(p);
+      return !!em && lastM < em; // still owned/for-rent as of the viewed month
+    };
+    const inScope = p =>
+      (feAct.length ? feAct.includes(p.entity) : true) &&
+      (fpAct.length ? fpAct.includes(p.door) : true) &&
+      (fsAct.length ? fsAct.includes(p.status) : timeOk(p));
+    const scope = ALLP.filter(inScope);
+    const nScope = scope.length;
+    const scopeSet = new Set(scope.map(p => p.door));
+    const excluded = ALLP.filter(p => !fsAct.length && !timeOk(p) && (feAct.length ? feAct.includes(p.entity) : true) && (fpAct.length ? fpAct.includes(p.door) : true));
+
+    // ══════════ filters UI ══════════
+    const mk = (key, label, allLabel, opts, sel, w, hasSearch, stateKey) => {
+      const sk = stateKey || key;
+      const set = v => { const cur = new Set(sel); cur.has(v) ? cur.delete(v) : cur.add(v); this.setFilter({ [sk]: [...cur] }); };
+      const q = (S.ddOpen === key ? S.fq : '').toLowerCase();
+      const shown = q ? opts.filter(o => (o.label || o.v).toLowerCase().includes(q) || o.v.toLowerCase().includes(q)) : opts;
+      const shownV = shown.map(o => o.v);
+      const allShownSel = shownV.length > 0 && shownV.every(v => sel.includes(v));
+      return {
+        label, allLabel, w: w || '230px', hasSearch: !!hasSearch, q: S.ddOpen === key ? S.fq : '',
+        onQ: e => this.setState({ fq: e.target.value }),
+        open: S.ddOpen === key,
+        onToggle: () => this.setState({ ddOpen: S.ddOpen === key ? null : key, fq: '' }),
+        onClear: () => this.setFilter({ [sk]: [] }),
+        allCheck: sel.length ? '' : '✓',
+        selAllShow: !!q && shownV.length > 1,
+        selAllLabel: allShownSel ? 'Unselect these ' + shownV.length : 'Select all ' + shownV.length + ' shown',
+        onSelAll: () => {
+          const cur = new Set(sel);
+          if (allShownSel) shownV.forEach(v => cur.delete(v));
+          else shownV.forEach(v => cur.add(v));
+          this.setFilter({ [sk]: [...cur] });
+        },
+        value: sel.length ? (sel.length === 1 ? (opts.find(o => o.v === sel[0]) || { label: sel[0] }).label || sel[0] : sel.length + ' selected') : 'All',
+        bd: sel.length ? '#C9A45C' : '#D8D4C8', bg: sel.length ? '#FBF6EA' : '#FFFFFF',
+        opts: shown.slice(0, 400).map(o => ({
+          label: o.label || o.v, n: o.n, on: sel.includes(o.v),
+          check: sel.includes(o.v) ? '✓' : '', fw: sel.includes(o.v) ? 700 : 500,
+          bg: sel.includes(o.v) ? '#FBF6EA' : 'transparent',
+          onClick: () => set(o.v),
+        })),
+      };
+    };
+    const monthOpts = monthsAll.slice().reverse().map(v => ({ v, label: mmyy(v), n: glP.includes(v) ? 'GL' : '' }));
+    const statusOpts = statuses.map(v => ({ v, n: ALLP.filter(p => p.status === v).length }));
+    const entOpts = entities.map(v => ({ v, n: ALLP.filter(p => p.entity === v).length }));
+    const doorOpts = ALLP.map(p => p.door).sort().map(v => ({ v, n: '' }));
+    const filters = [
+      mk('fm', 'MONTH', 'months', monthOpts, S.fm, '200px', true),
+      mk('fe', 'ENTITY', 'entities', entOpts, S.fe, '220px'),
+      mk('fp', 'PROPERTY', 'properties', doorOpts, S.fp, '300px', true),
+      mk('fs', 'STATUS', 'statuses', statusOpts, S.fs, '220px'),
+    ];
+    const hasActive = !!(S.fm.length || S.fe.length || S.fp.length || S.fs.length);
+    const onReset = () => this.setFilter({ fm: [], fe: [], fp: [], fs: [] });
+    const asOfLine = 'Balances at ' + mmyy(lastM) + (nWin ? ' · income ' + mmyy(glWin[0]) + (nWin > 1 ? ' → ' + mmyy(glWin[nWin - 1]) : '') : ' · no ledger months in selection');
+
+    // ══════════ GL joins over the selected window ══════════
     const OVERHEAD = new Set((S.gl.meta && S.gl.meta.overheadDoors) || []);
     const INC = new Set(['Rental Income', 'Increase/(Decrease) in Rent', 'Vacancy Loss', 'Other Income', 'SD - Forfeit Income', 'Insurance Claim']);
     const OPX = new Set(['Property Tax', 'Insurance', 'HOA Fee', 'Property Management Expense', 'Utilities', "Renter's Insurance", 'Other Misc Cost', 'Repairs - Payroll', 'Repairs - Materials', 'Repairs - Contractors', 'Rent Ready - Payroll', 'Rent Ready - Materials', 'Rent Ready - Contractors', 'Capex - HVAC', 'Capex - Appliances']);
-    const noiBy = new Map(), intBy = new Map(), rentBy = new Map();
-    let noiPort = 0, intPort = 0;
+    const noiBy = new Map(), intBy = new Map();
+    let noiOver = 0, intOver = 0;
     for (const [ent, door, acct, vals] of S.gl.rows) {
-      const tot = vals.reduce((s, x) => s + x, 0);
-      let d = 0;
+      const tot = glIdx.reduce((s, i) => s + (vals[i] || 0), 0);
+      if (acct === 'Interest Cost') {
+        if (OVERHEAD.has(door)) intOver += tot; else intBy.set(door, (intBy.get(door) || 0) + tot);
+        continue;
+      }
+      let d = null;
       if (INC.has(acct)) d = tot;
-      else if (acct === 'Collection Loss') d = -tot;
-      else if (OPX.has(acct)) d = -tot;
-      else if (acct === 'Interest Cost') { intBy.set(door, (intBy.get(door) || 0) + tot); intPort += tot; continue; }
-      else continue;
-      noiPort += d;
-      if (!OVERHEAD.has(door)) noiBy.set(door, (noiBy.get(door) || 0) + d);
-      if (acct === 'Rental Income') rentBy.set(door, (rentBy.get(door) || 0) + tot);
+      else if (acct === 'Collection Loss' || OPX.has(acct)) d = -tot;
+      if (d === null) continue;
+      if (OVERHEAD.has(door)) noiOver += d; else noiBy.set(door, (noiBy.get(door) || 0) + d);
     }
-    const ann = v => v / NP * 12;
-    const monthsIn = p => {
-      if (!p.putToUse || !/^\d{4}-\d{2}/.test(p.putToUse)) return NP;
-      const s = p.putToUse.slice(0, 7), e = (p.exit && /^\d{4}-\d{2}/.test(p.exit)) ? p.exit.slice(0, 7) : null;
-      let n = 0; for (const per of P) if (per >= s && (!e || per <= e)) n++;
-      return n > 0 ? n : NP;
-    };
-    const annD = (v, p) => v / monthsIn(p) * 12;
-
-    // ---- scope filters ----
-    const ALLP = S.bs.properties;
-    const entities = [...new Set(ALLP.map(p => p.entity))].sort();
-    const coSel = (S.cos || []).filter(c => entities.includes(c));
-    const coActive = coSel.length ? coSel : null;
-    const STATUS = [
-      { id: 'owned', label: 'Owned', test: p => p.status !== 'Sold' },
-      { id: 'rented', label: 'Rented', test: p => p.status === 'Rented' },
-      { id: 'hfs', label: 'Held for sale', test: p => p.status === 'Held for Sale' },
-      { id: 'onhold', label: 'On hold', test: p => p.status === 'On Hold' },
-      { id: 'sold', label: 'Sold', test: p => p.status === 'Sold' },
-      { id: 'all', label: 'All incl. sold', test: () => true },
-    ];
-    const stSel = STATUS.find(s => s.id === S.statusSel) || STATUS[0];
-    const scope = ALLP.filter(p => stSel.test(p) && (!coActive || coSel.includes(p.entity)));
-    const nScope = scope.length;
-
-    const statusChips = STATUS.map(s => {
-      const n = ALLP.filter(p => s.test(p) && (!coActive || coSel.includes(p.entity))).length;
-      return {
-        label: s.label + ' · ' + n,
-        onClick: () => this.setState({ statusSel: s.id, showAll: false }),
-        bg: s.id === stSel.id ? '#16233A' : '#FFFFFF', col: s.id === stSel.id ? '#FFFFFF' : MUT,
-        bd: s.id === stSel.id ? '#16233A' : '#D8D4C8',
-      };
-    });
-    const entLabel = !coActive ? 'All entities' : (coSel.length <= 2 ? coSel.join(', ') : coSel.length + ' entities');
-    const entChip = {
-      value: entLabel, open: S.entOpen,
-      onToggle: () => this.setState(p => ({ entOpen: !p.entOpen })),
-      opts: [{ label: 'All entities', all: true }, ...entities.map(e => ({ label: e }))].map(o => {
-        const active = o.all ? !coActive : coSel.includes(o.label);
-        return {
-          label: o.label, check: active ? '✓' : '', fw: active ? 700 : 500, bg: active ? '#F6F2E7' : 'transparent',
-          onClick: o.all ? () => this.setState({ cos: [] }) : () => this.setState(pp => {
-            const cur = (pp.cos || []).slice(); const ix = cur.indexOf(o.label);
-            if (ix >= 0) cur.splice(ix, 1); else cur.push(o.label);
-            return { cos: cur };
-          }),
-        };
-      }),
-    };
-
-    // ---- headline aggregates ----
-    const sum = f => scope.reduce((s, p) => s + f(p), 0);
-    const tVal = sum(p => p.value), tCost = sum(p => p.cost), tDebt = sum(p => p.refi);
-    const tEq = tVal - tDebt;
-    const costKnown = scope.filter(p => p.cost > 0);
-    const apprBase = costKnown.reduce((s, p) => s + p.cost, 0);
-    const apprVal = costKnown.reduce((s, p) => s + p.value, 0);
-    const tAppr = apprVal - apprBase;
+    const ovAdd = !feAct.length && !fpAct.length; // company-level overhead belongs to portfolio-wide views
     const glScope = scope.filter(p => noiBy.has(p.door));
-    const noiScope = glScope.reduce((s, p) => s + noiBy.get(p.door), 0) + (!coActive && stSel.id !== 'sold' ? (noiPort - [...noiBy.values()].reduce((a, b) => a + b, 0)) : 0); // add overhead PM only for all-entity owned views
-    const annNoi = ann(noiScope);
-    const capRate = tVal > 0 ? annNoi / tVal * 100 : 0;
-    const valGl = glScope.reduce((s, p) => s + p.value, 0);
+    const noiWin = glScope.reduce((s, p) => s + noiBy.get(p.door), 0) + (ovAdd ? noiOver : 0);
+    const intWin = scope.reduce((s, p) => s + (intBy.get(p.door) || 0), 0) + (ovAdd ? intOver : 0);
+    const niWin = noiWin - intWin;
+    const ann = v => nWin ? v / nWin * 12 : 0;
+    const monthsIn = p => {
+      if (!nWin) return 0;
+      if (!p.putToUse || !/^\d{4}-\d{2}/.test(p.putToUse)) return nWin;
+      const s0 = p.putToUse.slice(0, 7), e0 = exitMonth(p);
+      let n = 0; for (const per of glWin) if (per >= s0 && (!e0 || per <= e0)) n++;
+      return n > 0 ? n : nWin;
+    };
+    const annD = (v, p) => { const mi = monthsIn(p); return mi ? v / mi * 12 : 0; };
 
-    const scopeLine = 'As published · ' + entLabel + ' · ' + stSel.label.toLowerCase() + ' scope · ' + nScope + ' properties · income joined from GL ' + P[0] + ' → ' + P[NP - 1];
+    // ══════════ Section A: income on investment ══════════
+    const sum = f => scope.reduce((s, p) => s + f(p), 0);
+    const tCost = sum(p => p.cost), tRefi = sum(p => p.refi), tVal = sum(p => p.value);
+    const tInv = tCost - tRefi;
+    const calcBy = new Map(scope.map(p => [p.door, doorCalc(p.door, lastM)]));
+    const tRepaid = scope.reduce((s, p) => s + calcBy.get(p.door).owner, 0);
+    const tDebt = scope.reduce((s, p) => s + calcBy.get(p.door).close, 0);
+    const tCap = tInv + tRepaid;
+    const zeroCostN = scope.filter(p => !(p.cost > 0)).length;
+    const cashOutN = scope.filter(p => p.cost > 0 && p.refi > p.cost).length;
+    const annNoi = ann(noiWin), annNi = ann(niWin);
+    const capCost = tCost > 0 && nWin ? annNoi / tCost * 100 : null;
+    const niRoi = tCap > 0 && nWin ? annNi / tCap * 100 : null;
+    const excludedDebt = excluded.reduce((s, p) => s + debtAt(p.door, lastM), 0);
 
     const kpis = [
-      { label: 'Portfolio value', value: fK(tVal), sub: 'ARV-first policy · avg ' + fK(nScope ? tVal / nScope : 0) + ' per door', col: NAVY },
-      { label: 'Cost basis', value: fK(tCost), sub: (scope.length - costKnown.length) + ' door(s) pending cost data', col: NAVY },
-      { label: 'Debt · at refinance', value: fK(tDebt), sub: 'initial refinance balances — amortization pending', col: NAVY },
-      { label: 'Owner equity', value: fK(tEq), sub: fP(tEq, tVal) + ' of portfolio value', col: tEq < 0 ? RED : '#2A6F4E' },
-      { label: 'Portfolio LTV', value: tVal > 0 ? fP(tDebt, tVal) : '—', sub: 'debt ÷ value, at-refinance basis', col: tVal > 0 && tDebt / tVal > 0.75 ? RED : NAVY },
-      { label: 'Annualized NOI', value: fK(annNoi), sub: 'from ' + glScope.length + ' doors with ledger activity', col: annNoi < 0 ? RED : NAVY },
-      { label: 'Cap rate', value: tVal > 0 ? capRate.toFixed(2) + '%' : '—', sub: 'annualized NOI ÷ portfolio value', col: NAVY },
-      { label: 'Appreciation', value: fK(tAppr), sub: apprBase > 0 ? fP(tAppr, apprBase) + ' on known cost of ' + fK(apprBase) : 'no cost data in scope', col: tAppr < 0 ? RED : '#2A6F4E' },
+      { label: 'Cost basis', value: fN(tCost), col: NAVY, bg: '#FFFFFF', bd: '#E5E3DC', hasLegs: false, legs: [],
+        sub: nScope + ' properties in scope' + (zeroCostN ? ' · ' + zeroCostN + ' pending cost data' : '') },
+      { label: 'Initial refinance', value: fN(tRefi), col: BRICK, bg: '#FFFFFF', bd: '#E5E3DC', hasLegs: false, legs: [],
+        sub: 'cash pulled back out at refinance (BS sheet)' },
+      { label: 'Initial investment', value: fN(tInv), col: tInv < 0 ? '#2A6F4E' : NAVY, bg: '#FFFFFF', bd: '#E5E3DC', hasLegs: false, legs: [],
+        sub: 'cost basis − initial refinance' + (cashOutN ? ' · ' + cashOutN + ' door(s) cashed out beyond basis' : '') },
+      { label: 'Principal repaid · till ' + mmyy(lastM), value: fN(tRepaid), col: GREEN, bg: '#FFFFFF', bd: '#E5E3DC', hasLegs: false, legs: [],
+        sub: 'owner-paid only — includes release excess; sale proceeds & the refi-funded payoff are netted out' },
+      { label: 'Capital in deal', value: fN(tCap), col: NAVY, bg: '#F9F8F3', bd: '#EDEBE2', hasLegs: true,
+        legs: [{ bg: NAVY, txt: 'Invested ' + fK(tInv) }, { bg: GREEN, txt: 'Principal ' + fK(tRepaid) }],
+        sub: 'initial investment + principal repaid — the denominator for net-income ROI' },
+      { label: 'NOI cap rate · on cost', value: capCost === null ? '—' : capCost.toFixed(2) + '%', col: capCost !== null && capCost < 0 ? RED : NAVY, bg: '#FFFFFF', bd: '#E5E3DC', hasLegs: false, legs: [],
+        sub: nWin ? 'annualized NOI ' + fK(annNoi) + ' ÷ cost basis' : 'no ledger months in the selection (ledger ' + mmyy(glP[0]) + ' → ' + mmyy(glP[glP.length - 1]) + ')' },
+      { label: 'Net income ROI', value: niRoi === null ? '—' : niRoi.toFixed(2) + '%', col: niRoi !== null && niRoi < 0 ? RED : '#2A6F4E', bg: '#FFFFFF', bd: '#E5E3DC', hasLegs: false, legs: [],
+        sub: nWin ? 'annualized net income ' + fK(annNi) + ' (NOI − interest) ÷ capital in deal' : 'needs ledger months in the selection' },
+      { label: 'Cash-on-cash ROI', value: '—', col: MUT, bg: '#FBF6EA', bd: '#EAD9C0', hasLegs: false, legs: [],
+        sub: 'PENDING — needs actual cash flow (Cash Flow phase); will divide by initial investment' },
     ];
+    const invSub = 'ownership costs & returns for the selected scope · balances at ' + mmyy(lastM);
+    const invFoot = 'Common-sense scope: properties sold or moved to held-for-sale drop out of every figure from their event month (' + excluded.length + ' excluded here' + (excludedDebt > 0.005 ? ', still carrying ' + fK(excludedDebt) + ' of debt — see checks below' : '') + ') — select their status in the STATUS filter to bring them back. Principal repaid counts only money you paid: scheduled principal + extra principal + the excess paid on releases; the released door’s own slice (settled from sale proceeds) and the ' + fK(56774) + ' refinance-funded payoff on 410 Virginia Dr are not counted. Returns annualize the selected ledger window' + (nWin ? ' ' + mmyy(glWin[0]) + ' → ' + mmyy(glWin[nWin - 1]) : '') + '.';
 
-    // ---- balance sheet rows ----
+    // ══════════ checks & balances ══════════
+    const drawn = Object.values(LDD).reduce((s, d) => s + d.initial, 0);
+    const outAll = Object.values(LDD).reduce((s, d) => s + d.latest, 0);
+    let ownAll = 0, saleAll = 0, refiAll = 0;
+    for (const d in LDD) { const c = doorCalc(d, monthsAll[monthsAll.length - 1]); ownAll += c.owner; saleAll += c.saleF; refiAll += c.refiF; }
+    const identOk = Math.abs(ownAll + saleAll + refiAll + outAll - drawn) < 0.05;
+    const bsSet = new Set(ALLP.map(p => p.door));
+    const loanDoorsNoBs = Object.keys(LDD).filter(d => !bsSet.has(d));
+    const refiNoLoan = ALLP.filter(p => (p.refi || 0) > 0 && !doorNotes[p.door]);
+    const loanNoRefi = ALLP.filter(p => doorNotes[p.door] && !(p.refi > 0));
+    const exWithDebt = excluded.filter(p => debtAt(p.door, lastM) > 0.005);
+    const mkRecon = (id, sev, t, s, rows) => ({
+      t, s, rows: rows || [],
+      icon: sev === 'ok' ? '✓' : '!', iconBg: sev === 'ok' ? '#E3EEE7' : (sev === 'warn' ? '#F6ECD9' : '#F3E2DB'), iconCol: sev === 'ok' ? '#2F7351' : (sev === 'warn' ? '#96742F' : '#A03E28'),
+      bd: S.reconSel === id ? '#C9A45C' : '#EFE3CE', bg: S.reconSel === id ? '#FBF6EA' : '#FFFFFF',
+      exp: S.reconSel === id && (rows || []).length > 0,
+      caret: (rows || []).length ? (S.reconSel === id ? 'HIDE ▴' : 'DETAIL ▾') : '',
+      onClick: () => this.setState({ reconSel: S.reconSel === id ? null : id }),
+    });
+    const recon = [];
+    recon.push(mkRecon('ident', identOk && !sliceGateBad ? 'ok' : 'bad',
+      'Loans ledger ties to the cent',
+      'drawn ' + fN(drawn) + ' = owner-paid ' + fN(ownAll) + ' + sale-settled ' + fN(saleAll) + ' + refi-funded ' + fN(refiAll) + ' + outstanding ' + fN(outAll) + (sliceGateBad ? ' · ' + sliceGateBad + ' door slice mismatch!' : ''),
+      [{ l: 'Total principal drawn across 47 notes', r: fN(drawn) },
+       { l: 'Owner-paid principal (scheduled + extra + release excess)', r: fN(ownAll) },
+       { l: 'Retired by sale proceeds at release', r: fN(saleAll) },
+       { l: 'Retired by refinance draw (410 Virginia Dr payoff)', r: fN(refiAll) },
+       { l: 'Still outstanding at ' + mmyy(monthsAll[monthsAll.length - 1]), r: fN(outAll) }]));
+    if (exWithDebt.length) recon.push(mkRecon('exdebt', 'warn',
+      fK(exWithDebt.reduce((s, p) => s + debtAt(p.door, lastM), 0)) + ' of debt sits on excluded doors',
+      exWithDebt.length + ' sold / held-for-sale door(s) still carry loan balances at ' + mmyy(lastM) + ' — excluded from scope figures until you select their status',
+      exWithDebt.map(p => ({ l: p.door + ' · ' + p.status + (exitMonth(p) ? ' since ' + mmyy(exitMonth(p)) : ''), r: fN(debtAt(p.door, lastM)) }))));
+    if (refiNoLoan.length) recon.push(mkRecon('refinoloan', 'warn',
+      refiNoLoan.length + ' door(s) show a refinance in the BS sheet but no note in Loans.xlsx',
+      'their principal repaid reads $0 until the note is encoded',
+      refiNoLoan.map(p => ({ l: p.door + ' · ' + p.entity, r: 'BS refi ' + fN(p.refi) }))));
+    if (loanDoorsNoBs.length) recon.push(mkRecon('loannobsl', 'warn',
+      loanDoorsNoBs.length + ' loan door(s) missing from the Balance Sheet',
+      'they carry debt in Loans.xlsx but have no BS row — add them to the BS sheet',
+      loanDoorsNoBs.map(d => ({ l: d, r: 'outstanding ' + fN(LDD[d].latest) }))));
+    if (loanNoRefi.length) recon.push(mkRecon('loannorefi', 'warn',
+      loanNoRefi.length + ' door(s) have notes but a blank Initial Refinance in the BS sheet',
+      'initial investment is overstated for them until the BS refi column is filled',
+      loanNoRefi.map(p => ({ l: p.door + ' · ' + p.entity, r: 'initial slice ' + fN((doorNotes[p.door] || []).reduce((s, x) => s + x.slice, 0)) }))));
+    if (loansSkipped) recon.push(mkRecon('skip', 'warn',
+      loansSkipped + ' note(s) have no amortization rows in the horizon',
+      'e.g. a settled hard-money bridge — they contribute nothing to principal repaid',
+      S.ld.loans.filter(l => !l.schedule || !l.schedule.length).map(l => ({ l: 'Note ' + l.displayId + ' · ' + (Object.keys(l.origProps || {})[0] || '—'), r: l.type + ' · settled' }))));
+    const warnN = recon.filter(r => r.icon === '!').length;
+    const tieBadge = identOk && !sliceGateBad ? (warnN ? warnN + ' TO REVIEW' : 'ALL TIED') : 'TIE BROKEN';
+    const tieBg = identOk && !sliceGateBad ? (warnN ? '#F6ECD9' : '#E3EEE7') : '#F3E2DB';
+    const tieCol = identOk && !sliceGateBad ? (warnN ? '#96742F' : '#2F7351') : '#A03E28';
+    const tieLine = 'every figure above is cross-checked against Loans.xlsx and the ledger on each publish — click a line for detail';
+
+    // ══════════ Section B: margin of safety ══════════
+    const valued = scope.filter(p => p.value > 0);
+    const noVal = scope.filter(p => !(p.value > 0));
+    const vVal = valued.reduce((s, p) => s + p.value, 0);
+    const vDebt = valued.reduce((s, p) => s + calcBy.get(p.door).close, 0);
+    const vEq = vVal - vDebt;
+    const vCostKnown = valued.filter(p => p.cost > 0);
+    const apprBase = vCostKnown.reduce((s, p) => s + p.cost, 0);
+    const apprVal = vCostKnown.reduce((s, p) => s + p.value, 0);
+    const tAppr = apprVal - apprBase;
+    const mosPct = vVal > 0 ? fP(vEq, vVal) : '—';
+    // value decomposed as debt | equity-at-cost | appreciation; when cash-out leverage exceeds cost,
+    // the remaining equity is appreciation-derived, so appreciation is capped at the equity that exists
+    const brDebtPct = vVal > 0 ? Math.min(vDebt / vVal * 100, 100) : 0;
+    const brApprPct = vVal > 0 ? Math.min(Math.max(tAppr, 0) / vVal * 100, Math.max(100 - brDebtPct, 0)) : 0;
+    const brCostPct = Math.max(0, 100 - brDebtPct - brApprPct);
+    const brDebtW = brDebtPct.toFixed(2) + '%', brApprW = brApprPct.toFixed(2) + '%', brCostW = brCostPct.toFixed(2) + '%';
+    const eqAtCost = vVal * brCostPct / 100;
+    const BUCKETS = [
+      { id: 'hi', label: 'LTV ≥ 80%', test: (ltv, dbt) => dbt > 0 && ltv >= 80, col: RED, labCol: RED },
+      { id: 'mid', label: 'LTV 65–80%', test: (ltv, dbt) => dbt > 0 && ltv >= 65 && ltv < 80, col: GOLDD, labCol: GOLDD },
+      { id: 'low', label: 'LTV 50–65%', test: (ltv, dbt) => dbt > 0 && ltv >= 50 && ltv < 65, col: NAVY, labCol: MUT },
+      { id: 'safe', label: 'LTV < 50%', test: (ltv, dbt) => dbt > 0 && ltv < 50, col: '#2A6F4E', labCol: '#2A6F4E' },
+      { id: 'free', label: 'DEBT-FREE', test: (ltv, dbt) => !(dbt > 0), col: '#2A6F4E', labCol: '#2A6F4E' },
+    ];
+    const ladderAll = valued.map(p => {
+      const c = calcBy.get(p.door);
+      const ltv = p.value > 0 ? c.close / p.value * 100 : 0;
+      return { p, c, ltv, eq: p.value - c.close, appr: p.cost > 0 ? p.value - p.cost : 0 };
+    });
+    const buckets = BUCKETS.map(b => {
+      const rs = ladderAll.filter(r => b.test(r.ltv, r.c.close));
+      const on = S.mosBucket === b.id;
+      return {
+        label: b.label, labCol: on ? '#96742F' : b.labCol, n: String(rs.length),
+        sub: fK(rs.reduce((s, r) => s + r.eq, 0)) + ' equity',
+        col: b.col, filtTag: on ? 'FILTERING ✕' : '',
+        bd: on ? '#C9A45C' : '#E5E3DC', bg: on ? '#FBF6EA' : '#FFFFFF',
+        onClick: () => this.setState({ mosBucket: on ? null : b.id, mosSel: null }),
+      };
+    });
+    const bSel = BUCKETS.find(b => b.id === S.mosBucket) || null;
+    const mq = (S.mosQ || '').trim().toLowerCase();
+    const ladderF = ladderAll
+      .filter(r => !bSel || bSel.test(r.ltv, r.c.close))
+      .filter(r => !mq || r.p.door.toLowerCase().includes(mq) || r.p.entity.toLowerCase().includes(mq))
+      .sort((a, b) => b.ltv - a.ltv);
+    const ladder = ladderF.map(r => {
+      const isExp = S.mosSel === r.p.door;
+      const wD = Math.min(r.ltv, 100), wA = Math.max(0, Math.min(r.appr / r.p.value * 100, 100 - wD));
+      const wC = Math.max(0, 100 - wD - wA);
+      const facts = isExp ? [
+        { k: 'Cost basis', v: r.p.cost > 0 ? fN(r.p.cost) : 'pending', col: INK },
+        { k: 'Initial refinance', v: fN(r.p.refi), col: BRICK },
+        { k: 'Debt · ' + mmyy(lastM), v: fN(r.c.close), col: RED },
+        { k: 'Principal repaid', v: fN(r.c.owner), col: GREEN },
+        { k: 'Value (' + (r.p.valueSource === 'arv' ? 'ARV' : r.p.valueSource) + ')', v: fN(r.p.value), col: NAVY },
+        { k: 'Appreciation', v: r.p.cost > 0 ? fN(r.appr) + ' (' + fP(r.appr, r.p.cost) + ')' : '—', col: r.appr < 0 ? RED : '#2A6F4E' },
+        { k: 'Equity', v: fN(r.eq), col: r.eq < 0 ? RED : '#2A6F4E' },
+        { k: 'Margin of safety', v: r.p.value > 0 ? fP(r.eq, r.p.value) : '—', col: NAVY },
+      ] : [];
+      return {
+        door: r.p.door, ent: r.p.entity + ' · ' + r.p.status, caret: isExp ? '▾' : '▸',
+        wD: wD.toFixed(1) + '%', wC: wC.toFixed(1) + '%', wA: wA.toFixed(1) + '%',
+        aBg: r.appr < 0 ? '#E8A896' : GREEN,
+        ltv: r.c.close > 0 ? r.ltv.toFixed(1) + '%' : '—',
+        ltvCol: r.ltv >= 80 ? RED : (r.ltv >= 65 ? GOLDD : INK),
+        eq: fK(r.eq), eqCol: r.eq < 0 ? RED : '#2A6F4E',
+        bg: isExp ? '#FBFAF6' : 'transparent', selBd: isExp ? '#C9A45C' : 'transparent',
+        exp: isExp, facts,
+        hasLoan: !!doorNotes[r.p.door],
+        hrefPl: './PL%20Story%20-%20Main.dc.html?door=' + encodeURIComponent(r.p.door),
+        hrefLoan: './loans.dc.html?door=' + encodeURIComponent(r.p.door),
+        onClick: () => this.setState({ mosSel: isExp ? null : r.p.door }),
+      };
+    });
+    const mosNote = ladderF.length + ' of ' + valued.length + ' valued properties · riskiest first' + (bSel ? ' · ' + bSel.label + ' only' : '') + (noVal.length ? ' · ' + noVal.length + ' without valuation excluded' : '');
+    const mosFoot = 'Each bar is one property’s value split into debt at ' + mmyy(lastM) + ' (brick), the equity you put in at cost (blue), and appreciation above cost (green — pink when value sits below cost). Margin of safety = equity ÷ value: the drop the portfolio can absorb before your capital is impaired. Doors without a valuation (' + noVal.length + ') are excluded from value-based figures; appreciation is measured only on doors with known cost.' + (bSel ? ' Bucket filter applies to this section only.' : '');
+
+    const scopeLine = nScope + ' properties · balances at ' + mmyy(lastM) + ' · debt from the loans engine, income from the ledger, values from the balance sheet — all cross-checked below';
+
+    // ══════════ balance sheet rows ══════════
     const arvN = scope.filter(p => p.valueSource === 'arv').length;
     const cntyN = scope.filter(p => p.valueSource === 'county').length;
     const noneN = scope.filter(p => p.valueSource === 'none').length;
-    const mk = (label, val, o = {}) => ({
+    const mkRow = (label, val, o = {}) => ({
       label, val, dot: o.dot || 'transparent', dotR: o.sq ? '3px' : '50%',
       fs: o.big ? 14 : 12.5, fw: o.big ? 700 : 500, vfw: 700, col: o.col || INK, vcol: o.vcol || INK,
       bt: o.bt || '1px solid #F3F1EA', bg: o.bg || 'transparent', pad: o.big ? '11px 6px' : '8px 6px', rad: o.bg ? '8px' : '0',
     });
+    const tEqBs = tVal - tDebt;
     const bsRows = [
-      mk('ASSETS', '', { big: true, col: GOLDD, bt: 'none' }),
-      mk('Real estate — policy value (ARV-first)', fN(tVal), { dot: NAVY }),
-      mk('· of which valued by ARV', fN(scope.filter(p => p.valueSource === 'arv').reduce((s, p) => s + p.value, 0)) + '  (' + arvN + ')', { col: MUT, vcol: MUT }),
-      mk('· county-assessed fallback', fN(scope.filter(p => p.valueSource === 'county').reduce((s, p) => s + p.value, 0)) + '  (' + cntyN + ')', { col: MUT, vcol: MUT }),
-      mk('Cash & escrow', 'pending — Phase 3', { col: MUT, vcol: '#9AA3B5' }),
-      mk('Total assets (real estate)', fN(tVal), { big: true, bg: '#F4F2EA' }),
-      mk('LIABILITIES', '', { big: true, col: GOLDD, bt: 'none' }),
-      mk('Mortgage debt · at refinance', fN(tDebt), { dot: '#B04A33', vcol: RED }),
-      mk('Security deposits held', 'pending mapping', { col: MUT, vcol: '#9AA3B5' }),
-      mk('EQUITY', '', { big: true, col: GOLDD, bt: 'none' }),
-      mk('Owner equity (assets − debt)', fN(tEq), { big: true, bg: '#EAF3EC', vcol: tEq < 0 ? RED : '#2F7351' }),
+      mkRow('ASSETS', '', { big: true, col: GOLDD, bt: 'none' }),
+      mkRow('Real estate — policy value (ARV-first)', fN(tVal), { dot: NAVY }),
+      mkRow('· of which valued by ARV', fN(scope.filter(p => p.valueSource === 'arv').reduce((s, p) => s + p.value, 0)) + '  (' + arvN + ')', { col: MUT, vcol: MUT }),
+      mkRow('· county-assessed fallback', fN(scope.filter(p => p.valueSource === 'county').reduce((s, p) => s + p.value, 0)) + '  (' + cntyN + ')', { col: MUT, vcol: MUT }),
+      mkRow('Cash & escrow', 'pending — Phase 3', { col: MUT, vcol: '#9AA3B5' }),
+      mkRow('Total assets (real estate)', fN(tVal), { big: true, bg: '#F4F2EA' }),
+      mkRow('LIABILITIES', '', { big: true, col: GOLDD, bt: 'none' }),
+      mkRow('Mortgage debt · outstanding at ' + mmyy(lastM), fN(tDebt), { dot: '#B04A33', vcol: RED }),
+      mkRow('· at initial refinance (for reference)', fN(tRefi) + '  · repaid ' + fK(tRepaid), { col: MUT, vcol: MUT }),
+      mkRow('Security deposits held', 'pending mapping', { col: MUT, vcol: '#9AA3B5' }),
+      mkRow('EQUITY', '', { big: true, col: GOLDD, bt: 'none' }),
+      mkRow('Owner equity (assets − debt)', fN(tEqBs), { big: true, bg: '#EAF3EC', vcol: tEqBs < 0 ? RED : '#2F7351' }),
     ];
-    const bsSub = nScope + ' properties · ' + (noneN ? noneN + ' with no valuation yet · ' : '') + 'values as last published';
-    const bsFormula = fN(tVal) + ' assets − ' + fN(tDebt) + ' debt = ' + fN(tEq) + ' equity (' + fP(tEq, tVal) + ' of value)';
+    const bsSub = nScope + ' properties · ' + (noneN ? noneN + ' with no valuation yet · ' : '') + 'debt now amortized to ' + mmyy(lastM) + ' via the loans engine';
+    const bsFormula = fN(tVal) + ' assets − ' + fN(tDebt) + ' debt = ' + fN(tEqBs) + ' equity (' + (tVal > 0 ? fP(tEqBs, tVal) : '—') + ' of value)';
 
-    const eqBig = fK(tEq), eqPct = fP(tEq, tVal);
-    const eqW = Math.max(0, Math.min(100, tVal > 0 ? tEq / tVal * 100 : 0)) + '%';
-    const debtW = Math.max(0, Math.min(100, tVal > 0 ? tDebt / tVal * 100 : 0)) + '%';
-    const eqCents = tVal > 0 ? Math.round(tEq / tVal * 100) + '¢' : '—';
-
-    // ---- entity table ----
-    const entHeads = ['DOORS', 'VALUE', 'COST', 'DEBT', 'EQUITY', 'LTV', 'CAP RATE'];
-    const perEnt = entities.filter(e => !coActive || coSel.includes(e)).map(e => {
+    // ══════════ entity table ══════════
+    const entHeads = ['DOORS', 'VALUE', 'COST', 'DEBT NOW', 'PRINCIPAL PAID', 'EQUITY', 'LTV', 'CAP RATE'];
+    const perEnt = entities.filter(e => !feAct.length || feAct.includes(e)).map(e => {
       const ps = scope.filter(p => p.entity === e);
-      const v = ps.reduce((s, p) => s + p.value, 0), c = ps.reduce((s, p) => s + p.cost, 0), d = ps.reduce((s, p) => s + p.refi, 0);
+      const v = ps.reduce((s, p) => s + p.value, 0), c = ps.reduce((s, p) => s + p.cost, 0);
+      const d = ps.reduce((s, p) => s + calcBy.get(p.door).close, 0);
+      const rp = ps.reduce((s, p) => s + calcBy.get(p.door).owner, 0);
       const gp = ps.filter(p => noiBy.has(p.door));
       const n = ann(gp.reduce((s, p) => s + noiBy.get(p.door), 0));
-      return { e, n: ps.length, v, c, d, eq: v - d, noi: n };
+      return { e, n: ps.length, v, c, d, rp, eq: v - d, noi: n };
     }).filter(r => r.n > 0).sort((a, b) => b.eq - a.eq);
+    const capRateAll = tVal > 0 && nWin ? annNoi / tVal * 100 : null;
     const entRows = [...perEnt.map(r => ({
       name: r.e, fw: 500, col: INK, bt: '1px solid #F0EEE7', bg: 'transparent', rad: '0',
       cells: [
         { t: String(r.n), col: MUT }, { t: fK(r.v), col: INK }, { t: fK(r.c), col: INK }, { t: fK(r.d), col: RED },
+        { t: fK(r.rp), col: '#2A6F4E' },
         { t: fK(r.eq), col: r.eq < 0 ? RED : '#2A6F4E' },
         { t: r.v > 0 ? fP(r.d, r.v) : '—', col: r.v > 0 && r.d / r.v > 0.75 ? RED : MUT },
-        { t: r.v > 0 ? (r.noi / r.v * 100).toFixed(2) + '%' : '—', col: MUT },
+        { t: r.v > 0 && nWin ? (r.noi / r.v * 100).toFixed(2) + '%' : '—', col: MUT },
       ],
     })), {
       name: 'TOTAL', fw: 700, col: NAVY, bt: '1px solid #E0DDD1', bg: '#F4F2EA', rad: '8px',
       cells: [
         { t: String(nScope), col: NAVY }, { t: fK(tVal), col: NAVY }, { t: fK(tCost), col: NAVY }, { t: fK(tDebt), col: RED },
-        { t: fK(tEq), col: tEq < 0 ? RED : '#2F7351' }, { t: tVal > 0 ? fP(tDebt, tVal) : '—', col: NAVY },
-        { t: tVal > 0 ? capRate.toFixed(2) + '%' : '—', col: NAVY },
+        { t: fK(tRepaid), col: '#2F7351' },
+        { t: fK(tEqBs), col: tEqBs < 0 ? RED : '#2F7351' }, { t: tVal > 0 ? fP(tDebt, tVal) : '—', col: NAVY },
+        { t: capRateAll === null ? '—' : capRateAll.toFixed(2) + '%', col: NAVY },
       ],
     }];
-    const entSub = 'sorted by equity · cap rate = annualized ledger NOI ÷ value';
+    const entSub = 'sorted by equity · debt & principal from the loans engine at ' + mmyy(lastM) + ' · cap rate = annualized ledger NOI ÷ value';
 
-    // ---- by-door explorer ----
+    // ══════════ by-door explorer ══════════
     const METRICS = [
-      { id: 'equity', label: 'Equity', f: p => p.value - p.refi, fmt: fK, bar: 'abs', col: v => v < 0 ? RED : NAVY, need: p => p.value > 0 },
+      { id: 'equity', label: 'Equity', f: p => p.value - calcBy.get(p.door).close, fmt: fK, bar: 'abs', col: v => v < 0 ? RED : NAVY, need: p => p.value > 0 },
       { id: 'value', label: 'Value', f: p => p.value, fmt: fK, bar: 'abs', col: () => NAVY, need: p => p.value > 0 },
-      { id: 'debt', label: 'Debt', f: p => p.refi, fmt: fK, bar: 'abs', col: () => BRICK, need: p => p.refi > 0 },
-      { id: 'ltv', label: 'LTV', f: p => p.refi / p.value * 100, fmt: v => v.toFixed(1) + '%', bar: 'pct100', col: v => v > 75 ? RED : NAVY, need: p => p.value > 0 && p.refi > 0 },
+      { id: 'debt', label: 'Debt now', f: p => calcBy.get(p.door).close, fmt: fK, bar: 'abs', col: () => BRICK, need: p => calcBy.get(p.door).close > 0 },
+      { id: 'repaid', label: 'Principal repaid', f: p => calcBy.get(p.door).owner, fmt: fK, bar: 'abs', col: v => v < 0 ? '#2A6F4E' : GREEN, need: p => !!doorNotes[p.door] },
+      { id: 'ltv', label: 'LTV', f: p => calcBy.get(p.door).close / p.value * 100, fmt: v => v.toFixed(1) + '%', bar: 'pct100', col: v => v > 75 ? RED : NAVY, need: p => p.value > 0 && calcBy.get(p.door).close > 0 },
       { id: 'appr', label: 'Appreciation', f: p => p.value - p.cost, fmt: fK, bar: 'abs', col: v => v < 0 ? RED : '#2A6F4E', need: p => p.cost > 0 && p.value > 0 },
-      { id: 'cap', label: 'Cap rate', f: p => annD(noiBy.get(p.door), p) / p.value * 100, fmt: v => v.toFixed(2) + '%', bar: 'abs', col: v => v < 0 ? RED : NAVY, need: p => p.value > 0 && noiBy.has(p.door) },
-      { id: 'yoc', label: 'Yield on cost', f: p => annD(noiBy.get(p.door), p) / p.cost * 100, fmt: v => v.toFixed(2) + '%', bar: 'abs', col: v => v < 0 ? RED : NAVY, need: p => p.cost > 0 && noiBy.has(p.door) },
+      { id: 'cap', label: 'Cap rate', f: p => annD(noiBy.get(p.door), p) / p.value * 100, fmt: v => v.toFixed(2) + '%', bar: 'abs', col: v => v < 0 ? RED : NAVY, need: p => p.value > 0 && noiBy.has(p.door) && nWin > 0 },
+      { id: 'yoc', label: 'Yield on cost', f: p => annD(noiBy.get(p.door), p) / p.cost * 100, fmt: v => v.toFixed(2) + '%', bar: 'abs', col: v => v < 0 ? RED : NAVY, need: p => p.cost > 0 && noiBy.has(p.door) && nWin > 0 },
       { id: 'dscr', label: 'DSCR (interest-only)', f: p => noiBy.get(p.door) / intBy.get(p.door), fmt: v => v.toFixed(2) + '×', bar: 'abs', col: v => v < 1 ? RED : NAVY, need: p => noiBy.has(p.door) && (intBy.get(p.door) || 0) > 1, asc: true },
       { id: 'cash', label: 'Cash in deal', f: p => p.cost - p.refi, fmt: fK, bar: 'abs', col: v => v < 0 ? '#2A6F4E' : NAVY, need: p => p.cost > 0 },
     ];
@@ -527,7 +936,7 @@ class Component extends DCLogic {
       sub: r.p.entity + ' · ' + (r.p.valueSource === 'arv' ? 'ARV' : r.p.valueSource),
       val: met.fmt(r.v), vcol: met.col(r.v),
       w: Math.max(2, Math.abs(r.v) / mx * 100) + '%',
-      bg: met.col(r.v) === RED ? RED : (met.id === 'appr' || met.id === 'equity' ? '#2A6F4E' : NAVY),
+      bg: met.col(r.v) === RED ? RED : (met.id === 'appr' || met.id === 'equity' || met.id === 'repaid' ? '#2A6F4E' : NAVY),
       href: './PL%20Story%20-%20Main.dc.html?door=' + encodeURIComponent(r.p.door),
     }));
     const expNote = (q ? rowsQ.length + ' door(s) matching "' + S.expQ + '"' : ((S.showAll ? 'All ' + rowsQ.length : 'Top ' + Math.min(TOPN, rowsQ.length) + ' of ' + rowsQ.length) + ' doors')) + ' · ' + met.label + (met.asc ? ' · lowest first (risk view)' : ' · largest first') + ' · ' + (scope.length - eligible.length) + ' door(s) excluded for missing inputs';
@@ -536,11 +945,11 @@ class Component extends DCLogic {
       label: S.showAll ? '← Back to top ' + TOPN : 'Show all ' + rowsQ.length + ' doors →',
       onClick: () => this.setState(p => ({ showAll: !p.showAll })),
     };
-    const expFoot = 'Cap rate & yield annualize each door\u2019s ledger NOI over its in-service months within ' + P[0] + ' → ' + P[NP - 1] + ' (per the Property Index put-to-use/exit dates); DSCR is interest-only until amortization data arrives; cash in deal = cost − initial refinance (negative = cash-out beyond basis). Doors lacking a required input for the selected lens are excluded and counted above.';
+    const expFoot = 'Debt, LTV, equity and principal repaid now come from the loans engine at ' + mmyy(lastM) + '. Cap rate & yield annualize each door’s ledger NOI over its in-service months within the selected window; DSCR remains interest-only for now — a payment-based DSCR needs per-door debt-service shares (planned); cash in deal = cost − initial refinance (negative = cash-out beyond basis). Doors lacking a required input for the selected lens are excluded and counted above.';
 
-    // ---- lifecycle ----
+    // ══════════ lifecycle ══════════
     const years = {};
-    for (const p of ALLP.filter(p => !coActive || coSel.includes(p.entity))) {
+    for (const p of ALLP.filter(p => !feAct.length || feAct.includes(p.entity))) {
       if (!p.putToUse) continue;
       const y = p.putToUse.slice(0, 4);
       years[y] = (years[y] || 0) + 1;
@@ -548,11 +957,11 @@ class Component extends DCLogic {
     const ys = Object.keys(years).sort();
     const vmax = Math.max(...Object.values(years), 1);
     const vinRows = ys.map((y, i) => ({ year: y, n: years[y], w: Math.max(3, years[y] / vmax * 100) + '%', bg: i === ys.length - 1 ? GOLD : NAVY }));
-    const vinSub = entLabel;
-    const future = ALLP.filter(p => p.putToUse && p.putToUse.slice(0, 7) > P[NP - 1]).length;
+    const vinSub = feAct.length ? feAct.join(', ') : 'All entities';
+    const future = ALLP.filter(p => p.putToUse && p.putToUse.slice(0, 7) > glP[glP.length - 1]).length;
     const vinNote = future ? future + ' door(s) put to use after the last ledger month — they appear here and join the P&L as their activity lands.' : 'All indexed doors are within the ledger window.';
 
-    const exits = ALLP.filter(p => (p.status === 'Sold' || p.status === 'Held for Sale') && (!coActive || coSel.includes(p.entity)))
+    const exits = ALLP.filter(p => (p.status === 'Sold' || p.status === 'Held for Sale') && (!feAct.length || feAct.includes(p.entity)))
       .sort((a, b) => String(b.exit || '').localeCompare(String(a.exit || '')));
     const exitRows = exits.map(p => {
       let held = '—';
@@ -560,35 +969,44 @@ class Component extends DCLogic {
         const ms = (new Date(p.exit) - new Date(p.putToUse)) / (1000 * 3600 * 24 * 30.44);
         held = ms >= 12 ? (ms / 12).toFixed(1) + ' yr' : Math.round(ms) + ' mo';
       }
+      const dbt = debtAt(p.door, lastM);
       return {
         door: p.door, ent: p.entity,
         tag: p.status === 'Sold' ? 'SOLD' : 'FOR SALE',
         tagBg: p.status === 'Sold' ? '#F3E2DB' : '#F6ECD9', tagCol: p.status === 'Sold' ? '#A03E28' : '#96742F',
-        inUse: p.putToUse ? p.putToUse.slice(0, 7) : '—', exited: p.exit ? p.exit.slice(0, 7) : '—', held,
+        inUse: p.putToUse ? mmyy(p.putToUse.slice(0, 7)) : '—', exited: p.exit ? mmyy(p.exit.slice(0, 7)) : '—', held,
+        debt: dbt > 0.005 ? fN(dbt) : '—', debtCol: dbt > 0.005 ? RED : '#9AA3B5',
       };
     });
-    const exitSub = exits.filter(x => x.status === 'Sold').length + ' sold · ' + exits.filter(x => x.status === 'Held for Sale').length + ' held for sale · sale prices not yet tracked';
+    const exitSub = exits.filter(x => x.status === 'Sold').length + ' sold · ' + exits.filter(x => x.status === 'Held for Sale').length + ' held for sale · debt left at ' + mmyy(lastM) + ' from the loans engine';
 
-    // ---- coverage checks ----
+    // ══════════ coverage checks ══════════
     const cov = S.bs.meta.coverage || {};
-    const idOk = Math.abs((tVal - tDebt) - tEq) < 0.01;
+    const idOk = Math.abs((tVal - tDebt) - tEqBs) < 0.01;
     const covChecks = [
       { icon: idOk ? '✓' : '!', iconBg: idOk ? '#E3EEE7' : '#F3E2DB', iconCol: idOk ? '#2F7351' : '#A03E28',
-        t: 'Balance sheet identity holds', s: fN(tVal) + ' assets − ' + fN(tDebt) + ' liabilities = ' + fN(tEq) + ' equity, by construction on unrounded values.' },
-      { icon: '✓', iconBg: '#E3EEE7', iconCol: '#2F7351',
-        t: 'Every ledger door is covered', s: 'All GL doors matched by name in the Property Index and Balance Sheet at publish; income joined for ' + glScope.length + ' of ' + nScope + ' in-scope doors (' + fK(valGl) + ' of value).' },
+        t: 'Balance sheet identity holds', s: fN(tVal) + ' assets − ' + fN(tDebt) + ' liabilities = ' + fN(tEqBs) + ' equity, by construction on unrounded values.' },
+      { icon: identOk ? '✓' : '!', iconBg: identOk ? '#E3EEE7' : '#F3E2DB', iconCol: identOk ? '#2F7351' : '#A03E28',
+        t: 'Principal fully accounted', s: 'Every dollar drawn across the 47 notes is either owner-paid, sale-settled, refi-funded, or still outstanding — the split ties to the cent in Checks & balances above.' },
       { icon: (cov.zeroCost || noneN) ? '!' : '✓', iconBg: (cov.zeroCost || noneN) ? '#F6ECD9' : '#E3EEE7', iconCol: (cov.zeroCost || noneN) ? '#96742F' : '#2F7351',
         t: 'Known gaps are quarantined', s: (cov.zeroCost || 0) + ' door(s) pending cost data (excluded from cost-based lenses); ' + noneN + ' with no valuation; ' + cntyN + ' valued by county fallback. Each publish re-lists them until filled.' },
     ];
-    const discFoot = 'Valuation policy: ARV where present (' + arvN + ' doors), county-assessed fallback (' + cntyN + '), none (' + noneN + '). Debt is the initial refinance balance — current balances and amortization are planned; until then LTV/equity are at-refinance figures. Cash, escrow and security deposits arrive with the Cash Flow build. Income metrics use the published general ledger ' + P[0] + ' → ' + P[NP - 1] + ' annualized. Published ' + (S.bs.meta.published || '') + '.';
+    const discFoot = 'Valuation policy: ARV where present (' + arvN + ' doors), county-assessed fallback (' + cntyN + '), none (' + noneN + '). Debt is the actual outstanding balance from the loans engine at ' + mmyy(lastM) + '; initial-refinance figures are kept for the investment view. Sold and held-for-sale properties leave every figure at their event month unless their status is selected. Cash, escrow and security deposits arrive with the Cash Flow build. Income metrics annualize the selected ledger window' + (nWin ? ' ' + mmyy(glWin[0]) + ' → ' + mmyy(glWin[nWin - 1]) : '') + '. Published ' + (S.bs.meta.published || '') + '.';
 
     return {
       ready: true, loading: false, loadError: false, retryLoad: () => this.loadData(), stopProp,
-      scopeLine, statusChips, entChip,
-      kpis, bsRows, bsSub, bsFormula,
-      eqBig, eqPct, eqW, debtW, eqCents,
-      eqSmall: fK(tEq), debtSmall: fK(tDebt),
-      costBig: fK(tCost), apprBig: (tAppr >= 0 ? '+' : '−') + fK(Math.abs(tAppr)), apprCol: tAppr < 0 ? '#E8A896' : '#7FC29B',
+      scopeLine, filters, hasActive, onReset, asOfLine,
+      invSub, kpis, invFoot,
+      tieBadge, tieBg, tieCol, tieLine, recon,
+      mosAsOf: 'debt at ' + mmyy(lastM) + ' · values as published',
+      mosPct, mosEq: fK(vEq), mosVal: fK(vVal),
+      mosDrop: vVal > 0 ? fK(vEq) + ' (' + fP(vEq, vVal) + ')' : '—',
+      mosAppr: (tAppr >= 0 ? '+' : '−') + fK(Math.abs(tAppr)), mosApprPct: apprBase > 0 ? fP(tAppr, apprBase) : '—',
+      brDebtW, brCostW, brApprW,
+      brDebt: fK(vDebt), brCost: fK(eqAtCost), brAppr: fK(vVal * brApprPct / 100),
+      buckets, mosNote, mosQ: S.mosQ, onMosQ: e => this.setState({ mosQ: e.target.value }),
+      ladder, mosEmpty: ladder.length === 0, mosFoot,
+      bsRows, bsSub, bsFormula,
       entHeads, entRows, entSub,
       metricChips, expNote, expQ: S.expQ, onExpQ: e => this.setState({ expQ: e.target.value, showAll: false }),
       expRows, expEmpty: expRows.length === 0, expBtn, expFoot,
