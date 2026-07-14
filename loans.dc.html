@@ -436,10 +436,15 @@ input:focus{outline:2px solid #C9A45C;outline-offset:1px}
       </div>
       <div style="margin-top:14px;display:grid;grid-template-columns:repeat(3,1fr);gap:12px">
         <sc-for list="{{ evTiles }}" as="k" hint-placeholder-count="3">
-          <div style="background:#F9F8F3;border:1px solid #EDEBE2;border-radius:12px;padding:12px 16px">
-            <div style="display:flex;align-items:center;gap:7px">
-              <span style="width:9px;height:9px;border-radius:3px;background:{{ k.dot }}"></span>
-              <span style="font-size:10.5px;letter-spacing:0.08em;font-weight:700;color:#5E6B82;text-transform:uppercase">{{ k.label }}</span>
+          <div onClick="{{ k.onClick }}" title="{{ k.hint }}" style-hover="border-color:#C9A45C" style="background:{{ k.bg }};border:1.5px solid {{ k.bd }};border-radius:12px;padding:12px 16px;cursor:{{ k.cur }};opacity:{{ k.dim }}">
+            <div style="display:flex;align-items:center;justify-content:space-between;gap:7px">
+              <div style="display:flex;align-items:center;gap:7px">
+                <span style="width:9px;height:9px;border-radius:3px;background:{{ k.dot }}"></span>
+                <span style="font-size:10.5px;letter-spacing:0.08em;font-weight:700;color:#5E6B82;text-transform:uppercase">{{ k.label }}</span>
+              </div>
+              <sc-if value="{{ k.on }}" hint-placeholder-val="{{ false }}">
+                <span style="font-size:9px;font-weight:700;letter-spacing:0.06em;color:#96742F;background:#FFFFFF;border:1px solid #EAD9C0;border-radius:99px;padding:2px 8px">FILTERING ✕</span>
+              </sc-if>
             </div>
             <div style="margin-top:6px;font-family:'Source Serif 4',Georgia,serif;font-size:21px;font-weight:600;color:#16233A">{{ k.value }}</div>
             <div style="margin-top:4px;font-size:10.5px;color:#8A93A6">{{ k.sub }}</div>
@@ -449,7 +454,7 @@ input:focus{outline:2px solid #C9A45C;outline-offset:1px}
       <div class="scr" style="margin-top:14px;max-height:420px;overflow-y:auto;padding-right:4px">
         <sc-for list="{{ evGroups }}" as="eg" hint-placeholder-count="4">
           <div style="display:flex;align-items:center;gap:10px;margin-top:10px">
-            <span style="font-size:11px;font-weight:700;letter-spacing:0.06em;color:#96742F;white-space:nowrap">{{ eg.m }}</span>
+            <span onClick="{{ eg.onM }}" title="{{ eg.mTip }}" style-hover="color:#16233A" style="font-size:11px;font-weight:700;letter-spacing:0.06em;color:#96742F;white-space:nowrap;cursor:pointer;text-decoration:underline dotted 1px;text-underline-offset:3px">{{ eg.m }}</span>
             <span style="flex:1;height:1px;background:#EDEBE2"></span>
             <span style="font-size:10.5px;color:#8A93A6;white-space:nowrap">{{ eg.sub }}</span>
           </div>
@@ -557,7 +562,7 @@ class Component extends DCLogic {
     exp: null, schedFull: false,
     trendYear: null, showInt: true, showPrin: true, trendShowAll: false,
     topQ: '', topSel: null,
-    evYear: 'all', evSel: null,
+    evYear: 'all', evSel: null, evKind: 'all',
     xmode: 'flag',
   };
 
@@ -735,7 +740,11 @@ class Component extends DCLogic {
       }
     }
     const pSched = Math.max(pPrin - pRel - pPrep, 0);
-    const sparkM = selM.length > 12 ? selM.filter((_, i) => i >= selM.length - 12) : selM;
+    // context, not a mirror: always chart the trailing 12 months INTO the last
+    // selected month, and highlight the selection — one selected month must
+    // never collapse the line to a dot.
+    const upToLast = monthsAll.filter(m => m <= lastM);
+    const sparkM = upToLast.slice(-12);
     const spark = sparkM.map(m => scopeDoors.reduce((s, d) => s + closeAt(d, m), 0));
     const spMax = Math.max(...spark, 1), spMin = Math.min(...spark, 0);
     const spRange = (spMax - spMin) || 1;
@@ -744,14 +753,14 @@ class Component extends DCLogic {
     const sparkPath = spark.map((v, i) => (i === 0 ? 'M' : 'L') + spX(i).toFixed(1) + ' ' + spY(v).toFixed(1)).join(' ');
     const sparkArea = spark.length ? ('M' + spX(0).toFixed(1) + ' 42 ' + spark.map((v, i) => 'L' + spX(i).toFixed(1) + ' ' + spY(v).toFixed(1)).join(' ') + ' L' + spX(spark.length - 1).toFixed(1) + ' 42 Z') : '';
     const sparkCols = spark.map((v, i) => {
-      const cur = S.fm.length === 1 && S.fm[0] === sparkM[i];
+      const cur = S.fm.includes(sparkM[i]) || (!S.fm.length && i === spark.length - 1);
       return {
         cx: spX(i).toFixed(1), cy: spY(v).toFixed(1),
-        r: (cur || i === spark.length - 1) ? 3.4 : 2.4,
+        r: cur ? 3.6 : 2.4,
         fill: cur ? '#3D64A8' : '#FFFFFF',
         fw: cur ? 700 : 400, lc: cur ? '#16233A' : '#9AA3B5',
         t: mmyy(sparkM[i]) + ': ' + fK(v) + ' (' + fN(v) + ') — click to view this month',
-        lab: mmyy(sparkM[i]),
+        lab: (spark.length > 8 && !cur && i % 2 === 0) ? '' : mmyy(sparkM[i]),
         onClick: ((mv) => () => this.setFilter({ fm: S.fm.length === 1 && S.fm[0] === mv ? [] : [mv] }))(sparkM[i]),
       };
     });
@@ -771,7 +780,7 @@ class Component extends DCLogic {
         sub: pct(tRepaid, tInit) + ' of initial refinance repaid' },
       { label: 'Outstanding loan', tag: 'at ' + mmyy(lastM), value: fN(tOut), col: '#16233A', hasBar: false, hasBar2: false, hasSpark: true,
         cols: sparkCols, sparkPath, sparkArea,
-        sub: 'month-end balance' + (selM.length > 12 ? ' · last 12 selected months shown' : '') + ' · click a point to view that month · ' + inLoans.filter(l => l.outstanding > 0.005).length + ' active notes in scope' },
+        sub: 'trailing ' + sparkM.length + ' months into ' + mmyy(lastM) + ' · click a point to view that month, click it again for all · ' + inLoans.filter(l => l.outstanding > 0.005).length + ' active notes in scope' },
       { label: 'Initial LTV', tag: 'on bank appraisal', value: ltvInitDen > 0 ? (ltvInitNum / ltvInitDen * 100).toFixed(1) + '%' : '—', col: '#16233A', hasBar: false, hasBar2: false, hasSpark: false,
         sub: S.bsMiss ? 'bs-data.json not loaded — appraisals unavailable' : (ltvInitDen > 0 ? fK(ltvInitNum) + ' initial on ' + fK(ltvInitDen) + ' appraised · ' + apprN + ' doors covered' : 'no appraised values in scope') },
       { label: 'Current LTV', tag: 'on ARV', value: ltvCurDen > 0 ? (ltvCurNum / ltvCurDen * 100).toFixed(1) + '%' : '—', col: '#16233A', hasBar: false, hasBar2: false, hasSpark: false,
@@ -1161,15 +1170,25 @@ class Component extends DCLogic {
       label: o.label, bd: evYear === o.v ? '#16233A' : '#D8D4C8', bg: evYear === o.v ? '#16233A' : '#FFFFFF',
       col: evYear === o.v ? '#FFFFFF' : '#2A3550', onClick: () => this.setState({ evYear: o.v, evSel: null }),
     }));
-    const evF = evAll.filter(e => evYear === 'all' || e.m.startsWith(evYear)).sort((a, b) => b.m.localeCompare(a.m) || a.title.localeCompare(b.title));
-    const relF = evF.filter(e => e.kind === 'release'), prepF = evF.filter(e => e.kind === 'prepay'), recF = evF.filter(e => e.kind === 'recast');
+    const evYearF = evAll.filter(e => evYear === 'all' || e.m.startsWith(evYear)).sort((a, b) => b.m.localeCompare(a.m) || a.title.localeCompare(b.title));
+    const relF = evYearF.filter(e => e.kind === 'release'), prepF = evYearF.filter(e => e.kind === 'prepay'), recF = evYearF.filter(e => e.kind === 'recast');
     const relPaid = relF.reduce((s, e) => s + e.amt, 0);
     const relExc = relF.reduce((s, e) => s + (e.excess != null && e.excess > 0 ? e.excess : 0), 0);
+    const evKind = ['release', 'prepay', 'recast'].includes(S.evKind) ? S.evKind : 'all';
+    const mkTile = (kind, label, dot, value, sub, n) => {
+      const on = evKind === kind;
+      return { label, dot, value, sub,
+        on, bd: on ? '#C9A45C' : '#EDEBE2', bg: on ? '#FBF6EA' : '#F9F8F3',
+        cur: n > 0 ? 'pointer' : 'default', dim: n > 0 ? 1 : 0.55,
+        hint: on ? 'showing only these \u2014 click to show all' : (n > 0 ? 'click to show only these' : ''),
+        onClick: n > 0 ? (() => this.setState({ evKind: on ? 'all' : kind, evSel: null })) : (() => {}) };
+    };
     const evTiles = [
-      { label: 'Property releases', dot: C_REL, value: fK(relPaid), sub: relF.length + ' release' + (relF.length === 1 ? '' : 's') + ' \u00b7 ' + fK(relExc) + ' excess pushed to survivors' },
-      { label: 'Prepayments', dot: C_PREP, value: fK(prepF.reduce((s, e) => s + e.amt, 0)), sub: prepF.length + ' extra-principal payment' + (prepF.length === 1 ? '' : 's') },
-      { label: 'EMI recasts', dot: C_SCH, value: String(recF.length), sub: recF.length ? recF.map(e => mmyy(e.m)).join(' \u00b7 ') : 'payments re-leveled after a prepayment' },
+      mkTile('release', 'Property releases', C_REL, fK(relPaid), relF.length + ' release' + (relF.length === 1 ? '' : 's') + ' \u00b7 ' + fK(relExc) + ' excess pushed to survivors', relF.length),
+      mkTile('prepay', 'Prepayments', C_PREP, fK(prepF.reduce((s, e) => s + e.amt, 0)), prepF.length + ' extra-principal payment' + (prepF.length === 1 ? '' : 's'), prepF.length),
+      mkTile('recast', 'EMI recasts', C_SCH, String(recF.length), recF.length ? recF.map(e => mmyy(e.m)).join(' \u00b7 ') : 'payments re-leveled after a prepayment', recF.length),
     ];
+    const evF = evKind === 'all' ? evYearF : evYearF.filter(e => e.kind === evKind);
     const evByM = {};
     for (const e of evF) (evByM[e.m] = evByM[e.m] || []).push(e);
     const evGroups = Object.keys(evByM).sort((a, b) => b.localeCompare(a)).map(m => {
@@ -1177,6 +1196,8 @@ class Component extends DCLogic {
       const tot = evs.reduce((s, e) => s + (e.amt || 0), 0);
       return {
         m: mmyy(m).toUpperCase(),
+        onM: ((mv) => () => this.setFilter({ fm: S.fm.length === 1 && S.fm[0] === mv ? [] : [mv] }))(m),
+        mTip: 'Click to scope the whole page to ' + mmyy(m),
         sub: evs.length + ' event' + (evs.length === 1 ? '' : 's') + (tot > 0 ? ' \u00b7 ' + fK(tot) : ''),
         events: evs.map(e => {
           const open = S.evSel === e.key;
