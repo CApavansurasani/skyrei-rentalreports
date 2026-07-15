@@ -409,15 +409,15 @@ input:focus{outline:2px solid #C9A45C;outline-offset:1px}
       </div>
       <div style="margin-top:14px;display:grid;grid-template-columns:7fr 5fr;gap:22px;align-items:start">
         <div>
-          <svg viewBox="0 0 660 224" style="width:100%;display:block;overflow:visible">
+          <svg viewBox="0 0 660 214" style="width:100%;display:block;overflow:visible">
             <path d="{{ gArea }}" fill="#3D64A8" opacity="0.07"></path>
             <path d="{{ gPath }}" fill="none" stroke="#3D64A8" stroke-width="2" stroke-linejoin="round" stroke-linecap="round"></path>
             <sc-for list="{{ gPts }}" as="gp" hint-placeholder-count="6">
               <circle cx="{{ gp.cx }}" cy="{{ gp.cy }}" r="{{ gp.r }}" fill="{{ gp.fill }}" stroke="{{ gp.ring }}" stroke-width="2"><title>{{ gp.tip }}</title></circle>
               <circle onClick="{{ gp.onClick }}" cx="{{ gp.cx }}" cy="{{ gp.cy }}" r="13" fill="transparent" style="cursor:pointer"><title>{{ gp.tip }}</title></circle>
               <text x="{{ gp.cx }}" y="{{ gp.vy }}" text-anchor="middle" style="font-size:9.5px;font-weight:{{ gp.vfw }};fill:{{ gp.vcol }};font-variant-numeric:tabular-nums">{{ gp.vlab }}</text>
+              <text x="{{ gp.cx }}" y="{{ gp.dy }}" text-anchor="middle" style="font-size:8.5px;font-weight:800;fill:{{ gp.dcol }};font-variant-numeric:tabular-nums">{{ gp.dlab }}</text>
               <text x="{{ gp.cx }}" y="206" text-anchor="middle" style="font-size:9px;font-weight:{{ gp.xfw }};fill:{{ gp.xcol }}">{{ gp.lab }}</text>
-              <text x="{{ gp.cx }}" y="219" text-anchor="middle" style="font-size:8.5px;font-weight:800;fill:{{ gp.dcol }};font-variant-numeric:tabular-nums">{{ gp.dlab }}</text>
             </sc-for>
           </svg>
           <div style="margin-top:10px;padding:8px 12px;background:#F9F8F3;border-radius:9px;font-size:11px;font-weight:600;color:#2A3550">{{ gGrow }}</div>
@@ -436,7 +436,7 @@ input:focus{outline:2px solid #C9A45C;outline-offset:1px}
               <div onClick="{{ gr.onClick }}" style-hover="background:#F6F4EC" style="display:grid;grid-template-columns:18px 1fr 92px;gap:8px;padding:7px 6px;align-items:center;border-bottom:1px solid #F0EEE6;cursor:pointer;background:{{ gr.bg }};border-left:3px solid {{ gr.selBd }}">
                 <div style="font-size:10px;color:#96742F;font-weight:700">{{ gr.caret }}</div>
                 <div style="min-width:0">
-                  <div style="font-size:12px;font-weight:600;color:#1F3A6E;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">{{ gr.door }}</div>
+                  <div style="font-size:12px;font-weight:600;color:#1F3A6E;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">{{ gr.door }}<sc-if value="{{ gr.hasTag }}" hint-placeholder-val="{{ false }}"><span style="margin-left:6px;padding:1.5px 7px;border-radius:5px;font-size:8.5px;font-weight:800;background:{{ gr.tagBg }};color:{{ gr.tagCol }};white-space:nowrap;vertical-align:1px">{{ gr.tag }}</span></sc-if></div>
                   <div style="font-size:9.5px;color:#8A93A6;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">{{ gr.sub }}</div>
                 </div>
                 <div style="text-align:right;font-variant-numeric:tabular-nums;font-size:11.5px;font-weight:700;color:#2A3550">{{ gr.val }}</div>
@@ -1446,10 +1446,11 @@ class Component extends DCLogic {
       return {
         cx: gx(i).toFixed(1), cy: gy(pt.val).toFixed(1),
         r: on ? 4.8 : 3.6, fill: on ? '#C9A45C' : '#FFFFFF', ring: '#3D64A8',
-        vy: (gy(pt.val) - 10).toFixed(1), vlab: fMet(pt.val),
+        vy: (gy(pt.val) - 19).toFixed(1), vlab: fMet(pt.val),
         vfw: (on || i === 0 || i === gPtsRaw.length - 1) ? 800 : 600,
         vcol: on ? '#16233A' : '#5E6B82',
-        dlab: (pt.adds ? '+' + pt.adds : '') + (pt.exits ? (pt.adds ? ' ' : '') + '−' + pt.exits : ''),
+        dy: (gy(pt.val) - 8.5).toFixed(1),
+        dlab: (pt.adds || pt.exits) ? '(' + (pt.adds ? '+' + pt.adds : '') + (pt.exits ? (pt.adds ? ' ' : '') + '−' + pt.exits : '') + ')' : '',
         dcol: pt.adds && pt.exits ? '#96742F' : (pt.exits ? '#B04A33' : '#3E8E63'),
         lab: pt.lab,
         xfw: on ? 800 : 600, xcol: on ? '#16233A' : '#8A93A6',
@@ -1502,9 +1503,15 @@ class Component extends DCLogic {
       return est;
     };
     const selAdds = gSelPer ? vinDated.filter(p => isYr ? pmOf(p) === gSelPer : pmOf(p).slice(0, 4) === gSelPer) : [];
+    const selExits = gSelPer ? vinDated.filter(p => { const e6 = soldExitM(p); return e6 && (isYr ? e6 === gSelPer : e6.slice(0, 4) === gSelPer); }) : [];
     const gqq = (S.gq || '').trim().toLowerCase();
-    const gShown = selAdds.filter(p => !gqq || p.door.toLowerCase().includes(gqq) || p.entity.toLowerCase().includes(gqq)).sort((a, b) => (b.cost || 0) - (a.cost || 0));
-    const gRows = gShown.map(p => {
+    const gMatch = p => !gqq || p.door.toLowerCase().includes(gqq) || p.entity.toLowerCase().includes(gqq);
+    const byCost = (a, b) => (b.cost || 0) - (a.cost || 0);
+    const gShown = [
+      ...selAdds.filter(gMatch).sort(byCost).map(p => ({ p, exited: false })),
+      ...selExits.filter(gMatch).sort(byCost).map(p => ({ p, exited: true })),
+    ];
+    const gRows = gShown.map(({ p, exited }) => {
       const isExp = S.gsel === p.door;
       const a5 = acctBy[p.door] || { rent: 0, ptax: 0, ins: 0, hoa: 0 };
       const mi = monthsIn(p) || nWin || 1;
@@ -1529,7 +1536,10 @@ class Component extends DCLogic {
         { k: 'Net cashflow /mo', v: fN(ncf), col: ncf < 0 ? RED : '#2A6F4E' },
       ] : [];
       return {
-        door: p.door, sub: p.entity + ' · ' + p.status + ' · in use ' + mmyy(pmOf(p)),
+        door: p.door,
+        sub: p.entity + ' · ' + p.status + ' · in use ' + mmyy(pmOf(p)) + (exited ? ' · exited ' + mmyy(soldExitM(p)) : ''),
+        hasTag: exited, tag: p.status === 'Sold' ? 'SOLD' : 'HELD FOR SALE',
+        tagBg: p.status === 'Sold' ? '#F3E2DB' : '#F6ECD9', tagCol: p.status === 'Sold' ? '#A03E28' : '#96742F',
         val: p.cost > 0 ? fK(p.cost) : '—',
         caret: isExp ? '▾' : '▸', bg: isExp ? '#FBFAF6' : 'transparent', selBd: isExp ? '#C9A45C' : 'transparent',
         exp: isExp, facts,
@@ -1539,10 +1549,12 @@ class Component extends DCLogic {
         onClick: () => this.setState({ gsel: isExp ? null : p.door }),
       };
     });
-    const gPanelTitle = 'ADDED ' + (gSelPt ? (isYr ? 'IN ' : 'DURING ') + gSelPt.lab.toUpperCase() : '—');
-    const gPanelSub = selAdds.length + ' propert' + (selAdds.length === 1 ? 'y' : 'ies') + ' · ' + fK(selAdds.reduce((s, p) => s + (p.cost || 0), 0)) + ' cost' + (gSelPt && gSelPt.exits ? ' · ' + gSelPt.exits + ' exited this period' : '') + ' · click a row for the full story';
+    const gPanelTitle = (selExits.length ? (selAdds.length ? 'ADDED & EXITED' : 'EXITED') : 'ADDED') + (gSelPt ? ' · ' + gSelPt.lab.toUpperCase() : ' · —');
+    const gPanelSub = selAdds.length + ' added (' + fK(selAdds.reduce((s, p) => s + (p.cost || 0), 0)) + ' cost)'
+      + (selExits.length ? ' · ' + selExits.length + ' exited (' + fK(selExits.reduce((s, p) => s + (p.cost || 0), 0)) + ')' : '')
+      + ' · click a row for the full story';
     const gEmptyRows = gRows.length === 0;
-    const gEmptyTxt = gqq ? 'Nothing matches this search.' : 'No properties added ' + (gSelPt ? (isYr ? 'in ' : 'during ') + gSelPt.lab : '') + ' — click another point on the line.';
+    const gEmptyTxt = gqq ? 'Nothing matches this search.' : 'No portfolio moves ' + (gSelPt ? (isYr ? 'in ' : 'during ') + gSelPt.lab : '') + ' — click another point on the line.';
     const gPanelFoot = 'Net cashflow /mo = rent − property tax − insurance − HOA − debt service (your formula; P&I at ' + mmyy(lastM) + ', escrow tracked separately; notes whose first payment falls after the horizon show their scheduled P&I share) · ledger figures are monthly averages over the selected window · rental yield = rent ×12 ÷ cost, gross';
 
     const exits = ALLP.filter(p => (p.status === 'Sold' || p.status === 'Held for Sale') && (!feAct.length || feAct.includes(p.entity)))
