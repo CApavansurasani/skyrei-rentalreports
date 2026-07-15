@@ -431,6 +431,22 @@ input:focus{outline:2px solid #C9A45C;outline-offset:1px}
             </sc-for>
           </div>
           <div style="margin-top:10px;padding:8px 12px;background:#F9F8F3;border-radius:9px;font-size:11px;font-weight:600;color:#2A3550">{{ gGrow }}</div>
+          <sc-if value="{{ gTotOn }}" hint-placeholder-val="{{ false }}">
+            <div style="margin-top:12px;padding:12px 16px 13px;background:#FBFAF6;border:1px solid #EDEBE2;border-radius:12px">
+              <div style="display:flex;justify-content:space-between;align-items:baseline;gap:8px;flex-wrap:wrap">
+                <span style="font-size:10px;letter-spacing:0.09em;font-weight:800;color:#96742F">{{ gTotTitle }}</span>
+                <span style="font-size:10px;color:#9AA3B5">{{ gTotSub }}</span>
+              </div>
+              <div style="margin-top:10px;display:grid;grid-template-columns:repeat(auto-fit,minmax(100px,1fr));gap:10px 16px">
+                <sc-for list="{{ gTot }}" as="gt" hint-placeholder-count="7">
+                  <div>
+                    <div style="font-size:8.5px;letter-spacing:0.05em;font-weight:700;color:#8A93A6;text-transform:uppercase;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">{{ gt.k }}</div>
+                    <div style="margin-top:2px;font-family:'Source Serif 4',Georgia,serif;font-size:16px;font-weight:600;color:{{ gt.col }};font-variant-numeric:tabular-nums">{{ gt.v }}</div>
+                  </div>
+                </sc-for>
+              </div>
+            </div>
+          </sc-if>
           <div style="margin-top:10px;font-size:10.5px;color:#9AA3B5;line-height:1.6">{{ gFoot }}</div>
         </div>
         <div style="border-left:1px solid #F0EEE7;padding-left:20px">
@@ -684,6 +700,7 @@ class Component extends DCLogic {
       entHeads: [], entRows: [], entSub: '',
       metricChips: [], expNote: '', expQ: '', onExpQ: () => {}, expRows: [], expEmpty: false, expBtn: { show: false, label: '', onClick: () => {} }, expFoot: '', expMax: 'none', expOv: 'visible',
       gSub: '', gYearChips: [], gMetricChips: [], gPath: '', gArea: '', gPts: [], gGrow: '', gFoot: '',
+      gTotOn: false, gTotTitle: '', gTotSub: '', gTot: [],
       gPanelTitle: '', gPanelSub: '', gq: '', onGq: () => {}, gRows: [], gEmpty: false, gEmptyTxt: '', gPanelFoot: '',
       mosBtn: { show: false, label: '', onClick: () => {} },
       exitRows: [], exitSub: '', covChecks: [], discFoot: '',
@@ -1522,14 +1539,16 @@ class Component extends DCLogic {
       ...selAdds.filter(gMatch).sort(byCost).map(p => ({ p, exited: false })),
       ...selExits.filter(gMatch).sort(byCost).map(p => ({ p, exited: true })),
     ];
-    const gRows = gShown.map(({ p, exited }) => {
-      const isExp = S.gsel === p.door;
+    const doorStat = p => {
       const a5 = acctBy[p.door] || { rent: 0, ptax: 0, ins: 0, hoa: 0 };
       const mi = monthsIn(p) || nWin || 1;
       const rentMo = a5.rent / mi, ptaxMo = a5.ptax / mi, insMo = a5.ins / mi, hoaMo = a5.hoa / mi;
       const ds = dsMo(p.door);
-      const ncf = rentMo - ptaxMo - insMo - hoaMo - ds;
-      const dbt = debtAt(p.door, lastM);
+      return { rentMo, ptaxMo, insMo, hoaMo, ds, ncf: rentMo - ptaxMo - insMo - hoaMo - ds, dbt: debtAt(p.door, lastM) };
+    };
+    const gRows = gShown.map(({ p, exited }) => {
+      const isExp = S.gsel === p.door;
+      const { rentMo, ptaxMo, insMo, hoaMo, ds, ncf, dbt } = doorStat(p);
       const lnd = doorNotes[p.door] || [];
       const facts = isExp ? [
         { k: 'Cost basis', v: p.cost > 0 ? fN(p.cost) : 'pending', col: INK },
@@ -1567,6 +1586,27 @@ class Component extends DCLogic {
     const gEmptyRows = gRows.length === 0;
     const gEmptyTxt = gqq ? 'Nothing matches this search.' : 'No portfolio moves ' + (gSelPt ? (isYr ? 'in ' : 'during ') + gSelPt.lab : '') + ' — click another point on the line.';
     const gPanelFoot = 'Net cashflow /mo = rent − property tax − insurance − HOA − debt service (your formula; P&I at ' + mmyy(lastM) + ', escrow tracked separately; notes whose first payment falls after the horizon show their scheduled P&I share) · ledger figures are monthly averages over the selected window · rental yield = rent ×12 ÷ cost, gross';
+    // ---- totals strip for the selected period's additions (owner 2026-07-15: fills the gap under the chart) ----
+    const tS = { cost: 0, val: 0, dbt: 0, inv: 0, rent: 0, ncf: 0 };
+    let tPend = 0;
+    for (const p of selAdds) {
+      const s5 = doorStat(p);
+      tS.cost += p.cost || 0; tS.val += p.value || 0; tS.dbt += s5.dbt;
+      tS.inv += (p.cost || 0) - (p.refi || 0); tS.rent += s5.rentMo; tS.ncf += s5.ncf;
+      if (!(p.cost > 0) || !(p.value > 0)) tPend++;
+    }
+    const gTotOn = selAdds.length > 0;
+    const gTotTitle = 'THE ' + (gSelPt ? gSelPt.lab.toUpperCase() : '—') + ' ADDITIONS, IN TOTAL';
+    const gTotSub = selAdds.length + ' propert' + (selAdds.length === 1 ? 'y' : 'ies') + ' · balances at ' + mmyy(lastM) + (tPend ? ' · ' + tPend + ' with cost/value pending' : '') + ' · dig into any property on the right';
+    const gTot = [
+      { k: 'Cost', v: fK(tS.cost), col: INK },
+      { k: 'ARV / value', v: fK(tS.val), col: NAVY },
+      { k: 'Loan · ' + mmyy(lastM), v: fK(tS.dbt), col: RED },
+      { k: 'Equity (value − loan)', v: fK(tS.val - tS.dbt), col: (tS.val - tS.dbt) < 0 ? RED : '#2F7351' },
+      { k: 'Investment (cost − refi)', v: fK(tS.inv), col: '#3D64A8' },
+      { k: 'Rent /mo', v: fK(tS.rent), col: '#2F7351' },
+      { k: 'Net cashflow /mo', v: fK(tS.ncf), col: tS.ncf < 0 ? RED : '#2F7351' },
+    ];
 
     const exits = ALLP.filter(p => (p.status === 'Sold' || p.status === 'Held for Sale') && (!feAct.length || feAct.includes(p.entity)))
       .sort((a, b) => String(b.exit || '').localeCompare(String(a.exit || '')));
@@ -1622,6 +1662,7 @@ class Component extends DCLogic {
       expRows, expEmpty: expRows.length === 0, expBtn, expFoot,
       expMax: (S.showAll || q) ? '520px' : 'none', expOv: (S.showAll || q) ? 'auto' : 'visible',
       gSub, gYearChips, gMetricChips, gPath, gArea, gPts, gGrow, gFoot,
+      gTotOn, gTotTitle, gTotSub, gTot,
       gPanelTitle, gPanelSub, gq: S.gq, onGq: e => this.setState({ gq: e.target.value, gsel: null }),
       gEmpty: gEmptyRows, gEmptyTxt, gPanelFoot, gRows,
       exitRows, exitSub,
