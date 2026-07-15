@@ -409,17 +409,27 @@ input:focus{outline:2px solid #C9A45C;outline-offset:1px}
       </div>
       <div style="margin-top:14px;display:grid;grid-template-columns:7fr 5fr;gap:22px;align-items:start">
         <div>
-          <svg viewBox="0 0 660 214" style="width:100%;display:block;overflow:visible">
-            <path d="{{ gArea }}" fill="#3D64A8" opacity="0.07"></path>
-            <path d="{{ gPath }}" fill="none" stroke="#3D64A8" stroke-width="2" stroke-linejoin="round" stroke-linecap="round"></path>
+          <div style="position:relative">
+            <svg viewBox="0 0 660 190" style="width:100%;display:block;overflow:visible">
+              <path d="{{ gArea }}" fill="#3D64A8" opacity="0.07"></path>
+              <path d="{{ gPath }}" fill="none" stroke="#3D64A8" stroke-width="2" stroke-linejoin="round" stroke-linecap="round"></path>
+              <sc-for list="{{ gPts }}" as="gp" hint-placeholder-count="6">
+                <circle cx="{{ gp.cx }}" cy="{{ gp.cy }}" r="{{ gp.r }}" fill="{{ gp.fill }}" stroke="{{ gp.ring }}" stroke-width="2"><title>{{ gp.tip }}</title></circle>
+                <circle onClick="{{ gp.onClick }}" cx="{{ gp.cx }}" cy="{{ gp.cy }}" r="14" fill="transparent" style="cursor:pointer"><title>{{ gp.tip }}</title></circle>
+              </sc-for>
+            </svg>
             <sc-for list="{{ gPts }}" as="gp" hint-placeholder-count="6">
-              <circle cx="{{ gp.cx }}" cy="{{ gp.cy }}" r="{{ gp.r }}" fill="{{ gp.fill }}" stroke="{{ gp.ring }}" stroke-width="2"><title>{{ gp.tip }}</title></circle>
-              <circle onClick="{{ gp.onClick }}" cx="{{ gp.cx }}" cy="{{ gp.cy }}" r="13" fill="transparent" style="cursor:pointer"><title>{{ gp.tip }}</title></circle>
-              <text x="{{ gp.cx }}" y="{{ gp.vy }}" text-anchor="middle" style="font-size:9.5px;font-weight:{{ gp.vfw }};fill:{{ gp.vcol }};font-variant-numeric:tabular-nums">{{ gp.vlab }}</text>
-              <text x="{{ gp.cx }}" y="{{ gp.dy }}" text-anchor="middle" style="font-size:8.5px;font-weight:800;fill:{{ gp.dcol }};font-variant-numeric:tabular-nums">{{ gp.dlab }}</text>
-              <text x="{{ gp.cx }}" y="206" text-anchor="middle" style="font-size:9px;font-weight:{{ gp.xfw }};fill:{{ gp.xcol }}">{{ gp.lab }}</text>
+              <div title="{{ gp.tip }}" style="position:absolute;left:{{ gp.leftPct }};top:{{ gp.topPct }};transform:translate(-50%,-100%);text-align:center;line-height:1.3;pointer-events:none">
+                <div style="font-size:10px;font-weight:{{ gp.vfw }};color:{{ gp.vcol }};font-variant-numeric:tabular-nums;white-space:nowrap">{{ gp.vlab }}</div>
+                <div style="font-size:8.5px;font-weight:800;color:{{ gp.dcol }};font-variant-numeric:tabular-nums;white-space:nowrap">{{ gp.dlab }}</div>
+              </div>
             </sc-for>
-          </svg>
+          </div>
+          <div style="margin-top:5px;display:flex">
+            <sc-for list="{{ gPts }}" as="gp" hint-placeholder-count="6">
+              <div onClick="{{ gp.onClick }}" style-hover="color:#16233A" style="flex:1;text-align:center;font-size:10px;font-weight:{{ gp.xfw }};color:{{ gp.xcol }};cursor:pointer;white-space:nowrap;overflow:hidden">{{ gp.lab }}</div>
+            </sc-for>
+          </div>
           <div style="margin-top:10px;padding:8px 12px;background:#F9F8F3;border-radius:9px;font-size:11px;font-weight:600;color:#2A3550">{{ gGrow }}</div>
           <div style="margin-top:10px;font-size:10.5px;color:#9AA3B5;line-height:1.6">{{ gFoot }}</div>
         </div>
@@ -1426,7 +1436,7 @@ class Component extends DCLogic {
         .map(m0 => ({ per: m0, lab: mmyy(m0), val: cumAt[m0][gMetric], adds: cumAt[m0].adds, exits: cumAt[m0].exits }));
     }
     const gSelPer = (S.gm && gPtsRaw.some(pt => pt.per === S.gm)) ? S.gm : (gPtsRaw.length ? gPtsRaw[gPtsRaw.length - 1].per : null);
-    const GW = 660, GPX = 30, gTop = 16, gBot = 172;
+    const GW = 660, GH = 190, gTop = 44, gBot = 172;
     // zoom the y-axis to the data range (line charts encode slope, not length) so MoM growth is visible;
     // every point carries its count label, so the zoom can't mislead. ITD from ~0 behaves as before.
     const gvMaxR = Math.max(...gPtsRaw.map(pt => pt.val), 1);
@@ -1435,7 +1445,7 @@ class Component extends DCLogic {
     const gyMax = gvMaxR + gRng * 0.14;
     const gyMin = Math.max(0, gvMinR - gRng * 0.24);
     const gy = v => gBot - (v - gyMin) / (gyMax - gyMin) * (gBot - gTop);
-    const gx = i => gPtsRaw.length > 1 ? GPX + i * (GW - 2 * GPX) / (gPtsRaw.length - 1) : GW / 2;
+    const gx = i => (i + 0.5) * GW / Math.max(gPtsRaw.length, 1); // slot centers — aligns with the month flex row below
     const gPath = gPtsRaw.map((pt, i) => (i === 0 ? 'M' : 'L') + gx(i).toFixed(1) + ' ' + gy(pt.val).toFixed(1)).join(' ');
     const gArea = gPtsRaw.length ? 'M' + gx(0).toFixed(1) + ' ' + gBot + ' ' + gPtsRaw.map((pt, i) => 'L' + gx(i).toFixed(1) + ' ' + gy(pt.val).toFixed(1)).join(' ') + ' L' + gx(gPtsRaw.length - 1).toFixed(1) + ' ' + gBot + ' Z' : '';
     const gPts = gPtsRaw.map((pt, i) => {
@@ -1446,10 +1456,11 @@ class Component extends DCLogic {
       return {
         cx: gx(i).toFixed(1), cy: gy(pt.val).toFixed(1),
         r: on ? 4.8 : 3.6, fill: on ? '#C9A45C' : '#FFFFFF', ring: '#3D64A8',
-        vy: (gy(pt.val) - 19).toFixed(1), vlab: fMet(pt.val),
+        leftPct: (gx(i) / GW * 100).toFixed(2) + '%',
+        topPct: ((gy(pt.val) - 8) / GH * 100).toFixed(2) + '%',
+        vlab: fMet(pt.val),
         vfw: (on || i === 0 || i === gPtsRaw.length - 1) ? 800 : 600,
         vcol: on ? '#16233A' : '#5E6B82',
-        dy: (gy(pt.val) - 8.5).toFixed(1),
         dlab: (pt.adds || pt.exits) ? '(' + (pt.adds ? '+' + pt.adds : '') + (pt.exits ? (pt.adds ? ' ' : '') + '−' + pt.exits : '') + ')' : '',
         dcol: pt.adds && pt.exits ? '#96742F' : (pt.exits ? '#B04A33' : '#3E8E63'),
         lab: pt.lab,
