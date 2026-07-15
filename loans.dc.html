@@ -105,14 +105,15 @@ input:focus{outline:2px solid #C9A45C;outline-offset:1px}
     </div>
 
     <!-- ══ KPI band ══ -->
-    <div style="margin-top:14px;display:grid;grid-template-columns:repeat(3,1fr);gap:14px">
+    <div style="margin-top:14px;display:grid;grid-template-columns:repeat(12,1fr);gap:14px">
       <sc-for list="{{ kpis }}" as="k" hint-placeholder-count="6">
-        <div style="background:#FFFFFF;border:1px solid #E5E3DC;border-radius:16px;padding:16px 20px 14px">
+        <div style="grid-column:span {{ k.span }};display:flex;flex-direction:column;background:#FFFFFF;border:1px solid #E5E3DC;border-radius:16px;padding:16px 20px 14px">
           <div style="display:flex;justify-content:space-between;align-items:baseline;gap:8px">
             <div style="font-size:11px;letter-spacing:0.08em;font-weight:700;color:#5E6B82;text-transform:uppercase">{{ k.label }}</div>
             <div style="font-size:10px;color:#9AA3B5;white-space:nowrap">{{ k.tag }}</div>
           </div>
-          <div style="margin-top:7px;font-family:'Source Serif 4',Georgia,serif;font-size:25px;font-weight:600;color:{{ k.col }}">{{ k.value }}</div>
+          <div style="margin:auto 0">
+          <div style="font-family:'Source Serif 4',Georgia,serif;font-size:25px;font-weight:600;color:{{ k.col }}">{{ k.value }}</div>
           <sc-if value="{{ k.hasBar }}" hint-placeholder-val="{{ false }}">
             <div style="margin-top:9px;display:flex;gap:2px;height:9px;border-radius:5px;overflow:hidden;background:#F0EEE6">
               <sc-for list="{{ k.segs }}" as="sg" hint-placeholder-count="3">
@@ -154,6 +155,7 @@ input:focus{outline:2px solid #C9A45C;outline-offset:1px}
             </div>
           </sc-if>
           <div style="margin-top:7px;font-size:11px;color:#8A93A6;line-height:1.5">{{ k.sub }}</div>
+          </div>
         </div>
       </sc-for>
     </div>
@@ -881,20 +883,20 @@ class Component extends DCLogic {
       return [{ w: (a / t * 100).toFixed(1) + '%', bg: C_SCH }, { w: (b2 / t * 100).toFixed(1) + '%', bg: C_PREP }, { w: (c2 / t * 100).toFixed(1) + '%', bg: C_REL }].filter(s => parseFloat(s.w) > 0);
     };
     const kpis = [
-      { label: 'Initial refinance', tag: 'note originations', value: fN(tInit), col: '#16233A', hasBar: false, hasBar2: false, hasSpark: false,
+      { label: 'Initial refinance', tag: 'note originations', value: fN(tInit), col: '#16233A', span: 4, hasBar: false, hasBar2: false, hasSpark: false,
         sub: scopeDoors.length + ' propert' + (scopeDoors.length === 1 ? 'y' : 'ies') + ' financed in scope · each note’s original amount, per allocation slices' },
-      { label: 'Principal repaid', tag: 'through ' + mmyy(lastM), value: fN(tRepaid), col: '#3E8E63', hasBar: true, hasBar2: false, hasSpark: false,
+      { label: 'Principal repaid', tag: 'through ' + mmyy(lastM), value: fN(tRepaid), col: '#3E8E63', span: 4, hasBar: true, hasBar2: false, hasSpark: false,
         segs: seg3(tSch, tPrep, tRel),
         legs: [{ bg: C_SCH, txt: 'Monthly ' + fK(tSch) }, { bg: C_PREP, txt: 'Prepay ' + fK(tPrep) }, { bg: C_REL, txt: 'Releases ' + fK(tRel) }],
         sub: pct(tRepaid, tInit) + ' of initial refinance repaid' },
-      { label: 'Outstanding loan', tag: 'at ' + mmyy(lastM), value: fN(tOut), col: '#16233A', hasBar: false, hasBar2: false, hasSpark: true,
+      { label: 'Outstanding loan', tag: 'at ' + mmyy(lastM), value: fN(tOut), col: '#16233A', span: 4, hasBar: false, hasBar2: false, hasSpark: true,
         cols: sparkCols, sparkPath, sparkArea,
         sub: 'trailing ' + sparkM.length + ' months into ' + mmyy(lastM) + ' · click a point to view that month, click it again for all · ' + inLoans.filter(l => l.outstanding > 0.005).length + ' active notes in scope' },
-      { label: 'Initial LTV', tag: 'on bank appraisal', value: ltvInitDen > 0 ? (ltvInitNum / ltvInitDen * 100).toFixed(1) + '%' : '—', col: '#16233A', hasBar: false, hasBar2: false, hasSpark: false,
+      { label: 'Initial LTV', tag: 'on bank appraisal', value: ltvInitDen > 0 ? (ltvInitNum / ltvInitDen * 100).toFixed(1) + '%' : '—', col: '#16233A', span: 3, hasBar: false, hasBar2: false, hasSpark: false,
         sub: S.bsMiss ? 'bs-data.json not loaded — appraisals unavailable' : (ltvInitDen > 0 ? fK(ltvInitNum) + ' initial on ' + fK(ltvInitDen) + ' appraised · ' + apprN + ' doors covered' : 'no appraised values in scope') },
-      { label: 'Current LTV', tag: 'on ARV', value: ltvCurDen > 0 ? (ltvCurNum / ltvCurDen * 100).toFixed(1) + '%' : '—', col: '#16233A', hasBar: false, hasBar2: false, hasSpark: false,
+      { label: 'Current LTV', tag: 'on ARV', value: ltvCurDen > 0 ? (ltvCurNum / ltvCurDen * 100).toFixed(1) + '%' : '—', col: '#16233A', span: 3, hasBar: false, hasBar2: false, hasSpark: false,
         sub: S.bsMiss ? 'bs-data.json not loaded — values unavailable' : (ltvCurDen > 0 ? fK(ltvCurNum) + ' outstanding on ' + fK(ltvCurDen) + ' value (ARV-primary policy) · ' + valN + ' doors' : 'no ARV values in scope') },
-      { label: 'Payment · selected period', tag: periodTag, value: fN(pInt + pPrin), col: '#16233A', hasBar: true, hasBar2: true, hasSpark: false,
+      { label: 'Payment · selected period', tag: periodTag, value: fN(pInt + pPrin), col: '#16233A', span: 3, hasBar: true, hasBar2: true, hasSpark: false,
         segs: (pInt + pPrin > 0 ? [{ w: (pInt / (pInt + pPrin) * 100).toFixed(1) + '%', bg: '#B04A33' }, { w: (pPrin / (pInt + pPrin) * 100).toFixed(1) + '%', bg: '#3E8E63' }] : []),
         legs: [{ bg: '#B04A33', txt: 'Interest ' + fK(pInt) }, { bg: '#3E8E63', txt: 'Principal ' + fK(pPrin) }],
         segs2: seg3(pSched, pPrep, pRel),
@@ -1512,7 +1514,7 @@ class Component extends DCLogic {
     const ppFoot = 'Hard-money notes are excluded \u2014 they are bridge debt, refinanced by design. Penalty % applies to the balance at ' + mmyy(lastM) + ' by loan year from ORIGINATION (currently first payment \u2212 1 month; the clock will follow the sheet\u2019s origination dates once added). \u201c(till N months before Maturity)\u201d terms go penalty-free for the final window. Verdicts: \u22642 yr attractive \u00b7 \u22645 yr watch \u00b7 beyond that long.' + (target !== null ? ' Notes already at or below ' + tLbl + ' are marked KEEP and left out of every total.' : '') + ' All figures react to the scope and month filters.';
 
     kpis.push({
-      label: 'Current prepayment penalty', tag: 'to refinance scope', col: '#B04A33',
+      label: 'Current prepayment penalty', tag: 'to refinance scope', col: '#B04A33', span: 3,
       value: (ppLoans.length - nPend) > 0 ? fN(tpPenAll) : '\u2014',
       hasBar: false, hasBar2: false, hasSpark: false,
       sub: (ppLoans.length - nPend) > 0
