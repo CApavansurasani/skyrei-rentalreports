@@ -336,19 +336,54 @@ input:focus{outline:2px solid #C9A45C;outline-offset:1px}
     <!-- ══ Balance sheet ══ -->
     <div style="margin-top:16px;background:#FFFFFF;border:1px solid #E5E3DC;border-radius:16px;padding:20px 24px">
       <div style="display:flex;justify-content:space-between;align-items:baseline;flex-wrap:wrap;gap:8px">
-        <div style="font-family:'Source Serif 4',Georgia,serif;font-size:18px;font-weight:600;color:#16233A">Balance sheet</div>
+        <div style="font-family:'Source Serif 4',Georgia,serif;font-size:18px;font-weight:600;color:#16233A">Balance sheet <span style="font-size:12px;font-weight:600;color:#8A93A6">· at cost basis · {{ bsAsOf }}</span></div>
         <div style="font-size:11px;color:#8A93A6">{{ bsSub }}</div>
       </div>
       <div style="margin-top:12px;display:flex;flex-direction:column">
-        <sc-for list="{{ bsRows }}" as="r" hint-placeholder-count="9">
-          <div style="display:grid;grid-template-columns:14px 1fr 150px;gap:8px;align-items:center;padding:{{ r.pad }};border-top:{{ r.bt }};background:{{ r.bg }};border-radius:{{ r.rad }}">
-            <div style="width:9px;height:9px;border-radius:{{ r.dotR }};background:{{ r.dot }}"></div>
-            <div style="font-size:{{ r.fs }}px;font-weight:{{ r.fw }};color:{{ r.col }}">{{ r.label }}</div>
+        <sc-for list="{{ bsRows }}" as="r" hint-placeholder-count="12">
+          <div onClick="{{ r.onClick }}" style-hover="background:{{ r.hbg }}" style="display:grid;grid-template-columns:18px 1fr 160px;gap:8px;align-items:center;padding:{{ r.pad }};border-top:{{ r.bt }};background:{{ r.bg }};border-radius:{{ r.rad }};cursor:{{ r.cur }};border-left:3px solid {{ r.selBd }}">
+            <div style="font-size:10px;color:#96742F;font-weight:700">{{ r.caret }}</div>
+            <div style="min-width:0">
+              <div style="font-size:{{ r.fs }}px;font-weight:{{ r.fw }};color:{{ r.col }}">{{ r.label }}</div>
+              <sc-if value="{{ r.hasSub }}" hint-placeholder-val="{{ false }}"><div style="margin-top:1px;font-size:10px;color:#9AA3B5">{{ r.sub }}</div></sc-if>
+            </div>
             <div style="text-align:right;font-variant-numeric:tabular-nums;font-size:{{ r.fs }}px;font-weight:{{ r.vfw }};color:{{ r.vcol }}">{{ r.val }}</div>
           </div>
+          <sc-if value="{{ r.exp }}" hint-placeholder-val="{{ false }}">
+            <div style="border-left:3px solid #C9A45C;border-bottom:1px solid #E5E3DC;background:#FBFAF6;padding:12px 14px">
+              <div style="display:flex;gap:8px;flex-wrap:wrap;align-items:center;justify-content:space-between">
+                <div style="display:flex;gap:6px;flex-wrap:wrap">
+                  <sc-for list="{{ r.chips }}" as="ch" hint-placeholder-count="4">
+                    <div onClick="{{ ch.onClick }}" style-hover="border-color:#C9A45C" style="padding:4px 10px;border-radius:99px;border:1.5px solid {{ ch.bd }};background:{{ ch.bg }};font-size:10.5px;font-weight:700;color:#2A3550;cursor:pointer;white-space:nowrap">{{ ch.name }} <span style="color:#96742F">{{ ch.val }}</span></div>
+                  </sc-for>
+                </div>
+                <sc-if value="{{ r.hasQ }}" hint-placeholder-val="{{ false }}">
+                  <input value="{{ r.q }}" onInput="{{ r.onQ }}" placeholder="Search property…" style="width:180px;box-sizing:border-box;padding:6px 10px;border-radius:8px;border:1.5px solid #D8D4C8;font-family:inherit;font-size:11.5px;color:#16233A;background:#FFFFFF">
+                </sc-if>
+              </div>
+              <div class="scr" style="margin-top:8px;max-height:300px;overflow-y:auto;padding-right:4px">
+                <sc-for list="{{ r.items }}" as="it" hint-placeholder-count="8">
+                  <div onClick="{{ it.onClick }}" style-hover="background:#F6F4EC" style="display:grid;grid-template-columns:minmax(160px,1.4fr) 2fr 110px;gap:10px;padding:6px 8px;border-bottom:1px solid #F0EEE6;cursor:pointer;align-items:center">
+                    <div style="min-width:0">
+                      <div style="font-size:11.5px;font-weight:600;color:#1F3A6E;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">{{ it.name }}</div>
+                      <div style="font-size:9px;color:#9AA3B5;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">{{ it.sub }}</div>
+                    </div>
+                    <div style="height:9px;border-radius:5px;background:#F0EEE6;overflow:hidden"><div style="width:{{ it.w }};height:9px;background:{{ it.bg }}"></div></div>
+                    <div style="text-align:right;font-size:11.5px;font-weight:700;color:{{ it.col }};font-variant-numeric:tabular-nums">{{ it.val }}</div>
+                  </div>
+                </sc-for>
+                <sc-if value="{{ r.moreN }}" hint-placeholder-val="{{ false }}"><div style="padding:6px 8px;font-size:10px;color:#9AA3B5">{{ r.more }}</div></sc-if>
+                <sc-if value="{{ r.emptyD }}" hint-placeholder-val="{{ false }}"><div style="padding:8px;font-size:11px;color:#8A93A6">Nothing matches this search.</div></sc-if>
+              </div>
+              <div style="margin-top:8px;display:flex;justify-content:space-between;gap:10px;flex-wrap:wrap;align-items:center">
+                <div style="font-size:10px;color:#9AA3B5;line-height:1.5">{{ r.dFoot }}</div>
+                <sc-if value="{{ r.hasLink }}" hint-placeholder-val="{{ false }}"><a href="{{ r.link }}" style="font-size:11px;font-weight:700;white-space:nowrap">{{ r.linkTxt }}</a></sc-if>
+              </div>
+            </div>
+          </sc-if>
         </sc-for>
       </div>
-      <div style="margin-top:12px;padding:9px 12px;background:#16233A;border-radius:8px;font-size:10.5px;font-weight:600;color:#E9EDF5;text-align:center;line-height:1.5">{{ bsFormula }}</div>
+      <div style="margin-top:12px;padding:9px 12px;background:#16233A;border-radius:8px;font-size:10.5px;font-weight:600;color:{{ bsFormulaCol }};text-align:center;line-height:1.5">{{ bsFormula }}</div>
     </div>
 
     <!-- ══ Entity table ══ -->
@@ -501,6 +536,7 @@ class Component extends DCLogic {
     ddOpen: null, fq: '',
     metric: 'equity', expQ: '', showAll: false,
     mosBucket: null, mosQ: '', mosSel: null,
+    bsSel: null, bsQ: '',
     reconSel: null,
   };
 
@@ -569,7 +605,7 @@ class Component extends DCLogic {
       wfCols: [], wfConn: [], wfFoot: '',
       levOn: false, levRows: [], levThen: '', levThenSub: '', levNow: '', levNowSub: '', levNowCol: '#F5D9A8', levFoot: '',
       buckets: [], mosNote: '', mosQ: '', onMosQ: () => {}, ladder: [], mosEmpty: false, mosFoot: '',
-      bsRows: [], bsSub: '', bsFormula: '',
+      bsRows: [], bsSub: '', bsFormula: '', bsAsOf: '', bsFormulaCol: '#E9EDF5',
       entHeads: [], entRows: [], entSub: '',
       metricChips: [], expNote: '', expQ: '', onExpQ: () => {}, expRows: [], expEmpty: false, expBtn: { show: false, label: '', onClick: () => {} }, expFoot: '', expMax: 'none', expOv: 'visible',
       vinRows: [], vinSub: '', vinNote: '', exitRows: [], exitSub: '', covChecks: [], discFoot: '',
@@ -1031,32 +1067,147 @@ class Component extends DCLogic {
 
     const scopeLine = nScope + ' properties · balances at ' + mmyy(lastM) + ' · debt from the loans engine, income from the ledger, values from the balance sheet — all cross-checked below';
 
-    // ══════════ balance sheet rows ══════════
-    const arvN = scope.filter(p => p.valueSource === 'arv').length;
-    const cntyN = scope.filter(p => p.valueSource === 'county').length;
+    // ══════════ balance sheet (cost basis · owner structure 2026-07-15) ══════════
     const noneN = scope.filter(p => p.valueSource === 'none').length;
-    const mkRow = (label, val, o = {}) => ({
-      label, val, dot: o.dot || 'transparent', dotR: o.sq ? '3px' : '50%',
-      fs: o.big ? 14 : 12.5, fw: o.big ? 700 : 500, vfw: 700, col: o.col || INK, vcol: o.vcol || INK,
-      bt: o.bt || '1px solid #F3F1EA', bg: o.bg || 'transparent', pad: o.big ? '11px 6px' : '8px 6px', rad: o.bg ? '8px' : '0',
+    const ANCHOR = '2026-05'; // retained earnings = balancing figure through this month; anchored + actual ledger income after
+    const tcat2 = l => l.type === 'Hard Money' ? 'hm' : 'trad';
+    const doorType = d => {
+      const ns = doorNotes[d] || [];
+      if (!ns.length) return null;
+      const ts = new Set(ns.map(x => tcat2(x.l)));
+      return ts.size === 1 ? [...ts][0] : 'mixed';
+    };
+    let dTrad = 0, dHM = 0, nMixedBs = 0;
+    const mortP = { trad: [], hm: [] };
+    for (const p of scope) {
+      const cl = calcBy.get(p.door).close;
+      if (cl <= 0.005) continue;
+      const t = doorType(p.door);
+      if (t === 'hm') { dHM += cl; mortP.hm.push(p); }
+      else { dTrad += cl; mortP.trad.push(p); if (t === 'mixed') nMixedBs++; }
+    }
+    const notesIn = t => loansOk.filter(l => tcat2(l) === t && noteCloseAt(l, lastM) > 0.005 && Object.keys(l.origProps).some(d => scopeSet.has(d)));
+    const wtdRate = ls => { let n2 = 0, dn = 0; for (const l of ls) { const c = noteCloseAt(l, lastM); n2 += (l.rate || 0) * c; dn += c; } return dn > 0 ? (n2 / dn * 100).toFixed(2) + '%' : '—'; };
+    const AR_BAL = 0, ESCROW_BAL = 0, SD_BAL = 0; // placeholders — owner defines the logics later
+    const tAssets = tCost + AR_BAL + ESCROW_BAL;
+    const tLiab = dTrad + dHM + SD_BAL;
+    // retained earnings: balancing figure through ANCHOR; from Jun-26 = anchor base + actual ledger income
+    const bsAnchored = lastM > ANCHOR;
+    let reVal, reSub, reIncome = 0, reBase = 0, incMonths = [];
+    if (!bsAnchored) {
+      reVal = tAssets - tLiab - tInv;
+      reSub = 'balancing figure through ' + mmyy(ANCHOR) + ' — today it equals the principal repaid on your notes';
+    } else {
+      reBase = tRefi - scope.reduce((s, p) => s + debtAt(p.door, ANCHOR), 0);
+      incMonths = glP.filter(m => m > ANCHOR && m <= lastM);
+      const aInc = glAgg(incMonths.map(m => glP.indexOf(m)));
+      let noi2 = ovAdd ? aInc.noiOver : 0, int2 = ovAdd ? aInc.intOver : 0;
+      for (const [d2, x] of aInc.noiBy) if (scopeSet.has(d2)) noi2 += x;
+      for (const [d2, x] of aInc.intBy) if (scopeSet.has(d2)) int2 += x;
+      reIncome = noi2 - int2;
+      reVal = reBase + reIncome;
+      reSub = mmyy(ANCHOR) + ' base ' + fK(reBase) + ' + actual net income since: ' + (incMonths.length ? fK(reIncome) + ' over ' + incMonths.length + ' ledger month' + (incMonths.length > 1 ? 's' : '') : 'awaiting ledger for ' + mmyy(lastM));
+    }
+    const tEqBs = tInv + reVal;
+    const bsImb = tAssets - tLiab - tEqBs; // 0 by construction pre-anchor; a real reconciliation check after
+    // ---- drill machinery: one row open at a time; property click focuses the WHOLE page ----
+    const bq = (S.bsQ || '').trim().toLowerCase();
+    const drillOf = (raw, opts = {}) => {
+      // raw: [{name, sub, v, ent, onClick?}] — entity chips toggle the ENTITY filter, property rows the PROPERTY filter
+      const maxAbs = raw.reduce((s, x) => Math.max(s, Math.abs(x.v)), 0) || 1;
+      const byEnt = new Map();
+      for (const x of raw) if (x.ent) byEnt.set(x.ent, (byEnt.get(x.ent) || 0) + x.v);
+      const chips = [...byEnt.entries()].sort((a, b) => Math.abs(b[1]) - Math.abs(a[1])).slice(0, 8).map(([e, v2]) => ({
+        name: e, val: fK(v2), bd: feAct.includes(e) ? '#C9A45C' : '#D8D4C8', bg: feAct.includes(e) ? '#FBF6EA' : '#FFFFFF',
+        onClick: () => { const cur = new Set(S.fe); cur.has(e) ? cur.delete(e) : cur.add(e); this.setFilter({ fe: [...cur] }); },
+      }));
+      const filt = bq ? raw.filter(x => x.name.toLowerCase().includes(bq) || (x.sub || '').toLowerCase().includes(bq)) : raw;
+      const capN = 250;
+      const items = filt.slice(0, capN).map(x => ({
+        name: x.name, sub: x.sub || '',
+        w: Math.min(Math.abs(x.v) / maxAbs * 100, 100).toFixed(1) + '%',
+        bg: x.v < 0 ? '#E8A896' : (opts.bar || BLUE),
+        val: fN(x.v), col: x.v < 0 ? RED : (opts.vcol || INK),
+        onClick: x.onClick || (() => this.setFilter({ fp: S.fp.length === 1 && S.fp[0] === x.name ? [] : [x.name] })),
+      }));
+      return {
+        chips, hasQ: raw.length > 10, q: S.bsQ || '', onQ: e => this.setState({ bsQ: e.target.value }),
+        items, emptyD: items.length === 0,
+        moreN: filt.length > capN, more: 'showing ' + capN + ' of ' + filt.length + ' — search to narrow',
+        dFoot: opts.foot || 'click a property to focus the entire page on it (click again to release) · chips filter by entity · bars are relative to the largest line',
+        hasLink: !!opts.link, link: opts.link || '', linkTxt: opts.linkTxt || '',
+      };
+    };
+    const lendersOf = d => [...new Set((doorNotes[d] || []).map(x => x.l.lender || '—'))].join(' · ');
+    const subOf = p => p.entity + ' · ' + p.status;
+    const D_EMPTY = { chips: [], hasQ: false, q: '', onQ: () => {}, items: [], emptyD: false, moreN: false, more: '', dFoot: '', hasLink: false, link: '', linkTxt: '' };
+    const mkBsRow = (o) => ({
+      id: o.id || '', label: o.label, val: o.val,
+      sub: o.sub || '', hasSub: !!o.sub,
+      fs: o.big ? 14 : 12.5, fw: o.big ? 700 : 500, vfw: 700,
+      col: o.col || (o.dim ? MUT : INK), vcol: o.vcol || (o.dim ? '#9AA3B5' : INK),
+      bt: o.bt || '1px solid #F3F1EA', bg: o.bg || 'transparent',
+      pad: o.big ? '11px 6px' : '8px 6px', rad: o.bg ? '8px' : '0',
+      caret: o.drill ? (S.bsSel === o.id ? '▾' : '▸') : '',
+      cur: o.drill ? 'pointer' : 'default', hbg: o.drill ? '#F6F4EC' : (o.bg || 'transparent'),
+      selBd: S.bsSel === o.id && o.drill ? '#C9A45C' : 'transparent',
+      onClick: o.drill ? (() => this.setState({ bsSel: S.bsSel === o.id ? null : o.id, bsQ: '' })) : (() => {}),
+      exp: !!o.drill && S.bsSel === o.id,
+      ...(!!o.drill && S.bsSel === o.id ? o.drill() : D_EMPTY),
     });
-    const tEqBs = tVal - tDebt;
+    const costP = scope.filter(p => p.cost > 0).sort((a, b) => b.cost - a.cost);
+    const zeroCostBs = scope.filter(p => !(p.cost > 0)).length;
+    const invP = scope.filter(p => p.cost > 0 || p.refi > 0).map(p => ({ p, v: (p.cost || 0) - (p.refi || 0) })).sort((a, b) => b.v - a.v);
+    const cashOutBs = invP.filter(x => x.v < 0).length;
+    const reP = scope.map(p => ({ p, v: (p.refi || 0) - calcBy.get(p.door).close })).filter(x => Math.abs(x.v) > 0.005).sort((a, b) => b.v - a.v);
+    const noNote = d => !(doorNotes[d] || []).length;
+    const tradNotes = notesIn('trad'), hmNotes = notesIn('hm');
     const bsRows = [
-      mkRow('ASSETS', '', { big: true, col: GOLDD, bt: 'none' }),
-      mkRow('Real estate — policy value (ARV-first)', fN(tVal), { dot: NAVY }),
-      mkRow('· of which valued by ARV', fN(scope.filter(p => p.valueSource === 'arv').reduce((s, p) => s + p.value, 0)) + '  (' + arvN + ')', { col: MUT, vcol: MUT }),
-      mkRow('· county-assessed fallback', fN(scope.filter(p => p.valueSource === 'county').reduce((s, p) => s + p.value, 0)) + '  (' + cntyN + ')', { col: MUT, vcol: MUT }),
-      mkRow('Cash & escrow', 'pending — Phase 3', { col: MUT, vcol: '#9AA3B5' }),
-      mkRow('Total assets (real estate)', fN(tVal), { big: true, bg: '#F4F2EA' }),
-      mkRow('LIABILITIES', '', { big: true, col: GOLDD, bt: 'none' }),
-      mkRow('Mortgage debt · outstanding at ' + mmyy(lastM), fN(tDebt), { dot: '#B04A33', vcol: RED }),
-      mkRow('· at initial refinance (for reference)', fN(tRefi) + '  · repaid ' + fK(tRepaid), { col: MUT, vcol: MUT }),
-      mkRow('Security deposits held', 'pending mapping', { col: MUT, vcol: '#9AA3B5' }),
-      mkRow('EQUITY', '', { big: true, col: GOLDD, bt: 'none' }),
-      mkRow('Owner equity (assets − debt)', fN(tEqBs), { big: true, bg: '#EAF3EC', vcol: tEqBs < 0 ? RED : '#2F7351' }),
+      mkBsRow({ label: 'ASSETS', val: '', big: true, col: GOLDD, bt: 'none' }),
+      mkBsRow({ id: 'cost', label: 'Total cost of property', val: fN(tCost),
+        sub: costP.length + ' properties · purchase + rehab basis' + (zeroCostBs ? ' · ' + zeroCostBs + ' zero-cost pending' : ''),
+        drill: () => drillOf(costP.map(p => ({ name: p.door, sub: subOf(p), v: p.cost, ent: p.entity })), { bar: NAVY }) }),
+      mkBsRow({ id: 'ar', label: 'Accounts receivable', val: fN(AR_BAL), sub: 'placeholder — you will define the logic', dim: true }),
+      mkBsRow({ id: 'escrow', label: 'Escrow balance', val: fN(ESCROW_BAL), sub: 'placeholder — data source to be decided', dim: true }),
+      mkBsRow({ id: 'ta', label: 'Total assets', val: fN(tAssets), big: true, bg: '#F4F2EA' }),
+      mkBsRow({ id: 'memo', label: 'Memo · market value (ARV-first) — not on the books', val: fN(tVal),
+        sub: 'unrealized appreciation ' + (tVal - tCost >= 0 ? '+' : '−') + fK(Math.abs(tVal - tCost)) + ' vs cost — the Margin of safety section tells that story' + (noneN ? ' · ' + noneN + ' without valuation' : ''), dim: true }),
+      mkBsRow({ label: 'LIABILITIES', val: '', big: true, col: GOLDD, bt: 'none' }),
+      mkBsRow({ id: 'mtrad', label: 'Mortgages — traditional', val: fN(dTrad), vcol: RED,
+        sub: tradNotes.length + ' notes · ' + mortP.trad.length + ' properties · wtd rate ' + wtdRate(tradNotes) + (nMixedBs ? ' · ' + nMixedBs + ' mixed-type door(s) counted here' : ''),
+        drill: () => drillOf(mortP.trad.map(p => ({ name: p.door, sub: subOf(p) + ' · ' + lendersOf(p.door), v: calcBy.get(p.door).close, ent: p.entity })).sort((a, b) => b.v - a.v),
+          { bar: '#C4573C', vcol: RED, link: './loans.dc.html?type=Traditional', linkTxt: 'Open in Loans →' }) }),
+      mkBsRow({ id: 'mhm', label: 'Mortgages — hard money', val: fN(dHM), vcol: RED,
+        sub: hmNotes.length + ' notes · ' + mortP.hm.length + ' properties · wtd rate ' + wtdRate(hmNotes) + ' · bridge debt, refinanced by design',
+        drill: () => drillOf(mortP.hm.map(p => ({ name: p.door, sub: subOf(p) + ' · ' + lendersOf(p.door), v: calcBy.get(p.door).close, ent: p.entity })).sort((a, b) => b.v - a.v),
+          { bar: GOLDD, vcol: RED, link: './loans.dc.html?type=Hard%20Money', linkTxt: 'Open in Loans →' }) }),
+      mkBsRow({ id: 'sd', label: 'Tenant security deposits', val: fN(SD_BAL), sub: 'placeholder — data source to be decided', dim: true }),
+      mkBsRow({ id: 'tl', label: 'Total liabilities', val: fN(tLiab), big: true, bg: '#F4F2EA', vcol: RED }),
+      mkBsRow({ label: 'EQUITY', val: '', big: true, col: GOLDD, bt: 'none' }),
+      mkBsRow({ id: 'inv', label: 'Initial invested capital', val: fN(tInv),
+        sub: 'cost − initial refinance — the cash you brought at purchase' + (cashOutBs ? ' · ' + cashOutBs + ' cash-out door(s) net negative' : ''),
+        drill: () => drillOf(invP.map(x => ({ name: x.p.door, sub: subOf(x.p) + (x.v < 0 ? (x.p.cost > 0 ? ' · cash-out beyond cost' : ' · cost pending — refinance only for now') : ''), v: x.v, ent: x.p.entity })), { bar: BLUE }) }),
+      mkBsRow({ id: 're', label: 'Retained earnings' + (bsAnchored ? ' · anchored + income' : ' · balancing'), val: fN(reVal), vcol: reVal < 0 ? RED : '#2F7351',
+        sub: reSub,
+        drill: () => bsAnchored
+          ? drillOf(incMonths.map(m => {
+              const a1 = glAgg([glP.indexOf(m)]);
+              let n3 = ovAdd ? a1.noiOver : 0, i3 = ovAdd ? a1.intOver : 0;
+              for (const [d2, x] of a1.noiBy) if (scopeSet.has(d2)) n3 += x;
+              for (const [d2, x] of a1.intBy) if (scopeSet.has(d2)) i3 += x;
+              return { name: mmyy(m), sub: 'actual net income (ledger)', v: n3 - i3, ent: null, onClick: () => this.setFilter({ fm: [m] }) };
+            }), { bar: GREEN, foot: 'base at ' + mmyy(ANCHOR) + ' = ' + fN(reBase) + ' (the balancing figure frozen there) · each month adds its real ledger income · click a month to view the sheet then' })
+          : drillOf(reP.map(x => ({ name: x.p.door, sub: subOf(x.p) + (noNote(x.p.door) && x.p.refi > 0 ? ' · no note in loans data — flagged in checks & balances' : ''), v: x.v, ent: x.p.entity })),
+            { bar: GREEN, foot: 'per property: initial refinance − debt today = principal moved to your side of the ledger · click a property to focus the page on it' }) }),
+      mkBsRow({ id: 'te', label: 'Total equity', val: fN(tEqBs), big: true, bg: '#EAF3EC', vcol: tEqBs < 0 ? RED : '#2F7351' }),
     ];
-    const bsSub = nScope + ' properties · ' + (noneN ? noneN + ' with no valuation yet · ' : '') + 'debt now amortized to ' + mmyy(lastM) + ' via the loans engine';
-    const bsFormula = fN(tVal) + ' assets − ' + fN(tDebt) + ' debt = ' + fN(tEqBs) + ' equity (' + (tVal > 0 ? fP(tEqBs, tVal) : '—') + ' of value)';
+    const bsAsOf = 'balances at ' + mmyy(lastM);
+    const bsSub = 'assets = liabilities + equity · click any line to drill to its properties';
+    const bsTallied = Math.abs(bsImb) <= 0.5;
+    const bsFormula = fN(tAssets) + ' assets = ' + fN(tLiab) + ' liabilities + ' + fN(tEqBs) + ' equity' +
+      (bsTallied ? ' · TALLIED ✓ at ' + mmyy(lastM)
+        : ' · UNRECONCILED ' + fN(bsImb) + ' — principal repaid & income since ' + mmyy(ANCHOR) + ' await the cash / AR / escrow wiring');
+    const bsFormulaCol = bsTallied ? '#E9EDF5' : '#F5C89A';
 
     // ══════════ entity table ══════════
     const entHeads = ['DOORS', 'VALUE', 'COST', 'DEBT NOW', 'PRINCIPAL PAID', 'EQUITY', 'LTV', 'CAP RATE'];
@@ -1084,7 +1235,7 @@ class Component extends DCLogic {
       cells: [
         { t: String(nScope), col: NAVY }, { t: fK(tVal), col: NAVY }, { t: fK(tCost), col: NAVY }, { t: fK(tDebt), col: RED },
         { t: fK(tRepaid), col: '#2F7351' },
-        { t: fK(tEqBs), col: tEqBs < 0 ? RED : '#2F7351' }, { t: tVal > 0 ? fP(tDebt, tVal) : '—', col: NAVY },
+        { t: fK(tVal - tDebt), col: (tVal - tDebt) < 0 ? RED : '#2F7351' }, { t: tVal > 0 ? fP(tDebt, tVal) : '—', col: NAVY },
         { t: capRateAll === null ? '—' : capRateAll.toFixed(2) + '%', col: NAVY },
       ],
     }];
@@ -1168,10 +1319,12 @@ class Component extends DCLogic {
 
     // ══════════ coverage checks ══════════
     const cov = S.bs.meta.coverage || {};
-    const idOk = Math.abs((tVal - tDebt) - tEqBs) < 0.01;
+    const arvN = scope.filter(p => p.valueSource === 'arv').length;
+    const cntyN = scope.filter(p => p.valueSource === 'county').length;
+    const idOk = bsTallied;
     const covChecks = [
       { icon: idOk ? '✓' : '!', iconBg: idOk ? '#E3EEE7' : '#F3E2DB', iconCol: idOk ? '#2F7351' : '#A03E28',
-        t: 'Balance sheet identity holds', s: fN(tVal) + ' assets − ' + fN(tDebt) + ' liabilities = ' + fN(tEqBs) + ' equity, by construction on unrounded values.' },
+        t: idOk ? 'Balance sheet tallies' : 'Balance sheet unreconciled', s: fN(tAssets) + ' assets = ' + fN(tLiab) + ' liabilities + ' + fN(tEqBs) + ' equity at cost basis' + (idOk ? ', to the cent.' : ' — off by ' + fN(bsImb) + '; principal repaid and income since ' + mmyy(ANCHOR) + ' await the cash / AR / escrow logics.') },
       { icon: identOk ? '✓' : '!', iconBg: identOk ? '#E3EEE7' : '#F3E2DB', iconCol: identOk ? '#2F7351' : '#A03E28',
         t: 'Principal fully accounted', s: 'Every dollar drawn across the 47 notes is either owner-paid, sale-settled, refi-funded, or still outstanding — the split ties to the cent in Checks & balances above.' },
       { icon: (cov.zeroCost || noneN) ? '!' : '✓', iconBg: (cov.zeroCost || noneN) ? '#F6ECD9' : '#E3EEE7', iconCol: (cov.zeroCost || noneN) ? '#96742F' : '#2F7351',
@@ -1193,7 +1346,7 @@ class Component extends DCLogic {
       levOn, levRows, levThen, levThenSub, levNow, levNowSub, levNowCol, levFoot,
       buckets, mosNote, mosQ: S.mosQ, onMosQ: e => this.setState({ mosQ: e.target.value }),
       ladder, mosEmpty: ladder.length === 0, mosFoot,
-      bsRows, bsSub, bsFormula,
+      bsRows, bsSub, bsFormula, bsAsOf, bsFormulaCol,
       entHeads, entRows, entSub,
       metricChips, expNote, expQ: S.expQ, onExpQ: e => this.setState({ expQ: e.target.value, showAll: false }),
       expRows, expEmpty: expRows.length === 0, expBtn, expFoot,
