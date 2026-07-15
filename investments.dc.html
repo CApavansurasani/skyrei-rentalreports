@@ -1089,26 +1089,36 @@ class Component extends DCLogic {
     const notesIn = t => loansOk.filter(l => tcat2(l) === t && noteCloseAt(l, lastM) > 0.005 && Object.keys(l.origProps).some(d => scopeSet.has(d)));
     const wtdRate = ls => { let n2 = 0, dn = 0; for (const l of ls) { const c = noteCloseAt(l, lastM); n2 += (l.rate || 0) * c; dn += c; } return dn > 0 ? (n2 / dn * 100).toFixed(2) + '%' : '—'; };
     const AR_BAL = 0, ESCROW_BAL = 0, SD_BAL = 0; // placeholders — owner defines the logics later
-    const tAssets = tCost + AR_BAL + ESCROW_BAL;
-    const tLiab = dTrad + dHM + SD_BAL;
+    // held-for-sale reclassification (owner decision 2026-07-15): still owned until the sale closes,
+    // so their cost & debt stay ON the sheet as their own lines (return metrics elsewhere keep the exit rule).
+    // `excluded` already respects entity/property filters and empties when STATUS is explicitly selected.
+    const hfsX = excluded.filter(p => p.status === 'Held for Sale');
+    const hfsCost = hfsX.reduce((s, p) => s + (p.cost || 0), 0);
+    const hfsRefi = hfsX.reduce((s, p) => s + (p.refi || 0), 0);
+    const hfsDebt = hfsX.reduce((s, p) => s + debtAt(p.door, lastM), 0);
+    const hfsOn = hfsX.length > 0;
+    const bsDoorSet = new Set([...scopeSet, ...hfsX.map(p => p.door)]);
+    const tInvBs = tInv + (hfsCost - hfsRefi);
+    const tAssets = tCost + hfsCost + AR_BAL + ESCROW_BAL;
+    const tLiab = dTrad + dHM + hfsDebt + SD_BAL;
     // retained earnings: balancing figure through ANCHOR; from Jun-26 = anchor base + actual ledger income
     const bsAnchored = lastM > ANCHOR;
     let reVal, reSub, reIncome = 0, reBase = 0, incMonths = [];
     if (!bsAnchored) {
-      reVal = tAssets - tLiab - tInv;
+      reVal = tAssets - tLiab - tInvBs;
       reSub = 'balancing figure through ' + mmyy(ANCHOR) + ' — today it equals the principal repaid on your notes';
     } else {
-      reBase = tRefi - scope.reduce((s, p) => s + debtAt(p.door, ANCHOR), 0);
+      reBase = (tRefi + hfsRefi) - scope.reduce((s, p) => s + debtAt(p.door, ANCHOR), 0) - hfsX.reduce((s, p) => s + debtAt(p.door, ANCHOR), 0);
       incMonths = glP.filter(m => m > ANCHOR && m <= lastM);
       const aInc = glAgg(incMonths.map(m => glP.indexOf(m)));
       let noi2 = ovAdd ? aInc.noiOver : 0, int2 = ovAdd ? aInc.intOver : 0;
-      for (const [d2, x] of aInc.noiBy) if (scopeSet.has(d2)) noi2 += x;
-      for (const [d2, x] of aInc.intBy) if (scopeSet.has(d2)) int2 += x;
+      for (const [d2, x] of aInc.noiBy) if (bsDoorSet.has(d2)) noi2 += x;
+      for (const [d2, x] of aInc.intBy) if (bsDoorSet.has(d2)) int2 += x;
       reIncome = noi2 - int2;
       reVal = reBase + reIncome;
       reSub = mmyy(ANCHOR) + ' base ' + fK(reBase) + ' + actual net income since: ' + (incMonths.length ? fK(reIncome) + ' over ' + incMonths.length + ' ledger month' + (incMonths.length > 1 ? 's' : '') : 'awaiting ledger for ' + mmyy(lastM));
     }
-    const tEqBs = tInv + reVal;
+    const tEqBs = tInvBs + reVal;
     const bsImb = tAssets - tLiab - tEqBs; // 0 by construction pre-anchor; a real reconciliation check after
     // ---- drill machinery: one row open at a time; property click focuses the WHOLE page ----
     const bq = (S.bsQ || '').trim().toLowerCase();
@@ -1157,9 +1167,12 @@ class Component extends DCLogic {
     });
     const costP = scope.filter(p => p.cost > 0).sort((a, b) => b.cost - a.cost);
     const zeroCostBs = scope.filter(p => !(p.cost > 0)).length;
-    const invP = scope.filter(p => p.cost > 0 || p.refi > 0).map(p => ({ p, v: (p.cost || 0) - (p.refi || 0) })).sort((a, b) => b.v - a.v);
+    const bsProps = [...scope, ...hfsX];
+    const isHfsX = new Set(hfsX.map(p => p.door));
+    const bsClose = d => isHfsX.has(d) ? debtAt(d, lastM) : calcBy.get(d).close;
+    const invP = bsProps.filter(p => p.cost > 0 || p.refi > 0).map(p => ({ p, v: (p.cost || 0) - (p.refi || 0) })).sort((a, b) => b.v - a.v);
     const cashOutBs = invP.filter(x => x.v < 0).length;
-    const reP = scope.map(p => ({ p, v: (p.refi || 0) - calcBy.get(p.door).close })).filter(x => Math.abs(x.v) > 0.005).sort((a, b) => b.v - a.v);
+    const reP = bsProps.map(p => ({ p, v: (p.refi || 0) - bsClose(p.door) })).filter(x => Math.abs(x.v) > 0.005).sort((a, b) => b.v - a.v);
     const noNote = d => !(doorNotes[d] || []).length;
     const tradNotes = notesIn('trad'), hmNotes = notesIn('hm');
     const bsRows = [
@@ -1167,6 +1180,10 @@ class Component extends DCLogic {
       mkBsRow({ id: 'cost', label: 'Total cost of property', val: fN(tCost),
         sub: costP.length + ' properties · purchase + rehab basis' + (zeroCostBs ? ' · ' + zeroCostBs + ' zero-cost pending' : ''),
         drill: () => drillOf(costP.map(p => ({ name: p.door, sub: subOf(p), v: p.cost, ent: p.entity })), { bar: NAVY }) }),
+      ...(hfsOn ? [mkBsRow({ id: 'hfsa', label: 'Held for sale — at cost', val: fN(hfsCost),
+        sub: hfsX.length + ' propert' + (hfsX.length === 1 ? 'y' : 'ies') + ' awaiting sale — still yours until closing, so they stay on the sheet',
+        drill: () => drillOf(hfsX.map(p => ({ name: p.door, sub: subOf(p) + ' · listed ' + (p.exit ? mmyy(p.exit.slice(0, 7)) : '—'), v: p.cost || 0, ent: p.entity })).sort((a, b) => b.v - a.v),
+          { bar: NAVY, foot: 'excluded from every return metric by the exit rule — reclassified here, not dropped · sale settlement will retire the line' }) })] : []),
       mkBsRow({ id: 'ar', label: 'Accounts receivable', val: fN(AR_BAL), sub: 'placeholder — you will define the logic', dim: true }),
       mkBsRow({ id: 'escrow', label: 'Escrow balance', val: fN(ESCROW_BAL), sub: 'placeholder — data source to be decided', dim: true }),
       mkBsRow({ id: 'ta', label: 'Total assets', val: fN(tAssets), big: true, bg: '#F4F2EA' }),
@@ -1181,12 +1198,17 @@ class Component extends DCLogic {
         sub: hmNotes.length + ' notes · ' + mortP.hm.length + ' properties · wtd rate ' + wtdRate(hmNotes) + ' · bridge debt, refinanced by design',
         drill: () => drillOf(mortP.hm.map(p => ({ name: p.door, sub: subOf(p) + ' · ' + lendersOf(p.door), v: calcBy.get(p.door).close, ent: p.entity })).sort((a, b) => b.v - a.v),
           { bar: GOLDD, vcol: RED, link: './loans.dc.html?type=Hard%20Money', linkTxt: 'Open in Loans →' }) }),
+      ...(hfsOn ? [mkBsRow({ id: 'hfsl', label: 'Mortgages — held for sale properties', val: fN(hfsDebt), vcol: RED,
+        sub: 'debt rides until each sale settles — with this line, total liabilities ties to the Loans page',
+        drill: () => drillOf(hfsX.filter(p => debtAt(p.door, lastM) > 0.005).map(p => ({ name: p.door, sub: subOf(p) + ' · ' + lendersOf(p.door), v: debtAt(p.door, lastM), ent: p.entity })).sort((a, b) => b.v - a.v),
+          { bar: '#C4573C', vcol: RED, link: './loans.dc.html?door=' + encodeURIComponent(hfsX.map(p => p.door).join(',')), linkTxt: 'Open these notes in Loans →',
+            foot: 'the sale proceeds pay these off (Sale Release rows in Loans.xlsx) · until then they are real liabilities' }) })] : []),
       mkBsRow({ id: 'sd', label: 'Tenant security deposits', val: fN(SD_BAL), sub: 'placeholder — data source to be decided', dim: true }),
       mkBsRow({ id: 'tl', label: 'Total liabilities', val: fN(tLiab), big: true, bg: '#F4F2EA', vcol: RED }),
       mkBsRow({ label: 'EQUITY', val: '', big: true, col: GOLDD, bt: 'none' }),
-      mkBsRow({ id: 'inv', label: 'Initial invested capital', val: fN(tInv),
-        sub: 'cost − initial refinance — the cash you brought at purchase' + (cashOutBs ? ' · ' + cashOutBs + ' cash-out door(s) net negative' : ''),
-        drill: () => drillOf(invP.map(x => ({ name: x.p.door, sub: subOf(x.p) + (x.v < 0 ? (x.p.cost > 0 ? ' · cash-out beyond cost' : ' · cost pending — refinance only for now') : ''), v: x.v, ent: x.p.entity })), { bar: BLUE }) }),
+      mkBsRow({ id: 'inv', label: 'Initial invested capital', val: fN(tInvBs),
+        sub: 'cost − initial refinance — the cash you brought at purchase' + (hfsOn ? ' · incl. held-for-sale doors' : '') + (cashOutBs ? ' · ' + cashOutBs + ' cash-out door(s) net negative' : ''),
+        drill: () => drillOf(invP.map(x => ({ name: x.p.door, sub: subOf(x.p) + (isHfsX.has(x.p.door) ? ' · held for sale' : '') + (x.v < 0 ? (x.p.cost > 0 ? ' · cash-out beyond cost' : ' · cost pending — refinance only for now') : ''), v: x.v, ent: x.p.entity })), { bar: BLUE }) }),
       mkBsRow({ id: 're', label: 'Retained earnings' + (bsAnchored ? ' · anchored + income' : ' · balancing'), val: fN(reVal), vcol: reVal < 0 ? RED : '#2F7351',
         sub: reSub,
         drill: () => bsAnchored
@@ -1197,7 +1219,7 @@ class Component extends DCLogic {
               for (const [d2, x] of a1.intBy) if (scopeSet.has(d2)) i3 += x;
               return { name: mmyy(m), sub: 'actual net income (ledger)', v: n3 - i3, ent: null, onClick: () => this.setFilter({ fm: [m] }) };
             }), { bar: GREEN, foot: 'base at ' + mmyy(ANCHOR) + ' = ' + fN(reBase) + ' (the balancing figure frozen there) · each month adds its real ledger income · click a month to view the sheet then' })
-          : drillOf(reP.map(x => ({ name: x.p.door, sub: subOf(x.p) + (noNote(x.p.door) && x.p.refi > 0 ? ' · no note in loans data — flagged in checks & balances' : ''), v: x.v, ent: x.p.entity })),
+          : drillOf(reP.map(x => ({ name: x.p.door, sub: subOf(x.p) + (isHfsX.has(x.p.door) ? ' · held for sale' : '') + (noNote(x.p.door) && x.p.refi > 0 ? ' · no note in loans data — flagged in checks & balances' : ''), v: x.v, ent: x.p.entity })),
             { bar: GREEN, foot: 'per property: initial refinance − debt today = principal moved to your side of the ledger · click a property to focus the page on it' }) }),
       mkBsRow({ id: 'te', label: 'Total equity', val: fN(tEqBs), big: true, bg: '#EAF3EC', vcol: tEqBs < 0 ? RED : '#2F7351' }),
     ];
