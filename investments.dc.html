@@ -233,6 +233,44 @@ input:focus{outline:2px solid #C9A45C;outline-offset:1px}
           </sc-for>
         </div>
         <div style="margin-top:12px;padding-top:10px;border-top:1px solid rgba(233,237,245,0.12);font-size:10.5px;color:#8A96AD">{{ wfFoot }}</div>
+        <sc-if value="{{ levOn }}" hint-placeholder-val="{{ false }}">
+          <div style="margin-top:12px;padding-top:14px;border-top:1px solid rgba(233,237,245,0.12)">
+            <div style="display:flex;justify-content:space-between;align-items:flex-start;gap:26px;flex-wrap:wrap">
+              <div style="flex:1;min-width:320px">
+                <div style="font-size:10.5px;letter-spacing:0.1em;font-weight:700;color:#C9A45C">LEVERAGE — BANK MONEY ON YOUR CAPITAL</div>
+                <sc-for list="{{ levRows }}" as="lv" hint-placeholder-count="2">
+                  <div style="margin-top:10px">
+                    <div style="display:flex;justify-content:space-between;align-items:baseline;gap:10px">
+                      <span style="font-size:9px;letter-spacing:0.05em;font-weight:800;color:#C9D2E4;white-space:nowrap">{{ lv.lab }}</span>
+                      <span style="font-size:10px;color:#8A96AD;text-align:right">{{ lv.cap }}</span>
+                    </div>
+                    <div style="margin-top:4px;display:flex;height:12px;border-radius:6px;overflow:hidden;background:rgba(233,237,245,0.08)">
+                      <div style="width:{{ lv.wOwn }};background:#C9A45C" title="{{ lv.tOwn }}"></div>
+                      <div style="width:{{ lv.wDebt }};background:#C4573C;opacity:0.9" title="{{ lv.tDebt }}"></div>
+                    </div>
+                  </div>
+                </sc-for>
+                <div style="margin-top:8px;display:flex;gap:16px;flex-wrap:wrap">
+                  <span style="font-size:10px;color:#8A96AD;display:flex;align-items:center;gap:5px"><span style="width:8px;height:8px;border-radius:2.5px;background:#C9A45C"></span>your money</span>
+                  <span style="font-size:10px;color:#8A96AD;display:flex;align-items:center;gap:5px"><span style="width:8px;height:8px;border-radius:2.5px;background:#C4573C"></span>bank money</span>
+                </div>
+              </div>
+              <div style="display:flex;gap:26px;text-align:right">
+                <div>
+                  <div style="font-size:9.5px;letter-spacing:0.09em;font-weight:700;color:#8A96AD">LEVERAGE AT PURCHASE</div>
+                  <div style="margin-top:4px;font-family:'Source Serif 4',Georgia,serif;font-size:24px;font-weight:600;color:#F5D9A8">{{ levThen }}</div>
+                  <div style="font-size:10px;color:#8A96AD">{{ levThenSub }}</div>
+                </div>
+                <div>
+                  <div style="font-size:9.5px;letter-spacing:0.09em;font-weight:700;color:#8A96AD">LEVERAGE TODAY</div>
+                  <div style="margin-top:4px;font-family:'Source Serif 4',Georgia,serif;font-size:24px;font-weight:600;color:{{ levNowCol }}">{{ levNow }}</div>
+                  <div style="font-size:10px;color:#8A96AD">{{ levNowSub }}</div>
+                </div>
+              </div>
+            </div>
+            <div style="margin-top:10px;font-size:10.5px;color:#8A96AD">{{ levFoot }}</div>
+          </div>
+        </sc-if>
       </div>
 
       <!-- risk buckets -->
@@ -529,6 +567,7 @@ class Component extends DCLogic {
       mosAsOf: '', mosPct: '', mosEq: '', mosVal: '',
       mosCash: '', mosProfit: '', mosProfitPct: '', mosPctCol: '#6FBF8F', mosProfitCol: '#7FC29B', mosFiltTag: '', mosFiltOn: false, onMosClear: () => {},
       wfCols: [], wfConn: [], wfFoot: '',
+      levOn: false, levRows: [], levThen: '', levThenSub: '', levNow: '', levNowSub: '', levNowCol: '#F5D9A8', levFoot: '',
       buckets: [], mosNote: '', mosQ: '', onMosQ: () => {}, ladder: [], mosEmpty: false, mosFoot: '',
       bsRows: [], bsSub: '', bsFormula: '',
       entHeads: [], entRows: [], entSub: '',
@@ -936,6 +975,26 @@ class Component extends DCLogic {
       + (noCost.length ? ' · ' + noCost.length + ' with value but no cost yet — their ' + fK(noCost.reduce((s, r) => s + r.eq, 0)) + ' cash-if-sold joins when cost lands' : '')
       + (noVal.length ? ' · ' + noVal.length + ' without valuation excluded' : '')
       + ' · selling costs & taxes not modeled';
+    // leverage on invested capital — same working set as the waterfall (owner request 2026-07-15)
+    const wRefi = wCost - wInv;
+    const levScale = Math.max(wCost, wVal, wDebt, 1);
+    const lw = x => Math.max(0, Math.min(x / levScale * 100, 100)).toFixed(2) + '%';
+    const levOn = story.length > 0;
+    const mult = (a, b2) => b2 > 0 ? (a / b2 >= 100 ? Math.round(a / b2) : (a / b2).toFixed(1)) + '×' : '—';
+    const levThen = wInv > 0 ? mult(wRefi, wInv) : '—';
+    const levNow = wCash > 0 ? mult(wDebt, wCash) : '—';
+    const levRows = [
+      { lab: 'AT PURCHASE', wOwn: lw(wInv), wDebt: lw(wRefi),
+        cap: 'you put in ' + fK(wInv) + ' · banks funded ' + fK(wRefi) + ' of the ' + fK(wCost) + ' cost' + (wCost > 0 ? ' (' + fP(wRefi, wCost) + ')' : ''),
+        tOwn: 'Initial investment (cost − refinance): ' + fN(wInv), tDebt: 'Initial refinance: ' + fN(wRefi) },
+      { lab: 'TODAY · ' + mmyy(lastM), wOwn: lw(wCash), wDebt: lw(wDebt),
+        cap: 'debt is down to ' + fK(wDebt) + ' · ' + fK(wCash) + ' of the ' + fK(wVal) + ' value is yours' + (wVal > 0 ? ' (' + fP(wCash, wVal) + ')' : ''),
+        tOwn: 'Your equity (value − debt): ' + fN(wCash), tDebt: 'Debt outstanding: ' + fN(wDebt) },
+    ];
+    const levThenSub = wInv > 0 ? 'of bank money per $1 you invested' : 'refinance exceeded cost in this scope';
+    const levNowSub = wCash > 0 ? 'of debt per $1 of your equity' : 'debt exceeds value in this scope';
+    const levNowCol = (wCash > 0 && wInv > 0 && wDebt / wCash < wRefi / wInv) ? '#7FC29B' : '#F5D9A8';
+    const levFoot = 'How to read it: leverage = borrowed money per $1 of your own capital. At purchase that is the initial refinance ÷ your initial investment (cost − refinance); today it is debt outstanding ÷ your equity (value − debt). Principal repayments and appreciation both pull it down. The two bars share one scale — today’s longer bar is the value the same invested capital controls now.';
     const ladder = ladderF.map(r => {
       const isExp = S.mosSel === r.p.door;
       const wD = Math.min(r.ltv, 100), wA = Math.max(0, Math.min(r.appr / r.p.value * 100, 100 - wD));
@@ -1131,6 +1190,7 @@ class Component extends DCLogic {
       mosPctCol: wCash < 0 ? '#E8A896' : '#6FBF8F', mosProfitCol: wProfit < 0 ? '#E8A896' : '#7FC29B',
       mosFiltTag, mosFiltOn: !!mosFiltTag, onMosClear,
       wfCols, wfConn, wfFoot,
+      levOn, levRows, levThen, levThenSub, levNow, levNowSub, levNowCol, levFoot,
       buckets, mosNote, mosQ: S.mosQ, onMosQ: e => this.setState({ mosQ: e.target.value }),
       ladder, mosEmpty: ladder.length === 0, mosFoot,
       bsRows, bsSub, bsFormula,
