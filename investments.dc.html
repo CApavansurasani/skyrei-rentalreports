@@ -330,6 +330,9 @@ input:focus{outline:2px solid #C9A45C;outline-offset:1px}
         </sc-for>
       </div>
       <sc-if value="{{ mosEmpty }}" hint-placeholder-val="{{ false }}"><div style="padding:14px;font-size:12px;color:#8A93A6">No properties match this view.</div></sc-if>
+      <sc-if value="{{ mosBtn.show }}" hint-placeholder-val="{{ false }}">
+        <div onClick="{{ mosBtn.onClick }}" style-hover="background:#16233A;color:#FFFFFF;border-color:#16233A" style="margin-top:10px;display:inline-flex;padding:8px 15px;border-radius:9px;border:1px solid #D8D4C8;background:#FFFFFF;color:#16233A;font-size:11.5px;font-weight:700;cursor:pointer">{{ mosBtn.label }}</div>
+      </sc-if>
       <div style="margin-top:10px;font-size:11px;color:#9AA3B5;line-height:1.6">{{ mosFoot }}</div>
     </div>
 
@@ -384,6 +387,81 @@ input:focus{outline:2px solid #C9A45C;outline-offset:1px}
         </sc-for>
       </div>
       <div style="margin-top:12px;padding:9px 12px;background:#16233A;border-radius:8px;font-size:10.5px;font-weight:600;color:{{ bsFormulaCol }};text-align:center;line-height:1.5">{{ bsFormula }}</div>
+    </div>
+
+    <!-- ══ How the portfolio was built ══ -->
+    <div style="margin-top:16px;background:#FFFFFF;border:1px solid #E5E3DC;border-radius:16px;padding:22px 26px" onClick="{{ stopProp }}">
+      <div style="display:flex;justify-content:space-between;align-items:baseline;flex-wrap:wrap;gap:8px">
+        <div style="font-family:'Source Serif 4',Georgia,serif;font-size:18px;font-weight:600;color:#16233A">How the portfolio was built</div>
+        <div style="font-size:11.5px;color:#8A93A6">{{ gSub }}</div>
+      </div>
+      <div style="margin-top:12px;display:flex;justify-content:space-between;align-items:center;gap:10px;flex-wrap:wrap">
+        <div style="display:flex;gap:6px;flex-wrap:wrap">
+          <sc-for list="{{ gYearChips }}" as="yc" hint-placeholder-count="6">
+            <div onClick="{{ yc.onClick }}" style-hover="border-color:#C9A45C" style="padding:6px 13px;border-radius:99px;border:1.5px solid {{ yc.bd }};background:{{ yc.bg }};font-size:11px;font-weight:700;color:{{ yc.col }};cursor:pointer;white-space:nowrap">{{ yc.label }}</div>
+          </sc-for>
+        </div>
+        <div style="display:flex;gap:6px">
+          <sc-for list="{{ gMetricChips }}" as="mc" hint-placeholder-count="2">
+            <div onClick="{{ mc.onClick }}" style-hover="border-color:#C9A45C" style="padding:6px 13px;border-radius:9px;border:1.5px solid {{ mc.bd }};background:{{ mc.bg }};font-size:10.5px;font-weight:700;letter-spacing:0.05em;color:#2A3550;cursor:pointer">{{ mc.label }}</div>
+          </sc-for>
+        </div>
+      </div>
+      <div style="margin-top:14px;display:grid;grid-template-columns:7fr 5fr;gap:22px;align-items:start">
+        <div>
+          <svg viewBox="0 0 660 224" style="width:100%;display:block;overflow:visible">
+            <path d="{{ gArea }}" fill="#3D64A8" opacity="0.07"></path>
+            <path d="{{ gPath }}" fill="none" stroke="#3D64A8" stroke-width="2" stroke-linejoin="round" stroke-linecap="round"></path>
+            <sc-for list="{{ gPts }}" as="gp" hint-placeholder-count="6">
+              <circle cx="{{ gp.cx }}" cy="{{ gp.cy }}" r="{{ gp.r }}" fill="{{ gp.fill }}" stroke="{{ gp.ring }}" stroke-width="2"><title>{{ gp.tip }}</title></circle>
+              <circle onClick="{{ gp.onClick }}" cx="{{ gp.cx }}" cy="{{ gp.cy }}" r="13" fill="transparent" style="cursor:pointer"><title>{{ gp.tip }}</title></circle>
+              <text x="{{ gp.cx }}" y="{{ gp.vy }}" text-anchor="middle" style="font-size:10px;font-weight:700;fill:#2A3550;font-variant-numeric:tabular-nums">{{ gp.vlab }}</text>
+              <text x="{{ gp.cx }}" y="216" text-anchor="middle" style="font-size:9px;font-weight:{{ gp.xfw }};fill:{{ gp.xcol }}">{{ gp.lab }}</text>
+            </sc-for>
+          </svg>
+          <div style="margin-top:10px;padding:8px 12px;background:#F9F8F3;border-radius:9px;font-size:11px;font-weight:600;color:#2A3550">{{ gGrow }}</div>
+          <div style="margin-top:10px;font-size:10.5px;color:#9AA3B5;line-height:1.6">{{ gFoot }}</div>
+        </div>
+        <div style="border-left:1px solid #F0EEE7;padding-left:20px">
+          <div style="display:flex;justify-content:space-between;align-items:baseline;gap:8px;flex-wrap:wrap">
+            <div>
+              <div style="font-size:10.5px;letter-spacing:0.08em;font-weight:700;color:#96742F">{{ gPanelTitle }}</div>
+              <div style="margin-top:2px;font-size:10.5px;color:#8A93A6">{{ gPanelSub }}</div>
+            </div>
+            <input value="{{ gq }}" onInput="{{ onGq }}" placeholder="Search…" style="width:150px;box-sizing:border-box;padding:6px 10px;border-radius:8px;border:1.5px solid #D8D4C8;font-family:inherit;font-size:11.5px;color:#16233A;background:#FFFFFF">
+          </div>
+          <div class="scr" style="margin-top:8px;max-height:400px;overflow-y:auto;padding-right:4px">
+            <sc-for list="{{ gRows }}" as="gr" hint-placeholder-count="6">
+              <div onClick="{{ gr.onClick }}" style-hover="background:#F6F4EC" style="display:grid;grid-template-columns:18px 1fr 92px;gap:8px;padding:7px 6px;align-items:center;border-bottom:1px solid #F0EEE6;cursor:pointer;background:{{ gr.bg }};border-left:3px solid {{ gr.selBd }}">
+                <div style="font-size:10px;color:#96742F;font-weight:700">{{ gr.caret }}</div>
+                <div style="min-width:0">
+                  <div style="font-size:12px;font-weight:600;color:#1F3A6E;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">{{ gr.door }}</div>
+                  <div style="font-size:9.5px;color:#8A93A6;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">{{ gr.sub }}</div>
+                </div>
+                <div style="text-align:right;font-variant-numeric:tabular-nums;font-size:11.5px;font-weight:700;color:#2A3550">{{ gr.val }}</div>
+              </div>
+              <sc-if value="{{ gr.exp }}" hint-placeholder-val="{{ false }}">
+                <div style="border-left:3px solid #C9A45C;border-bottom:1px solid #E5E3DC;background:#FBFAF6;padding:11px 12px">
+                  <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:9px 14px">
+                    <sc-for list="{{ gr.facts }}" as="gf" hint-placeholder-count="9">
+                      <div>
+                        <div style="font-size:9px;letter-spacing:0.06em;font-weight:700;color:#8A93A6;text-transform:uppercase">{{ gf.k }}</div>
+                        <div style="margin-top:2px;font-size:12px;font-weight:700;color:{{ gf.col }};font-variant-numeric:tabular-nums">{{ gf.v }}</div>
+                      </div>
+                    </sc-for>
+                  </div>
+                  <div style="margin-top:9px;display:flex;gap:12px;flex-wrap:wrap;font-size:10.5px">
+                    <a href="{{ gr.hrefPl }}" style="font-weight:700">Open in P&amp;L →</a>
+                    <sc-if value="{{ gr.hasLoan }}" hint-placeholder-val="{{ false }}"><a href="{{ gr.hrefLoan }}" style="font-weight:700">Open its note in Loans →</a></sc-if>
+                  </div>
+                </div>
+              </sc-if>
+            </sc-for>
+            <sc-if value="{{ gEmpty }}" hint-placeholder-val="{{ false }}"><div style="padding:12px 6px;font-size:11.5px;color:#8A93A6">{{ gEmptyTxt }}</div></sc-if>
+          </div>
+          <div style="margin-top:8px;font-size:10px;color:#9AA3B5;line-height:1.5">{{ gPanelFoot }}</div>
+        </div>
+      </div>
     </div>
 
     <!-- ══ Entity table ══ -->
@@ -445,22 +523,7 @@ input:focus{outline:2px solid #C9A45C;outline-offset:1px}
     </div>
 
     <!-- ══ Lifecycle ══ -->
-    <div style="margin-top:16px;display:grid;grid-template-columns:5fr 7fr;gap:16px;align-items:start">
-      <div style="background:#FFFFFF;border:1px solid #E5E3DC;border-radius:16px;padding:22px 26px">
-        <div style="font-family:'Source Serif 4',Georgia,serif;font-size:17px;font-weight:600;color:#16233A">How the portfolio was built</div>
-        <div style="margin-top:2px;font-size:12px;color:#8A93A6">Doors put to use per year · {{ vinSub }}</div>
-        <div style="margin-top:14px;display:flex;flex-direction:column;gap:9px">
-          <sc-for list="{{ vinRows }}" as="v" hint-placeholder-count="6">
-            <div style="display:grid;grid-template-columns:44px 1fr 34px;gap:10px;align-items:center">
-              <span style="font-size:12px;font-weight:700;color:#5E6B82;font-variant-numeric:tabular-nums">{{ v.year }}</span>
-              <div style="height:16px;background:#F4F2EA;border-radius:4px;overflow:hidden"><div style="width:{{ v.w }};height:16px;background:{{ v.bg }};border-radius:4px"></div></div>
-              <span style="font-size:12px;font-weight:700;color:#2A3550;font-variant-numeric:tabular-nums;text-align:right">{{ v.n }}</span>
-            </div>
-          </sc-for>
-        </div>
-        <div style="margin-top:12px;font-size:11px;color:#9AA3B5;line-height:1.5">{{ vinNote }}</div>
-      </div>
-
+    <div style="margin-top:16px;display:grid;grid-template-columns:1fr;gap:16px;align-items:start">
       <div style="background:#FFFFFF;border:1px solid #E5E3DC;border-radius:16px;padding:22px 26px">
         <div style="display:flex;justify-content:space-between;align-items:baseline;flex-wrap:wrap;gap:8px">
           <div style="font-family:'Source Serif 4',Georgia,serif;font-size:17px;font-weight:600;color:#16233A">Exits &amp; doors held for sale</div>
@@ -535,8 +598,9 @@ class Component extends DCLogic {
     fm: [], fe: [], fp: [], fs: [],
     ddOpen: null, fq: '',
     metric: 'equity', expQ: '', showAll: false,
-    mosBucket: null, mosQ: '', mosSel: null,
+    mosBucket: null, mosQ: '', mosSel: null, mosAll: false,
     bsSel: null, bsQ: '',
+    gyr: 'ITD', gm: null, gq: '', gsel: null, gMetric: 'doors',
     reconSel: null,
   };
 
@@ -608,7 +672,10 @@ class Component extends DCLogic {
       bsRows: [], bsSub: '', bsFormula: '', bsAsOf: '', bsFormulaCol: '#E9EDF5',
       entHeads: [], entRows: [], entSub: '',
       metricChips: [], expNote: '', expQ: '', onExpQ: () => {}, expRows: [], expEmpty: false, expBtn: { show: false, label: '', onClick: () => {} }, expFoot: '', expMax: 'none', expOv: 'visible',
-      vinRows: [], vinSub: '', vinNote: '', exitRows: [], exitSub: '', covChecks: [], discFoot: '',
+      gSub: '', gYearChips: [], gMetricChips: [], gPath: '', gArea: '', gPts: [], gGrow: '', gFoot: '',
+      gPanelTitle: '', gPanelSub: '', gq: '', onGq: () => {}, gRows: [], gEmpty: false, gEmptyTxt: '', gPanelFoot: '',
+      mosBtn: { show: false, label: '', onClick: () => {} },
+      exitRows: [], exitSub: '', covChecks: [], discFoot: '',
     };
 
     const fK = n => { const a = Math.abs(n), s = n < 0; let t; if (a >= 1e6) t = '$' + (a / 1e6).toFixed(2) + 'M'; else if (a >= 100000) t = '$' + Math.round(a / 1000) + 'K'; else if (a >= 1000) t = '$' + (a / 1000).toFixed(1) + 'K'; else t = '$' + Math.round(a); return s ? '(' + t + ')' : t; };
@@ -1031,7 +1098,16 @@ class Component extends DCLogic {
     const levNowSub = wCash > 0 ? 'of debt per $1 of your equity' : 'debt exceeds value in this scope';
     const levNowCol = (wCash > 0 && wInv > 0 && wDebt / wCash < wRefi / wInv) ? '#7FC29B' : '#F5D9A8';
     const levFoot = 'How to read it: leverage = borrowed money per $1 of your own capital. At purchase that is the initial refinance ÷ your initial investment (cost − refinance); today it is debt outstanding ÷ your equity (value − debt). Principal repayments and appreciation both pull it down. The two bars share one scale — today’s longer bar is the value the same invested capital controls now.';
-    const ladder = ladderF.map(r => {
+    // ladder cap (owner 2026-07-15): first 7 by default — search shows all matches, button expands
+    const MOSCAP = 7;
+    const mosExpanded = !!mq || !!S.mosAll;
+    const ladderShown = mosExpanded ? ladderF : ladderF.slice(0, MOSCAP);
+    const mosBtn = {
+      show: !mq && ladderF.length > MOSCAP,
+      label: S.mosAll ? 'Show riskiest ' + MOSCAP + ' only ▴' : 'Show all ' + ladderF.length + ' properties ▾',
+      onClick: () => this.setState(p2 => ({ mosAll: !p2.mosAll })),
+    };
+    const ladder = ladderShown.map(r => {
       const isExp = S.mosSel === r.p.door;
       const wD = Math.min(r.ltv, 100), wA = Math.max(0, Math.min(r.appr / r.p.value * 100, 100 - wD));
       const wC = Math.max(0, 100 - wD - wA);
@@ -1062,7 +1138,7 @@ class Component extends DCLogic {
         onClick: () => this.setState({ mosSel: isExp ? null : r.p.door }),
       };
     });
-    const mosNote = ladderF.length + ' of ' + valued.length + ' valued properties · riskiest first' + (bSel ? ' · ' + bSel.label + ' only' : '') + (noVal.length ? ' · ' + noVal.length + ' without valuation excluded' : '');
+    const mosNote = (mosExpanded ? ladderF.length + ' of ' + valued.length + ' valued properties' : 'riskiest ' + ladder.length + ' of ' + ladderF.length + ' — search or expand for the rest') + (bSel ? ' · ' + bSel.label + ' only' : '') + (noVal.length ? ' · ' + noVal.length + ' without valuation excluded' : '');
     const mosFoot = 'The waterfall and headline retell the story for exactly what you see in the list — the scope filters above, the LTV tiles and the search all drill the whole section together. Each list bar is one property’s value split into debt at ' + mmyy(lastM) + ' (brick), equity at cost (blue) and appreciation (green — pink when value sits below cost). Cash if sold = value − debt; profit if sold = cash − capital in deal (initial investment + principal repaid); selling costs and taxes are not modeled. County-fallback valuations can understate ARV — the underwater cluster is mostly county-valued.';
 
     const scopeLine = nScope + ' properties · balances at ' + mmyy(lastM) + ' · debt from the loans engine, income from the ledger, values from the balance sheet — all cross-checked below';
@@ -1306,19 +1382,156 @@ class Component extends DCLogic {
     };
     const expFoot = 'Debt, LTV, equity and principal repaid now come from the loans engine at ' + mmyy(lastM) + '. Cap rate & yield annualize each door’s ledger NOI over its in-service months within the selected window; DSCR remains interest-only for now — a payment-based DSCR needs per-door debt-service shares (planned); cash in deal = cost − initial refinance (negative = cash-out beyond basis). Doors lacking a required input for the selected lens are excluded and counted above.';
 
-    // ══════════ lifecycle ══════════
-    const years = {};
-    for (const p of ALLP.filter(p => !feAct.length || feAct.includes(p.entity))) {
-      if (!p.putToUse) continue;
-      const y = p.putToUse.slice(0, 4);
-      years[y] = (years[y] || 0) + 1;
+    // ══════════ how the portfolio was built (v2 2026-07-15: cumulative growth line + drillable additions) ══════════
+    const pmOf = p => (p.putToUse && /^\d{4}-\d{2}/.test(p.putToUse)) ? p.putToUse.slice(0, 7) : null;
+    const VINP = ALLP.filter(p => !feAct.length || feAct.includes(p.entity));
+    const vinDated = VINP.filter(p => pmOf(p));
+    const vinUndated = VINP.filter(p => p.putToUse && !pmOf(p));
+    const soldExitM = p => p.status === 'Sold' ? exitMonth(p) : null; // held-for-sale stays owned (BS decision)
+    const addM = {}, exM = {};
+    for (const p of vinDated) {
+      const m0 = pmOf(p); (addM[m0] = addM[m0] || []).push(p);
+      const e0 = soldExitM(p); if (e0) (exM[e0] = exM[e0] || []).push(p);
     }
-    const ys = Object.keys(years).sort();
-    const vmax = Math.max(...Object.values(years), 1);
-    const vinRows = ys.map((y, i) => ({ year: y, n: years[y], w: Math.max(3, years[y] / vmax * 100) + '%', bg: i === ys.length - 1 ? GOLD : NAVY }));
-    const vinSub = feAct.length ? feAct.join(', ') : 'All entities';
-    const future = ALLP.filter(p => p.putToUse && p.putToUse.slice(0, 7) > glP[glP.length - 1]).length;
-    const vinNote = future ? future + ' door(s) put to use after the last ledger month — they appear here and join the P&L as their activity lands.' : 'All indexed doors are within the ledger window.';
+    const allEvM = Object.keys(addM).concat(Object.keys(exM));
+    const gFirst = allEvM.length ? allEvM.reduce((a, b) => a < b ? a : b) : null;
+    const gLastEv = allEvM.length ? allEvM.reduce((a, b) => a > b ? a : b) : null;
+    const gHor = gLastEv && gLastEv > monthsAll[monthsAll.length - 1] ? gLastEv : monthsAll[monthsAll.length - 1];
+    const nextMo = m0 => { let y = +m0.slice(0, 4), mo = +m0.slice(5, 7) + 1; if (mo > 12) { y++; mo = 1; } return y + '-' + String(mo).padStart(2, '0'); };
+    const gMonths = [];
+    if (gFirst) { let m0 = gFirst; while (m0 <= gHor && gMonths.length < 600) { gMonths.push(m0); m0 = nextMo(m0); } }
+    const cumAt = {};
+    { let d0 = 0, c0 = 0;
+      for (const m0 of gMonths) {
+        const ad = addM[m0] || [], ex = exM[m0] || [];
+        d0 += ad.length - ex.length;
+        c0 += ad.reduce((s, p) => s + (p.cost || 0), 0) - ex.reduce((s, p) => s + (p.cost || 0), 0);
+        cumAt[m0] = { doors: d0, cost: c0, adds: ad.length, exits: ex.length };
+      } }
+    const gYearsAll = [...new Set(gMonths.map(m0 => m0.slice(0, 4)))];
+    const isYr = S.gyr !== 'ITD' && gYearsAll.includes(S.gyr);
+    const gMetric = S.gMetric === 'cost' ? 'cost' : 'doors';
+    const fMet = v => gMetric === 'cost' ? fK(v) : String(v);
+    let gPtsRaw;
+    if (!isYr) {
+      gPtsRaw = gYearsAll.map(y => {
+        const ms = gMonths.filter(m0 => m0.slice(0, 4) === y);
+        const end = ms[ms.length - 1];
+        return { per: y, lab: y, val: cumAt[end][gMetric],
+          adds: ms.reduce((s, m0) => s + cumAt[m0].adds, 0), exits: ms.reduce((s, m0) => s + cumAt[m0].exits, 0) };
+      });
+    } else {
+      gPtsRaw = gMonths.filter(m0 => m0.slice(0, 4) === S.gyr)
+        .map(m0 => ({ per: m0, lab: mmyy(m0), val: cumAt[m0][gMetric], adds: cumAt[m0].adds, exits: cumAt[m0].exits }));
+    }
+    const gSelPer = (S.gm && gPtsRaw.some(pt => pt.per === S.gm)) ? S.gm : (gPtsRaw.length ? gPtsRaw[gPtsRaw.length - 1].per : null);
+    const GW = 660, GPX = 30, gTop = 16, gBot = 178;
+    const gvMax = Math.max(...gPtsRaw.map(pt => pt.val), 1);
+    const gy = v => gBot - v / (gvMax * 1.06) * (gBot - gTop);
+    const gx = i => gPtsRaw.length > 1 ? GPX + i * (GW - 2 * GPX) / (gPtsRaw.length - 1) : GW / 2;
+    const gPath = gPtsRaw.map((pt, i) => (i === 0 ? 'M' : 'L') + gx(i).toFixed(1) + ' ' + gy(pt.val).toFixed(1)).join(' ');
+    const gArea = gPtsRaw.length ? 'M' + gx(0).toFixed(1) + ' ' + gBot + ' ' + gPtsRaw.map((pt, i) => 'L' + gx(i).toFixed(1) + ' ' + gy(pt.val).toFixed(1)).join(' ') + ' L' + gx(gPtsRaw.length - 1).toFixed(1) + ' ' + gBot + ' Z' : '';
+    const gPts = gPtsRaw.map((pt, i) => {
+      const on = pt.per === gSelPer;
+      const prev = i > 0 ? gPtsRaw[i - 1].val : null;
+      const grw = prev ? (pt.val - prev) / Math.abs(prev) * 100 : null;
+      return {
+        cx: gx(i).toFixed(1), cy: gy(pt.val).toFixed(1),
+        r: on ? 4.8 : 3.6, fill: on ? '#C9A45C' : '#FFFFFF', ring: '#3D64A8',
+        vy: (gy(pt.val) - 10).toFixed(1), vlab: (on || i === 0 || i === gPtsRaw.length - 1) ? fMet(pt.val) : '',
+        lab: (gPtsRaw.length > 8 && !on && i % 2 === 1) ? '' : pt.lab,
+        xfw: on ? 800 : 600, xcol: on ? '#16233A' : '#8A93A6',
+        tip: pt.lab + ': ' + fMet(pt.val) + (gMetric === 'doors' ? ' doors' : ' cost basis') + ' · +' + pt.adds + ' added' + (pt.exits ? ' · −' + pt.exits + ' sold' : '') + (grw !== null ? ' · ' + (grw >= 0 ? '+' : '') + grw.toFixed(1) + '% ' + (isYr ? 'MoM' : 'YoY') : '') + ' — click to see what was added',
+        onClick: (per => () => this.setState({ gm: per, gsel: null }))(pt.per),
+      };
+    });
+    const gYearChips = ['ITD', ...gYearsAll].map(y => {
+      const on = y === 'ITD' ? !isYr : y === S.gyr;
+      return { label: y === 'ITD' ? 'ITD · inception' : y, bd: on ? '#C9A45C' : '#D8D4C8', bg: on ? '#FBF6EA' : '#FFFFFF', col: '#2A3550',
+        onClick: () => this.setState({ gyr: y, gm: null, gsel: null, gq: '' }) };
+    });
+    const gMetricChips = [{ k: 'doors', label: 'DOORS' }, { k: 'cost', label: 'COST' }].map(mc2 => ({
+      label: mc2.label, bd: gMetric === mc2.k ? '#C9A45C' : '#D8D4C8', bg: gMetric === mc2.k ? '#FBF6EA' : '#FFFFFF',
+      onClick: () => this.setState({ gMetric: mc2.k }) }));
+    const gP0 = gPtsRaw[0], gPn = gPtsRaw[gPtsRaw.length - 1];
+    const gSelIdx = gPtsRaw.findIndex(pt => pt.per === gSelPer);
+    const gSelPt = gSelIdx >= 0 ? gPtsRaw[gSelIdx] : null;
+    const gSelPrev = gSelIdx > 0 ? gPtsRaw[gSelIdx - 1].val : null;
+    const gGrow = gPtsRaw.length ? ((isYr ? 'Month on month · ' + S.gyr : 'Year over year · inception to date') + ':  ' + gP0.lab + ' ' + fMet(gP0.val) + '  →  ' + gPn.lab + ' ' + fMet(gPn.val)
+      + (gP0.val ? '  (' + ((gPn.val - gP0.val) / Math.abs(gP0.val) * 100).toFixed(0) + '% growth)' : '')
+      + (gSelPt ? '   ·   selected ' + gSelPt.lab + ': +' + gSelPt.adds + ' added' + (gSelPt.exits ? ', −' + gSelPt.exits + ' sold' : '') + (gSelPrev ? ', ' + ((gSelPt.val - gSelPrev) / Math.abs(gSelPrev) * 100 >= 0 ? '+' : '') + ((gSelPt.val - gSelPrev) / Math.abs(gSelPrev) * 100).toFixed(1) + '% ' + (isYr ? 'MoM' : 'YoY') : '') : '')) : 'no dated put-to-use months';
+    const future = ALLP.filter(p => p.putToUse && pmOf(p) && pmOf(p) > glP[glP.length - 1]).length;
+    const gFoot = 'The line is the portfolio you actually held: additions land at their put-to-use month, sold doors leave at their sale month, held-for-sale doors stay until sold. Cost is today’s basis attributed to the put-to-use month.'
+      + (vinUndated.length ? ' ' + vinUndated.length + ' door(s) with text put-to-use (' + vinUndated.map(p => p.door).slice(0, 2).join(', ') + (vinUndated.length > 2 ? '…' : '') + ') excluded until dated.' : '')
+      + (future ? ' ' + future + ' door(s) put to use after the last ledger month — on the line, joining the P&L as activity lands.' : '');
+    const gSub = (feAct.length ? feAct.join(', ') : 'all entities') + ' · net of sold doors · this section has its own time controls';
+    // ---- right panel: what was added in the selected period ----
+    const acct4 = { 'Rental Income': 'rent', 'Property Tax': 'ptax', 'Insurance': 'ins', 'HOA Fee': 'hoa' };
+    const acctBy = {};
+    for (const [e4, d4, a4, v4] of S.gl.rows) {
+      const k4 = acct4[a4]; if (!k4) continue;
+      const tot = glIdx.reduce((s, i2) => s + (v4[i2] || 0), 0);
+      (acctBy[d4] = acctBy[d4] || { rent: 0, ptax: 0, ins: 0, hoa: 0 })[k4] += tot;
+    }
+    const dsMo = d4 => {
+      const dd = LDD[d4]; if (!dd) return 0;
+      let lastK = null; for (const k of doorKeys[d4]) { if (k <= lastM) lastK = k; else break; }
+      if (!lastK) return 0;
+      const r4 = dd.monthly[lastK];
+      if (!(r4.close > 0.005)) return 0;              // settled — no ongoing payment
+      const paid = r4.interest + r4.principal;
+      if (paid > 0.005) return paid;                  // engine-exact latest month
+      // note funded but first payment falls after the horizon — use scheduled payment × door's original share
+      let est = 0;
+      for (const x of (doorNotes[d4] || [])) {
+        if (noteCloseAt(x.l, lastM) <= 0.005 || !x.l.payment) continue;
+        est += x.l.payment * (noteP0[x.l.id] > 0 ? x.slice / noteP0[x.l.id] : 0);
+      }
+      return est;
+    };
+    const selAdds = gSelPer ? vinDated.filter(p => isYr ? pmOf(p) === gSelPer : pmOf(p).slice(0, 4) === gSelPer) : [];
+    const gqq = (S.gq || '').trim().toLowerCase();
+    const gShown = selAdds.filter(p => !gqq || p.door.toLowerCase().includes(gqq) || p.entity.toLowerCase().includes(gqq)).sort((a, b) => (b.cost || 0) - (a.cost || 0));
+    const gRows = gShown.map(p => {
+      const isExp = S.gsel === p.door;
+      const a5 = acctBy[p.door] || { rent: 0, ptax: 0, ins: 0, hoa: 0 };
+      const mi = monthsIn(p) || nWin || 1;
+      const rentMo = a5.rent / mi, ptaxMo = a5.ptax / mi, insMo = a5.ins / mi, hoaMo = a5.hoa / mi;
+      const ds = dsMo(p.door);
+      const ncf = rentMo - ptaxMo - insMo - hoaMo - ds;
+      const dbt = debtAt(p.door, lastM);
+      const lnd = doorNotes[p.door] || [];
+      const facts = isExp ? [
+        { k: 'Cost basis', v: p.cost > 0 ? fN(p.cost) : 'pending', col: INK },
+        { k: 'Initial refinance', v: fN(p.refi), col: BRICK },
+        { k: 'Investment (cost − refi)', v: p.cost > 0 ? fN(p.cost - p.refi) : '—', col: NAVY },
+        { k: 'Debt · ' + mmyy(lastM), v: dbt > 0.005 ? fN(dbt) : 'debt-free', col: dbt > 0.005 ? RED : '#2A6F4E' },
+        { k: 'Note · lender', v: lnd.length ? lnd.map(x => x.l.displayId).slice(0, 2).join(', ') + (lnd.length > 2 ? ' +' + (lnd.length - 2) : '') + ' · ' + (lnd[0].l.lender || '—') : 'none', col: INK },
+        { k: 'ARV / value', v: p.value > 0 ? fN(p.value) + ' (' + (p.valueSource === 'arv' ? 'ARV' : p.valueSource) + ')' : '—', col: NAVY },
+        { k: 'Rental yield on cost', v: p.cost > 0 && rentMo > 0 ? (rentMo * 12 / p.cost * 100).toFixed(1) + '%' : '—', col: NAVY },
+        { k: 'Rent /mo', v: rentMo > 0 ? fN(rentMo) : '—', col: '#2A6F4E' },
+        { k: 'Property tax /mo', v: fN(ptaxMo), col: INK },
+        { k: 'Insurance /mo', v: fN(insMo), col: INK },
+        { k: 'HOA /mo', v: fN(hoaMo), col: INK },
+        { k: 'Debt service /mo (P&I)', v: ds > 0 ? fN(ds) : '—', col: RED },
+        { k: 'Net cashflow /mo', v: fN(ncf), col: ncf < 0 ? RED : '#2A6F4E' },
+      ] : [];
+      return {
+        door: p.door, sub: p.entity + ' · ' + p.status + ' · in use ' + mmyy(pmOf(p)),
+        val: p.cost > 0 ? fK(p.cost) : '—',
+        caret: isExp ? '▾' : '▸', bg: isExp ? '#FBFAF6' : 'transparent', selBd: isExp ? '#C9A45C' : 'transparent',
+        exp: isExp, facts,
+        hasLoan: !!lnd.length,
+        hrefPl: './PL%20Story%20-%20Main.dc.html?door=' + encodeURIComponent(p.door),
+        hrefLoan: './loans.dc.html?door=' + encodeURIComponent(p.door),
+        onClick: () => this.setState({ gsel: isExp ? null : p.door }),
+      };
+    });
+    const gPanelTitle = 'ADDED ' + (gSelPt ? (isYr ? 'IN ' : 'DURING ') + gSelPt.lab.toUpperCase() : '—');
+    const gPanelSub = selAdds.length + ' propert' + (selAdds.length === 1 ? 'y' : 'ies') + ' · ' + fK(selAdds.reduce((s, p) => s + (p.cost || 0), 0)) + ' cost' + (gSelPt && gSelPt.exits ? ' · ' + gSelPt.exits + ' sold this period' : '') + ' · click a row for the full story';
+    const gEmptyRows = gRows.length === 0;
+    const gEmptyTxt = gqq ? 'Nothing matches this search.' : 'No properties added ' + (gSelPt ? (isYr ? 'in ' : 'during ') + gSelPt.lab : '') + ' — click another point on the line.';
+    const gPanelFoot = 'Net cashflow /mo = rent − property tax − insurance − HOA − debt service (your formula; P&I at ' + mmyy(lastM) + ', escrow tracked separately; notes whose first payment falls after the horizon show their scheduled P&I share) · ledger figures are monthly averages over the selected window · rental yield = rent ×12 ÷ cost, gross';
 
     const exits = ALLP.filter(p => (p.status === 'Sold' || p.status === 'Held for Sale') && (!feAct.length || feAct.includes(p.entity)))
       .sort((a, b) => String(b.exit || '').localeCompare(String(a.exit || '')));
@@ -1366,14 +1579,17 @@ class Component extends DCLogic {
       mosFiltTag, mosFiltOn: !!mosFiltTag, onMosClear,
       wfCols, wfConn, wfFoot,
       levOn, levRows, levThen, levThenSub, levNow, levNowSub, levNowCol, levFoot,
-      buckets, mosNote, mosQ: S.mosQ, onMosQ: e => this.setState({ mosQ: e.target.value }),
+      buckets, mosNote, mosBtn, mosQ: S.mosQ, onMosQ: e => this.setState({ mosQ: e.target.value }),
       ladder, mosEmpty: ladder.length === 0, mosFoot,
       bsRows, bsSub, bsFormula, bsAsOf, bsFormulaCol,
       entHeads, entRows, entSub,
       metricChips, expNote, expQ: S.expQ, onExpQ: e => this.setState({ expQ: e.target.value, showAll: false }),
       expRows, expEmpty: expRows.length === 0, expBtn, expFoot,
       expMax: (S.showAll || q) ? '520px' : 'none', expOv: (S.showAll || q) ? 'auto' : 'visible',
-      vinRows, vinSub, vinNote, exitRows, exitSub,
+      gSub, gYearChips, gMetricChips, gPath, gArea, gPts, gGrow, gFoot,
+      gPanelTitle, gPanelSub, gq: S.gq, onGq: e => this.setState({ gq: e.target.value, gsel: null }),
+      gEmpty: gEmptyRows, gEmptyTxt, gPanelFoot, gRows,
+      exitRows, exitSub,
       covChecks, discFoot,
     };
   }
