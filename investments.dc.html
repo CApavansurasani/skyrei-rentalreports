@@ -539,12 +539,31 @@ input:focus{outline:2px solid #C9A45C;outline-offset:1px}
         <div style="font-size:11.5px;color:#96742F;font-weight:600">{{ wNote }}</div>
         <input value="{{ wQ }}" onInput="{{ onWQ }}" placeholder="Search doors…" style="width:210px;box-sizing:border-box;padding:8px 12px;border-radius:9px;border:1.5px solid #D8D4C8;font-family:inherit;font-size:12px;color:#16233A;background:#FFFFFF">
       </div>
-      <div style="margin-top:8px;display:grid;grid-template-columns:24px minmax(170px,1.3fr) 2.2fr 132px;gap:8px;padding:7px 8px;font-size:10px;letter-spacing:0.07em;font-weight:700;color:#5E6B82;text-transform:uppercase;border-bottom:1px solid #E5E3DC">
+      <sc-if value="{{ wTrayOn }}" hint-placeholder-val="{{ false }}">
+        <div style="margin-top:10px;padding:12px 16px;background:#16233A;border-radius:12px">
+          <div style="display:flex;justify-content:space-between;align-items:baseline;gap:10px;flex-wrap:wrap">
+            <span style="font-size:10px;letter-spacing:0.09em;font-weight:800;color:#C9A45C">{{ wTrayTitle }}</span>
+            <span onClick="{{ onWClear }}" style-hover="opacity:0.85" style="padding:3px 10px;border-radius:99px;background:#C9A45C;color:#16233A;font-size:9.5px;font-weight:800;cursor:pointer;white-space:nowrap">CLEAR ✕</span>
+          </div>
+          <div style="margin-top:9px;display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:10px 16px">
+            <sc-for list="{{ wTray }}" as="wt" hint-placeholder-count="5">
+              <div>
+                <div style="font-size:8.5px;letter-spacing:0.06em;font-weight:700;color:#8A96AD;text-transform:uppercase">{{ wt.k }}</div>
+                <div style="margin-top:2px;font-family:'Source Serif 4',Georgia,serif;font-size:17px;font-weight:600;color:{{ wt.col }};font-variant-numeric:tabular-nums">{{ wt.v }}</div>
+                <div style="font-size:9.5px;color:#8A96AD">{{ wt.sub }}</div>
+              </div>
+            </sc-for>
+          </div>
+        </div>
+      </sc-if>
+      <div style="margin-top:8px;display:grid;grid-template-columns:22px 24px minmax(170px,1.3fr) 2.2fr 132px;gap:8px;padding:7px 8px;font-size:10px;letter-spacing:0.07em;font-weight:700;color:#5E6B82;text-transform:uppercase;border-bottom:1px solid #E5E3DC">
+        <div onClick="{{ onWPickAll }}" title="{{ wPickAllTip }}" style="width:14px;height:14px;border-radius:4px;border:1.5px solid #C9A45C;background:{{ wPickAllBg }};color:#16233A;font-size:10px;line-height:14px;text-align:center;cursor:pointer;font-weight:800">{{ wPickAllCh }}</div>
         <div></div><div>Door</div><div>Why it's here</div><div style="text-align:right">{{ wValHead }}</div>
       </div>
       <div class="scr" style="max-height:480px;overflow-y:auto;padding-right:4px">
         <sc-for list="{{ wRows }}" as="wr" hint-placeholder-count="10">
-          <div onClick="{{ wr.onClick }}" style-hover="background:#F6F4EC" style="display:grid;grid-template-columns:24px minmax(170px,1.3fr) 2.2fr 132px;gap:8px;padding:8px;align-items:center;border-bottom:1px solid #F0EEE6;cursor:pointer;background:{{ wr.bg }};border-left:3px solid {{ wr.selBd }}">
+          <div onClick="{{ wr.onClick }}" style-hover="background:#F6F4EC" style="display:grid;grid-template-columns:22px 24px minmax(170px,1.3fr) 2.2fr 132px;gap:8px;padding:8px;align-items:center;border-bottom:1px solid #F0EEE6;cursor:pointer;background:{{ wr.bg }};border-left:3px solid {{ wr.selBd }}">
+            <div onClick="{{ wr.onPick }}" title="pick to simulate solving it" style="width:14px;height:14px;border-radius:4px;border:1.5px solid {{ wr.boxBd }};background:{{ wr.boxBg }};color:#16233A;font-size:10px;line-height:14px;text-align:center;cursor:pointer;font-weight:800">{{ wr.boxCh }}</div>
             <div style="font-size:10px;color:#96742F;font-weight:700">{{ wr.caret }}</div>
             <div style="min-width:0">
               <div style="font-size:12px;font-weight:600;color:#1F3A6E;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">{{ wr.door }}</div>
@@ -654,7 +673,7 @@ class Component extends DCLogic {
     bs: null, gl: null, ld: null, loadError: null,
     fm: [], fe: [], fp: [], fs: [],
     ddOpen: null, fq: '',
-    wSel: [], wQ: '', wExp: null,
+    wSel: [], wQ: '', wExp: null, wPick: [],
     mosBucket: null, mosQ: '', mosSel: null, mosAll: false,
     bsSel: null, bsQ: '',
     gyr: 'ITD', gm: null, gq: '', gsel: null, gMetric: 'doors',
@@ -729,6 +748,7 @@ class Component extends DCLogic {
       bsRows: [], bsSub: '', bsFormula: '', bsAsOf: '', bsFormulaCol: '#E9EDF5',
       entHeads: [], entRows: [], entSub: '',
       wSub: '', wStats: [], wChips: [], wNote: '', wQ: '', onWQ: () => {}, wValHead: '', wRows: [], wEmpty: false, wEmptyTxt: '', wFoot: '',
+      wTrayOn: false, wTrayTitle: '', wTray: [], onWClear: () => {}, onWPickAll: () => {}, wPickAllCh: '', wPickAllBg: '#FFFFFF', wPickAllTip: '',
       gSub: '', gYearChips: [], gMetricChips: [], gPath: '', gArea: '', gPts: [], gGrow: '', gFoot: '',
       gTotOn: false, gTotTitle: '', gTotSub: '', gTot: [],
       gPanelTitle: '', gPanelSub: '', gq: '', onGq: () => {}, gRows: [], gEmpty: false, gEmptyTxt: '', gPanelFoot: '',
@@ -1485,6 +1505,7 @@ class Component extends DCLogic {
         onClick: () => { const cur = new Set(S.wSel || []); cur.has(F.id) ? cur.delete(F.id) : cur.add(F.id); this.setState({ wSel: [...cur], wExp: null }); },
       };
     });
+    const wPickSet = new Set((S.wPick || []).filter(d => wFlagged.some(x => x.p.door === d)));
     const wRows = wSorted.map(x => {
       const isExp = S.wExp === x.p.door;
       const s = x.s, p = x.p;
@@ -1504,12 +1525,15 @@ class Component extends DCLogic {
         { k: 'EMI /mo (P&I)', v: s.ds > 0 ? fN(s.ds) : '—', col: RED },
         { k: 'Net cashflow /mo', v: fN(s.ncf), col: s.ncf < 0 ? RED : '#2A6F4E' },
       ] : [];
+      const picked = wPickSet.has(p.door);
       return {
         door: p.door, sub: p.entity + ' · ' + p.status + (pmOf(p) ? ' · in use ' + mmyy(pmOf(p)) : ''),
         pills: x.flags.map(f => ({ t: f.pill, bg: PILL[f.tone][0], col: PILL[f.tone][1] })),
         val: selF ? selF.fmt(selF.sev(p, s)) : x.flags.length + ' flag' + (x.flags.length > 1 ? 's' : ''),
         vcol: selF ? (selF.worst === 'asc' && selF.sev(p, s) < (selF.id === 'yield' ? 12 : 0) ? RED : INK) : (x.flags.length >= 3 ? RED : INK),
-        caret: isExp ? '▾' : '▸', bg: isExp ? '#FBFAF6' : 'transparent', selBd: isExp ? '#C9A45C' : 'transparent',
+        boxCh: picked ? '✓' : '', boxBd: picked ? '#C9A45C' : '#D8D4C8', boxBg: picked ? '#FBF6EA' : '#FFFFFF',
+        onPick: (e => { e.stopPropagation(); const cur = new Set(S.wPick || []); cur.has(p.door) ? cur.delete(p.door) : cur.add(p.door); this.setState({ wPick: [...cur] }); }),
+        caret: isExp ? '▾' : '▸', bg: picked ? '#FBF6EA' : (isExp ? '#FBFAF6' : 'transparent'), selBd: picked ? '#C9A45C' : (isExp ? '#C9A45C' : 'transparent'),
         exp: isExp, facts,
         hasLoan: !!lnd.length,
         hrefPl: './PL%20Story%20-%20Main.dc.html?door=' + encodeURIComponent(p.door),
@@ -1520,12 +1544,58 @@ class Component extends DCLogic {
     const wCashIn = wFlagged.reduce((s, x) => s + Math.max((x.p.cost || 0) - (x.p.refi || 0), 0), 0);
     const wBleed = wFlagged.reduce((s, x) => s + (x.s.ncf < 0 && hasGL(x.p) ? x.s.ncf : 0), 0);
     const wThin = wFlagged.filter(x => x.flags.some(f => f.id === 'equity'));
-    const wStats = [
-      { k: 'On the watchlist', v: wFlagged.length + ' of ' + nScope, col: NAVY, sub: 'doors failing at least one test' },
-      { k: 'Your cash sitting in them', v: fK(wCashIn), col: '#3D64A8', sub: 'cost − refinance across flagged doors' },
-      { k: 'Monthly bleed', v: fK(wBleed), col: wBleed < 0 ? RED : '#2A6F4E', sub: 'negative net cashflows, summed' },
-      { k: 'Thin or negative equity', v: String(wThin.length), col: wThin.length ? RED : '#2A6F4E', sub: fK(wThin.reduce((s, x) => s + (x.p.value - x.s.dbt), 0)) + ' equity across them' },
+    // tiles are DYNAMIC (owner 2026-07-15): with tests selected they re-total to what the selection means
+    const TILE = {
+      cash: xs => { const t = xs.reduce((s, x) => s + (x.p.cost || 0), 0); return { k: 'Cash sitting — this view', v: fK(t), col: '#3D64A8', sub: 'full cost of ' + xs.length + ' cash-purchase door(s), nothing refinanced' }; },
+      stuck: xs => { const t = xs.reduce((s, x) => s + Math.max((x.p.cost || 0) - (x.p.refi || 0), 0), 0); return { k: 'Capital stuck — this view', v: fK(t), col: '#3D64A8', sub: 'cost − refinance across ' + xs.length + ' door(s)' }; },
+      yield: xs => { const c = xs.reduce((s, x) => s + (x.p.cost || 0), 0), r = xs.reduce((s, x) => s + x.s.rentMo, 0);
+        const gap = xs.reduce((s, x) => s + Math.max(0, (x.p.cost || 0) * 0.12 / 12 - x.s.rentMo), 0);
+        return { k: 'Rent shortfall to 12%', v: fK(gap) + '/mo', col: '#96742F', sub: 'view yields ' + (c > 0 ? (r * 12 / c * 100).toFixed(1) : '—') + '% on ' + fK(c) + ' cost' }; },
+      bleed: xs => { const t = xs.reduce((s, x) => s + Math.min(x.s.ncf, 0), 0); return { k: 'Bleeding — this view', v: fK(t) + '/mo', col: RED, sub: 'after fixed costs + EMI, across ' + xs.length + ' door(s)' }; },
+      equity: xs => { const e = xs.reduce((s, x) => s + (x.p.value - x.s.dbt), 0), vv = xs.reduce((s, x) => s + (x.p.value || 0), 0);
+        return { k: 'Equity — this view', v: fK(e), col: e < 0 ? RED : '#96742F', sub: (vv > 0 ? fP(e, vv) : '—') + ' of ' + fK(vv) + ' value' }; },
+      vacant: xs => { const t = xs.reduce((s, x) => s + x.s.ptaxMo + x.s.insMo + x.s.hoaMo + x.s.ds, 0); return { k: 'Carrying costs running', v: fK(t) + '/mo', col: RED, sub: xs.length + ' door(s) with no rent coming in' }; },
+      under: xs => { const t = xs.reduce((s, x) => s + (x.p.value - x.p.cost), 0); return { k: 'Below-cost gap', v: fK(t), col: RED, sub: 'value − cost across ' + xs.length + ' door(s)' }; },
+    };
+    const wStats = wSelIds.length
+      ? [{ k: 'Doors in this view', v: wSorted.length + ' of ' + nScope, col: NAVY, sub: wSelIds.length === 1 ? 'failing this test' + (wq ? ' · search applied' : '') : 'failing all ' + wSelIds.length + ' selected tests' + (wq ? ' · search applied' : '') },
+         ...wSelIds.map(id => TILE[id](wSorted))]
+      : [
+        { k: 'On the watchlist', v: wFlagged.length + ' of ' + nScope, col: NAVY, sub: 'doors failing at least one test' },
+        { k: 'Your cash sitting in them', v: fK(wCashIn), col: '#3D64A8', sub: 'cost − refinance across flagged doors' },
+        { k: 'Monthly bleed', v: fK(wBleed), col: wBleed < 0 ? RED : '#2A6F4E', sub: 'negative net cashflows, summed' },
+        { k: 'Thin or negative equity', v: String(wThin.length), col: wThin.length ? RED : '#2A6F4E', sub: fK(wThin.reduce((s, x) => s + (x.p.value - x.s.dbt), 0)) + ' equity across them' },
+      ];
+    // ---- the solve simulator: pick doors, see how much of the total problem clears ----
+    const wPicked = wFlagged.filter(x => wPickSet.has(x.p.door));
+    const wTotFlags = wFlagged.reduce((s, x) => s + x.flags.length, 0);
+    const pcOf = (a, b) => b !== 0 ? ' (' + Math.round(a / b * 100) + '%)' : '';
+    const pCash = wPicked.reduce((s, x) => s + Math.max((x.p.cost || 0) - (x.p.refi || 0), 0), 0);
+    const pBleed = wPicked.reduce((s, x) => s + Math.min(x.s.ncf, 0), 0);
+    const pFlags = wPicked.reduce((s, x) => s + x.flags.length, 0);
+    const pSold = wPicked.reduce((s, x) => s + (x.p.value > 0 ? x.p.value - x.s.dbt : 0), 0);
+    const pRentGap = wPicked.reduce((s, x) => s + (x.flags.some(f => f.id === 'yield' || f.id === 'vacant') ? Math.max(0, (x.p.cost || 0) * 0.12 / 12 - x.s.rentMo) : 0), 0);
+    const wTrayOn = wPicked.length > 0;
+    const wTrayTitle = 'IF YOU SOLVE THE ' + wPicked.length + ' PICKED DOOR' + (wPicked.length > 1 ? 'S' : '') + ' — WHAT CLEARS';
+    const wTray = [
+      { k: 'Flags cleared', v: pFlags + ' of ' + wTotFlags + pcOf(pFlags, wTotFlags), col: '#F5D9A8', sub: 'across the whole watchlist' },
+      { k: 'Cash freed by refinancing', v: fK(pCash) + pcOf(pCash, wCashIn), col: '#AEC7EF', sub: 'of the ' + fK(wCashIn) + ' sitting in flagged doors' },
+      { k: 'Bleed stopped', v: fK(pBleed) + '/mo' + pcOf(pBleed, wBleed), col: pBleed < 0 ? '#E8A896' : '#8A96AD', sub: 'of the ' + fK(wBleed) + '/mo total bleed' },
+      { k: 'Rent to raise for 12%', v: fK(pRentGap) + '/mo', col: '#F5D9A8', sub: 'shortfall on the picked yield/vacant doors' },
+      { k: 'Or cash if sold instead', v: fK(pSold), col: '#7FC29B', sub: 'value − debt across the picked doors' },
     ];
+    const onWClear = () => this.setState({ wPick: [] });
+    const wShownDoors = wSorted.map(x => x.p.door);
+    const wAllPicked = wShownDoors.length > 0 && wShownDoors.every(d => wPickSet.has(d));
+    const onWPickAll = e => {
+      e.stopPropagation();
+      const cur = new Set(S.wPick || []);
+      if (wAllPicked) wShownDoors.forEach(d => cur.delete(d)); else wShownDoors.forEach(d => cur.add(d));
+      this.setState({ wPick: [...cur] });
+    };
+    const wPickAllCh = wAllPicked ? '✓' : '';
+    const wPickAllBg = wAllPicked ? '#FBF6EA' : '#FFFFFF';
+    const wPickAllTip = wAllPicked ? 'unpick all shown' : 'pick all shown';
     const wSub = 'the plan: refinance pulls the capital back out, every door cash-positive after its EMI · ' + nScope + ' doors tested · balances at ' + mmyy(lastM);
     const wNote = wSorted.length + ' door(s) ' + (wq ? 'matching "' + S.wQ + '"' : 'shown') + ' · ' + (wSelIds.length ? (wSelIds.length === 1 ? 'sorted worst-first on this test' : 'failing ALL ' + wSelIds.length + ' selected tests') : 'failing any test — most flags first, then most cash stuck') + ' · click a door for its full story';
     const wEmpty = wRows.length === 0;
@@ -1751,6 +1821,7 @@ class Component extends DCLogic {
       entHeads, entRows, entSub,
       wSub, wStats, wChips, wNote, wQ: S.wQ, onWQ: e => this.setState({ wQ: e.target.value, wExp: null }),
       wValHead: selF ? selF.head : 'Flags', wRows, wEmpty, wEmptyTxt, wFoot,
+      wTrayOn, wTrayTitle, wTray, onWClear, onWPickAll, wPickAllCh, wPickAllBg, wPickAllTip,
       gSub, gYearChips, gMetricChips, gPath, gArea, gPts, gGrow, gFoot,
       gTotOn, gTotTitle, gTotSub, gTot,
       gPanelTitle, gPanelSub, gq: S.gq, onGq: e => this.setState({ gq: e.target.value, gsel: null }),
