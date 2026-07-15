@@ -515,38 +515,68 @@ input:focus{outline:2px solid #C9A45C;outline-offset:1px}
       </div>
     </div>
 
-    <!-- ══ By-door explorer ══ -->
+    <!-- ══ Watchlist ══ -->
     <div style="margin-top:16px;background:#FFFFFF;border:1px solid #E5E3DC;border-radius:16px;padding:24px 30px">
       <div style="display:flex;justify-content:space-between;align-items:baseline;flex-wrap:wrap;gap:8px">
-        <div style="font-family:'Source Serif 4',Georgia,serif;font-size:18px;font-weight:600;color:#16233A">Every door, by the numbers</div>
-        <div style="font-size:12px;color:#8A93A6">Pick a lens — sorted so the doors that matter most show first · click any door to open its P&amp;L</div>
+        <div style="font-family:'Source Serif 4',Georgia,serif;font-size:18px;font-weight:600;color:#16233A">Watchlist — doors off the game plan</div>
+        <div style="font-size:11.5px;color:#8A93A6">{{ wSub }}</div>
       </div>
-      <div style="margin-top:14px;display:flex;gap:8px;flex-wrap:wrap">
-        <sc-for list="{{ metricChips }}" as="c" hint-placeholder-count="9">
-          <div onClick="{{ c.onClick }}" style-hover="border-color:#C9A45C" style="padding:7px 14px;border-radius:99px;font-size:12px;font-weight:600;cursor:pointer;border:1px solid {{ c.bd }};background:{{ c.bg }};color:{{ c.col }};white-space:nowrap">{{ c.label }}</div>
-        </sc-for>
-      </div>
-      <div style="margin-top:8px;display:flex;justify-content:space-between;align-items:center;gap:12px;flex-wrap:wrap">
-        <div style="font-size:11.5px;color:#96742F;font-weight:600">{{ expNote }}</div>
-        <input value="{{ expQ }}" onChange="{{ onExpQ }}" placeholder="Search doors…" style="width:220px;box-sizing:border-box;padding:8px 12px;border-radius:8px;border:1px solid #D8D4C8;font-family:'Libre Franklin',system-ui,sans-serif;font-size:12.5px;color:#16233A;background:#FFFFFF">
-      </div>
-      <div class="scr" style="margin-top:12px;display:grid;grid-template-columns:1fr 1fr;gap:0 44px;align-items:start;max-height:{{ expMax }};overflow-y:{{ expOv }};padding-right:4px">
-        <sc-for list="{{ expRows }}" as="p" hint-placeholder-count="8">
-          <div style="padding:8px 0;border-top:1px solid #F0EEE7">
-            <div style="display:flex;justify-content:space-between;font-size:12.5px;color:#2A3550;gap:10px;align-items:baseline">
-              <a href="{{ p.href }}" style="font-weight:500;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;min-width:0;flex:1;color:#2A3550;text-decoration:none;border-bottom:1px dotted #C9A45C">{{ p.name }}</a>
-              <span style="flex:none;font-size:10.5px;color:#8A93A6">{{ p.sub }}</span>
-              <span style="font-weight:700;font-variant-numeric:tabular-nums;color:{{ p.vcol }};flex:none;min-width:70px;text-align:right">{{ p.val }}</span>
-            </div>
-            <div style="margin-top:4px;height:6px;background:#F4F2EA;border-radius:3px;overflow:hidden"><div style="width:{{ p.w }};height:6px;background:{{ p.bg }};border-radius:3px"></div></div>
+      <div style="margin-top:14px;display:grid;grid-template-columns:repeat(auto-fit,minmax(160px,1fr));gap:10px">
+        <sc-for list="{{ wStats }}" as="ws" hint-placeholder-count="4">
+          <div style="background:#FBFAF6;border:1px solid #EDEBE2;border-radius:12px;padding:11px 14px">
+            <div style="font-size:9px;letter-spacing:0.07em;font-weight:800;color:#8A93A6;text-transform:uppercase">{{ ws.k }}</div>
+            <div style="margin-top:3px;font-family:'Source Serif 4',Georgia,serif;font-size:19px;font-weight:600;color:{{ ws.col }}">{{ ws.v }}</div>
+            <div style="margin-top:1px;font-size:9.5px;color:#9AA3B5">{{ ws.sub }}</div>
           </div>
         </sc-for>
-        <sc-if value="{{ expEmpty }}" hint-placeholder-val="{{ false }}"><div style="padding:14px;font-size:12px;color:#8A93A6">No doors match</div></sc-if>
       </div>
-      <sc-if value="{{ expBtn.show }}" hint-placeholder-val="{{ false }}">
-        <div onClick="{{ expBtn.onClick }}" style-hover="background:#16233A;color:#FFFFFF;border-color:#16233A" style="margin-top:12px;display:inline-flex;padding:9px 16px;border-radius:9px;border:1px solid #D8D4C8;background:#FFFFFF;color:#16233A;font-size:12px;font-weight:700;cursor:pointer">{{ expBtn.label }}</div>
-      </sc-if>
-      <div style="margin-top:10px;padding-top:10px;border-top:1px solid #F0EEE7;font-size:10.5px;line-height:1.6;color:#9AA3B5">{{ expFoot }}</div>
+      <div style="margin-top:12px;display:flex;gap:7px;flex-wrap:wrap">
+        <sc-for list="{{ wChips }}" as="wc" hint-placeholder-count="7">
+          <div onClick="{{ wc.onClick }}" style-hover="border-color:#C9A45C" style="display:flex;align-items:center;gap:7px;padding:7px 13px;border-radius:99px;font-size:11.5px;font-weight:700;cursor:pointer;border:1.5px solid {{ wc.bd }};background:{{ wc.bg }};color:{{ wc.col }};white-space:nowrap">{{ wc.label }}<span style="padding:1px 8px;border-radius:99px;background:{{ wc.nBg }};color:{{ wc.nCol }};font-size:10px;font-weight:800">{{ wc.n }}</span></div>
+        </sc-for>
+      </div>
+      <div style="margin-top:10px;display:flex;justify-content:space-between;align-items:center;gap:12px;flex-wrap:wrap">
+        <div style="font-size:11.5px;color:#96742F;font-weight:600">{{ wNote }}</div>
+        <input value="{{ wQ }}" onInput="{{ onWQ }}" placeholder="Search doors…" style="width:210px;box-sizing:border-box;padding:8px 12px;border-radius:9px;border:1.5px solid #D8D4C8;font-family:inherit;font-size:12px;color:#16233A;background:#FFFFFF">
+      </div>
+      <div style="margin-top:8px;display:grid;grid-template-columns:24px minmax(170px,1.3fr) 2.2fr 132px;gap:8px;padding:7px 8px;font-size:10px;letter-spacing:0.07em;font-weight:700;color:#5E6B82;text-transform:uppercase;border-bottom:1px solid #E5E3DC">
+        <div></div><div>Door</div><div>Why it's here</div><div style="text-align:right">{{ wValHead }}</div>
+      </div>
+      <div class="scr" style="max-height:480px;overflow-y:auto;padding-right:4px">
+        <sc-for list="{{ wRows }}" as="wr" hint-placeholder-count="10">
+          <div onClick="{{ wr.onClick }}" style-hover="background:#F6F4EC" style="display:grid;grid-template-columns:24px minmax(170px,1.3fr) 2.2fr 132px;gap:8px;padding:8px;align-items:center;border-bottom:1px solid #F0EEE6;cursor:pointer;background:{{ wr.bg }};border-left:3px solid {{ wr.selBd }}">
+            <div style="font-size:10px;color:#96742F;font-weight:700">{{ wr.caret }}</div>
+            <div style="min-width:0">
+              <div style="font-size:12px;font-weight:600;color:#1F3A6E;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">{{ wr.door }}</div>
+              <div style="font-size:9.5px;color:#8A93A6;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">{{ wr.sub }}</div>
+            </div>
+            <div style="display:flex;gap:5px;flex-wrap:wrap">
+              <sc-for list="{{ wr.pills }}" as="wp" hint-placeholder-count="3">
+                <span style="padding:2px 8px;border-radius:5px;font-size:8.5px;font-weight:800;background:{{ wp.bg }};color:{{ wp.col }};white-space:nowrap">{{ wp.t }}</span>
+              </sc-for>
+            </div>
+            <div style="text-align:right;font-variant-numeric:tabular-nums;font-size:12px;font-weight:700;color:{{ wr.vcol }}">{{ wr.val }}</div>
+          </div>
+          <sc-if value="{{ wr.exp }}" hint-placeholder-val="{{ false }}">
+            <div style="border-left:3px solid #C9A45C;border-bottom:1px solid #E5E3DC;background:#FBFAF6;padding:12px 16px">
+              <div style="display:grid;grid-template-columns:repeat(4,1fr);gap:10px 18px">
+                <sc-for list="{{ wr.facts }}" as="wf" hint-placeholder-count="12">
+                  <div>
+                    <div style="font-size:9.5px;letter-spacing:0.06em;font-weight:700;color:#8A93A6;text-transform:uppercase">{{ wf.k }}</div>
+                    <div style="margin-top:2px;font-size:13px;font-weight:700;color:{{ wf.col }};font-variant-numeric:tabular-nums">{{ wf.v }}</div>
+                  </div>
+                </sc-for>
+              </div>
+              <div style="margin-top:10px;display:flex;gap:14px;flex-wrap:wrap;font-size:11px">
+                <a href="{{ wr.hrefPl }}" style="font-weight:700">Open in P&amp;L →</a>
+                <sc-if value="{{ wr.hasLoan }}" hint-placeholder-val="{{ false }}"><a href="{{ wr.hrefLoan }}" style="font-weight:700">Open its note in Loans →</a></sc-if>
+              </div>
+            </div>
+          </sc-if>
+        </sc-for>
+      </div>
+      <sc-if value="{{ wEmpty }}" hint-placeholder-val="{{ false }}"><div style="padding:14px 8px;font-size:12px;color:#2F7351;font-weight:600">{{ wEmptyTxt }}</div></sc-if>
+      <div style="margin-top:10px;padding-top:10px;border-top:1px solid #F0EEE7;font-size:10.5px;line-height:1.6;color:#9AA3B5">{{ wFoot }}</div>
     </div>
 
     <!-- ══ Lifecycle ══ -->
@@ -624,7 +654,7 @@ class Component extends DCLogic {
     bs: null, gl: null, ld: null, loadError: null,
     fm: [], fe: [], fp: [], fs: [],
     ddOpen: null, fq: '',
-    metric: 'equity', expQ: '', showAll: false,
+    wSel: [], wQ: '', wExp: null,
     mosBucket: null, mosQ: '', mosSel: null, mosAll: false,
     bsSel: null, bsQ: '',
     gyr: 'ITD', gm: null, gq: '', gsel: null, gMetric: 'doors',
@@ -698,7 +728,7 @@ class Component extends DCLogic {
       buckets: [], mosNote: '', mosQ: '', onMosQ: () => {}, ladder: [], mosEmpty: false, mosFoot: '',
       bsRows: [], bsSub: '', bsFormula: '', bsAsOf: '', bsFormulaCol: '#E9EDF5',
       entHeads: [], entRows: [], entSub: '',
-      metricChips: [], expNote: '', expQ: '', onExpQ: () => {}, expRows: [], expEmpty: false, expBtn: { show: false, label: '', onClick: () => {} }, expFoot: '', expMax: 'none', expOv: 'visible',
+      wSub: '', wStats: [], wChips: [], wNote: '', wQ: '', onWQ: () => {}, wValHead: '', wRows: [], wEmpty: false, wEmptyTxt: '', wFoot: '',
       gSub: '', gYearChips: [], gMetricChips: [], gPath: '', gArea: '', gPts: [], gGrow: '', gFoot: '',
       gTotOn: false, gTotTitle: '', gTotSub: '', gTot: [],
       gPanelTitle: '', gPanelSub: '', gq: '', onGq: () => {}, gRows: [], gEmpty: false, gEmptyTxt: '', gPanelFoot: '',
@@ -1367,51 +1397,142 @@ class Component extends DCLogic {
     }];
     const entSub = 'sorted by equity · debt & principal from the loans engine at ' + mmyy(lastM) + ' · cap rate = annualized ledger NOI ÷ value';
 
-    // ══════════ by-door explorer ══════════
-    const METRICS = [
-      { id: 'equity', label: 'Equity', f: p => p.value - calcBy.get(p.door).close, fmt: fK, bar: 'abs', col: v => v < 0 ? RED : NAVY, need: p => p.value > 0 },
-      { id: 'value', label: 'Value', f: p => p.value, fmt: fK, bar: 'abs', col: () => NAVY, need: p => p.value > 0 },
-      { id: 'debt', label: 'Debt now', f: p => calcBy.get(p.door).close, fmt: fK, bar: 'abs', col: () => BRICK, need: p => calcBy.get(p.door).close > 0 },
-      { id: 'repaid', label: 'Principal repaid', f: p => calcBy.get(p.door).owner, fmt: fK, bar: 'abs', col: v => v < 0 ? '#2A6F4E' : GREEN, need: p => !!doorNotes[p.door] },
-      { id: 'ltv', label: 'LTV', f: p => calcBy.get(p.door).close / p.value * 100, fmt: v => v.toFixed(1) + '%', bar: 'pct100', col: v => v > 75 ? RED : NAVY, need: p => p.value > 0 && calcBy.get(p.door).close > 0 },
-      { id: 'appr', label: 'Appreciation', f: p => p.value - p.cost, fmt: fK, bar: 'abs', col: v => v < 0 ? RED : '#2A6F4E', need: p => p.cost > 0 && p.value > 0 },
-      { id: 'cap', label: 'Cap rate', f: p => annD(noiBy.get(p.door), p) / p.value * 100, fmt: v => v.toFixed(2) + '%', bar: 'abs', col: v => v < 0 ? RED : NAVY, need: p => p.value > 0 && noiBy.has(p.door) && nWin > 0 },
-      { id: 'yoc', label: 'Yield on cost', f: p => annD(noiBy.get(p.door), p) / p.cost * 100, fmt: v => v.toFixed(2) + '%', bar: 'abs', col: v => v < 0 ? RED : NAVY, need: p => p.cost > 0 && noiBy.has(p.door) && nWin > 0 },
-      { id: 'dscr', label: 'DSCR (interest-only)', f: p => noiBy.get(p.door) / intBy.get(p.door), fmt: v => v.toFixed(2) + '×', bar: 'abs', col: v => v < 1 ? RED : NAVY, need: p => noiBy.has(p.door) && (intBy.get(p.door) || 0) > 1, asc: true },
-      { id: 'cash', label: 'Cash in deal', f: p => p.cost - p.refi, fmt: fK, bar: 'abs', col: v => v < 0 ? '#2A6F4E' : NAVY, need: p => p.cost > 0 },
-    ];
-    const met = METRICS.find(m => m.id === S.metric) || METRICS[0];
-    const metricChips = METRICS.map(m => ({
-      label: m.label,
-      onClick: () => this.setState({ metric: m.id, showAll: false }),
-      bg: m.id === met.id ? '#16233A' : '#FFFFFF', col: m.id === met.id ? '#FFFFFF' : MUT,
-      bd: m.id === met.id ? '#16233A' : '#D8D4C8',
-    }));
-    const q = (S.expQ || '').trim().toLowerCase();
-    const eligible = scope.filter(p => met.need(p));
-    const rowsAll = eligible.map(p => ({ p, v: met.f(p) })).sort((a, b) => met.asc ? a.v - b.v : Math.abs(b.v) - Math.abs(a.v));
-    const rowsQ = q ? rowsAll.filter(r => r.p.door.toLowerCase().includes(q)) : rowsAll;
-    const TOPN = 14;
-    const shown = (S.showAll || q) ? rowsQ : rowsQ.slice(0, TOPN);
-    const mx = Math.max(...rowsQ.map(r => met.bar === 'pct100' ? 100 : Math.abs(r.v)), 1);
-    const expRows = shown.map(r => ({
-      name: r.p.door,
-      sub: r.p.entity + ' · ' + (r.p.valueSource === 'arv' ? 'ARV' : r.p.valueSource),
-      val: met.fmt(r.v), vcol: met.col(r.v),
-      w: Math.max(2, Math.abs(r.v) / mx * 100) + '%',
-      bg: met.col(r.v) === RED ? RED : (met.id === 'appr' || met.id === 'equity' || met.id === 'repaid' ? '#2A6F4E' : NAVY),
-      href: './PL%20Story%20-%20Main.dc.html?door=' + encodeURIComponent(r.p.door),
-    }));
-    const expNote = (q ? rowsQ.length + ' door(s) matching "' + S.expQ + '"' : ((S.showAll ? 'All ' + rowsQ.length : 'Top ' + Math.min(TOPN, rowsQ.length) + ' of ' + rowsQ.length) + ' doors')) + ' · ' + met.label + (met.asc ? ' · lowest first (risk view)' : ' · largest first') + ' · ' + (scope.length - eligible.length) + ' door(s) excluded for missing inputs';
-    const expBtn = {
-      show: !q && rowsQ.length > TOPN,
-      label: S.showAll ? '← Back to top ' + TOPN : 'Show all ' + rowsQ.length + ' doors →',
-      onClick: () => this.setState(p => ({ showAll: !p.showAll })),
+    // ══════════ watchlist — doors off the game plan (owner spec 2026-07-15) ══════════
+    // shared per-door cash machinery (the growth section below reuses these)
+    const pmOf = p => (p.putToUse && /^\d{4}-\d{2}/.test(p.putToUse)) ? p.putToUse.slice(0, 7) : null;
+    const acct4 = { 'Rental Income': 'rent', 'Property Tax': 'ptax', 'Insurance': 'ins', 'HOA Fee': 'hoa' };
+    const acctBy = {};
+    for (const [e4, d4, a4, v4] of S.gl.rows) {
+      const k4 = acct4[a4]; if (!k4) continue;
+      const tot = glIdx.reduce((s, i2) => s + (v4[i2] || 0), 0);
+      (acctBy[d4] = acctBy[d4] || { rent: 0, ptax: 0, ins: 0, hoa: 0 })[k4] += tot;
+    }
+    const dsMo = d4 => {
+      // the STANDING monthly payment, not the cash that happened to move: a payoff / release / extra-principal
+      // event month would otherwise read as a monster EMI (410 Virginia's balloon = $62K "payment").
+      const dd = LDD[d4]; if (!dd) return 0;
+      let lastK = null; for (const k of doorKeys[d4]) { if (k <= lastM) lastK = k; else break; }
+      if (!lastK) return 0;
+      const r4 = dd.monthly[lastK];
+      if (!(r4.close > 0.005)) return 0;              // settled — no ongoing payment
+      const ns4 = doorNotes[d4] || [];
+      const eventy = ns4.some(x => { const row = x.l.schedule.find(r0 => r0.m === lastK); return row && row.events > 0; });
+      const paid = r4.interest + r4.principal;
+      if (paid > 0.005 && !eventy) return paid;       // clean engine month — live proportions, exact
+      // event month, or first payment past the horizon — scheduled payment × door's share
+      let est = 0;
+      for (const x of ns4) {
+        const l4 = x.l, nc4 = noteCloseAt(l4, lastM);
+        if (nc4 <= 0.005) continue;
+        let pay = l4.payment || 0;
+        if (!pay && l4.io && l4.rate) pay = nc4 * l4.rate / 12;   // hard money: interest-only run-rate
+        if (!pay) continue;
+        const share = ns4.filter(x2 => noteCloseAt(x2.l, lastM) > 0.005).length === 1
+          ? Math.min(r4.close / nc4, 1)
+          : (noteP0[l4.id] > 0 ? x.slice / noteP0[l4.id] : 0);
+        est += pay * share;
+      }
+      return est;
     };
-    const expFoot = 'Debt, LTV, equity and principal repaid now come from the loans engine at ' + mmyy(lastM) + '. Cap rate & yield annualize each door’s ledger NOI over its in-service months within the selected window; DSCR remains interest-only for now — a payment-based DSCR needs per-door debt-service shares (planned); cash in deal = cost − initial refinance (negative = cash-out beyond basis). Doors lacking a required input for the selected lens are excluded and counted above.';
+    const doorStat = p => {
+      const a5 = acctBy[p.door] || { rent: 0, ptax: 0, ins: 0, hoa: 0 };
+      const mi = monthsIn(p) || nWin || 1;
+      const rentMo = a5.rent / mi, ptaxMo = a5.ptax / mi, insMo = a5.ins / mi, hoaMo = a5.hoa / mi;
+      const ds = dsMo(p.door);
+      return { rentMo, ptaxMo, insMo, hoaMo, ds, ncf: rentMo - ptaxMo - insMo - hoaMo - ds, dbt: debtAt(p.door, lastM) };
+    };
+    // the company plan: refinance pulls the capital back out, and every door stays cash-positive after its EMI.
+    // seven tests catch the drifters — thresholds are the owner's (12% yield floor) or stated defaults he can move.
+    const hasGL = p => { const a = acctBy[p.door]; return (!!a && (a.rent > 0.5 || a.ptax > 0.5 || a.ins > 0.5 || a.hoa > 0.5)) || noiBy.has(p.door); };
+    const inSvc = p => !!pmOf(p) && nWin > 0 && pmOf(p) <= glWin[nWin - 1];
+    const PILL = { money: ['#EFF3FA', '#3D64A8'], income: ['#F6ECD9', '#96742F'], risk: ['#F3E2DB', '#A03E28'] };
+    const FLAGS = [
+      { id: 'cash', pill: 'CASH SITTING', tone: 'money', label: 'Cash purchase — never refinanced',
+        test: (p, s) => p.cost > 0 && !(p.refi > 0), sev: (p, s) => p.cost, fmt: fK, head: 'Your cash in', worst: 'desc' },
+      { id: 'stuck', pill: 'CAPITAL STUCK', tone: 'money', label: 'Capital stuck after refi',
+        test: (p, s) => p.refi > 0 && p.cost > 0 && (p.cost - p.refi) > Math.max(0.2 * p.cost, 15000), sev: (p, s) => p.cost - p.refi, fmt: fK, head: 'Stuck (cost − refi)', worst: 'desc' },
+      { id: 'yield', pill: 'YIELD < 12%', tone: 'income', label: 'Rental yield under 12%',
+        test: (p, s) => p.cost > 0 && s.rentMo > 0.5 && s.rentMo * 12 / p.cost * 100 < 12, sev: (p, s) => s.rentMo * 12 / p.cost * 100, fmt: v => v.toFixed(1) + '%', head: 'Yield on cost', worst: 'asc' },
+      { id: 'bleed', pill: 'BLEEDING', tone: 'risk', label: 'Cash-negative after fixed costs + EMI',
+        test: (p, s) => hasGL(p) && s.ncf < -0.5, sev: (p, s) => s.ncf, fmt: v => fK(v) + '/mo', head: 'Net cashflow /mo', worst: 'asc' },
+      { id: 'equity', pill: 'THIN EQUITY', tone: 'risk', label: 'Equity under 20% of value',
+        test: (p, s) => p.value > 0 && s.dbt > 0.005 && (p.value - s.dbt) / p.value < 0.20, sev: (p, s) => (p.value - s.dbt) / p.value * 100, fmt: v => v.toFixed(1) + '%', head: 'Equity % of value', worst: 'asc' },
+      { id: 'vacant', pill: 'NO RENT', tone: 'income', label: 'No rent coming in',
+        test: (p, s) => inSvc(p) && s.rentMo <= 0.5 && (s.ptaxMo + s.insMo + s.hoaMo + s.ds) > 0.5, sev: (p, s) => -(s.ptaxMo + s.insMo + s.hoaMo + s.ds), fmt: v => fK(v) + '/mo', head: 'Carrying cost /mo', worst: 'asc' },
+      { id: 'under', pill: 'BELOW COST', tone: 'risk', label: 'Worth less than it cost',
+        test: (p, s) => p.value > 0 && p.cost > 0 && p.value < p.cost, sev: (p, s) => p.value - p.cost, fmt: fK, head: 'Value − cost', worst: 'asc' },
+    ];
+    const wStatBy = new Map(scope.map(p => [p.door, doorStat(p)]));
+    const wFlagged = scope.map(p => {
+      const s = wStatBy.get(p.door);
+      return { p, s, flags: FLAGS.filter(F => F.test(p, s)) };
+    }).filter(x => x.flags.length);
+    const wSelIds = (S.wSel || []).filter(id => FLAGS.some(F => F.id === id));
+    const wUniverse = wSelIds.length ? wFlagged.filter(x => wSelIds.every(id => x.flags.some(f => f.id === id))) : wFlagged;
+    const wq = (S.wQ || '').trim().toLowerCase();
+    const wMatched = wUniverse.filter(x => !wq || x.p.door.toLowerCase().includes(wq) || x.p.entity.toLowerCase().includes(wq));
+    const selF = wSelIds.length === 1 ? FLAGS.find(F => F.id === wSelIds[0]) : null;
+    const wSorted = wMatched.slice().sort((a, b) => selF
+      ? (selF.worst === 'asc' ? selF.sev(a.p, a.s) - selF.sev(b.p, b.s) : selF.sev(b.p, b.s) - selF.sev(a.p, a.s))
+      : (b.flags.length - a.flags.length) || (Math.max(b.p.cost - b.p.refi, 0) - Math.max(a.p.cost - a.p.refi, 0)));
+    const wChips = FLAGS.map(F => {
+      const n = wFlagged.filter(x => x.flags.some(f => f.id === F.id)).length;
+      const on = wSelIds.includes(F.id);
+      return {
+        label: F.label, n: String(n),
+        bd: on ? '#16233A' : '#D8D4C8', bg: on ? '#16233A' : '#FFFFFF', col: on ? '#FFFFFF' : '#2A3550',
+        nBg: on ? 'rgba(233,237,245,0.2)' : '#F4F2EA', nCol: on ? '#F5D9A8' : '#96742F',
+        onClick: () => { const cur = new Set(S.wSel || []); cur.has(F.id) ? cur.delete(F.id) : cur.add(F.id); this.setState({ wSel: [...cur], wExp: null }); },
+      };
+    });
+    const wRows = wSorted.map(x => {
+      const isExp = S.wExp === x.p.door;
+      const s = x.s, p = x.p;
+      const lnd = doorNotes[p.door] || [];
+      const eqD = p.value - s.dbt;
+      const facts = isExp ? [
+        { k: 'Cost basis', v: p.cost > 0 ? fN(p.cost) : 'pending', col: INK },
+        { k: 'Initial refinance', v: p.refi > 0 ? fN(p.refi) : 'never — cash deal', col: p.refi > 0 ? BRICK : RED },
+        { k: 'Your cash in (cost − refi)', v: p.cost > 0 ? fN(p.cost - p.refi) : '—', col: '#3D64A8' },
+        { k: 'Principal repaid', v: fN(calcBy.get(p.door).owner), col: GREEN },
+        { k: 'Debt · ' + mmyy(lastM), v: s.dbt > 0.005 ? fN(s.dbt) : 'debt-free', col: s.dbt > 0.005 ? RED : '#2A6F4E' },
+        { k: 'Value (' + (p.valueSource === 'arv' ? 'ARV' : p.valueSource) + ')', v: p.value > 0 ? fN(p.value) : '—', col: NAVY },
+        { k: 'Equity', v: p.value > 0 ? fN(eqD) + ' (' + fP(eqD, p.value) + ')' : '—', col: eqD < 0 ? RED : '#2A6F4E' },
+        { k: 'Yield on cost', v: p.cost > 0 && s.rentMo > 0 ? (s.rentMo * 12 / p.cost * 100).toFixed(1) + '%' : '—', col: NAVY },
+        { k: 'Rent /mo', v: s.rentMo > 0 ? fN(s.rentMo) : '—', col: '#2A6F4E' },
+        { k: 'Fixed costs /mo (PT+ins+HOA)', v: fN(s.ptaxMo + s.insMo + s.hoaMo), col: INK },
+        { k: 'EMI /mo (P&I)', v: s.ds > 0 ? fN(s.ds) : '—', col: RED },
+        { k: 'Net cashflow /mo', v: fN(s.ncf), col: s.ncf < 0 ? RED : '#2A6F4E' },
+      ] : [];
+      return {
+        door: p.door, sub: p.entity + ' · ' + p.status + (pmOf(p) ? ' · in use ' + mmyy(pmOf(p)) : ''),
+        pills: x.flags.map(f => ({ t: f.pill, bg: PILL[f.tone][0], col: PILL[f.tone][1] })),
+        val: selF ? selF.fmt(selF.sev(p, s)) : x.flags.length + ' flag' + (x.flags.length > 1 ? 's' : ''),
+        vcol: selF ? (selF.worst === 'asc' && selF.sev(p, s) < (selF.id === 'yield' ? 12 : 0) ? RED : INK) : (x.flags.length >= 3 ? RED : INK),
+        caret: isExp ? '▾' : '▸', bg: isExp ? '#FBFAF6' : 'transparent', selBd: isExp ? '#C9A45C' : 'transparent',
+        exp: isExp, facts,
+        hasLoan: !!lnd.length,
+        hrefPl: './PL%20Story%20-%20Main.dc.html?door=' + encodeURIComponent(p.door),
+        hrefLoan: './loans.dc.html?door=' + encodeURIComponent(p.door),
+        onClick: () => this.setState({ wExp: isExp ? null : x.p.door }),
+      };
+    });
+    const wCashIn = wFlagged.reduce((s, x) => s + Math.max((x.p.cost || 0) - (x.p.refi || 0), 0), 0);
+    const wBleed = wFlagged.reduce((s, x) => s + (x.s.ncf < 0 && hasGL(x.p) ? x.s.ncf : 0), 0);
+    const wThin = wFlagged.filter(x => x.flags.some(f => f.id === 'equity'));
+    const wStats = [
+      { k: 'On the watchlist', v: wFlagged.length + ' of ' + nScope, col: NAVY, sub: 'doors failing at least one test' },
+      { k: 'Your cash sitting in them', v: fK(wCashIn), col: '#3D64A8', sub: 'cost − refinance across flagged doors' },
+      { k: 'Monthly bleed', v: fK(wBleed), col: wBleed < 0 ? RED : '#2A6F4E', sub: 'negative net cashflows, summed' },
+      { k: 'Thin or negative equity', v: String(wThin.length), col: wThin.length ? RED : '#2A6F4E', sub: fK(wThin.reduce((s, x) => s + (x.p.value - x.s.dbt), 0)) + ' equity across them' },
+    ];
+    const wSub = 'the plan: refinance pulls the capital back out, every door cash-positive after its EMI · ' + nScope + ' doors tested · balances at ' + mmyy(lastM);
+    const wNote = wSorted.length + ' door(s) ' + (wq ? 'matching "' + S.wQ + '"' : 'shown') + ' · ' + (wSelIds.length ? (wSelIds.length === 1 ? 'sorted worst-first on this test' : 'failing ALL ' + wSelIds.length + ' selected tests') : 'failing any test — most flags first, then most cash stuck') + ' · click a door for its full story';
+    const wEmpty = wRows.length === 0;
+    const wEmptyTxt = wq ? 'Nothing matches this search.' : (wSelIds.length ? 'No door fails all the selected tests together — good sign.' : 'Nothing on the watchlist in this view — the plan is holding.');
+    const wFoot = 'The tests: cash purchase never refinanced · refinance left > 20% of cost (and > $15K) in the deal · rental yield below your 12% floor (window-avg rent ×12 ÷ cost, gross) · net cashflow negative after property tax, insurance, HOA and the EMI (P&I at ' + mmyy(lastM) + '; escrow separate; scheduled payment share for notes starting past the horizon) · equity under 20% of value on the loans-engine balance · in service with no rent in the ledger window while carrying costs run · valued below cost (county fallbacks can understate). Thresholds are owner-adjustable. Doors without ledger activity are only tested on capital and equity; zero-cost doors are tested where cost is not required and stay flagged in Checks & balances. Note: with a short ledger window, annual bills (property tax especially) can overstate or understate the monthly averages — a full year of GL history will smooth the yield and cashflow tests.';
 
     // ══════════ how the portfolio was built (v2 2026-07-15: cumulative growth line + drillable additions) ══════════
-    const pmOf = p => (p.putToUse && /^\d{4}-\d{2}/.test(p.putToUse)) ? p.putToUse.slice(0, 7) : null;
     const VINP = ALLP.filter(p => !feAct.length || feAct.includes(p.entity));
     const vinDated = VINP.filter(p => pmOf(p));
     const vinUndated = VINP.filter(p => p.putToUse && !pmOf(p));
@@ -1506,30 +1627,7 @@ class Component extends DCLogic {
       + (vinUndated.length ? ' ' + vinUndated.length + ' door(s) with text put-to-use (' + vinUndated.map(p => p.door).slice(0, 2).join(', ') + (vinUndated.length > 2 ? '…' : '') + ') excluded until dated.' : '')
       + (future ? ' ' + future + ' door(s) put to use after the last ledger month — on the line, joining the P&L as activity lands.' : '');
     const gSub = (feAct.length ? feAct.join(', ') : 'all entities') + ' · net of sold & held-for-sale exits · this section has its own time controls';
-    // ---- right panel: what was added in the selected period ----
-    const acct4 = { 'Rental Income': 'rent', 'Property Tax': 'ptax', 'Insurance': 'ins', 'HOA Fee': 'hoa' };
-    const acctBy = {};
-    for (const [e4, d4, a4, v4] of S.gl.rows) {
-      const k4 = acct4[a4]; if (!k4) continue;
-      const tot = glIdx.reduce((s, i2) => s + (v4[i2] || 0), 0);
-      (acctBy[d4] = acctBy[d4] || { rent: 0, ptax: 0, ins: 0, hoa: 0 })[k4] += tot;
-    }
-    const dsMo = d4 => {
-      const dd = LDD[d4]; if (!dd) return 0;
-      let lastK = null; for (const k of doorKeys[d4]) { if (k <= lastM) lastK = k; else break; }
-      if (!lastK) return 0;
-      const r4 = dd.monthly[lastK];
-      if (!(r4.close > 0.005)) return 0;              // settled — no ongoing payment
-      const paid = r4.interest + r4.principal;
-      if (paid > 0.005) return paid;                  // engine-exact latest month
-      // note funded but first payment falls after the horizon — use scheduled payment × door's original share
-      let est = 0;
-      for (const x of (doorNotes[d4] || [])) {
-        if (noteCloseAt(x.l, lastM) <= 0.005 || !x.l.payment) continue;
-        est += x.l.payment * (noteP0[x.l.id] > 0 ? x.slice / noteP0[x.l.id] : 0);
-      }
-      return est;
-    };
+    // ---- right panel: what was added in the selected period (acctBy/dsMo/doorStat shared from the watchlist above) ----
     const selAdds = gSelPer ? vinDated.filter(p => isYr ? pmOf(p) === gSelPer : pmOf(p).slice(0, 4) === gSelPer) : [];
     const selExits = gSelPer ? vinDated.filter(p => { const e6 = soldExitM(p); return e6 && (isYr ? e6 === gSelPer : e6.slice(0, 4) === gSelPer); }) : [];
     const gqq = (S.gq || '').trim().toLowerCase();
@@ -1539,13 +1637,6 @@ class Component extends DCLogic {
       ...selAdds.filter(gMatch).sort(byCost).map(p => ({ p, exited: false })),
       ...selExits.filter(gMatch).sort(byCost).map(p => ({ p, exited: true })),
     ];
-    const doorStat = p => {
-      const a5 = acctBy[p.door] || { rent: 0, ptax: 0, ins: 0, hoa: 0 };
-      const mi = monthsIn(p) || nWin || 1;
-      const rentMo = a5.rent / mi, ptaxMo = a5.ptax / mi, insMo = a5.ins / mi, hoaMo = a5.hoa / mi;
-      const ds = dsMo(p.door);
-      return { rentMo, ptaxMo, insMo, hoaMo, ds, ncf: rentMo - ptaxMo - insMo - hoaMo - ds, dbt: debtAt(p.door, lastM) };
-    };
     const gRows = gShown.map(({ p, exited }) => {
       const isExp = S.gsel === p.door;
       const { rentMo, ptaxMo, insMo, hoaMo, ds, ncf, dbt } = doorStat(p);
@@ -1658,9 +1749,8 @@ class Component extends DCLogic {
       ladder, mosEmpty: ladder.length === 0, mosFoot,
       bsRows, bsSub, bsFormula, bsAsOf, bsFormulaCol,
       entHeads, entRows, entSub,
-      metricChips, expNote, expQ: S.expQ, onExpQ: e => this.setState({ expQ: e.target.value, showAll: false }),
-      expRows, expEmpty: expRows.length === 0, expBtn, expFoot,
-      expMax: (S.showAll || q) ? '520px' : 'none', expOv: (S.showAll || q) ? 'auto' : 'visible',
+      wSub, wStats, wChips, wNote, wQ: S.wQ, onWQ: e => this.setState({ wQ: e.target.value, wExp: null }),
+      wValHead: selF ? selF.head : 'Flags', wRows, wEmpty, wEmptyTxt, wFoot,
       gSub, gYearChips, gMetricChips, gPath, gArea, gPts, gGrow, gFoot,
       gTotOn, gTotTitle, gTotSub, gTot,
       gPanelTitle, gPanelSub, gq: S.gq, onGq: e => this.setState({ gq: e.target.value, gsel: null }),
