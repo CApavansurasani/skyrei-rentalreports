@@ -706,7 +706,7 @@ class Component extends DCLogic {
     const nGl = scoped.filter(d => DOORS[d].inGL).length, nFile = scoped.length - nGl;
     const nTen = allRows.length;
     const scopeLine = spanLab + ' · ' + nGl + ' GL doors' + (nFile ? ' (+' + nFile + ' file-only)' : '') + ' · ' + nTen + ' tenant ledgers · rent charged → cash actually kept';
-    const asOfLine = 'DERIVED MOCK · charges = GL rent · collections = Cashflow.xlsx · not published';
+    const asOfLine = 'DERIVED v1 · charges = GL rent (proxy) · collections = Cashflow.xlsx · bank tie-out pending';
 
     // ══ filter bar ══
     const openDd = (id) => (e) => { e.stopPropagation(); this.setState({ ddOpen: S.ddOpen === id ? null : id, fq: '' }); };
@@ -1047,7 +1047,7 @@ class Component extends DCLogic {
       { t: 'Sale proceeds per exited door — completes financing events and the gain-on-sale story.' },
       { t: 'HOA / property-tax / insurance direct-payment actuals (HOA currently “NA” in the file; GL accrual used as proxy).' },
     ];
-    const asFoot = 'This page is a derived mock: cf-data.json is computed from PL.xlsx (GL), Loans engine, AR Balances.xlsx, Leases.csv and Cashflow.xlsx. Nothing is published; publish gates + verify harness run before it ships.';
+    const asFoot = 'cf-data.json is computed from PL.xlsx (GL), the loans engine, AR Balances.xlsx, Leases.csv and Cashflow.xlsx through publish gates + a 155-check verify harness. Figures refine as the pending data lands — every assumption above stays visible until it does.';
 
     return {
       ready: true, loading: false, loadError: false, retryLoad: () => this.loadData(), stopProp,
