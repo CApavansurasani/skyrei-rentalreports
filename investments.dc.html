@@ -686,7 +686,7 @@ class Component extends DCLogic {
         if (!bs || bs.schema !== 'bs.v1' || !Array.isArray(bs.properties)) throw new Error('bs-data.json is not a valid bs.v1 file');
         if (!gl || !Array.isArray(gl.rows) || !Array.isArray(gl.periods)) throw new Error('pl-data.json is not a valid ledger file');
         if (!ld || ld.schema !== 'loans.v2' || !Array.isArray(ld.loans) || !ld.doors) throw new Error('loans-data.json is not a valid loans.v2 file');
-        const cfdOk = (cfd && cfd.schema === 'cf.v1' && cfd.doors && cfd.meta && Array.isArray(cfd.meta.months)) ? cfd : null; // optional — cash-on-cash degrades to PENDING without it
+        const cfdOk = (cfd && (cfd.schema === 'cf.v1' || cfd.schema === 'cf.v2') && cfd.doors && cfd.meta && Array.isArray(cfd.meta.months)) ? cfd : null; // optional — cash-on-cash degrades to PENDING without it
         this.setState({ bs, gl, ld, cfd: cfdOk }, () => this.applyQuery());
       })
       .catch(e => this.setState({ bs: null, gl: null, ld: null, cfd: null, loadError: (e && e.message ? e.message : String(e)) }));
@@ -954,10 +954,15 @@ class Component extends DCLogic {
     // ---- cash-on-cash from cf-data.json (Cash Flow build) — optional, degrades to PENDING ----
     const CFD = S.cfd || null;
     const cfMo = CFD ? CFD.meta.months : [];
+    const cfRefOut = (d2, ci) => { // cash refunded back out, outside tenant AR (cf.v2) — same deduction as the Cash Flow page
+      const L = (CFD.collections && CFD.collections.sdRefunds) || [];
+      let s2 = 0; for (const x of L) if (x.cash && x.prop === d2 && cfMo[ci] === x.m) s2 += -x.amt;
+      return s2;
+    };
     const cfKeptDoor = (d2, ci) => {
       const r = CFD.doors[d2]; if (!r) return 0;
       const hoa = r.statByAcct && r.statByAcct['HOA Fee'] ? r.statByAcct['HOA Fee'][ci] : 0;
-      return r.coll[ci] + r.claims[ci] - r.opex[ci] - r.escrow[ci] - hoa - r.int[ci] - r.prinSched[ci];
+      return r.coll[ci] + r.claims[ci] - cfRefOut(d2, ci) - r.opex[ci] - r.escrow[ci] - hoa - r.int[ci] - r.prinSched[ci];
     };
     const cfKeptOver = (ci) => { // company overhead + portfolio-level direct PT/Ins cash — portfolio-wide views only (same rule as the Cash Flow page)
       const oh = CFD.overhead, rc = CFD.recon.statutoryCash;
@@ -1045,7 +1050,7 @@ class Component extends DCLogic {
       { label: 'Net income ROI', value: niRoi === null ? '—' : niRoi.toFixed(2) + '%', col: niRoi !== null && niRoi < 0 ? RED : '#2A6F4E', bg: '#FFFFFF', bd: '#E5E3DC', hasLegs: false, legs: [], ...roiSpark,
         sub: (nWin ? 'annualized net income ' + fK(annNi) + ' (NOI − interest) ÷ capital in deal' : 'needs ledger months in the selection') + (roiSpark.hasSpark ? ' · monthly trail into ' + mmyy(seriesM[seriesM.length - 1]) : '') },
       CFD ? { label: 'Cash-on-cash ROI', value: cocRoi === null ? '—' : cocRoi.toFixed(2) + '%', col: cocRoi !== null && cocRoi < 0 ? RED : GOLDD, bg: '#FFFFFF', bd: '#E5E3DC', hasLegs: false, legs: [], ...cocSpark,
-        sub: (cfWin.length ? (cocRoi === null ? 'needs positive initial investment in scope (cash-out beyond basis)' : 'annualized cash kept ' + fK(annKept) + ' (collected + claims − opex − escrow − HOA − interest − scheduled principal) ÷ initial investment') : 'no cash-flow months in the selection (cash ledger ' + mmyy(cfMo[0]) + ' → ' + mmyy(cfMo[cfMo.length - 1]) + ')') + ' · collections still include SD, fees & arrears until true tenant charges land' + (cocSpark.hasSpark ? ' · monthly trail — click a point' : '') }
+        sub: (cfWin.length ? (cocRoi === null ? 'needs positive initial investment in scope (cash-out beyond basis)' : 'annualized cash kept ' + fK(annKept) + ' (collected + claims − refunds out − opex − escrow − HOA − interest − scheduled principal) ÷ initial investment') : 'no cash-flow months in the selection (cash ledger ' + mmyy(cfMo[0]) + ' → ' + mmyy(cfMo[cfMo.length - 1]) + ')') + ' · collections still include SD, fees & arrears until true tenant charges land' + (cocSpark.hasSpark ? ' · monthly trail — click a point' : '') }
       : { label: 'Cash-on-cash ROI', value: '—', col: MUT, bg: '#FBF6EA', bd: '#EAD9C0', hasLegs: false, legs: [],
         sub: 'PENDING — cf-data.json is not available to this page yet; once the Cash Flow section publishes, this becomes annualized actual cash kept ÷ initial investment, with its own monthly trail.' },
     ].map(k => ({ hasSpark: false, spCol: '', sparkPath: '', sparkArea: '', cols: [], ...k }));
