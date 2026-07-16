@@ -666,7 +666,7 @@ input:focus{outline:2px solid #C9A45C;outline-offset:1px}
 <script type="text/x-dc" data-dc-script>
 class Component extends DCLogic {
   state = {
-    bs: null, gl: null, ld: null, loadError: null,
+    bs: null, gl: null, ld: null, cfd: null, loadError: null,
     fm: [], fe: [], fp: [], fs: [],
     ddOpen: null, fq: '',
     wSel: [], wQ: '', wExp: null, wPick: [],
@@ -680,14 +680,16 @@ class Component extends DCLogic {
   loadData() {
     this.setState({ loadError: null });
     const get = (u) => fetch(u).then(r => { if (!r.ok) throw new Error('HTTP ' + r.status + ' fetching ' + u); return r.json(); });
-    Promise.all([get('./bs-data.json'), get('./pl-data.json'), get('./loans-data.json')])
-      .then(([bs, gl, ld]) => {
+    Promise.all([get('./bs-data.json'), get('./pl-data.json'), get('./loans-data.json'),
+      get('./cf-data.json').catch(() => null)])
+      .then(([bs, gl, ld, cfd]) => {
         if (!bs || bs.schema !== 'bs.v1' || !Array.isArray(bs.properties)) throw new Error('bs-data.json is not a valid bs.v1 file');
         if (!gl || !Array.isArray(gl.rows) || !Array.isArray(gl.periods)) throw new Error('pl-data.json is not a valid ledger file');
         if (!ld || ld.schema !== 'loans.v2' || !Array.isArray(ld.loans) || !ld.doors) throw new Error('loans-data.json is not a valid loans.v2 file');
-        this.setState({ bs, gl, ld }, () => this.applyQuery());
+        const cfdOk = (cfd && cfd.schema === 'cf.v1' && cfd.doors && cfd.meta && Array.isArray(cfd.meta.months)) ? cfd : null; // optional — cash-on-cash degrades to PENDING without it
+        this.setState({ bs, gl, ld, cfd: cfdOk }, () => this.applyQuery());
       })
-      .catch(e => this.setState({ bs: null, gl: null, ld: null, loadError: (e && e.message ? e.message : String(e)) }));
+      .catch(e => this.setState({ bs: null, gl: null, ld: null, cfd: null, loadError: (e && e.message ? e.message : String(e)) }));
   }
 
   applyQuery() {
@@ -949,6 +951,23 @@ class Component extends DCLogic {
     const niRoi = tCap > 0 && nWin ? annNi / tCap * 100 : null;
     const excludedDebt = excluded.reduce((s, p) => s + debtAt(p.door, lastM), 0);
 
+    // ---- cash-on-cash from cf-data.json (Cash Flow build) — optional, degrades to PENDING ----
+    const CFD = S.cfd || null;
+    const cfMo = CFD ? CFD.meta.months : [];
+    const cfKeptDoor = (d2, ci) => {
+      const r = CFD.doors[d2]; if (!r) return 0;
+      const hoa = r.statByAcct && r.statByAcct['HOA Fee'] ? r.statByAcct['HOA Fee'][ci] : 0;
+      return r.coll[ci] + r.claims[ci] - r.opex[ci] - r.escrow[ci] - hoa - r.int[ci] - r.prinSched[ci];
+    };
+    const cfKeptOver = (ci) => { // company overhead + portfolio-level direct PT/Ins cash — portfolio-wide views only (same rule as the Cash Flow page)
+      const oh = CFD.overhead, rc = CFD.recon.statutoryCash;
+      return (oh.coll[ci] + oh.claims[ci] - oh.opex[ci] - oh.stat[ci] - oh.int[ci]) - rc.insurance[ci] - rc.propertyTax[ci];
+    };
+    const cfWin = CFD ? glWin.map(m2 => cfMo.indexOf(m2)).filter(i => i >= 0) : [];
+    const keptWin = CFD ? scope.reduce((s2, p) => s2 + cfWin.reduce((a, ci) => a + cfKeptDoor(p.door, ci), 0), 0) + (ovAdd ? cfWin.reduce((a, ci) => a + cfKeptOver(ci), 0) : 0) : 0;
+    const annKept = CFD && cfWin.length ? keptWin / cfWin.length * 12 : 0;
+    const cocRoi = CFD && cfWin.length && tInv > 0 ? annKept / tInv * 100 : null;
+
     // ---- trailing monthly return series (loans-style clickable lines; grows as GL history lands) ----
     // always the trailing 12 ledger months — a navigator, so a single selected month highlights
     // a point but never collapses the line (owner's standing rule)
@@ -963,10 +982,20 @@ class Component extends DCLogic {
       let noi = ovAdd ? a.noiOver : 0, intx = ovAdd ? a.intOver : 0;
       for (const [d2, x] of a.noiBy) if (ss.has(d2)) noi += x;
       for (const [d2, x] of a.intBy) if (ss.has(d2)) intx += x;
+      let coc = null;
+      if (CFD && inv > 0) {
+        const ci = cfMo.indexOf(g);
+        if (ci >= 0) {
+          let kept = sc.reduce((s2, p) => s2 + cfKeptDoor(p.door, ci), 0);
+          if (ovAdd) kept += cfKeptOver(ci);
+          coc = kept * 12 / inv * 100;
+        }
+      }
       return {
         m: g,
         cap: cost > 0 ? noi * 12 / cost * 100 : null,
         roi: (inv + rep) > 0 ? (noi - intx) * 12 / (inv + rep) * 100 : null,
+        coc,
       };
     });
     const mkSpark = (key, col) => {
@@ -997,6 +1026,7 @@ class Component extends DCLogic {
     };
     const capSpark = mkSpark('cap', '#C0763F');
     const roiSpark = mkSpark('roi', '#3E8E63');
+    const cocSpark = CFD ? mkSpark('coc', '#96742F') : { hasSpark: false, spCol: '#96742F', sparkPath: '', sparkArea: '', cols: [] };
 
     const kpis = [
       { label: 'Cost basis', value: fN(tCost), col: NAVY, bg: '#FFFFFF', bd: '#E5E3DC', hasLegs: false, legs: [],
@@ -1014,8 +1044,10 @@ class Component extends DCLogic {
         sub: (nWin ? 'annualized NOI ' + fK(annNoi) + ' ÷ cost basis' : 'no ledger months in the selection (ledger ' + mmyy(glP[0]) + ' → ' + mmyy(glP[glP.length - 1]) + ')') + (capSpark.hasSpark ? ' · monthly trail — click a point for that month' : '') },
       { label: 'Net income ROI', value: niRoi === null ? '—' : niRoi.toFixed(2) + '%', col: niRoi !== null && niRoi < 0 ? RED : '#2A6F4E', bg: '#FFFFFF', bd: '#E5E3DC', hasLegs: false, legs: [], ...roiSpark,
         sub: (nWin ? 'annualized net income ' + fK(annNi) + ' (NOI − interest) ÷ capital in deal' : 'needs ledger months in the selection') + (roiSpark.hasSpark ? ' · monthly trail into ' + mmyy(seriesM[seriesM.length - 1]) : '') },
-      { label: 'Cash-on-cash ROI', value: '—', col: MUT, bg: '#FBF6EA', bd: '#EAD9C0', hasLegs: false, legs: [],
-        sub: 'PENDING — needs actual cash flow (Cash Flow phase); will divide by initial investment. Its trail line lights up alongside the other two once cash-flow months land.' },
+      CFD ? { label: 'Cash-on-cash ROI', value: cocRoi === null ? '—' : cocRoi.toFixed(2) + '%', col: cocRoi !== null && cocRoi < 0 ? RED : GOLDD, bg: '#FFFFFF', bd: '#E5E3DC', hasLegs: false, legs: [], ...cocSpark,
+        sub: (cfWin.length ? (cocRoi === null ? 'needs positive initial investment in scope (cash-out beyond basis)' : 'annualized cash kept ' + fK(annKept) + ' (collected + claims − opex − escrow − HOA − interest − scheduled principal) ÷ initial investment') : 'no cash-flow months in the selection (cash ledger ' + mmyy(cfMo[0]) + ' → ' + mmyy(cfMo[cfMo.length - 1]) + ')') + ' · collections still include SD, fees & arrears until true tenant charges land' + (cocSpark.hasSpark ? ' · monthly trail — click a point' : '') }
+      : { label: 'Cash-on-cash ROI', value: '—', col: MUT, bg: '#FBF6EA', bd: '#EAD9C0', hasLegs: false, legs: [],
+        sub: 'PENDING — cf-data.json is not available to this page yet; once the Cash Flow section publishes, this becomes annualized actual cash kept ÷ initial investment, with its own monthly trail.' },
     ].map(k => ({ hasSpark: false, spCol: '', sparkPath: '', sparkArea: '', cols: [], ...k }));
     const invSub = 'ownership costs & returns for the selected scope · balances at ' + mmyy(lastM);
     const invFoot = 'Common-sense scope: properties sold or moved to held-for-sale drop out of every figure from their event month (' + excluded.length + ' excluded here' + (excludedDebt > 0.005 ? ', still carrying ' + fK(excludedDebt) + ' of debt — see checks below' : '') + ') — select their status in the STATUS filter to bring them back. Principal repaid counts only money you paid: scheduled principal + extra principal + the excess paid on releases; the released door’s own slice (settled from sale proceeds) and the ' + fK(56774) + ' refinance-funded payoff on 410 Virginia Dr are not counted. Returns annualize the selected ledger window' + (nWin ? ' ' + mmyy(glWin[0]) + ' → ' + mmyy(glWin[nWin - 1]) : '') + '.';
