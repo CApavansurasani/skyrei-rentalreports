@@ -169,6 +169,51 @@ input:focus{outline:2px solid #C9A45C;outline-offset:1px}
       <div style="margin-top:12px;padding-top:10px;border-top:1px solid rgba(233,237,245,0.12);font-size:10.5px;color:#8A96AD;line-height:1.6">{{ wfFoot }}</div>
     </div>
 
+    <!-- ══ Collection rate — the walk ══ -->
+    <div style="margin-top:16px;background:#FFFFFF;border:1px solid #E5E3DC;border-radius:16px;padding:22px 26px">
+      <div style="display:flex;justify-content:space-between;align-items:baseline;flex-wrap:wrap;gap:8px">
+        <div style="font-family:'Source Serif 4',Georgia,serif;font-size:18px;font-weight:600;color:#16233A">Collection rate — the monthly walk</div>
+        <div style="font-size:11.5px;color:#8A93A6">{{ rwSub }}</div>
+      </div>
+      <div style="margin-top:14px;display:flex;align-items:flex-end;gap:26px;flex-wrap:wrap">
+        <div>
+          <div style="font-size:10px;letter-spacing:0.1em;font-weight:700;color:#96742F">{{ rwHeadLab }}</div>
+          <div style="margin-top:4px;font-family:'Source Serif 4',Georgia,serif;font-size:34px;font-weight:600;color:{{ rwHeadCol }}">{{ rwHead }}</div>
+          <div style="margin-top:2px;font-size:11px;color:#8A93A6">{{ rwHeadCap }}</div>
+        </div>
+        <div style="display:flex;gap:22px;flex-wrap:wrap">
+          <sc-for list="{{ rwTiles }}" as="rt" hint-placeholder-count="4">
+            <div>
+              <div style="font-size:9px;letter-spacing:0.07em;font-weight:800;color:#8A93A6">{{ rt.k }}</div>
+              <div style="margin-top:3px;font-family:'Source Serif 4',Georgia,serif;font-size:19px;font-weight:600;color:{{ rt.col }};font-variant-numeric:tabular-nums">{{ rt.v }}</div>
+              <div style="font-size:10px;color:#9AA3B5">{{ rt.sub }}</div>
+            </div>
+          </sc-for>
+        </div>
+      </div>
+      <div class="scr" style="margin-top:14px;overflow-x:auto">
+        <div style="min-width:640px">
+          <div style="display:flex;padding:6px 10px;font-size:9px;letter-spacing:0.06em;font-weight:800;color:#8A93A6;border-bottom:1px solid #EDEBE2">
+            <span style="flex:2.2">PARTICULARS</span>
+            <sc-for list="{{ rwCols }}" as="rc" hint-placeholder-count="5">
+              <span onClick="{{ rc.onClick }}" style="flex:1;text-align:right;cursor:pointer;color:{{ rc.col }};font-weight:{{ rc.fw }}">{{ rc.lab }}</span>
+            </sc-for>
+            <span style="flex:1.1;text-align:right;color:#96742F">{{ rwTotLab }}</span>
+          </div>
+          <sc-for list="{{ rwRows }}" as="rr" hint-placeholder-count="10">
+            <div style="display:flex;padding:6px 10px;font-size:11.5px;font-variant-numeric:tabular-nums;border-bottom:1px solid #F4F2EA;background:{{ rr.bg }}">
+              <span style="flex:2.2;font-weight:{{ rr.fw }};color:{{ rr.kcol }}">{{ rr.k }}</span>
+              <sc-for list="{{ rr.vals }}" as="rv" hint-placeholder-count="5">
+                <span style="flex:1;text-align:right;color:{{ rv.c }};font-weight:{{ rv.f }}">{{ rv.v }}</span>
+              </sc-for>
+              <span style="flex:1.1;text-align:right;font-weight:800;color:{{ rr.tcol }}">{{ rr.tot }}</span>
+            </div>
+          </sc-for>
+        </div>
+      </div>
+      <div style="margin-top:10px;font-size:10.5px;color:#9AA3B5;line-height:1.65">{{ rwFoot }}</div>
+    </div>
+
     <!-- ══ Monthly trend ══ -->
     <div style="margin-top:16px;background:#FFFFFF;border:1px solid #E5E3DC;border-radius:16px;padding:22px 26px">
       <div style="display:flex;justify-content:space-between;align-items:baseline;flex-wrap:wrap;gap:8px">
@@ -223,6 +268,8 @@ input:focus{outline:2px solid #C9A45C;outline-offset:1px}
         <span style="font-size:12.5px;font-weight:700;color:#3D64A8">{{ idChg }}</span><span style="font-size:11px;color:#8A93A6">charges</span>
         <span style="font-size:12px;color:#8A93A6">−</span>
         <span style="font-size:12.5px;font-weight:700;color:#96742F">{{ idColl }}</span><span style="font-size:11px;color:#8A93A6">collected</span>
+        <span style="font-size:12px;color:#8A93A6">−</span>
+        <span style="font-size:12.5px;font-weight:700;color:#A03E28">{{ idCl }}</span><span style="font-size:11px;color:#8A93A6">written off</span>
         <span style="font-size:12px;color:#8A93A6">=</span>
         <span style="font-size:12.5px;font-weight:700;color:{{ idCloseCol }}">{{ idClose }}</span><span style="font-size:11px;color:#8A93A6">closing · {{ idNote }}</span>
       </div>
@@ -557,7 +604,7 @@ class Component extends DCLogic {
     fetch('./cf-data.json')
       .then(r => { if (!r.ok) throw new Error('HTTP ' + r.status + ' fetching ./cf-data.json'); return r.json(); })
       .then(cf => {
-        if (!cf || cf.schema !== 'cf.v1' || !cf.doors || !cf.meta || !Array.isArray(cf.meta.months)) throw new Error('cf-data.json is not a valid cf.v1 file');
+        if (!cf || cf.schema !== 'cf.v2' || !cf.doors || !cf.collections || !Array.isArray(cf.meta.months)) throw new Error('cf-data.json is not a valid cf.v2 file');
         this.setState({ cf }, () => this.applyQuery());
       })
       .catch(e => this.setState({ cf: null, loadError: (e && e.message ? e.message : String(e)) }));
@@ -612,7 +659,8 @@ class Component extends DCLogic {
       keptCol: '#F5D9A8', keptBig: '', keptCap: '', collBig: '', collCap: '', rateCol: '#F5D9A8', rateBig: '', rateCap: '',
       wfConn: [], wfCols: [], driftOn: false, driftLine: '', wfFoot: '',
       trSub: '', trAreaK: '', trPathC: '', trPathK: '', trPtsC: [], trPtsK: [], trX: [], trFoot: '',
-      ldSub: '', idOpen: '', idChg: '', idColl: '', idClose: '', idCloseCol: INK, idNote: '',
+      rwSub: '', rwHeadLab: '', rwHead: '', rwHeadCol: '#16233A', rwHeadCap: '', rwTiles: [], rwCols: [], rwTotLab: '', rwRows: [], rwFoot: '',
+      ldSub: '', idOpen: '', idChg: '', idColl: '', idCl: '', idClose: '', idCloseCol: INK, idNote: '',
       lq: '', onLq: () => {}, lBucketChips: [], lSortChips: [],
       lRows: [], lEmpty: false, lEmptyTxt: '', lMoreShow: false, onLMore: () => {}, lMoreLab: '', lFoot: '',
       wSub: '', wTiles: [], wChips: [], wq: '', onWq: () => {}, wValHead: '',
@@ -679,7 +727,7 @@ class Component extends DCLogic {
       const dd = DOORS[d];
       for (const t of dd.tenants) {
         if (S.ft.length && !ftSet.has(t.tenant)) continue;
-        const openW = firstI === 0 ? t.opening : t.close[firstI - 1];
+        const openW = firstI === 0 ? t.opening : t.postSweep[firstI - 1];
         const chgW = sum(winIdx.map(i => t.chg[i]));
         const collW = sum(winIdx.map(i => t.coll[i]));
         const closeW = t.close[lastI];
@@ -690,13 +738,40 @@ class Component extends DCLogic {
       }
     }
     const monthsN = winIdx.length;
+    // ══ collection-rate engine (owner formula) — scoped from tenant rows ══
+    const CLX = CF.collections;
+    const rowsAll = [];
+    for (const d of scoped) for (const t of DOORS[d].tenants) {
+      if (S.ft.length && !ftSet.has(t.tenant)) continue;
+      rowsAll.push(t);
+    }
+    const openAt = (t, i) => i === 0 ? t.opening : t.postSweep[i - 1];
+    const rateStats = (i) => {
+      let od = 0, oa = 0, cd = 0, ca = 0, inv = 0, col = 0, cl = 0;
+      for (const t of rowsAll) {
+        const o = openAt(t, i);
+        if (o > 0.005) od += o; else if (o < -0.005) oa += -o;
+        const c = t.close[i];
+        if (c > 0.005) cd += c; else if (c < -0.005) ca += -c;
+        inv += t.chg[i]; col += t.coll[i]; cl += t.cl[i];
+      }
+      const due = inv + od, act = col + oa - ca;
+      return { od, oa, cd, ca, inv, col, cl, due, act, rate: due > 0 ? act / due * 100 : null };
+    };
+    const rsM = MO.map((_, i) => rateStats(i));
+    const spanIdx = winIdx;
+    const spanInv = sum(spanIdx.map(i => rsM[i].inv)), spanColl = sum(spanIdx.map(i => rsM[i].col));
+    const spanAct = sum(spanIdx.map(i => rsM[i].act));
+    const spanDue = rsM[firstI].od + spanInv;
+    const spanRate = spanDue > 0 ? spanAct / spanDue * 100 : null;
+    const spanCL = sum(spanIdx.map(i => rsM[i].cl));
     const tests = {
       every: { lab: 'Balance every month', f: r => monthsN >= 2 && r.t.close.filter((c, i) => i >= firstI && i <= lastI).every(c => c > 50) },
       tworent: { lab: '≥ 2 months’ rent', f: r => r.rent > 0 && r.closeW >= 2 * r.rent - 0.005 },
       grow: { lab: 'Growing balance', f: r => r.move > 50 },
       never: { lab: 'Owes, paid nothing', f: r => r.collW < 0.005 && r.closeW > 50 },
       credit: { lab: 'Credit balance', f: r => r.closeW < -50 },
-      nolease: { lab: 'No lease covering', f: r => (r.t.nl || 0) > 0 },
+      pendwo: { lab: 'Pending write-off', f: r => (r.t.flags || []).includes('pending-writeoff') },
       blank: { lab: 'Blank opening', f: r => r.t.openingBlank },
     };
     const testKeys = Object.keys(tests);
@@ -706,7 +781,7 @@ class Component extends DCLogic {
     const nGl = scoped.filter(d => DOORS[d].inGL).length, nFile = scoped.length - nGl;
     const nTen = allRows.length;
     const scopeLine = spanLab + ' · ' + nGl + ' GL doors' + (nFile ? ' (+' + nFile + ' file-only)' : '') + ' · ' + nTen + ' tenant ledgers · rent charged → cash actually kept';
-    const asOfLine = 'DERIVED v1 · charges = GL rent (proxy) · collections = Cashflow.xlsx · bank tie-out pending';
+    const asOfLine = 'v2 · Buildium journals at tenant grain · rate = owner formula · bank tie-out pending';
 
     // ══ filter bar ══
     const openDd = (id) => (e) => { e.stopPropagation(); this.setState({ ddOpen: S.ddOpen === id ? null : id, fq: '' }); };
@@ -747,11 +822,11 @@ class Component extends DCLogic {
     const credits = allRows.reduce((s, r) => s + (r.closeW < 0 ? r.closeW : 0), 0);
     const kTile = (label, val, sub, col, tip, bg, bd) => ({ label, val, sub, col: col || NAVY, dcol: FAINT, tip: tip || '', bg: bg || '#FFFFFF', bd: bd || '#E5E3DC' });
     const kpis = [
-      kTile('Rent charged', fN(chg), spanLab + ' · GL rent net of vacancy', BLUE, 'Rental Income + Vacancy Loss for the span'),
-      kTile('Cash collected', fN(coll), sum(winIdx.map(i => scoped.reduce((s, d) => s + DOORS[d].nrec[i], 0))) + ' receipts', GOLDD, 'Actual tenant receipts from Cashflow.xlsx'),
-      kTile('Collection rate', chg > 0 ? rate.toFixed(1) + '%' : '—', 'collected ÷ charged' + (rate > 100 ? ' · arrears & deposits inside' : ''), rate >= 100 ? GREEND : (rate >= 90 ? NAVY : REDD), 'Includes arrears catch-up, SD and fees — true tenant charges pending'),
-      kTile('Owed by tenants', fN(owed), 'at ' + mmyy(MO[lastI]) + ' · ' + allRows.filter(r => r.closeW > 0.005).length + ' tenants', REDD, 'Sum of positive tenant balances at span end'),
-      kTile('Tenant credits held', fN(-credits), 'prepaid / deposits unapplied', GREEND, 'Sum of negative balances — inflated until true charges land'),
+      kTile('Charges raised', fN(spanInv), spanLab + ' · rent, SD, fees, utilities', BLUE, 'Buildium charge journal for the span (refund rows excluded)'),
+      kTile('Cash collected', fN(spanColl), sum(winIdx.map(i => scoped.reduce((s, d) => s + DOORS[d].nrec[i], 0))) + ' receipts', GOLDD, 'Buildium receipts (SD refunds outside AR)'),
+      kTile('Collection rate', spanRate !== null ? spanRate.toFixed(2) + '%' : '—', 'actual collection ÷ due for the span', spanRate !== null && spanRate >= 85 ? GREEND : (spanRate !== null && spanRate >= 75 ? NAVY : REDD), 'Owner formula: (collections + opening advances − closing advances) ÷ (invoices + opening due)'),
+      kTile('Owed by tenants', fN(rsM[lastI].cd), 'at ' + mmyy(MO[lastI]) + ' · gross dues', REDD, 'Sum of positive tenant balances at span end (before that month\u2019s write-offs)'),
+      kTile('Advances held', fN(rsM[lastI].ca), 'prepaid for future months', GREEND, 'Sum of negative tenant balances at span end'),
       kTile('Cash kept', fN(kept), 'after opex, statutory & full EMI', kept >= 0 ? GREEND : REDD, 'Collections + claims − operating − statutory − interest − scheduled principal', kept >= 0 ? '#F2F7F0' : '#FBF0ED', kept >= 0 ? '#D6E4D2' : '#EAD1C8'),
     ];
 
@@ -763,7 +838,7 @@ class Component extends DCLogic {
     const rateCap = rate > 100 ? 'over 100% — balances drawn down' : 'of charged rent';
     const dBal = coll - chg; // + means collected more than charged
     const steps = [
-      { label: 'RENT CHARGED', cap: 'GL · net of vacancy', v: chg, kind: 'anchor', col: '#3D64A8' },
+      { label: 'CHARGES RAISED', cap: 'rent · SD · fees', v: chg, kind: 'anchor', col: '#3D64A8' },
       { label: dBal >= 0 ? 'FROM BALANCES' : 'TO BALANCES', cap: dBal >= 0 ? 'arrears & deposits in' : 'unpaid → AR', v: dBal, kind: 'delta' },
       { label: 'CASH COLLECTED', cap: 'actual receipts', v: coll, kind: 'anchor', col: GOLD },
       { label: 'INSURANCE CLAIMS', cap: 'per GL', v: claims, kind: 'delta' },
@@ -789,10 +864,9 @@ class Component extends DCLogic {
       const t = Math.max(Math.min(216 - yPx(ends[i]), 214), 2);
       return { l: ((i + 0.8) * (100 / wfN)) + '%', w: (0.4 * (100 / wfN)) + '%', t: t + 'px' };
     });
-    const driftAll = coll - chg;
-    const driftOn = Math.abs(driftAll) > 500;
-    const driftLine = 'Collections exceed rent charges by ' + fN(Math.abs(driftAll)) + ' in this scope. Expected for now: receipts include security deposits, fees, utility recoveries and arrears settlements, while charges are rent-only until the true tenant-charge data lands. Tenant credit balances are overstated by roughly the same amount — the drift is quantified, not absorbed.';
-    const wfFoot = 'Operating cash only. Capex per GL: ' + fN(capexW) + ' · financing events (draws, payoffs, releases) shown separately at right — sale-funded payoffs are settled from sale proceeds, not operating cash. Escrow uses the loans-engine T&I; the file’s recorded T&I differs by a reconciled delta (see Checks & balances). HOA cash pending — GL accrual used as proxy.';
+    const driftOn = Math.abs(spanCL) > 0.5;
+    const driftLine = 'Collection loss written off in this span: ' + fN(spanCL) + ' — moved-out tenants\u2019 residual balances per your AR file (' + (CLX.clDetail || []).length + ' write-off events portfolio-wide; the walk below and Checks & balances carry the detail). Movers not yet written off stay on the book: ' + (CLX.pendingWriteoffs || []).length + ' listed.';
+    const wfFoot = 'Charges & collections from the Buildium journals at tenant grain. Operating cash only. Capex per GL: ' + fN(capexW) + ' · financing events (draws, payoffs, releases) shown separately at right — sale-funded payoffs are settled from sale proceeds, not operating cash. Escrow uses the loans-engine T&I; the file’s recorded T&I differs by a reconciled delta (see Checks & balances). HOA cash pending — GL accrual used as proxy.';
 
     // ══ trend ══
     const chgM = totM('chg'), collM = totM('coll');
@@ -822,10 +896,47 @@ class Component extends DCLogic {
     const trX = MO.map((m, i) => ({
       lab: mmyy(m), onClick: () => this.setF({ fm: S.fm.length === 1 && S.fm[0] === m ? [] : [m] }),
       xfw: inSpan(i) && selM.length ? 800 : 600, xcol: inSpan(i) && selM.length ? NAVY : FAINT,
-      rate: chgM[i] > 0 ? (collM[i] / chgM[i] * 100).toFixed(0) + '%' : '—', rcol: chgM[i] > 0 && collM[i] / chgM[i] >= 1 ? GREEND : GOLDD,
+      rate: rsM[i].rate !== null ? rsM[i].rate.toFixed(1) + '%' : '—', rcol: rsM[i].rate !== null && rsM[i].rate >= 85 ? GREEND : GOLDD,
     }));
     const trSub = 'every month in the ledger · click a point to focus the page on that month';
-    const trFoot = 'Collection rate under each month = collected ÷ charged. Rates above 100% mean tenants settled arrears or paid deposits — the ledger drift note in the hero quantifies it. Y-axis zoomed to the data range; every point labeled.';
+    const trFoot = 'The rate under each month is the owner-formula collection rate (see the walk above). Y-axis zoomed to the data range; every point labeled. Charged = Buildium invoices; collected = receipts.';
+
+    // ══ collection-rate walk card ══
+    const fR = v => v === null ? '—' : v.toFixed(2) + '%';
+    const rwCols = spanIdx.map(i => ({
+      lab: mmyy(MO[i]), col: NAVY, fw: 800,
+      onClick: () => this.setF({ fm: S.fm.length === 1 && S.fm[0] === MO[i] ? [] : [MO[i]] }),
+    }));
+    const rwTotLab = spanIdx.length > 1 ? 'SPAN' : '';
+    const mkVals = (f, opts) => spanIdx.map(i => {
+      const v = f(i);
+      return { v: typeof v === 'string' ? v : fN(v), c: (opts && opts.c) || INK, f: (opts && opts.f) || 500 };
+    });
+    const rwRows = [
+      { k: 'Invoices for the month', vals: mkVals(i => rsM[i].inv), tot: fN(spanInv), bg: 'transparent', fw: 600, kcol: INK, tcol: INK },
+      { k: '+ Opening due', vals: mkVals(i => rsM[i].od), tot: fN(rsM[firstI].od), bg: 'transparent', fw: 500, kcol: MUT, tcol: MUT },
+      { k: '= Due for the month', vals: mkVals(i => rsM[i].due), tot: fN(spanDue), bg: '#FBFAF6', fw: 800, kcol: NAVY, tcol: NAVY },
+      { k: 'Collections received', vals: mkVals(i => rsM[i].col), tot: fN(spanColl), bg: 'transparent', fw: 600, kcol: GOLDD, tcol: GOLDD },
+      { k: '+ Opening advances applied', vals: mkVals(i => rsM[i].oa), tot: fN(rsM[firstI].oa), bg: 'transparent', fw: 500, kcol: MUT, tcol: MUT },
+      { k: '− Advances for future months', vals: mkVals(i => rsM[i].ca), tot: fN(rsM[lastI].ca), bg: 'transparent', fw: 500, kcol: MUT, tcol: MUT },
+      { k: '= Actual collection', vals: mkVals(i => rsM[i].act), tot: fN(spanAct), bg: '#FBFAF6', fw: 800, kcol: GREEND, tcol: GREEND },
+      { k: 'COLLECTION RATE', vals: spanIdx.map(i => ({ v: fR(rsM[i].rate), c: rsM[i].rate !== null && rsM[i].rate >= 85 ? GREEND : (rsM[i].rate !== null && rsM[i].rate >= 75 ? NAVY : REDD), f: 800 })), tot: fR(spanRate), bg: '#F6ECD9', fw: 800, kcol: '#96742F', tcol: '#96742F' },
+      { k: 'Collection loss written off', vals: mkVals(i => rsM[i].cl), tot: fN(spanCL), bg: 'transparent', fw: 500, kcol: REDD, tcol: REDD },
+      { k: 'Closing due (gross)', vals: mkVals(i => rsM[i].cd), tot: fN(rsM[lastI].cd), bg: 'transparent', fw: 500, kcol: MUT, tcol: MUT },
+    ];
+    const ytdArr = CLX.monthly.ytdRate || [];
+    const rwHead = spanIdx.length > 1 ? fR(spanRate) : fR(rsM[firstI].rate);
+    const rwHeadLab = spanIdx.length > 1 ? 'SPAN RATE · ' + spanLab + ' (TELESCOPED)' : 'COLLECTION RATE · ' + spanLab;
+    const rwHeadCol = spanRate !== null && spanRate >= 85 ? GREEND : (spanRate !== null && spanRate >= 75 ? NAVY : REDD);
+    const rwHeadCap = 'each due counted once; each collection counted once' + (unfiltered ? '' : ' · filtered scope');
+    const rwTiles = [
+      { k: 'YTD RATE (JAN →)', v: unfiltered && ytdArr.length ? fR(ytdArr[lastI]) : fR((() => { const d0 = rsM[0].od + sum(MO.map((_, i) => i <= lastI ? rsM[i].inv : 0)); const a0 = sum(MO.map((_, i) => i <= lastI ? rsM[i].act : 0)); return d0 > 0 ? a0 / d0 * 100 : null; })()), sub: 'telescoped from January', col: GREEND },
+      { k: 'BEST MONTH', v: (() => { let b = null; for (const i of spanIdx) if (rsM[i].rate !== null && (b === null || rsM[i].rate > rsM[b].rate)) b = i; return b === null ? '—' : mmyy(MO[b]) + ' · ' + rsM[b].rate.toFixed(1) + '%'; })(), sub: 'of the span', col: NAVY },
+      { k: 'COLLECTION LOSS', v: fN(spanCL), sub: (CLX.pendingWriteoffs || []).length + ' movers pending write-off', col: REDD },
+      { k: 'SD REFUNDS (OUTSIDE AR)', v: fN(Math.abs(sum((CLX.sdRefunds || []).filter(x => { const i = MO.indexOf(x.m); return i >= firstI && i <= lastI; }).map(x => x.amt)))), sub: 'excluded from the ledger', col: MUT },
+    ];
+    const rwSub = 'your formula, live — click a month column to focus the page';
+    const rwFoot = 'Monthly rate = (collections + opening advances − closing advances) ÷ (invoices + opening due) — advances for future months never flatter a month, and months collecting past advances get credit for the dues they cleared. The SPAN/YTD column counts each due once: Σ actual collections ÷ (opening due at span start + Σ invoices) — monthly denominators re-count carried dues by design (the arrears-drag view). Write-offs stay in the denominator. Openings chain: closing − collection loss = next opening, to the cent.';
 
     // ══ ledger table ══
     const lqv = (S.lq || '').toLowerCase();
@@ -841,31 +952,38 @@ class Component extends DCLogic {
     const lShown = (S.lAll || lqv) ? lFiltered : lFiltered.slice(0, CAP);
     const rowKey = r => r.d + '||' + r.t.tenant;
     const mkMini = r => winIdx.map(i => {
-      const o = i === 0 ? r.t.opening : r.t.close[i - 1];
+      const o = i === 0 ? r.t.opening : r.t.postSweep[i - 1];
+      const fb = r.t.fileBal ? r.t.fileBal[i] : null;
+      const tie = fb === null ? '·' : (Math.abs(r.t.close[i] - fb) <= 0.005 || Math.abs(r.t.postSweep[i] - fb) <= 0.005 ? '✓' : 'Δ ' + fK(r.t.close[i] - fb));
       return { m: mmyy(MO[i]), open: f2(o), chg: f2(r.t.chg[i]), coll: f2(r.t.coll[i]), close: f2(r.t.close[i]),
-        closeCol: r.t.close[i] > 0.005 ? REDD : (r.t.close[i] < -0.005 ? GREEND : MUT), occ: r.t.occ[i] ? '●' : '—' };
+        closeCol: r.t.close[i] > 0.005 ? REDD : (r.t.close[i] < -0.005 ? GREEND : MUT),
+        occ: (r.t.occ[i] ? '●' : '—') + ' ' + tie };
     });
     const leaseLine = r => {
-      if (r.t.lease) { const L = r.t.lease; return L.status + ' · ' + L.type + ' · ' + L.start.slice(0, 10) + ' → ' + (L.end.slice(0, 4) === '2060' ? 'at will' : L.end.slice(0, 10)) + ' · rent ' + fN(L.rent) + '/mo'; }
-      if (r.t.src === 'ar') return 'No lease on file — carried from AR balances (' + (r.dd.arTenant === r.t.tenant ? 'named tenant at Dec-25' : 'AR record') + ')';
-      return r.t.tenant === 'Vacant' ? 'System bucket — months with no lease and no known tenant' : 'No lease matched';
+      if (r.t.lease) { const L = r.t.lease; return L.status + ' · ' + L.start.slice(0, 10) + ' → ' + (L.end.slice(0, 4) === '2060' ? 'at will' : L.end.slice(0, 10)) + ' · rent ' + fN(L.rent) + '/mo'; }
+      if (r.t.src === 'ar') return 'AR-file row — no lease on file for this name';
+      return 'Journal-only row (payer/lease name not in the AR file)';
     };
     const flagsLine = r => {
-      const f = [];
-      if (r.t.openingBlank) f.push('Dec-25 opening BLANK in AR file — treated as $0');
-      if ((r.t.nl || 0) > 0) f.push(r.t.nl + ' month' + (r.t.nl === 1 ? '' : 's') + ' attributed with no lease covering — last known occupant');
-      if (r.dd.flags.includes('ar-tenant-not-in-leases') && r.dd.arTenant === r.t.tenant) f.push('AR tenant name not found in Leases.csv — possible spelling gap');
+      const f = []; const F = r.t.flags || [];
+      const clTot = sum(r.t.cl || []);
+      if (Math.abs(clTot) > 0.005) f.push('collection loss written off: ' + f2(clTot));
+      if (F.includes('pending-writeoff')) f.push('moved out, balance NOT yet written off in the AR file');
+      if (r.t.openingBlank) f.push('Dec-25 opening blank in AR file — treated as $0');
       if (!r.dd.inGL) f.push('door not in the 2026 GL (sold / pre-2026)');
       const nrec = sum(winIdx.map(i => r.dd.nrec[i]));
       f.push(nrec + ' receipt' + (nrec === 1 ? '' : 's') + ' on this door in span');
+      const bad = winIdx.some(i => r.t.fileBal && r.t.fileBal[i] !== null && Math.abs(r.t.close[i] - r.t.fileBal[i]) > 0.005 && Math.abs(r.t.postSweep[i] - r.t.fileBal[i]) > 0.005);
+      if (bad) f.push('does NOT tie to your AR file — see the reconciliation card');
       return f.join(' · ');
     };
     const mkBadges = r => {
-      const b = [];
+      const b = []; const F = r.t.flags || [];
+      if (F.includes('pending-writeoff')) b.push({ t: 'PENDING W/O', bg: '#FBF0ED', col: REDD });
+      else if (F.includes('written-off')) b.push({ t: 'WRITTEN OFF', bg: '#FBF6EA', col: GOLDD });
+      else if (F.includes('moved-out')) b.push({ t: 'MOVED OUT', bg: '#F0EEE6', col: MUT });
+      if (F.includes('book-only')) b.push({ t: 'NOT IN AR FILE', bg: '#FBF6EA', col: GOLDD });
       if (r.t.openingBlank) b.push({ t: 'BLANK OPEN', bg: '#FBF6EA', col: GOLDD });
-      if ((r.t.nl || 0) > 0) b.push({ t: 'NO LEASE', bg: '#FBF0ED', col: REDD });
-      if (r.t.lease && r.t.lease.status === 'Past') b.push({ t: 'FORMER', bg: '#F0EEE6', col: MUT });
-      if (r.t.tenant === 'Vacant') b.push({ t: 'UNATTRIBUTED', bg: '#F0EEE6', col: MUT });
       return b.slice(0, 2);
     };
     const mkRow = (r, expKey, setExp) => ({
@@ -891,9 +1009,10 @@ class Component extends DCLogic {
     const sortDef = [{ id: 'bal', lab: 'Worst balance' }, { id: 'move', lab: 'Biggest move' }, { id: 'az', lab: 'A–Z' }];
     const lSortChips = sortDef.map(sd => ({ label: sd.lab, onClick: () => this.setState({ lSort: sd.id }), bd: S.lSort === sd.id ? GOLD : '#D8D4C8', bg: S.lSort === sd.id ? '#FBF6EA' : '#FFFFFF' }));
     const idOpen = allRows.reduce((s, r) => s + r.openW, 0), idChgV = allRows.reduce((s, r) => s + r.chgW, 0), idCollV = allRows.reduce((s, r) => s + r.collW, 0), idCloseV = allRows.reduce((s, r) => s + r.closeW, 0);
-    const idNote = 'holds to the cent for every tenant, property, entity and month' + (spanned ? ' · non-adjacent picks widened to the span ' + spanLab : '');
+    const idClV = allRows.reduce((s, r) => { let c = 0; for (const i of winIdx) if (i < lastI) c += r.t.cl[i]; return s + c; }, 0);
+    const idNote = 'write-offs leave the book between months (your rule) · holds to the cent for every tenant, property, entity and month' + (spanned ? ' · non-adjacent picks widened to ' + spanLab : '');
     const ldSub = spanLab + ' · opening + charges − collected = closing · ' + allRows.length + ' ledgers' + (hiddenZero ? ' (' + hiddenZero + ' all-zero hidden)' : '');
-    const lFoot = 'Openings are the Dec-25 tenant balances by property (33 blank cells treated as $0 and badged). Charges are GL rent net of vacancy attributed to the month’s occupant — the later lease when two overlap; months with no lease go to the last known AR tenant. Balances of former tenants stay frozen on their own line until settled or written off. True tenant charges (SD, fees, utilities) will replace the rent proxy when supplied.';
+    const lFoot = 'Openings are your AR file’s Dec-25 closings, matched by tenant name per property. Charges and collections are the actual Buildium journals — rent, SD, fees and utilities — allocated to the tenant in the unit on each row’s date (Active/Last status per your column; payer names override payment allocation). Balances of former tenants stay frozen on their own line until written off in your AR file; write-offs leave the book between months. In the expanded month view, ✓ means the computed closing ties your AR file to the cent, Δ shows the difference, · means no file balance for that name.';
 
     // ══ watchlist ══
     const universe = allRows.filter(r => r.fails.length);
@@ -908,7 +1027,7 @@ class Component extends DCLogic {
     const wChips = testKeys.map(k => ({
       label: tests[k].lab, n: '' + universe.filter(r => r.fails.includes(k)).length,
       onClick: () => { const cur = new Set(S.wSel); cur.has(k) ? cur.delete(k) : cur.add(k); this.setState({ wSel: [...cur], wAll: false }); },
-      bd: wSelSet.has(k) ? GOLD : '#D8D4C8', bg: wSelSet.has(k) ? '#FBF6EA' : '#FFFFFF', col: k === 'credit' ? GREEND : (k === 'blank' || k === 'nolease') ? GOLDD : REDD,
+      bd: wSelSet.has(k) ? GOLD : '#D8D4C8', bg: wSelSet.has(k) ? '#FBF6EA' : '#FFFFFF', col: k === 'credit' ? GREEND : (k === 'blank' || k === 'pendwo') ? GOLDD : REDD,
     }));
     const wOwed = wView.reduce((s, r) => s + (r.closeW > 0 ? r.closeW : 0), 0);
     const wCred = wView.reduce((s, r) => s + (r.closeW < 0 ? r.closeW : 0), 0);
@@ -922,13 +1041,13 @@ class Component extends DCLogic {
     const wRowsList = wShown.map(r => {
       const base = mkRow(r, 'wExp', true);
       return Object.assign(base, {
-        pills: r.fails.map(k => ({ t: tests[k].lab.toUpperCase(), bg: k === 'credit' ? '#F2F7F0' : (k === 'blank' || k === 'nolease') ? '#FBF6EA' : '#FBF0ED', col: k === 'credit' ? GREEND : (k === 'blank' || k === 'nolease') ? GOLDD : REDD })).slice(0, 4),
+        pills: r.fails.map(k => ({ t: tests[k].lab.toUpperCase(), bg: k === 'credit' ? '#F2F7F0' : (k === 'blank' || k === 'pendwo') ? '#FBF6EA' : '#FBF0ED', col: k === 'credit' ? GREEND : (k === 'blank' || k === 'pendwo') ? GOLDD : REDD })).slice(0, 4),
         val: wSelSet.size ? f2(metric(r)) : ('' + r.fails.length + ' ⚑'), valCol: r.closeW > 0.005 ? REDD : (r.closeW < -0.005 ? GREEND : MUT),
       });
     });
     const wValHead = selOne ? tests[selOne].lab.toUpperCase() : (wSelSet.size ? 'CLOSING' : 'FLAGS · WORST FIRST');
     const wSub = 'the plan: every tenant pays in full, every month · ' + universe.length + ' ledgers trip at least one test';
-    const wFoot = 'Tests run on the selected span: balance every month-end > $50 · closing ≥ 2 months’ lease rent · balance grew > $50 · owes with zero receipts · credit beyond $50 (inflated until true charges land) · no lease on file · blank Dec-25 opening. Chips combine with AND. Consistent-balance tenants are the eviction/settlement conversation list.';
+    const wFoot = 'Tests run on the selected span: balance every month-end > $50 · closing ≥ 2 months’ lease rent · balance grew > $50 · owes with zero receipts · credit beyond $50 · moved out with balance pending write-off · blank Dec-25 opening. Chips combine with AND. Consistent-balance tenants are the eviction/settlement conversation list; balances are gross ledger dues from the Buildium journals.';
 
     // ══ where the cash went ══
     const opexAccts = {};
@@ -980,7 +1099,7 @@ class Component extends DCLogic {
     // ══ checks & balances ══
     const badge = ok => ok ? { badge: 'TIES', bg: '#E4F0E7', col: GREEND, bd: '#D6E4D2' } : { badge: 'CHECK', bg: '#FBF0ED', col: REDD, bd: '#EAD1C8' };
     const gold = { badge: 'PENDING', bg: '#FBF6EA', col: GOLDD, bd: '#EAD9C0' };
-    const idResid = Math.abs(idOpen + idChgV - idCollV - idCloseV);
+    const idResid = Math.abs(idOpen + idChgV - idCollV - idClV - idCloseV);
     const ckList = (id) => ({ onClick: () => this.setState({ ckOpen: S.ckOpen === id ? null : id }), listOn: S.ckOpen === id });
     const pScope = unfiltered ? [] : [{ k: 'Scope', v: 'portfolio-wide recon', vc: FAINT }];
     const naPrin = RC.principal.naCells || [], naColl = RC.collections.naCells || [];
@@ -997,7 +1116,7 @@ class Component extends DCLogic {
     const nrecW = scoped.reduce((s, d) => s + sum(winIdx.map(i => DOORS[d].nrec[i])), 0);
     const ckCards = [
       Object.assign({ title: 'Ledger identity', lines: [
-        { k: 'Opening + charges', v: f2(idOpen + idChgV), vc: INK }, { k: '− collected', v: f2(idCollV), vc: INK },
+        { k: 'Opening + charges', v: f2(idOpen + idChgV), vc: INK }, { k: '− collected − written off', v: f2(idCollV + idClV), vc: INK },
         { k: '= closing', v: f2(idCloseV), vc: idCloseV < 0 ? GREEND : REDD }, { k: 'Residual', v: f2(idResid), vc: idResid < 0.02 ? GREEND : REDD },
       ], hasList: false, listOn: false, listLab: '', list: [], onClick: () => {} }, badge(idResid < 0.02)),
       Object.assign({ title: 'Interest — file vs GL', lines: [
@@ -1016,38 +1135,49 @@ class Component extends DCLogic {
         { k: 'File T&I payments', v: f2(fileEsc), vc: INK }, { k: 'Engine (loan sheet)', v: f2(engEsc), vc: INK },
         { k: 'Δ', v: f2(fileEsc - engEsc), vc: GOLDD }, { k: 'Grain', v: 'mixed: company + door', vc: FAINT },
       ], hasList: tiRows.length > 0, listLab: S.ckOpen === 'ti' ? 'Hide file rows ▲' : 'Show file rows ▼', list: tiRows }, gold, ckList('ti')),
-      Object.assign({ title: 'Charges completeness', lines: [
-        { k: 'Collected − charged', v: f2(coll - chg), vc: GOLDD },
-        { k: 'Other Income (GL, not in charges)', v: f2(memoOI), vc: FAINT },
-        { k: 'SD forfeits (GL)', v: f2(memoSD), vc: FAINT },
-        { k: 'Collection Loss (GL) — write-offs?', v: f2(memoCL), vc: REDD },
-      ], hasList: false, listOn: false, listLab: '', list: [], onClick: () => {} }, gold),
+      Object.assign({ title: 'AR file reconciliation', lines: [
+        { k: 'Cells compared (tenant × month)', v: '' + (1265 - 0), vc: FAINT },
+        { k: 'Differences', v: '' + (CLX.reconDiffs || []).length + ' cells', vc: (CLX.reconDiffs || []).length ? GOLDD : GREEND },
+        { k: 'Σ |Δ|', v: f2(sum((CLX.reconDiffs || []).map(x => Math.abs(x.diff)))), vc: GOLDD },
+        { k: 'Largest', v: (CLX.reconDiffs || []).length ? fK(Math.max(...(CLX.reconDiffs || []).map(x => Math.abs(x.diff)))) : '—', vc: GOLDD },
+      ], hasList: (CLX.reconDiffs || []).length > 0, listLab: S.ckOpen === 'recon' ? 'Hide differences ▲' : 'Show every difference ▼',
+      list: (CLX.reconDiffs || []).map(x => ({ t: '• ' + x.prop + ' — ' + x.tenant + ' · ' + mmyy(x.m), v: f2(x.computed) + ' vs ' + f2(x.file) })) }, gold, ckList('recon')),
+      Object.assign({ title: 'Collection loss', lines: [
+        { k: 'Written off (file, span)', v: f2(spanCL), vc: REDD },
+        { k: 'Stated lease rule (memo)', v: f2(sum(winIdx.map(i => (CLX.statedCL || z())[i] || 0))), vc: FAINT },
+        { k: 'Dec-25 write-offs vs opening', v: f2(CLX.decCL || 0), vc: FAINT },
+        { k: 'Movers pending write-off', v: '' + (CLX.pendingWriteoffs || []).length, vc: (CLX.pendingWriteoffs || []).length ? GOLDD : GREEND },
+      ], hasList: true, listLab: S.ckOpen === 'cl' ? 'Hide events ▲' : 'Show write-offs & pending ▼',
+      list: [
+        ...(CLX.clDetail || []).map(x => ({ t: '• ' + mmyy(x.m === '2025-12' ? '2025-12' : x.m) + ' — ' + x.prop + ' · ' + x.tenant + (x.kind.indexOf('pending') >= 0 ? ' (lease rule)' : ''), v: f2(x.amount) })),
+        ...(CLX.pendingWriteoffs || []).map(x => ({ t: '◦ PENDING — ' + x.prop + ' · ' + x.tenant + ' (out ' + x.movedOut + ')', v: f2(x.balance) })),
+        ...(CLX.sdRefunds || []).map(x => ({ t: '· SD refund (outside AR) — ' + x.prop + ' · ' + mmyy(x.m), v: f2(x.amt) })),
+      ] }, gold, ckList('cl')),
       Object.assign({ title: 'Coverage & source', lines: [
-        { k: 'Receipts in span', v: nrecW + ' rows', vc: INK }, { k: 'Collections “NA” cells', v: '' + naColl.length, vc: naColl.length ? GOLDD : GREEND },
-        { k: 'GL doors without AR row', v: '' + covLists.noAr.length, vc: covLists.noAr.length ? GOLDD : GREEND },
-        { k: 'Doors w/o lease · file-only · name gaps · blank open', v: covLists.noLease.length + ' · ' + covLists.noGl.length + ' · ' + covLists.mismatch.length + ' · ' + covLists.blank.length, vc: GOLDD },
+        { k: 'Receipts in span (Buildium)', v: nrecW + ' rows', vc: INK },
+        { k: 'Buildium vs Cashflow.xlsx (old export)', v: MO.map((_, i) => fK((CLX.monthly.collections[i] || 0) - (CLX.cfxCollections[i] || 0))).join(' '), vc: GOLDD },
+        { k: 'Property aliases applied', v: '' + Object.keys(CLX.propAliases || {}).length, vc: FAINT },
+        { k: 'Journal-only rows · unallocated', v: (CLX.bookOnly || []).length + ' · ' + (CLX.unallocated || 0), vc: (CLX.unallocated || 0) ? REDD : FAINT },
       ], hasList: true, listLab: S.ckOpen === 'cov' ? 'Hide lists ▲' : 'Show all lists ▼', list: [
-        ...covLists.noAr.map(x => ({ t: '• no AR row — ' + x.t, v: '' })),
-        ...covLists.noLease.map(x => ({ t: '• no lease — ' + x.t, v: '' })),
-        ...covLists.mismatch.map(x => ({ t: '• AR name ≠ leases — ' + x.t, v: x.v })),
-        ...naColl.map(x => ({ t: '• collections NA — ' + x[0], v: mmyy(x[1]) })),
-        ...covLists.noGl.map(x => ({ t: '• file-only door — ' + x.t, v: x.v })),
+        ...Object.entries(CLX.propAliases || {}).map(([a, b]) => ({ t: '• AR name “' + a + '” → ' + b, v: '' })),
+        ...(CLX.bookOnly || []).map(x => ({ t: '• journal-only — ' + x.prop + ' · ' + x.tenant, v: f2(x.close) })),
+        ...covLists.noGl.map(x => ({ t: '• no 2026 GL — ' + x.t, v: x.v })),
         ...covLists.blank.map(x => ({ t: '• blank Dec-25 — ' + x.t, v: x.v })),
       ] }, gold, ckList('cov')),
     ];
-    const ckFoot = 'Interest ties the file to the GL within pennies. The principal gap is the file’s scheduled-EMI capture vs the lender-verified engine (NA cells + rounding) — engine is canonical. The escrow Δ (' + f2(fileEsc - engEsc) + ') is recorded T&I vs the loan sheet’s escrow column, and includes the Apr-26 ' + fK(24029.40) + ' item on 1520 Nicklaus Drive. Charges completeness closes when true tenant charges (incl. SD & fees) arrive; Collection Loss treatment (write-off vs memo) is an owner decision pending.';
+    const ckFoot = 'Interest ties the file to the GL within pennies; the principal gap is the file’s scheduled-EMI capture vs the lender-verified engine; the escrow Δ (' + f2(fileEsc - engEsc) + ') includes the Apr-26 ' + fK(24029.40) + ' item on 1520 Nicklaus Drive. The AR reconciliation compares every computed tenant balance to your monthly AR file — the ' + (CLX.reconDiffs || []).length + ' differences are highlighted for your review, never absorbed. Collection loss follows YOUR write-off entries; the stated lease rule runs beside it as a memo.';
 
     // ══ assumptions & pending ══
     const asRows = (CF.meta.assumptions || []).map(t => ({ t }));
     const pendRows = [
-      { t: 'True tenant charges by month — rent, SD, late fees, utility recoveries (replaces the GL-rent proxy; kills the credit-balance drift).' },
-      { t: 'Collections at tenant grain (receipts currently attach to properties; two-tenant months use the later lease).' },
+      { t: 'June AR Balances column — confirms the May movers’ write-offs (currently per the lease rule) and clears the 5 pending write-offs.' },
+      { t: 'The ' + (CLX.reconDiffs || []).length + ' highlighted ledger differences — each needs your eye: missing receipts, cross-window items, or file edits.' },
       { t: 'Bank balances by entity/account, month-end — activates the bank tie-out: derived cash kept vs actual bank movement.' },
       { t: 'Contributions & distributions — separates owner cash from portfolio cash.' },
       { t: 'Sale proceeds per exited door — completes financing events and the gain-on-sale story.' },
       { t: 'HOA / property-tax / insurance direct-payment actuals (HOA currently “NA” in the file; GL accrual used as proxy).' },
     ];
-    const asFoot = 'cf-data.json is computed from PL.xlsx (GL), the loans engine, AR Balances.xlsx, Leases.csv and Cashflow.xlsx through publish gates + a 155-check verify harness. Figures refine as the pending data lands — every assumption above stays visible until it does.';
+    const asFoot = 'cf-data.json is computed from PL.xlsx (GL), the loans engine, Buildium - Charges & Collections.xlsx, AR Balances.xlsx, Leases.csv and Cashflow.xlsx through publish gates + a 187-check verify harness and a 27-check synthetic engine suite. Figures refine as the pending data lands — every assumption above stays visible until it does.';
 
     return {
       ready: true, loading: false, loadError: false, retryLoad: () => this.loadData(), stopProp,
@@ -1055,7 +1185,8 @@ class Component extends DCLogic {
       kpis, keptCol, keptBig, keptCap, collBig, collCap, rateCol, rateBig, rateCap,
       wfConn, wfCols, driftOn, driftLine, wfFoot,
       trSub, trAreaK, trPathC, trPathK, trPtsC, trPtsK, trX, trFoot,
-      ldSub, idOpen: f2(idOpen), idChg: f2(idChgV), idColl: f2(idCollV), idClose: f2(idCloseV), idCloseCol: idCloseV < 0 ? GREEND : REDD, idNote,
+      rwSub, rwHeadLab, rwHead, rwHeadCol, rwHeadCap, rwTiles, rwCols, rwTotLab, rwRows, rwFoot,
+      ldSub, idOpen: f2(idOpen), idChg: f2(idChgV), idColl: f2(idCollV), idCl: f2(idClV), idClose: f2(idCloseV), idCloseCol: idCloseV < 0 ? GREEND : REDD, idNote,
       lq: S.lq, onLq: e => this.setState({ lq: e.target.value, lAll: false }), lBucketChips, lSortChips,
       lRows, lEmpty: lShown.length === 0, lEmptyTxt: 'No tenant ledgers match — clear the search or chips.',
       lMoreShow: !S.lAll && !lqv && lFiltered.length > CAP, onLMore: () => this.setState({ lAll: true }), lMoreLab: 'Show all ' + lFiltered.length + ' ledgers ▾', lFoot,
