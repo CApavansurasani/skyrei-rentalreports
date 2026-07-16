@@ -3,40 +3,1072 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>SKY REI · Cash Flow</title>
-<style>
-body{margin:0;background:#EFEDE7;font-family:"Libre Franklin",system-ui,sans-serif;color:#16233A}
-.nav a{text-decoration:none;font-size:12px;font-weight:600;color:#8A96AD;white-space:nowrap}
-.nav a:hover{color:#C9A45C}
-.nav a.on{font-weight:700;color:#E9EDF5;border-bottom:2px solid #C9A45C;padding-bottom:2px}
-.card{background:#FFFFFF;border:1px solid #E5E3DC;border-radius:16px;padding:26px 28px;display:block;text-decoration:none;color:#16233A;transition:border-color .15s}
-a.card:hover{border-color:#C9A45C}
-.tag{display:inline-block;padding:3px 10px;border-radius:99px;font-size:9.5px;font-weight:700;letter-spacing:0.1em}
-</style>
-<link rel="preconnect" href="https://fonts.googleapis.com">
-<link href="https://fonts.googleapis.com/css2?family=Libre+Franklin:wght@400;500;600;700&family=Source+Serif+4:opsz,wght@8..60,400;8..60,600;8..60,700&display=swap" rel="stylesheet">
+<script src="./support.js"></script>
 </head>
 <body>
-<div style="background:#0A1226;border-bottom:1px solid rgba(201,164,92,0.25)">
-  <div class="nav" style="max-width:1320px;margin:0 auto;padding:10px 40px;display:flex;align-items:center;gap:22px;flex-wrap:wrap">
-    <a href="./index.html" style="font-family:'Source Serif 4',Georgia,serif;font-size:13px;font-weight:700;letter-spacing:0.06em;color:#C9A45C">SKY&nbsp;REI</a>
-    <span style="width:1px;height:14px;background:rgba(233,237,245,0.2)"></span>
-    <a class="" href="./executive-summary.dc.html">Executive Summary</a>
-    <a class="" href="./PL%20Story%20-%20Main.dc.html">P&amp;L</a>
-    <a class="" href="./investments.dc.html">Investments &amp; Balance Sheet</a>
-    <a class="on" href="./cashflow.dc.html">Cash Flow</a>
-    <a class="" href="./loans.dc.html">Loans</a>
-    <a class="" href="./property-index.dc.html">Property Index</a>
-    <span style="margin-left:auto;font-size:10px;letter-spacing:0.28em;font-weight:700;color:#5E6B82">PORTFOLIO&nbsp;INTELLIGENCE</span>
+<x-dc>
+<helmet data-dc-atomics="">
+<title>SKY REI · Cash Flow</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Libre+Franklin:wght@400;500;600;700&amp;family=Source+Serif+4:opsz,wght@8..60,400;8..60,600;8..60,700&amp;display=swap" rel="stylesheet">
+<style>
+body{margin:0;background:#EFEDE7;font-family:"Libre Franklin",system-ui,sans-serif;color:#16233A}
+a{color:#1F3A6E}a:hover{color:#C9A45C}
+input:focus{outline:2px solid #C9A45C;outline-offset:1px}
+.scr::-webkit-scrollbar{width:8px;height:8px}
+.scr::-webkit-scrollbar-thumb{background:#D8D4C8;border-radius:4px}
+</style>
+</helmet>
+
+<div data-screen-label="CashFlow" style="min-height:100vh;background:#EFEDE7;padding-bottom:64px">
+
+  <!-- ══ Section navigation ══ -->
+  <div style="background:#0A1226;border-bottom:1px solid rgba(201,164,92,0.25)">
+    <div style="max-width:1320px;margin:0 auto;padding:10px 40px;display:flex;align-items:center;gap:22px;flex-wrap:wrap">
+      <a href="./index.html" style="text-decoration:none;font-family:'Source Serif 4',Georgia,serif;font-size:13px;font-weight:700;letter-spacing:0.06em;color:#C9A45C">SKY&nbsp;REI</a>
+      <span style="width:1px;height:14px;background:rgba(233,237,245,0.2)"></span>
+      <a href="./executive-summary.dc.html" style-hover="color:#C9A45C" style="text-decoration:none;font-size:12px;font-weight:600;color:#8A96AD;white-space:nowrap">Executive Summary</a>
+      <a href="./PL%20Story%20-%20Main.dc.html" style-hover="color:#C9A45C" style="text-decoration:none;font-size:12px;font-weight:600;color:#8A96AD;white-space:nowrap">P&amp;L</a>
+      <a href="./investments.dc.html" style-hover="color:#C9A45C" style="text-decoration:none;font-size:12px;font-weight:600;color:#8A96AD;white-space:nowrap">Investments &amp; Balance Sheet</a>
+      <a href="./cashflow.dc.html" style="text-decoration:none;font-size:12px;font-weight:700;color:#E9EDF5;border-bottom:2px solid #C9A45C;padding-bottom:2px;white-space:nowrap">Cash Flow</a>
+      <a href="./loans.dc.html" style-hover="color:#C9A45C" style="text-decoration:none;font-size:12px;font-weight:600;color:#8A96AD;white-space:nowrap">Loans</a>
+      <a href="./property-index.dc.html" style-hover="color:#C9A45C" style="text-decoration:none;font-size:12px;font-weight:600;color:#8A96AD;white-space:nowrap">Property Index</a>
+      <span style="margin-left:auto;font-size:10px;letter-spacing:0.28em;font-weight:700;color:#5E6B82">PORTFOLIO&nbsp;INTELLIGENCE</span>
+    </div>
+  </div>
+
+  <!-- ══ Header ══ -->
+  <div style="background:#0E1830;padding:26px 40px 24px;overflow:hidden">
+    <div style="max-width:1320px;margin:0 auto">
+      <div style="display:flex;justify-content:space-between;align-items:flex-end;gap:16px;flex-wrap:wrap;row-gap:14px">
+        <div>
+          <div style="font-family:'Source Serif 4',Georgia,serif;font-size:15px;font-weight:700;letter-spacing:0.06em;color:#C9A45C">SKY&nbsp;REI</div>
+          <div style="margin-top:6px;font-family:'Source Serif 4',Georgia,serif;font-size:32px;font-weight:600;color:#E9EDF5;line-height:1.1">Cash Flow</div>
+          <div style="margin-top:7px;font-size:12.5px;color:#8A96AD">{{ scopeLine }}</div>
+        </div>
+        <div style="display:flex;flex-direction:column;align-items:center;padding-right:6px">
+          <svg width="216" height="62" viewBox="0 0 216 62" style="display:block">
+            <g stroke="#C9A45C" stroke-width="1.3" opacity="0.85">
+              <line x1="108" y1="44" x2="108" y2="9"></line><line x1="108" y1="44" x2="89" y2="14"></line>
+              <line x1="108" y1="44" x2="127" y2="14"></line><line x1="108" y1="44" x2="74" y2="25"></line>
+              <line x1="108" y1="44" x2="142" y2="25"></line><line x1="108" y1="44" x2="65" y2="39"></line>
+              <line x1="108" y1="44" x2="151" y2="39"></line>
+            </g>
+            <circle cx="108" cy="44" r="11" fill="#C9A45C"></circle>
+            <g stroke="#E9EDF5" stroke-width="1.5" fill="#0E1830">
+              <path d="M30 54 L30 44 L41 36 L52 44 L52 54 Z"></path><path d="M60 54 L60 41 L69 34 L78 41 L78 54 Z"></path>
+              <path d="M138 54 L138 41 L147 34 L156 41 L156 54 Z"></path><path d="M164 54 L164 44 L175 36 L186 44 L186 54 Z"></path>
+            </g>
+            <line x1="14" y1="54" x2="202" y2="54" stroke="#C9A45C" stroke-width="1.5"></line>
+          </svg>
+          <div style="margin-top:6px;font-size:9px;letter-spacing:0.34em;font-weight:700;color:#8A96AD;text-align:center">PORTFOLIO&nbsp;INTELLIGENCE</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div style="max-width:1320px;margin:0 auto;padding:0 40px">
+
+    <sc-if value="{{ ready }}" hint-placeholder-val="{{ false }}">
+
+    <!-- ══ Filter bar ══ -->
+    <div style="margin-top:18px;background:#FFFFFF;border:1px solid #E5E3DC;border-radius:16px;padding:12px 16px;display:flex;align-items:center;gap:8px;flex-wrap:wrap;position:relative;z-index:50" onClick="{{ stopProp }}">
+      <span style="font-size:10px;letter-spacing:0.1em;font-weight:700;color:#96742F;margin-right:2px">SCOPE</span>
+      <sc-for list="{{ filters }}" as="fb" hint-placeholder-count="4">
+        <div style="position:relative">
+          <div onClick="{{ fb.onToggle }}" style-hover="border-color:#C9A45C" style="display:flex;align-items:center;gap:7px;padding:8px 13px;border-radius:10px;border:1.5px solid {{ fb.bd }};background:{{ fb.bg }};font-size:12px;font-weight:600;color:#16233A;cursor:pointer;white-space:nowrap">
+            <span style="font-size:9.5px;letter-spacing:0.07em;font-weight:700;color:#5E6B82">{{ fb.label }}</span>
+            <span style="max-width:150px;overflow:hidden;text-overflow:ellipsis">{{ fb.value }}</span>
+            <span style="font-size:8.5px;color:#5E6B82">▾</span>
+          </div>
+          <sc-if value="{{ fb.open }}" hint-placeholder-val="{{ false }}">
+            <div style="position:absolute;top:42px;left:0;width:{{ fb.w }};background:#FFFFFF;border:1px solid #D8D4C8;border-radius:12px;box-shadow:0 14px 36px rgba(14,24,48,0.20);z-index:80;padding:6px;max-height:340px;display:flex;flex-direction:column">
+              <sc-if value="{{ fb.hasSearch }}" hint-placeholder-val="{{ false }}">
+                <input value="{{ fb.q }}" onInput="{{ fb.onQ }}" placeholder="Type to search…" style="margin:2px 2px 6px;padding:7px 10px;border-radius:8px;border:1px solid #D8D4C8;font-size:12px;font-family:inherit;color:#16233A">
+              </sc-if>
+              <div onClick="{{ fb.onClear }}" style-hover="background:#F6F4EC" style="padding:7px 10px;border-radius:7px;font-size:12px;font-weight:700;color:#96742F;cursor:pointer;display:flex;justify-content:space-between"><span>All {{ fb.allLabel }}</span><span>{{ fb.allCheck }}</span></div>
+              <sc-if value="{{ fb.selAllShow }}" hint-placeholder-val="{{ false }}">
+                <div onClick="{{ fb.onSelAll }}" style-hover="background:#EFF3FA" style="padding:7px 10px;border-radius:7px;font-size:12px;font-weight:700;color:#3D64A8;cursor:pointer;display:flex;justify-content:space-between;border:1px dashed #C7D3EA"><span>{{ fb.selAllLabel }}</span><span>⇩</span></div>
+              </sc-if>
+              <div class="scr" style="overflow-y:auto;flex:1">
+                <sc-for list="{{ fb.opts }}" as="op" hint-placeholder-count="6">
+                  <div onClick="{{ op.onClick }}" style-hover="background:#F6F4EC" style="padding:7px 10px;border-radius:7px;font-size:12.5px;font-weight:{{ op.fw }};color:#2A3550;cursor:pointer;background:{{ op.bg }};display:flex;justify-content:space-between;align-items:center;gap:10px">
+                    <span style="white-space:nowrap;overflow:hidden;text-overflow:ellipsis">{{ op.label }}</span>
+                    <span style="display:flex;gap:8px;align-items:center"><span style="font-size:10.5px;color:#8A93A6">{{ op.n }}</span><span style="color:#96742F;font-weight:700;width:12px">{{ op.check }}</span></span>
+                  </div>
+                </sc-for>
+              </div>
+            </div>
+          </sc-if>
+        </div>
+      </sc-for>
+      <sc-if value="{{ hasActive }}" hint-placeholder-val="{{ false }}">
+        <div onClick="{{ onReset }}" style-hover="background:#16233A;color:#FFFFFF" style="margin-left:2px;padding:8px 13px;border-radius:10px;background:#F3E2DB;color:#A03E28;font-size:11.5px;font-weight:700;cursor:pointer;white-space:nowrap">Reset ✕</div>
+      </sc-if>
+      <span style="margin-left:auto;font-size:11px;color:#8A93A6;white-space:nowrap">{{ asOfLine }}</span>
+    </div>
+
+    <!-- ══ KPI row ══ -->
+    <div style="margin-top:16px;display:grid;grid-template-columns:repeat(6,1fr);gap:12px">
+      <sc-for list="{{ kpis }}" as="k" hint-placeholder-count="6">
+        <div title="{{ k.tip }}" style="background:{{ k.bg }};border:1px solid {{ k.bd }};border-radius:14px;padding:14px 16px">
+          <div style="font-size:9.5px;letter-spacing:0.07em;font-weight:700;color:#5E6B82;text-transform:uppercase;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">{{ k.label }}</div>
+          <div style="margin-top:5px;font-family:'Source Serif 4',Georgia,serif;font-size:21px;font-weight:600;color:{{ k.col }};font-variant-numeric:tabular-nums;white-space:nowrap">{{ k.val }}</div>
+          <div style="margin-top:3px;font-size:10px;color:{{ k.dcol }};font-weight:600;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">{{ k.sub }}</div>
+        </div>
+      </sc-for>
+    </div>
+
+    <!-- ══ HERO: rent charged → cash kept ══ -->
+    <div style="margin-top:16px;background:linear-gradient(135deg,#0E1830,#16233A);border-radius:18px;padding:24px 28px;color:#E9EDF5">
+      <div style="display:flex;justify-content:space-between;align-items:flex-start;gap:20px;flex-wrap:wrap">
+        <div>
+          <div style="font-size:10.5px;letter-spacing:0.12em;font-weight:700;color:#C9A45C">FROM RENT CHARGED TO CASH KEPT</div>
+          <div style="margin-top:6px;display:flex;align-items:baseline;gap:12px;flex-wrap:wrap">
+            <span style="font-family:'Source Serif 4',Georgia,serif;font-size:38px;font-weight:600;line-height:1;color:{{ keptCol }}">{{ keptBig }}</span>
+            <span style="font-size:12.5px;font-weight:600;color:#8A96AD">{{ keptCap }}</span>
+          </div>
+        </div>
+        <div style="display:flex;gap:26px;text-align:right">
+          <div>
+            <div style="font-size:9.5px;letter-spacing:0.09em;font-weight:700;color:#8A96AD">CASH COLLECTED</div>
+            <div style="margin-top:4px;font-family:'Source Serif 4',Georgia,serif;font-size:24px;font-weight:600;color:#F5D9A8">{{ collBig }}</div>
+            <div style="font-size:10px;color:#8A96AD">{{ collCap }}</div>
+          </div>
+          <div>
+            <div style="font-size:9.5px;letter-spacing:0.09em;font-weight:700;color:#8A96AD">COLLECTION RATE</div>
+            <div style="margin-top:4px;font-family:'Source Serif 4',Georgia,serif;font-size:24px;font-weight:600;color:{{ rateCol }}">{{ rateBig }}</div>
+            <div style="font-size:10px;color:#8A96AD">{{ rateCap }}</div>
+          </div>
+        </div>
+      </div>
+      <div style="position:relative;height:216px;margin-top:16px">
+        <sc-for list="{{ wfConn }}" as="wc" hint-placeholder-count="8">
+          <div style="position:absolute;left:{{ wc.l }};width:{{ wc.w }};top:{{ wc.t }};border-top:1.5px dashed rgba(233,237,245,0.35)"></div>
+        </sc-for>
+        <div style="display:flex;height:216px">
+          <sc-for list="{{ wfCols }}" as="wf" hint-placeholder-count="9">
+            <div style="flex:1;position:relative" title="{{ wf.tip }}">
+              <div style="position:absolute;bottom:{{ wf.vB }};left:0;right:0;text-align:center;font-size:12px;font-weight:700;color:{{ wf.vc }};font-variant-numeric:tabular-nums;white-space:nowrap">{{ wf.val }}</div>
+              <div style="position:absolute;bottom:{{ wf.b }};height:{{ wf.h }};left:20%;width:60%;background:{{ wf.bg }};border-radius:5px"></div>
+            </div>
+          </sc-for>
+        </div>
+      </div>
+      <div style="display:flex;margin-top:8px">
+        <sc-for list="{{ wfCols }}" as="wf" hint-placeholder-count="9">
+          <div style="flex:1;text-align:center;min-width:0">
+            <div style="font-size:9px;letter-spacing:0.05em;font-weight:800;color:#C9D2E4;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">{{ wf.label }}</div>
+            <div style="margin-top:2px;font-size:9px;color:#8A96AD;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">{{ wf.cap }}</div>
+          </div>
+        </sc-for>
+      </div>
+      <sc-if value="{{ driftOn }}" hint-placeholder-val="{{ false }}">
+        <div style="margin-top:14px;padding:10px 14px;background:rgba(201,164,92,0.12);border:1px solid rgba(201,164,92,0.4);border-radius:10px;font-size:11px;line-height:1.6;color:#F5D9A8">{{ driftLine }}</div>
+      </sc-if>
+      <div style="margin-top:12px;padding-top:10px;border-top:1px solid rgba(233,237,245,0.12);font-size:10.5px;color:#8A96AD;line-height:1.6">{{ wfFoot }}</div>
+    </div>
+
+    <!-- ══ Monthly trend ══ -->
+    <div style="margin-top:16px;background:#FFFFFF;border:1px solid #E5E3DC;border-radius:16px;padding:22px 26px">
+      <div style="display:flex;justify-content:space-between;align-items:baseline;flex-wrap:wrap;gap:8px">
+        <div style="font-family:'Source Serif 4',Georgia,serif;font-size:18px;font-weight:600;color:#16233A">Charged vs collected, month by month</div>
+        <div style="font-size:11.5px;color:#8A93A6">{{ trSub }}</div>
+      </div>
+      <div style="margin-top:6px;display:flex;gap:16px;flex-wrap:wrap">
+        <span style="font-size:10.5px;color:#5E6B82;display:flex;align-items:center;gap:5px;font-weight:600"><span style="width:9px;height:9px;border-radius:3px;background:#C9A45C"></span>Cash collected</span>
+        <span style="font-size:10.5px;color:#5E6B82;display:flex;align-items:center;gap:5px;font-weight:600"><span style="width:9px;height:9px;border-radius:3px;background:#3D64A8"></span>Rent charged</span>
+      </div>
+      <div style="margin-top:16px;position:relative">
+        <svg viewBox="0 0 660 170" style="width:100%;display:block;overflow:visible">
+          <path d="{{ trAreaK }}" fill="#C9A45C" opacity="0.08"></path>
+          <path d="{{ trPathC }}" fill="none" stroke="#3D64A8" stroke-width="2" stroke-linejoin="round" stroke-linecap="round"></path>
+          <path d="{{ trPathK }}" fill="none" stroke="#C9A45C" stroke-width="2" stroke-linejoin="round" stroke-linecap="round"></path>
+          <sc-for list="{{ trPtsC }}" as="tpc" hint-placeholder-count="5">
+            <circle cx="{{ tpc.cx }}" cy="{{ tpc.cy }}" r="4" fill="#FFFFFF" stroke="#3D64A8" stroke-width="2"><title>{{ tpc.tip }}</title></circle>
+          </sc-for>
+          <sc-for list="{{ trPtsK }}" as="tpk" hint-placeholder-count="5">
+            <circle cx="{{ tpk.cx }}" cy="{{ tpk.cy }}" r="{{ tpk.r }}" fill="{{ tpk.fill }}" stroke="#C9A45C" stroke-width="2"><title>{{ tpk.tip }}</title></circle>
+            <circle onClick="{{ tpk.onClick }}" cx="{{ tpk.cx }}" cy="{{ tpk.cy }}" r="14" fill="transparent" style="cursor:pointer"><title>{{ tpk.tip }}</title></circle>
+          </sc-for>
+        </svg>
+        <sc-for list="{{ trPtsK }}" as="tpk" hint-placeholder-count="5">
+          <div title="{{ tpk.tip }}" style="position:absolute;left:{{ tpk.leftPct }};top:{{ tpk.topPct }};transform:translate(-50%,-100%);pointer-events:none;font-size:10px;font-weight:{{ tpk.vfw }};color:#96742F;font-variant-numeric:tabular-nums;white-space:nowrap">{{ tpk.vlab }}</div>
+        </sc-for>
+        <sc-for list="{{ trPtsC }}" as="tpc" hint-placeholder-count="5">
+          <div title="{{ tpc.tip }}" style="position:absolute;left:{{ tpc.leftPct }};top:{{ tpc.topPct }};transform:translate(-50%,{{ tpc.shift }});pointer-events:none;font-size:10px;font-weight:600;color:#3D64A8;font-variant-numeric:tabular-nums;white-space:nowrap">{{ tpc.vlab }}</div>
+        </sc-for>
+      </div>
+      <div style="margin-top:6px;display:flex">
+        <sc-for list="{{ trX }}" as="tx" hint-placeholder-count="5">
+          <div onClick="{{ tx.onClick }}" style-hover="color:#16233A" style="flex:1;text-align:center;cursor:pointer">
+            <div style="font-size:10px;font-weight:{{ tx.xfw }};color:{{ tx.xcol }};white-space:nowrap">{{ tx.lab }}</div>
+            <div style="margin-top:2px;font-size:9.5px;font-weight:700;color:{{ tx.rcol }};font-variant-numeric:tabular-nums">{{ tx.rate }}</div>
+          </div>
+        </sc-for>
+      </div>
+      <div style="margin-top:10px;font-size:10.5px;color:#9AA3B5;line-height:1.6">{{ trFoot }}</div>
+    </div>
+
+    <!-- ══ Tenant ledger ══ -->
+    <div style="margin-top:16px;background:#FFFFFF;border:1px solid #E5E3DC;border-radius:16px;padding:22px 26px">
+      <div style="display:flex;justify-content:space-between;align-items:baseline;flex-wrap:wrap;gap:8px">
+        <div style="font-family:'Source Serif 4',Georgia,serif;font-size:18px;font-weight:600;color:#16233A">Tenant balances — the rent ledger</div>
+        <div style="font-size:11.5px;color:#8A93A6">{{ ldSub }}</div>
+      </div>
+      <div style="margin-top:12px;padding:12px 16px;background:#FBFAF6;border:1px solid #EDEBE2;border-radius:12px;display:flex;align-items:center;gap:10px;flex-wrap:wrap;font-variant-numeric:tabular-nums">
+        <span style="font-size:10px;letter-spacing:0.08em;font-weight:800;color:#96742F">LEDGER IDENTITY</span>
+        <span style="font-size:12.5px;font-weight:700;color:#2A3550">{{ idOpen }}</span><span style="font-size:11px;color:#8A93A6">opening</span>
+        <span style="font-size:12px;color:#8A93A6">+</span>
+        <span style="font-size:12.5px;font-weight:700;color:#3D64A8">{{ idChg }}</span><span style="font-size:11px;color:#8A93A6">charges</span>
+        <span style="font-size:12px;color:#8A93A6">−</span>
+        <span style="font-size:12.5px;font-weight:700;color:#96742F">{{ idColl }}</span><span style="font-size:11px;color:#8A93A6">collected</span>
+        <span style="font-size:12px;color:#8A93A6">=</span>
+        <span style="font-size:12.5px;font-weight:700;color:{{ idCloseCol }}">{{ idClose }}</span><span style="font-size:11px;color:#8A93A6">closing · {{ idNote }}</span>
+      </div>
+      <div style="margin-top:12px;display:flex;align-items:center;gap:8px;flex-wrap:wrap">
+        <input value="{{ lq }}" onInput="{{ onLq }}" placeholder="Search tenant or property…" style="flex:1;min-width:220px;padding:9px 13px;border-radius:10px;border:1.5px solid #D8D4C8;font-size:12.5px;font-family:inherit;color:#16233A">
+        <sc-for list="{{ lBucketChips }}" as="bc" hint-placeholder-count="4">
+          <div onClick="{{ bc.onClick }}" style-hover="border-color:#C9A45C" style="padding:7px 12px;border-radius:9px;border:1.5px solid {{ bc.bd }};background:{{ bc.bg }};font-size:11px;font-weight:700;color:{{ bc.col }};cursor:pointer;white-space:nowrap">{{ bc.label }} <span style="font-weight:600;opacity:0.7">{{ bc.n }}</span></div>
+        </sc-for>
+        <span style="width:1px;height:18px;background:#E5E3DC"></span>
+        <sc-for list="{{ lSortChips }}" as="sc" hint-placeholder-count="3">
+          <div onClick="{{ sc.onClick }}" style-hover="border-color:#C9A45C" style="padding:7px 12px;border-radius:9px;border:1.5px solid {{ sc.bd }};background:{{ sc.bg }};font-size:11px;font-weight:700;color:#2A3550;cursor:pointer;white-space:nowrap">{{ sc.label }}</div>
+        </sc-for>
+      </div>
+      <div style="margin-top:10px;display:flex;padding:0 14px;font-size:9px;letter-spacing:0.07em;font-weight:800;color:#8A93A6">
+        <span style="flex:2.6">TENANT · PROPERTY</span>
+        <span style="flex:1;text-align:right">OPENING</span>
+        <span style="flex:1;text-align:right">CHARGES</span>
+        <span style="flex:1;text-align:right">COLLECTED</span>
+        <span style="flex:1.2;text-align:right">CLOSING</span>
+        <span style="flex:1;text-align:right">MOVE</span>
+      </div>
+      <div>
+        <sc-for list="{{ lRows }}" as="r" hint-placeholder-count="8">
+          <div style="border-top:1px solid #F0EEE7">
+            <div onClick="{{ r.onClick }}" style-hover="background:#FBFAF6" style="display:flex;align-items:center;padding:10px 14px;cursor:pointer;background:{{ r.rowBg }}">
+              <span style="flex:2.6;min-width:0;display:flex;align-items:center;gap:8px">
+                <span style="min-width:0">
+                  <span style="display:block;font-size:12.5px;font-weight:700;color:#16233A;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">{{ r.tenant }}</span>
+                  <span style="display:block;font-size:10.5px;color:#8A93A6;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">{{ r.prop }} · {{ r.entity }}</span>
+                </span>
+                <sc-for list="{{ r.badges }}" as="bd" hint-placeholder-count="1">
+                  <span style="padding:2px 7px;border-radius:99px;font-size:8.5px;font-weight:800;letter-spacing:0.04em;background:{{ bd.bg }};color:{{ bd.col }};white-space:nowrap">{{ bd.t }}</span>
+                </sc-for>
+              </span>
+              <span style="flex:1;text-align:right;font-size:12px;color:#5E6B82;font-variant-numeric:tabular-nums">{{ r.open }}</span>
+              <span style="flex:1;text-align:right;font-size:12px;color:#3D64A8;font-variant-numeric:tabular-nums">{{ r.chg }}</span>
+              <span style="flex:1;text-align:right;font-size:12px;color:#96742F;font-variant-numeric:tabular-nums">{{ r.coll }}</span>
+              <span style="flex:1.2;text-align:right;font-size:13px;font-weight:800;color:{{ r.closeCol }};font-variant-numeric:tabular-nums">{{ r.close }}</span>
+              <span style="flex:1;text-align:right;font-size:11px;font-weight:700;color:{{ r.moveCol }};font-variant-numeric:tabular-nums">{{ r.moveLab }}</span>
+            </div>
+            <sc-if value="{{ r.exp }}" hint-placeholder-val="{{ false }}">
+              <div style="padding:4px 14px 16px;background:#FBFAF6">
+                <div style="display:flex;gap:20px;flex-wrap:wrap;align-items:flex-start">
+                  <div style="flex:2;min-width:300px">
+                    <div style="display:flex;padding:6px 10px;font-size:8.5px;letter-spacing:0.06em;font-weight:800;color:#8A93A6;border-bottom:1px solid #EDEBE2">
+                      <span style="flex:1">MONTH</span><span style="flex:1;text-align:right">OPENING</span><span style="flex:1;text-align:right">CHARGES</span><span style="flex:1;text-align:right">COLLECTED</span><span style="flex:1;text-align:right">CLOSING</span><span style="flex:0.7;text-align:right">IN&nbsp;UNIT</span>
+                    </div>
+                    <sc-for list="{{ r.mini }}" as="mn" hint-placeholder-count="5">
+                      <div style="display:flex;padding:5px 10px;font-size:11px;color:#2A3550;font-variant-numeric:tabular-nums;border-bottom:1px solid #F4F2EA">
+                        <span style="flex:1;font-weight:700">{{ mn.m }}</span><span style="flex:1;text-align:right">{{ mn.open }}</span><span style="flex:1;text-align:right;color:#3D64A8">{{ mn.chg }}</span><span style="flex:1;text-align:right;color:#96742F">{{ mn.coll }}</span><span style="flex:1;text-align:right;font-weight:700;color:{{ mn.closeCol }}">{{ mn.close }}</span><span style="flex:0.7;text-align:right">{{ mn.occ }}</span>
+                      </div>
+                    </sc-for>
+                  </div>
+                  <div style="flex:1;min-width:230px">
+                    <div style="font-size:9px;letter-spacing:0.07em;font-weight:800;color:#8A93A6">LEASE</div>
+                    <div style="margin-top:4px;font-size:11.5px;color:#2A3550;line-height:1.65">{{ r.leaseLine }}</div>
+                    <div style="margin-top:8px;font-size:9px;letter-spacing:0.07em;font-weight:800;color:#8A93A6">NOTES</div>
+                    <div style="margin-top:4px;font-size:11px;color:#5E6B82;line-height:1.65">{{ r.flagsLine }}</div>
+                    <div style="margin-top:10px;display:flex;gap:12px;flex-wrap:wrap">
+                      <a href="{{ r.plHref }}" style="font-size:11px;font-weight:700;color:#96742F;text-decoration:none">P&amp;L →</a>
+                      <a href="{{ r.loanHref }}" style="font-size:11px;font-weight:700;color:#96742F;text-decoration:none">Loans →</a>
+                      <div onClick="{{ r.onFocus }}" style-hover="color:#16233A" style="font-size:11px;font-weight:700;color:#3D64A8;cursor:pointer">{{ r.focusLab }}</div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </sc-if>
+          </div>
+        </sc-for>
+      </div>
+      <sc-if value="{{ lEmpty }}" hint-placeholder-val="{{ false }}">
+        <div style="padding:26px;text-align:center;font-size:12px;color:#8A93A6">{{ lEmptyTxt }}</div>
+      </sc-if>
+      <sc-if value="{{ lMoreShow }}" hint-placeholder-val="{{ false }}">
+        <div style="display:flex;justify-content:center;margin-top:10px">
+          <div onClick="{{ onLMore }}" style-hover="background:#16233A;color:#FFFFFF;border-color:#16233A" style="padding:8px 16px;border-radius:9px;border:1px solid #D8D4C8;background:#FFFFFF;font-size:11.5px;font-weight:700;color:#2A3550;cursor:pointer">{{ lMoreLab }}</div>
+        </div>
+      </sc-if>
+      <div style="margin-top:12px;padding-top:10px;border-top:1px solid #F0EEE7;font-size:10.5px;color:#9AA3B5;line-height:1.65">{{ lFoot }}</div>
+    </div>
+
+    <!-- ══ Collections watchlist ══ -->
+    <div style="margin-top:16px;background:#FFFFFF;border:1px solid #E5E3DC;border-radius:16px;padding:22px 26px">
+      <div style="display:flex;justify-content:space-between;align-items:baseline;flex-wrap:wrap;gap:8px">
+        <div style="font-family:'Source Serif 4',Georgia,serif;font-size:18px;font-weight:600;color:#16233A">Collections watchlist — tenants off the plan</div>
+        <div style="font-size:11.5px;color:#8A93A6">{{ wSub }}</div>
+      </div>
+      <div style="margin-top:12px;display:grid;grid-template-columns:repeat(4,1fr);gap:12px">
+        <sc-for list="{{ wTiles }}" as="wt" hint-placeholder-count="4">
+          <div style="background:#FBFAF6;border:1px solid #EDEBE2;border-radius:12px;padding:12px 15px">
+            <div style="font-size:9px;letter-spacing:0.07em;font-weight:800;color:#8A93A6;text-transform:uppercase;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">{{ wt.k }}</div>
+            <div style="margin-top:4px;font-family:'Source Serif 4',Georgia,serif;font-size:19px;font-weight:600;color:{{ wt.col }};font-variant-numeric:tabular-nums">{{ wt.v }}</div>
+            <div style="margin-top:2px;font-size:10px;color:#9AA3B5;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">{{ wt.sub }}</div>
+          </div>
+        </sc-for>
+      </div>
+      <div style="margin-top:12px;display:flex;align-items:center;gap:8px;flex-wrap:wrap">
+        <sc-for list="{{ wChips }}" as="wcp" hint-placeholder-count="7">
+          <div onClick="{{ wcp.onClick }}" style-hover="border-color:#C9A45C" style="padding:7px 12px;border-radius:9px;border:1.5px solid {{ wcp.bd }};background:{{ wcp.bg }};font-size:11px;font-weight:700;color:{{ wcp.col }};cursor:pointer;white-space:nowrap">{{ wcp.label }} <span style="font-weight:600;opacity:0.75">{{ wcp.n }}</span></div>
+        </sc-for>
+        <input value="{{ wq }}" onInput="{{ onWq }}" placeholder="Search…" style="margin-left:auto;min-width:170px;padding:8px 12px;border-radius:9px;border:1.5px solid #D8D4C8;font-size:12px;font-family:inherit;color:#16233A">
+      </div>
+      <div style="margin-top:10px;display:flex;padding:0 14px;font-size:9px;letter-spacing:0.07em;font-weight:800;color:#8A93A6">
+        <span style="flex:3">TENANT · PROPERTY · WHY FLAGGED</span>
+        <span style="flex:1;text-align:right">{{ wValHead }}</span>
+      </div>
+      <div>
+        <sc-for list="{{ wRows }}" as="wr" hint-placeholder-count="7">
+          <div style="border-top:1px solid #F0EEE7">
+            <div onClick="{{ wr.onClick }}" style-hover="background:#FBFAF6" style="display:flex;align-items:center;padding:10px 14px;cursor:pointer;background:{{ wr.rowBg }}">
+              <span style="flex:3;min-width:0">
+                <span style="display:flex;align-items:center;gap:8px;min-width:0">
+                  <span style="font-size:12.5px;font-weight:700;color:#16233A;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">{{ wr.tenant }}</span>
+                  <span style="font-size:10.5px;color:#8A93A6;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">{{ wr.prop }} · {{ wr.entity }}</span>
+                </span>
+                <span style="margin-top:4px;display:flex;gap:5px;flex-wrap:wrap">
+                  <sc-for list="{{ wr.pills }}" as="pl" hint-placeholder-count="3">
+                    <span style="padding:2px 8px;border-radius:99px;font-size:8.5px;font-weight:800;letter-spacing:0.03em;background:{{ pl.bg }};color:{{ pl.col }};white-space:nowrap">{{ pl.t }}</span>
+                  </sc-for>
+                </span>
+              </span>
+              <span style="flex:1;text-align:right;font-size:13px;font-weight:800;color:{{ wr.valCol }};font-variant-numeric:tabular-nums">{{ wr.val }}</span>
+            </div>
+            <sc-if value="{{ wr.exp }}" hint-placeholder-val="{{ false }}">
+              <div style="padding:4px 14px 16px;background:#FBFAF6">
+                <div style="display:flex;gap:20px;flex-wrap:wrap;align-items:flex-start">
+                  <div style="flex:2;min-width:300px">
+                    <div style="display:flex;padding:6px 10px;font-size:8.5px;letter-spacing:0.06em;font-weight:800;color:#8A93A6;border-bottom:1px solid #EDEBE2">
+                      <span style="flex:1">MONTH</span><span style="flex:1;text-align:right">OPENING</span><span style="flex:1;text-align:right">CHARGES</span><span style="flex:1;text-align:right">COLLECTED</span><span style="flex:1;text-align:right">CLOSING</span><span style="flex:0.7;text-align:right">IN&nbsp;UNIT</span>
+                    </div>
+                    <sc-for list="{{ wr.mini }}" as="mn" hint-placeholder-count="5">
+                      <div style="display:flex;padding:5px 10px;font-size:11px;color:#2A3550;font-variant-numeric:tabular-nums;border-bottom:1px solid #F4F2EA">
+                        <span style="flex:1;font-weight:700">{{ mn.m }}</span><span style="flex:1;text-align:right">{{ mn.open }}</span><span style="flex:1;text-align:right;color:#3D64A8">{{ mn.chg }}</span><span style="flex:1;text-align:right;color:#96742F">{{ mn.coll }}</span><span style="flex:1;text-align:right;font-weight:700;color:{{ mn.closeCol }}">{{ mn.close }}</span><span style="flex:0.7;text-align:right">{{ mn.occ }}</span>
+                      </div>
+                    </sc-for>
+                  </div>
+                  <div style="flex:1;min-width:230px">
+                    <div style="font-size:9px;letter-spacing:0.07em;font-weight:800;color:#8A93A6">LEASE</div>
+                    <div style="margin-top:4px;font-size:11.5px;color:#2A3550;line-height:1.65">{{ wr.leaseLine }}</div>
+                    <div style="margin-top:8px;font-size:9px;letter-spacing:0.07em;font-weight:800;color:#8A93A6">NOTES</div>
+                    <div style="margin-top:4px;font-size:11px;color:#5E6B82;line-height:1.65">{{ wr.flagsLine }}</div>
+                    <div style="margin-top:10px;display:flex;gap:12px;flex-wrap:wrap">
+                      <a href="{{ wr.plHref }}" style="font-size:11px;font-weight:700;color:#96742F;text-decoration:none">P&amp;L →</a>
+                      <a href="{{ wr.loanHref }}" style="font-size:11px;font-weight:700;color:#96742F;text-decoration:none">Loans →</a>
+                      <div onClick="{{ wr.onFocus }}" style-hover="color:#16233A" style="font-size:11px;font-weight:700;color:#3D64A8;cursor:pointer">{{ wr.focusLab }}</div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </sc-if>
+          </div>
+        </sc-for>
+      </div>
+      <sc-if value="{{ wEmpty }}" hint-placeholder-val="{{ false }}">
+        <div style="padding:26px;text-align:center;font-size:12px;color:#8A93A6">{{ wEmptyTxt }}</div>
+      </sc-if>
+      <sc-if value="{{ wMoreShow }}" hint-placeholder-val="{{ false }}">
+        <div style="display:flex;justify-content:center;margin-top:10px">
+          <div onClick="{{ onWMore }}" style-hover="background:#16233A;color:#FFFFFF;border-color:#16233A" style="padding:8px 16px;border-radius:9px;border:1px solid #D8D4C8;background:#FFFFFF;font-size:11.5px;font-weight:700;color:#2A3550;cursor:pointer">{{ wMoreLab }}</div>
+        </div>
+      </sc-if>
+      <div style="margin-top:12px;padding-top:10px;border-top:1px solid #F0EEE7;font-size:10.5px;color:#9AA3B5;line-height:1.65">{{ wFoot }}</div>
+    </div>
+
+    <!-- ══ Where the cash went + financing events ══ -->
+    <div style="margin-top:16px;display:grid;grid-template-columns:3fr 2fr;gap:16px;align-items:start">
+      <div style="background:#FFFFFF;border:1px solid #E5E3DC;border-radius:16px;padding:22px 26px">
+        <div style="display:flex;justify-content:space-between;align-items:baseline;flex-wrap:wrap;gap:8px">
+          <div style="font-family:'Source Serif 4',Georgia,serif;font-size:18px;font-weight:600;color:#16233A">Where the cash went</div>
+          <div style="font-size:11.5px;color:#8A93A6">{{ ofSub }}</div>
+        </div>
+        <div style="margin-top:14px;font-size:10px;letter-spacing:0.09em;font-weight:800;color:#96742F">OPERATING — CASH-BASIS GL</div>
+        <sc-for list="{{ ofOp }}" as="o" hint-placeholder-count="10">
+          <div style="display:flex;align-items:center;gap:10px;padding:6px 0;border-bottom:1px solid #F4F2EA">
+            <span style="flex:1.6;font-size:11.5px;color:#2A3550;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">{{ o.k }}</span>
+            <span style="flex:1;height:6px;border-radius:3px;background:#F0EEE6;overflow:hidden"><span style="display:block;height:6px;border-radius:3px;background:#B04A33;opacity:0.75;width:{{ o.w }}"></span></span>
+            <span style="width:86px;text-align:right;font-size:11.5px;font-weight:700;color:#2A3550;font-variant-numeric:tabular-nums">{{ o.v }}</span>
+            <span style="width:52px;text-align:right;font-size:10px;color:#8A93A6;font-variant-numeric:tabular-nums">{{ o.pct }}</span>
+          </div>
+        </sc-for>
+        <div style="display:flex;justify-content:space-between;padding:8px 0;font-size:12px;font-weight:800;color:#16233A;font-variant-numeric:tabular-nums"><span>Total operating</span><span>{{ ofOpTot }}</span></div>
+        <div style="margin-top:12px;font-size:10px;letter-spacing:0.09em;font-weight:800;color:#96742F">STATUTORY &amp; ESCROW — CASH BASIS</div>
+        <sc-for list="{{ ofStat }}" as="s" hint-placeholder-count="4">
+          <div style="display:flex;align-items:center;gap:10px;padding:6px 0;border-bottom:1px solid #F4F2EA">
+            <span style="flex:1.6;font-size:11.5px;color:#2A3550;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">{{ s.k }}</span>
+            <span style="padding:2px 8px;border-radius:99px;font-size:8.5px;font-weight:800;background:{{ s.tagBg }};color:{{ s.tagCol }};white-space:nowrap">{{ s.tag }}</span>
+            <span style="margin-left:auto;width:86px;text-align:right;font-size:11.5px;font-weight:700;color:#2A3550;font-variant-numeric:tabular-nums">{{ s.v }}</span>
+          </div>
+        </sc-for>
+        <div style="display:flex;justify-content:space-between;padding:8px 0;font-size:12px;font-weight:800;color:#16233A;font-variant-numeric:tabular-nums"><span>Total statutory &amp; escrow</span><span>{{ ofStatTot }}</span></div>
+        <div style="padding:8px 12px;background:#FBF6EA;border:1px solid #EAD9C0;border-radius:9px;font-size:10.5px;line-height:1.6;color:#96742F">{{ ofStatNote }}</div>
+        <div style="margin-top:12px;font-size:10px;letter-spacing:0.09em;font-weight:800;color:#96742F">DEBT SERVICE</div>
+        <sc-for list="{{ ofDebt }}" as="d" hint-placeholder-count="3">
+          <div style="display:flex;align-items:center;gap:10px;padding:6px 0;border-bottom:1px solid #F4F2EA">
+            <span style="flex:1.6;font-size:11.5px;color:#2A3550;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">{{ d.k }}</span>
+            <span style="padding:2px 8px;border-radius:99px;font-size:8.5px;font-weight:800;background:{{ d.chipBg }};color:{{ d.chipCol }};white-space:nowrap">{{ d.chip }}</span>
+            <span style="margin-left:auto;width:86px;text-align:right;font-size:11.5px;font-weight:700;color:#2A3550;font-variant-numeric:tabular-nums">{{ d.v }}</span>
+          </div>
+        </sc-for>
+        <div style="display:flex;justify-content:space-between;padding:8px 0;font-size:12px;font-weight:800;color:#16233A;font-variant-numeric:tabular-nums"><span>Total debt service</span><span>{{ ofDebtTot }}</span></div>
+        <div style="margin-top:10px;font-size:10.5px;color:#9AA3B5;line-height:1.65">{{ ofFoot }}</div>
+      </div>
+
+      <div style="background:#FFFFFF;border:1px solid #E5E3DC;border-radius:16px;padding:22px 26px">
+        <div style="display:flex;justify-content:space-between;align-items:baseline;flex-wrap:wrap;gap:8px">
+          <div style="font-family:'Source Serif 4',Georgia,serif;font-size:18px;font-weight:600;color:#16233A">Financing events</div>
+          <div style="font-size:11.5px;color:#8A93A6">{{ evSub }}</div>
+        </div>
+        <sc-if value="{{ evOn }}" hint-placeholder-val="{{ false }}">
+          <div class="scr" style="margin-top:10px;max-height:520px;overflow-y:auto;padding-right:4px">
+            <sc-for list="{{ evGroups }}" as="g" hint-placeholder-count="5">
+              <div style="margin-top:10px">
+                <div style="display:flex;justify-content:space-between;align-items:baseline">
+                  <span style="font-size:10px;letter-spacing:0.09em;font-weight:800;color:#96742F">{{ g.m }}</span>
+                  <span style="font-size:10.5px;font-weight:700;color:{{ g.netCol }};font-variant-numeric:tabular-nums">{{ g.net }}</span>
+                </div>
+                <sc-for list="{{ g.rows }}" as="e" hint-placeholder-count="3">
+                  <div style="margin-top:6px;display:flex;align-items:center;gap:10px;padding:8px 10px;background:#FBFAF6;border:1px solid #EDEBE2;border-radius:10px">
+                    <span style="width:26px;height:26px;border-radius:8px;background:{{ e.iconBg }};color:{{ e.iconCol }};display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:800">{{ e.icon }}</span>
+                    <span style="flex:1;min-width:0">
+                      <span style="display:block;font-size:11.5px;font-weight:700;color:#16233A;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">{{ e.title }}</span>
+                      <span style="display:block;font-size:10px;color:#8A93A6;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">{{ e.sub }}</span>
+                    </span>
+                    <span style="font-size:12px;font-weight:800;color:{{ e.amtCol }};font-variant-numeric:tabular-nums;white-space:nowrap">{{ e.amt }}</span>
+                  </div>
+                </sc-for>
+              </div>
+            </sc-for>
+          </div>
+        </sc-if>
+        <sc-if value="{{ evEmpty }}" hint-placeholder-val="{{ false }}">
+          <div style="padding:26px;text-align:center;font-size:12px;color:#8A93A6">No financing events in this scope.</div>
+        </sc-if>
+        <div style="margin-top:12px;padding-top:10px;border-top:1px solid #F0EEE7;font-size:10.5px;color:#9AA3B5;line-height:1.65">{{ evFoot }}</div>
+      </div>
+    </div>
+
+    <!-- ══ Checks & balances ══ -->
+    <div style="margin-top:16px;background:#FFFFFF;border:1px solid #E5E3DC;border-radius:16px;padding:22px 26px">
+      <div style="display:flex;justify-content:space-between;align-items:baseline;flex-wrap:wrap;gap:8px">
+        <div style="font-family:'Source Serif 4',Georgia,serif;font-size:18px;font-weight:600;color:#16233A">Checks &amp; balances</div>
+        <div style="font-size:11.5px;color:#8A93A6">every figure cross-checked against its source — differences shown, never absorbed</div>
+      </div>
+      <div style="margin-top:14px;display:grid;grid-template-columns:repeat(3,1fr);gap:12px;align-items:start">
+        <sc-for list="{{ ckCards }}" as="c" hint-placeholder-count="6">
+          <div style="background:#FBFAF6;border:1px solid {{ c.bd }};border-radius:12px;padding:14px 16px">
+            <div style="display:flex;justify-content:space-between;align-items:center;gap:8px">
+              <span style="font-size:10px;letter-spacing:0.07em;font-weight:800;color:#5E6B82;text-transform:uppercase">{{ c.title }}</span>
+              <span style="padding:2px 9px;border-radius:99px;font-size:8.5px;font-weight:800;letter-spacing:0.05em;background:{{ c.bg }};color:{{ c.col }};white-space:nowrap">{{ c.badge }}</span>
+            </div>
+            <sc-for list="{{ c.lines }}" as="cl" hint-placeholder-count="4">
+              <div style="margin-top:7px;display:flex;justify-content:space-between;gap:10px;font-size:11px">
+                <span style="color:#5E6B82">{{ cl.k }}</span>
+                <span style="font-weight:700;color:{{ cl.vc }};font-variant-numeric:tabular-nums;text-align:right">{{ cl.v }}</span>
+              </div>
+            </sc-for>
+            <sc-if value="{{ c.hasList }}" hint-placeholder-val="{{ false }}">
+              <div onClick="{{ c.onClick }}" style-hover="color:#16233A" style="margin-top:9px;font-size:10.5px;font-weight:700;color:#3D64A8;cursor:pointer">{{ c.listLab }}</div>
+              <sc-if value="{{ c.listOn }}" hint-placeholder-val="{{ false }}">
+                <div class="scr" style="margin-top:6px;max-height:180px;overflow-y:auto;border-top:1px solid #EDEBE2">
+                  <sc-for list="{{ c.list }}" as="li" hint-placeholder-count="6">
+                    <div style="display:flex;justify-content:space-between;gap:10px;padding:4px 0;font-size:10.5px;border-bottom:1px solid #F4F2EA">
+                      <span style="color:#2A3550;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">{{ li.t }}</span>
+                      <span style="color:#5E6B82;font-variant-numeric:tabular-nums;white-space:nowrap">{{ li.v }}</span>
+                    </div>
+                  </sc-for>
+                </div>
+              </sc-if>
+            </sc-if>
+          </div>
+        </sc-for>
+      </div>
+      <div style="margin-top:12px;padding-top:10px;border-top:1px solid #F0EEE7;font-size:10.5px;color:#9AA3B5;line-height:1.65">{{ ckFoot }}</div>
+    </div>
+
+    <!-- ══ Assumptions & pending data ══ -->
+    <div style="margin-top:16px;background:#FBF6EA;border:1px solid #EAD9C0;border-radius:16px;padding:22px 26px">
+      <div style="display:flex;justify-content:space-between;align-items:baseline;flex-wrap:wrap;gap:8px">
+        <div style="font-family:'Source Serif 4',Georgia,serif;font-size:18px;font-weight:600;color:#96742F">Assumptions in force &amp; data still to land</div>
+        <div style="font-size:11.5px;color:#B08A4B">every gap is shown, none silently absorbed</div>
+      </div>
+      <div style="margin-top:12px;display:grid;grid-template-columns:1fr 1fr;gap:18px;align-items:start">
+        <div>
+          <div style="font-size:10px;letter-spacing:0.09em;font-weight:800;color:#96742F">ASSUMPTIONS (OWNER-CONFIRMED OR STATED)</div>
+          <sc-for list="{{ asRows }}" as="a" hint-placeholder-count="6">
+            <div style="margin-top:8px;display:flex;gap:8px;font-size:11.5px;line-height:1.6;color:#6B5A33"><span style="color:#C9A45C;font-weight:800">•</span><span>{{ a.t }}</span></div>
+          </sc-for>
+        </div>
+        <div>
+          <div style="font-size:10px;letter-spacing:0.09em;font-weight:800;color:#96742F">PENDING DATA — SLOT WIRED, AWAITING OWNER</div>
+          <sc-for list="{{ pendRows }}" as="p" hint-placeholder-count="6">
+            <div style="margin-top:8px;display:flex;gap:8px;font-size:11.5px;line-height:1.6;color:#6B5A33"><span style="color:#B04A33;font-weight:800">◦</span><span>{{ p.t }}</span></div>
+          </sc-for>
+        </div>
+      </div>
+      <div style="margin-top:12px;padding-top:10px;border-top:1px solid #EAD9C0;font-size:10.5px;color:#B08A4B;line-height:1.65">{{ asFoot }}</div>
+    </div>
+
+    </sc-if>
+
+    <sc-if value="{{ loading }}" hint-placeholder-val="{{ true }}">
+      <div style="margin-top:18px;background:#FFFFFF;border:1px solid #E5E3DC;border-radius:16px;padding:48px;text-align:center;font-size:13px;color:#8A93A6">Loading the cash ledger…</div>
+    </sc-if>
+
+    <sc-if value="{{ loadError }}" hint-placeholder-val="{{ false }}">
+      <div style="margin-top:18px;background:#FFFFFF;border:1px solid #E5C9BE;border-radius:16px;padding:40px;text-align:center">
+        <div style="font-family:'Source Serif 4',Georgia,serif;font-size:18px;font-weight:600;color:#A03E28">Couldn&#8217;t load the data</div>
+        <div style="margin-top:8px;font-size:12.5px;color:#5E6B82;line-height:1.6;max-width:560px;margin-left:auto;margin-right:auto">{{ loadError }}</div>
+        <div style="margin-top:16px;display:flex;justify-content:center">
+          <div onClick="{{ retryLoad }}" style-hover="background:#16233A;color:#FFFFFF;border-color:#16233A" style="display:inline-flex;padding:9px 18px;border-radius:9px;border:1px solid #D8D4C8;background:#FFFFFF;color:#16233A;font-size:12.5px;font-weight:700;cursor:pointer">Retry</div>
+        </div>
+      </div>
+    </sc-if>
+
   </div>
 </div>
-<div style="max-width:760px;margin:80px auto 0;padding:0 40px;text-align:center">
-  <div style="font-family:'Source Serif 4',Georgia,serif;font-size:15px;font-weight:700;letter-spacing:0.06em;color:#C9A45C">SKY&nbsp;REI</div>
-  <h1 style="margin:14px 0 0;font-family:'Source Serif 4',Georgia,serif;font-size:30px;font-weight:600">Cash Flow</h1>
-  <span class="tag" style="margin-top:14px;background:#F6ECD9;color:#96742F">IN BUILD</span>
-  <p style="margin-top:18px;font-size:13.5px;color:#5E6B82;line-height:1.7">From NOI to cash actually kept — full debt service including principal, CapEx and distributions, tied out to bank balances every month. Awaiting loan schedules and bank balances.</p>
-  <p style="margin-top:6px;font-size:12px;color:#9AA3B5">This section activates automatically once its data intake and verification are complete.</p>
-  <p style="margin-top:26px"><a href="./PL%20Story%20-%20Main.dc.html" style="color:#96742F;font-weight:700;font-size:13px;text-decoration:none">← Back to the live P&amp;L</a></p>
-</div>
+</x-dc>
+
+<script type="text/x-dc" data-dc-script>
+class Component extends DCLogic {
+  state = {
+    cf: null, loadError: null,
+    fm: [], fe: [], fp: [], ft: [],
+    ddOpen: null, fq: '',
+    lq: '', lSort: 'bal', lBucket: null, lExp: null, lAll: false,
+    wSel: [], wq: '', wExp: null, wAll: false,
+    ckOpen: null,
+  };
+
+  loadData() {
+    this.setState({ loadError: null });
+    fetch('./cf-data.json')
+      .then(r => { if (!r.ok) throw new Error('HTTP ' + r.status + ' fetching ./cf-data.json'); return r.json(); })
+      .then(cf => {
+        if (!cf || cf.schema !== 'cf.v1' || !cf.doors || !cf.meta || !Array.isArray(cf.meta.months)) throw new Error('cf-data.json is not a valid cf.v1 file');
+        this.setState({ cf }, () => this.applyQuery());
+      })
+      .catch(e => this.setState({ cf: null, loadError: (e && e.message ? e.message : String(e)) }));
+  }
+
+  applyQuery() {
+    try {
+      if (typeof location === 'undefined' || !location.search || !this.state.cf) return;
+      const q = new URLSearchParams(location.search);
+      const li = (k) => (q.get(k) || '').split(',').map(s => s.trim()).filter(Boolean);
+      const patch = {};
+      if (q.get('m')) patch.fm = li('m');
+      if (q.get('entity')) patch.fe = li('entity');
+      if (q.get('door')) patch.fp = li('door');
+      if (q.get('tenant')) patch.ft = li('tenant');
+      if (Object.keys(patch).length) this.setState(patch);
+    } catch (e) {}
+  }
+
+  syncUrl() {
+    try {
+      if (typeof history === 'undefined' || typeof location === 'undefined') return;
+      const S = this.state, q = new URLSearchParams();
+      if (S.fm.length) q.set('m', S.fm.join(','));
+      if (S.fe.length) q.set('entity', S.fe.join(','));
+      if (S.fp.length) q.set('door', S.fp.join(','));
+      if (S.ft.length) q.set('tenant', S.ft.join(','));
+      const s = q.toString();
+      history.replaceState(null, '', location.pathname + (s ? '?' + s : ''));
+    } catch (e) {}
+  }
+
+  setF(patch) { this.setState(patch, () => this.syncUrl()); }
+
+  componentDidMount() {
+    this.loadData();
+    this._doc = () => { if (this.state.ddOpen) this.setState({ ddOpen: null }); };
+    document.addEventListener('click', this._doc);
+  }
+  componentWillUnmount() { document.removeEventListener('click', this._doc); }
+
+  renderVals() {
+    const S = this.state;
+    const NAVY = '#16233A', INK = '#2A3550', MUT = '#5E6B82', FAINT = '#8A93A6', RED = '#B04A33', REDD = '#A03E28', GREEN = '#3E8E63', GREEND = '#2A6F4E', GOLD = '#C9A45C', GOLDD = '#96742F', BLUE = '#3D64A8';
+    const stopProp = e => e.stopPropagation();
+    if (!S.cf) return {
+      ready: false, loading: !S.loadError, loadError: S.loadError || false,
+      retryLoad: () => this.loadData(), stopProp,
+      scopeLine: S.loadError ? 'Data failed to load' : 'Loading…',
+      filters: [], hasActive: false, onReset: () => {}, asOfLine: '',
+      kpis: [],
+      keptCol: '#F5D9A8', keptBig: '', keptCap: '', collBig: '', collCap: '', rateCol: '#F5D9A8', rateBig: '', rateCap: '',
+      wfConn: [], wfCols: [], driftOn: false, driftLine: '', wfFoot: '',
+      trSub: '', trAreaK: '', trPathC: '', trPathK: '', trPtsC: [], trPtsK: [], trX: [], trFoot: '',
+      ldSub: '', idOpen: '', idChg: '', idColl: '', idClose: '', idCloseCol: INK, idNote: '',
+      lq: '', onLq: () => {}, lBucketChips: [], lSortChips: [],
+      lRows: [], lEmpty: false, lEmptyTxt: '', lMoreShow: false, onLMore: () => {}, lMoreLab: '', lFoot: '',
+      wSub: '', wTiles: [], wChips: [], wq: '', onWq: () => {}, wValHead: '',
+      wRows: [], wEmpty: false, wEmptyTxt: '', wMoreShow: false, onWMore: () => {}, wMoreLab: '', wFoot: '',
+      ofSub: '', ofOp: [], ofOpTot: '', ofStat: [], ofStatTot: '', ofStatNote: '', ofDebt: [], ofDebtTot: '', ofFoot: '',
+      evSub: '', evOn: false, evEmpty: false, evGroups: [], evFoot: '',
+      ckCards: [], ckFoot: '',
+      asRows: [], pendRows: [], asFoot: '',
+    };
+
+    const CF = S.cf, MO = CF.meta.months, NM = MO.length, DOORS = CF.doors, OH = CF.overhead, RC = CF.recon;
+    const fN = n => { const r = Math.round(n); const s = '$' + Math.abs(r).toLocaleString('en-US'); return r < 0 ? '(' + s + ')' : s; };
+    const f2 = n => { const s = '$' + Math.abs(n).toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 }); return n < -0.004 ? '(' + s + ')' : s; };
+    const fK = n => { const a = Math.abs(n), s = n < 0; let t; if (a >= 1e6) t = '$' + (a / 1e6).toFixed(2) + 'M'; else if (a >= 100000) t = '$' + Math.round(a / 1000) + 'K'; else if (a >= 1000) t = '$' + (a / 1000).toFixed(1) + 'K'; else t = '$' + Math.round(a); return s ? '(' + t + ')' : t; };
+    const MMM = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
+    const mmyy = m => MMM[+m.slice(5, 7) - 1] + '-' + m.slice(2, 4);
+    const sum = a => a.reduce((x, y) => x + y, 0);
+    const esc = s => encodeURIComponent(s);
+
+    // ══ month span (contiguous, accounting-correct) ══
+    const selM = (S.fm || []).filter(m => MO.includes(m)).sort();
+    let firstI = 0, lastI = NM - 1;
+    if (selM.length) { firstI = MO.indexOf(selM[0]); lastI = MO.indexOf(selM[selM.length - 1]); }
+    const winIdx = []; for (let i = firstI; i <= lastI; i++) winIdx.push(i);
+    const spanLab = firstI === lastI ? mmyy(MO[firstI]) : mmyy(MO[firstI]) + ' – ' + mmyy(MO[lastI]);
+    const spanned = selM.length > 0 && selM.length !== (lastI - firstI + 1);
+
+    // ══ door scope ══
+    const doorNames = Object.keys(DOORS);
+    const ftSet = new Set(S.ft);
+    const doorHasTenant = d => DOORS[d].tenants.some(t => ftSet.has(t.tenant));
+    const pass = d => {
+      const dd = DOORS[d];
+      if (S.fe.length && !S.fe.includes(dd.entity)) return false;
+      if (S.fp.length && !S.fp.includes(d)) return false;
+      if (S.ft.length && !doorHasTenant(d)) return false;
+      return true;
+    };
+    const scoped = doorNames.filter(pass);
+    const unfiltered = !S.fe.length && !S.fp.length && !S.ft.length;
+    const wsum = (d, key) => { let s = 0; for (const i of winIdx) s += DOORS[d][key][i]; return s; };
+    const tot = key => { let s = 0; for (const d of scoped) s += wsum(d, key); return s; };
+    const totM = key => MO.map((_, i) => { let s = 0; for (const d of scoped) s += DOORS[d][key][i]; return s; });
+    const ohW = key => unfiltered ? sum(winIdx.map(i => OH[key][i])) : 0;
+
+    const chg = tot('chg'), coll = tot('coll'), claims = tot('claims') + ohW('claims');
+    const opex = tot('opex') + ohW('opex');
+    const escW = tot('escrow');
+    // direct statutory cash is portfolio-level in the file (mixed grain); door-filtered scopes drop it with a note
+    const insDirW = unfiltered ? sum(winIdx.map(i => RC.statutoryCash.insurance[i])) : 0;
+    const ptDirW = unfiltered ? sum(winIdx.map(i => RC.statutoryCash.propertyTax[i])) : 0;
+    const hoaProxy = MO.map((_, i) => scoped.reduce((s, d) => s + (DOORS[d].statByAcct['HOA Fee'] ? DOORS[d].statByAcct['HOA Fee'][i] : 0), 0));
+    const hoaProxyW = sum(winIdx.map(i => hoaProxy[i]));
+    const statCash = escW + insDirW + ptDirW + hoaProxyW;
+    const statAccr = tot('stat') + ohW('stat');
+    const intW = tot('int'), prinW = tot('prinSched'), capexW = tot('capex') + ohW('capex');
+    const kept = coll + claims - opex - statCash - intW - prinW;
+    const rate = chg > 0 ? coll / chg * 100 : 0;
+
+    // ══ tenant ledger rows (scope-aware) ══
+    const allRows = [];
+    let hiddenZero = 0;
+    for (const d of scoped) {
+      const dd = DOORS[d];
+      for (const t of dd.tenants) {
+        if (S.ft.length && !ftSet.has(t.tenant)) continue;
+        const openW = firstI === 0 ? t.opening : t.close[firstI - 1];
+        const chgW = sum(winIdx.map(i => t.chg[i]));
+        const collW = sum(winIdx.map(i => t.coll[i]));
+        const closeW = t.close[lastI];
+        const occAny = winIdx.some(i => t.occ[i]);
+        if (!t.openingBlank && Math.abs(openW) < 0.005 && Math.abs(chgW) < 0.005 && Math.abs(collW) < 0.005 && Math.abs(closeW) < 0.005) { hiddenZero++; continue; }
+        const rent = t.lease && t.lease.rent > 0 ? t.lease.rent : Math.max(0, ...winIdx.map(i => t.chg[i]));
+        allRows.push({ d, dd, t, openW, chgW, collW, closeW, move: closeW - openW, occAny, rent });
+      }
+    }
+    const monthsN = winIdx.length;
+    const tests = {
+      every: { lab: 'Balance every month', f: r => monthsN >= 2 && r.t.close.filter((c, i) => i >= firstI && i <= lastI).every(c => c > 50) },
+      tworent: { lab: '≥ 2 months’ rent', f: r => r.rent > 0 && r.closeW >= 2 * r.rent - 0.005 },
+      grow: { lab: 'Growing balance', f: r => r.move > 50 },
+      never: { lab: 'Owes, paid nothing', f: r => r.collW < 0.005 && r.closeW > 50 },
+      credit: { lab: 'Credit balance', f: r => r.closeW < -50 },
+      nolease: { lab: 'No lease covering', f: r => (r.t.nl || 0) > 0 },
+      blank: { lab: 'Blank opening', f: r => r.t.openingBlank },
+    };
+    const testKeys = Object.keys(tests);
+    for (const r of allRows) r.fails = testKeys.filter(k => tests[k].f(r));
+
+    // ══ scope line / as-of ══
+    const nGl = scoped.filter(d => DOORS[d].inGL).length, nFile = scoped.length - nGl;
+    const nTen = allRows.length;
+    const scopeLine = spanLab + ' · ' + nGl + ' GL doors' + (nFile ? ' (+' + nFile + ' file-only)' : '') + ' · ' + nTen + ' tenant ledgers · rent charged → cash actually kept';
+    const asOfLine = 'DERIVED MOCK · charges = GL rent · collections = Cashflow.xlsx · not published';
+
+    // ══ filter bar ══
+    const openDd = (id) => (e) => { e.stopPropagation(); this.setState({ ddOpen: S.ddOpen === id ? null : id, fq: '' }); };
+    const togList = (key, v) => () => { const cur = new Set(S[key]); cur.has(v) ? cur.delete(v) : cur.add(v); this.setF({ [key]: [...cur] }); };
+    const entities = [...new Set(doorNames.map(d => DOORS[d].entity))].sort();
+    const entN = {}; doorNames.forEach(d => { entN[DOORS[d].entity] = (entN[DOORS[d].entity] || 0) + 1; });
+    const tenantNames = [...new Set(doorNames.flatMap(d => DOORS[d].tenants.filter(t => t.src !== 'system').map(t => t.tenant)))].sort();
+    const tenantDoor = {}; doorNames.forEach(d => DOORS[d].tenants.forEach(t => { if (!tenantDoor[t.tenant]) tenantDoor[t.tenant] = d; }));
+    const q = (S.fq || '').toLowerCase();
+    const mkOpts = (list, key, nOf) => list.map(v => ({
+      label: key === 'fm' ? mmyy(v) : v, n: nOf ? nOf(v) : '', check: S[key].includes(v) ? '✓' : '',
+      fw: S[key].includes(v) ? 700 : 500, bg: S[key].includes(v) ? '#FBF6EA' : 'transparent', onClick: togList(key, v),
+    }));
+    const filtDef = [
+      { id: 'MONTH', key: 'fm', label: 'MONTH', all: 'months', w: '190px', search: false, list: MO, nOf: m => '', val: selM.length ? spanLab : 'All months' },
+      { id: 'ENTITY', key: 'fe', label: 'ENTITY', all: 'entities', w: '230px', search: false, list: entities, nOf: v => entN[v], val: S.fe.length ? (S.fe.length > 2 ? S.fe.length + ' selected' : S.fe.join(', ')) : 'All entities' },
+      { id: 'PROPERTY', key: 'fp', label: 'PROPERTY', all: 'properties', w: '300px', search: true, list: doorNames, nOf: v => DOORS[v].entity, val: S.fp.length ? (S.fp.length > 1 ? S.fp.length + ' selected' : S.fp[0]) : 'All properties' },
+      { id: 'TENANT', key: 'ft', label: 'TENANT', all: 'tenants', w: '300px', search: true, list: tenantNames, nOf: v => tenantDoor[v] || '', val: S.ft.length ? (S.ft.length > 1 ? S.ft.length + ' selected' : S.ft[0]) : 'All tenants' },
+    ];
+    const filters = filtDef.map(f => {
+      const open = S.ddOpen === f.id;
+      const shown = open && f.search && q ? f.list.filter(v => v.toLowerCase().includes(q)) : f.list;
+      return {
+        onToggle: openDd(f.id), bd: S[f.key].length ? GOLD : '#D8D4C8', bg: S[f.key].length ? '#FBF6EA' : '#FFFFFF',
+        label: f.label, value: f.val, open, w: f.w, hasSearch: f.search, q: S.fq,
+        onQ: e => this.setState({ fq: e.target.value }),
+        onClear: () => this.setF({ [f.key]: [] }), allLabel: f.all, allCheck: S[f.key].length ? '' : '✓',
+        selAllShow: !!(f.search && q && shown.length && shown.length <= 400), onSelAll: () => { const cur = new Set(S[f.key]); shown.forEach(v => cur.add(v)); this.setF({ [f.key]: [...cur] }); },
+        selAllLabel: 'Select all ' + shown.length + ' matching',
+        opts: mkOpts(shown.slice(0, 260), f.key, f.nOf),
+      };
+    });
+    const hasActive = !!(S.fm.length || S.fe.length || S.fp.length || S.ft.length);
+    const onReset = () => this.setF({ fm: [], fe: [], fp: [], ft: [] });
+
+    // ══ KPI row ══
+    const owed = allRows.reduce((s, r) => s + (r.closeW > 0 ? r.closeW : 0), 0);
+    const credits = allRows.reduce((s, r) => s + (r.closeW < 0 ? r.closeW : 0), 0);
+    const kTile = (label, val, sub, col, tip, bg, bd) => ({ label, val, sub, col: col || NAVY, dcol: FAINT, tip: tip || '', bg: bg || '#FFFFFF', bd: bd || '#E5E3DC' });
+    const kpis = [
+      kTile('Rent charged', fN(chg), spanLab + ' · GL rent net of vacancy', BLUE, 'Rental Income + Vacancy Loss for the span'),
+      kTile('Cash collected', fN(coll), sum(winIdx.map(i => scoped.reduce((s, d) => s + DOORS[d].nrec[i], 0))) + ' receipts', GOLDD, 'Actual tenant receipts from Cashflow.xlsx'),
+      kTile('Collection rate', chg > 0 ? rate.toFixed(1) + '%' : '—', 'collected ÷ charged' + (rate > 100 ? ' · arrears & deposits inside' : ''), rate >= 100 ? GREEND : (rate >= 90 ? NAVY : REDD), 'Includes arrears catch-up, SD and fees — true tenant charges pending'),
+      kTile('Owed by tenants', fN(owed), 'at ' + mmyy(MO[lastI]) + ' · ' + allRows.filter(r => r.closeW > 0.005).length + ' tenants', REDD, 'Sum of positive tenant balances at span end'),
+      kTile('Tenant credits held', fN(-credits), 'prepaid / deposits unapplied', GREEND, 'Sum of negative balances — inflated until true charges land'),
+      kTile('Cash kept', fN(kept), 'after opex, statutory & full EMI', kept >= 0 ? GREEND : REDD, 'Collections + claims − operating − statutory − interest − scheduled principal', kept >= 0 ? '#F2F7F0' : '#FBF0ED', kept >= 0 ? '#D6E4D2' : '#EAD1C8'),
+    ];
+
+    // ══ hero waterfall ══
+    const keptBig = fN(kept), keptCol = kept >= 0 ? '#8FD0A8' : '#E8A896';
+    const keptCap = 'kept from ' + fN(coll) + ' collected · ' + spanLab;
+    const collBig = fN(coll), collCap = 'of ' + fN(chg) + ' charged';
+    const rateBig = chg > 0 ? rate.toFixed(1) + '%' : '—', rateCol = rate >= 100 ? '#8FD0A8' : '#F5D9A8';
+    const rateCap = rate > 100 ? 'over 100% — balances drawn down' : 'of charged rent';
+    const dBal = coll - chg; // + means collected more than charged
+    const steps = [
+      { label: 'RENT CHARGED', cap: 'GL · net of vacancy', v: chg, kind: 'anchor', col: '#3D64A8' },
+      { label: dBal >= 0 ? 'FROM BALANCES' : 'TO BALANCES', cap: dBal >= 0 ? 'arrears & deposits in' : 'unpaid → AR', v: dBal, kind: 'delta' },
+      { label: 'CASH COLLECTED', cap: 'actual receipts', v: coll, kind: 'anchor', col: GOLD },
+      { label: 'INSURANCE CLAIMS', cap: 'per GL', v: claims, kind: 'delta' },
+      { label: 'OPERATING', cap: 'cash-basis GL', v: -opex, kind: 'delta' },
+      { label: 'STATUTORY & ESCROW', cap: 'escrow + direct + HOA', v: -statCash, kind: 'delta' },
+      { label: 'INTEREST', cap: 'GL actuals', v: -intW, kind: 'delta' },
+      { label: 'PRINCIPAL', cap: 'scheduled · engine', v: -prinW, kind: 'delta' },
+      { label: 'CASH KEPT', cap: kept >= 0 ? 'yours' : 'shortfall', v: kept, kind: 'anchor', col: kept >= 0 ? '#3E8E63' : '#C4573C' },
+    ];
+    let run = 0; const pts = [], ends = [];
+    steps.forEach((st, i) => { if (st.kind === 'anchor') { run = st.v; pts.push({ lo: Math.min(0, st.v), hi: Math.max(0, st.v) }); } else { const a = run; run += st.v; pts.push({ lo: Math.min(a, run), hi: Math.max(a, run) }); } ends.push(run); });
+    const wMaxV = Math.max(...pts.map(p => p.hi), 1), wMinV = Math.min(...pts.map(p => p.lo), 0);
+    const H = 170;
+    const yPx = v => (v - wMinV) / (wMaxV - wMinV) * H;
+    const wfCols = steps.map((st, i) => {
+      const p = pts[i]; const b = yPx(p.lo), h = Math.max(yPx(p.hi) - yPx(p.lo), 2);
+      const bg = st.kind === 'anchor' ? st.col : (st.v >= 0 ? 'rgba(143,208,168,0.85)' : 'rgba(196,87,60,0.85)');
+      return { label: st.label, cap: st.cap, val: fK(st.v), vc: st.kind === 'anchor' ? '#F5D9A8' : (st.v >= 0 ? '#8FD0A8' : '#E8A896'),
+        b: b + 'px', h: h + 'px', bg, vB: (b + h + 8) + 'px', tip: st.label + ': ' + f2(st.v) };
+    });
+    const wfN = steps.length;
+    const wfConn = steps.slice(0, -1).map((st, i) => {
+      const t = Math.max(Math.min(216 - yPx(ends[i]), 214), 2);
+      return { l: ((i + 0.8) * (100 / wfN)) + '%', w: (0.4 * (100 / wfN)) + '%', t: t + 'px' };
+    });
+    const driftAll = coll - chg;
+    const driftOn = Math.abs(driftAll) > 500;
+    const driftLine = 'Collections exceed rent charges by ' + fN(Math.abs(driftAll)) + ' in this scope. Expected for now: receipts include security deposits, fees, utility recoveries and arrears settlements, while charges are rent-only until the true tenant-charge data lands. Tenant credit balances are overstated by roughly the same amount — the drift is quantified, not absorbed.';
+    const wfFoot = 'Operating cash only. Capex per GL: ' + fN(capexW) + ' · financing events (draws, payoffs, releases) shown separately at right — sale-funded payoffs are settled from sale proceeds, not operating cash. Escrow uses the loans-engine T&I; the file’s recorded T&I differs by a reconciled delta (see Checks & balances). HOA cash pending — GL accrual used as proxy.';
+
+    // ══ trend ══
+    const chgM = totM('chg'), collM = totM('coll');
+    const TW = 660, TH = 170, TPAD = 30;
+    const allVals = [...chgM, ...collM];
+    const tMax = Math.max(...allVals, 1), tMin = Math.min(...allVals, tMax);
+    const tSpanV = Math.max(tMax - tMin, 1);
+    const ty = v => TPAD + (TH - 2 * TPAD) * (1 - (v - tMin) / tSpanV);
+    const tx = i => (i + 0.5) * TW / NM;
+    const mkPath = arr => arr.map((v, i) => (i === 0 ? 'M' : 'L') + tx(i).toFixed(1) + ' ' + ty(v).toFixed(1)).join(' ');
+    const trPathC = mkPath(chgM), trPathK = mkPath(collM);
+    const trAreaK = 'M' + tx(0).toFixed(1) + ' ' + (TH - 6) + ' ' + collM.map((v, i) => 'L' + tx(i).toFixed(1) + ' ' + ty(v).toFixed(1)).join(' ') + ' L' + tx(NM - 1).toFixed(1) + ' ' + (TH - 6) + ' Z';
+    const inSpan = i => i >= firstI && i <= lastI;
+    const trPtsK = collM.map((v, i) => ({
+      cx: tx(i).toFixed(1), cy: ty(v).toFixed(1), r: inSpan(i) && selM.length ? 5 : 4,
+      fill: inSpan(i) && selM.length ? GOLD : '#FFFFFF',
+      tip: mmyy(MO[i]) + ' — collected ' + f2(collM[i]) + ' vs charged ' + f2(chgM[i]),
+      onClick: () => this.setF({ fm: S.fm.length === 1 && S.fm[0] === MO[i] ? [] : [MO[i]] }),
+      leftPct: (tx(i) / TW * 100) + '%', topPct: (ty(v) / TH * 100 - 5) + '%', vfw: inSpan(i) && selM.length ? 800 : 600, vlab: fK(v),
+    }));
+    const trPtsC = chgM.map((v, i) => ({
+      cx: tx(i).toFixed(1), cy: ty(v).toFixed(1),
+      tip: mmyy(MO[i]) + ' — charged ' + f2(v),
+      leftPct: (tx(i) / TW * 100) + '%', topPct: (ty(v) / TH * 100 + 6) + '%', shift: '0%',
+      vlab: (i === 0 || i === NM - 1) ? fK(v) : '',
+    }));
+    const trX = MO.map((m, i) => ({
+      lab: mmyy(m), onClick: () => this.setF({ fm: S.fm.length === 1 && S.fm[0] === m ? [] : [m] }),
+      xfw: inSpan(i) && selM.length ? 800 : 600, xcol: inSpan(i) && selM.length ? NAVY : FAINT,
+      rate: chgM[i] > 0 ? (collM[i] / chgM[i] * 100).toFixed(0) + '%' : '—', rcol: chgM[i] > 0 && collM[i] / chgM[i] >= 1 ? GREEND : GOLDD,
+    }));
+    const trSub = 'every month in the ledger · click a point to focus the page on that month';
+    const trFoot = 'Collection rate under each month = collected ÷ charged. Rates above 100% mean tenants settled arrears or paid deposits — the ledger drift note in the hero quantifies it. Y-axis zoomed to the data range; every point labeled.';
+
+    // ══ ledger table ══
+    const lqv = (S.lq || '').toLowerCase();
+    const match = r => !lqv || r.t.tenant.toLowerCase().includes(lqv) || r.d.toLowerCase().includes(lqv);
+    const bucketDef = [
+      { id: null, lab: 'All' }, { id: 'owes', lab: 'Owes' }, { id: 'credit', lab: 'Credit' }, { id: 'settled', lab: 'Settled' },
+    ];
+    const inBucket = (r, b) => b === null ? true : b === 'owes' ? r.closeW > 0.005 : b === 'credit' ? r.closeW < -0.005 : Math.abs(r.closeW) <= 0.005;
+    const lFiltered = allRows.filter(r => match(r) && inBucket(r, S.lBucket));
+    const sorters = { bal: (a, b) => b.closeW - a.closeW, move: (a, b) => Math.abs(b.move) - Math.abs(a.move), az: (a, b) => a.t.tenant.localeCompare(b.t.tenant) };
+    lFiltered.sort(sorters[S.lSort] || sorters.bal);
+    const CAP = 12;
+    const lShown = (S.lAll || lqv) ? lFiltered : lFiltered.slice(0, CAP);
+    const rowKey = r => r.d + '||' + r.t.tenant;
+    const mkMini = r => winIdx.map(i => {
+      const o = i === 0 ? r.t.opening : r.t.close[i - 1];
+      return { m: mmyy(MO[i]), open: f2(o), chg: f2(r.t.chg[i]), coll: f2(r.t.coll[i]), close: f2(r.t.close[i]),
+        closeCol: r.t.close[i] > 0.005 ? REDD : (r.t.close[i] < -0.005 ? GREEND : MUT), occ: r.t.occ[i] ? '●' : '—' };
+    });
+    const leaseLine = r => {
+      if (r.t.lease) { const L = r.t.lease; return L.status + ' · ' + L.type + ' · ' + L.start.slice(0, 10) + ' → ' + (L.end.slice(0, 4) === '2060' ? 'at will' : L.end.slice(0, 10)) + ' · rent ' + fN(L.rent) + '/mo'; }
+      if (r.t.src === 'ar') return 'No lease on file — carried from AR balances (' + (r.dd.arTenant === r.t.tenant ? 'named tenant at Dec-25' : 'AR record') + ')';
+      return r.t.tenant === 'Vacant' ? 'System bucket — months with no lease and no known tenant' : 'No lease matched';
+    };
+    const flagsLine = r => {
+      const f = [];
+      if (r.t.openingBlank) f.push('Dec-25 opening BLANK in AR file — treated as $0');
+      if ((r.t.nl || 0) > 0) f.push(r.t.nl + ' month' + (r.t.nl === 1 ? '' : 's') + ' attributed with no lease covering — last known occupant');
+      if (r.dd.flags.includes('ar-tenant-not-in-leases') && r.dd.arTenant === r.t.tenant) f.push('AR tenant name not found in Leases.csv — possible spelling gap');
+      if (!r.dd.inGL) f.push('door not in the 2026 GL (sold / pre-2026)');
+      const nrec = sum(winIdx.map(i => r.dd.nrec[i]));
+      f.push(nrec + ' receipt' + (nrec === 1 ? '' : 's') + ' on this door in span');
+      return f.join(' · ');
+    };
+    const mkBadges = r => {
+      const b = [];
+      if (r.t.openingBlank) b.push({ t: 'BLANK OPEN', bg: '#FBF6EA', col: GOLDD });
+      if ((r.t.nl || 0) > 0) b.push({ t: 'NO LEASE', bg: '#FBF0ED', col: REDD });
+      if (r.t.lease && r.t.lease.status === 'Past') b.push({ t: 'FORMER', bg: '#F0EEE6', col: MUT });
+      if (r.t.tenant === 'Vacant') b.push({ t: 'UNATTRIBUTED', bg: '#F0EEE6', col: MUT });
+      return b.slice(0, 2);
+    };
+    const mkRow = (r, expKey, setExp) => ({
+      onClick: () => this.setState({ [expKey]: S[expKey] === rowKey(r) ? null : rowKey(r) }),
+      rowBg: S[expKey] === rowKey(r) ? '#FBFAF6' : 'transparent', exp: S[expKey] === rowKey(r),
+      tenant: r.t.tenant, prop: r.d, entity: r.dd.entity, badges: mkBadges(r),
+      open: f2(r.openW), chg: f2(r.chgW), coll: f2(r.collW), close: f2(r.closeW),
+      closeCol: r.closeW > 0.005 ? REDD : (r.closeW < -0.005 ? GREEND : MUT),
+      moveLab: (r.move > 0.005 ? '▲ ' : r.move < -0.005 ? '▼ ' : '· ') + fK(Math.abs(r.move)),
+      moveCol: r.move > 0.005 ? REDD : (r.move < -0.005 ? GREEND : FAINT),
+      mini: mkMini(r), leaseLine: leaseLine(r), flagsLine: flagsLine(r),
+      plHref: './PL%20Story%20-%20Main.dc.html?door=' + esc(r.d), loanHref: './loans.dc.html?door=' + esc(r.d),
+      onFocus: () => this.setF({ fp: S.fp.length === 1 && S.fp[0] === r.d ? [] : [r.d] }),
+      focusLab: S.fp.length === 1 && S.fp[0] === r.d ? 'Release focus ✕' : 'Focus property ⌖',
+    });
+    const lRows = lShown.map(r => mkRow(r, 'lExp', true));
+    const lBucketChips = bucketDef.map(b => ({
+      label: b.lab, n: '' + allRows.filter(r => match(r) && inBucket(r, b.id)).length,
+      onClick: () => this.setState({ lBucket: b.id, lAll: false }),
+      bd: S.lBucket === b.id ? GOLD : '#D8D4C8', bg: S.lBucket === b.id ? '#FBF6EA' : '#FFFFFF',
+      col: b.id === 'owes' ? REDD : b.id === 'credit' ? GREEND : INK,
+    }));
+    const sortDef = [{ id: 'bal', lab: 'Worst balance' }, { id: 'move', lab: 'Biggest move' }, { id: 'az', lab: 'A–Z' }];
+    const lSortChips = sortDef.map(sd => ({ label: sd.lab, onClick: () => this.setState({ lSort: sd.id }), bd: S.lSort === sd.id ? GOLD : '#D8D4C8', bg: S.lSort === sd.id ? '#FBF6EA' : '#FFFFFF' }));
+    const idOpen = allRows.reduce((s, r) => s + r.openW, 0), idChgV = allRows.reduce((s, r) => s + r.chgW, 0), idCollV = allRows.reduce((s, r) => s + r.collW, 0), idCloseV = allRows.reduce((s, r) => s + r.closeW, 0);
+    const idNote = 'holds to the cent for every tenant, property, entity and month' + (spanned ? ' · non-adjacent picks widened to the span ' + spanLab : '');
+    const ldSub = spanLab + ' · opening + charges − collected = closing · ' + allRows.length + ' ledgers' + (hiddenZero ? ' (' + hiddenZero + ' all-zero hidden)' : '');
+    const lFoot = 'Openings are the Dec-25 tenant balances by property (33 blank cells treated as $0 and badged). Charges are GL rent net of vacancy attributed to the month’s occupant — the later lease when two overlap; months with no lease go to the last known AR tenant. Balances of former tenants stay frozen on their own line until settled or written off. True tenant charges (SD, fees, utilities) will replace the rent proxy when supplied.';
+
+    // ══ watchlist ══
+    const universe = allRows.filter(r => r.fails.length);
+    const wSelSet = new Set(S.wSel);
+    const wqv = (S.wq || '').toLowerCase();
+    const wMatch = r => !wqv || r.t.tenant.toLowerCase().includes(wqv) || r.d.toLowerCase().includes(wqv);
+    const wView = universe.filter(r => wMatch(r) && (!wSelSet.size || [...wSelSet].every(k => r.fails.includes(k))));
+    const selOne = wSelSet.size === 1 ? [...wSelSet][0] : null;
+    const metric = r => selOne === 'credit' ? r.closeW : selOne === 'grow' ? r.move : r.closeW;
+    wView.sort((a, b) => wSelSet.size ? (selOne === 'credit' ? metric(a) - metric(b) : metric(b) - metric(a)) : (b.fails.length - a.fails.length || b.closeW - a.closeW));
+    const wShown = (S.wAll || wqv) ? wView : wView.slice(0, 10);
+    const wChips = testKeys.map(k => ({
+      label: tests[k].lab, n: '' + universe.filter(r => r.fails.includes(k)).length,
+      onClick: () => { const cur = new Set(S.wSel); cur.has(k) ? cur.delete(k) : cur.add(k); this.setState({ wSel: [...cur], wAll: false }); },
+      bd: wSelSet.has(k) ? GOLD : '#D8D4C8', bg: wSelSet.has(k) ? '#FBF6EA' : '#FFFFFF', col: k === 'credit' ? GREEND : (k === 'blank' || k === 'nolease') ? GOLDD : REDD,
+    }));
+    const wOwed = wView.reduce((s, r) => s + (r.closeW > 0 ? r.closeW : 0), 0);
+    const wCred = wView.reduce((s, r) => s + (r.closeW < 0 ? r.closeW : 0), 0);
+    const wBig = wView.length ? Math.max(...wView.map(r => r.closeW)) : 0;
+    const wTiles = [
+      { k: wSelSet.size ? 'In view' : 'On the watchlist', v: '' + wView.length, sub: 'of ' + allRows.length + ' ledgers', col: NAVY },
+      { k: 'Owed in view', v: fN(wOwed), sub: 'positive balances', col: REDD },
+      { k: 'Credits in view', v: fN(-wCred), sub: 'prepaid / deposits unapplied', col: GREEND },
+      { k: 'Largest balance', v: fN(wBig), sub: wView.length && wBig > 0 ? wView.find(r => r.closeW === wBig).t.tenant : '—', col: REDD },
+    ];
+    const wRowsList = wShown.map(r => {
+      const base = mkRow(r, 'wExp', true);
+      return Object.assign(base, {
+        pills: r.fails.map(k => ({ t: tests[k].lab.toUpperCase(), bg: k === 'credit' ? '#F2F7F0' : (k === 'blank' || k === 'nolease') ? '#FBF6EA' : '#FBF0ED', col: k === 'credit' ? GREEND : (k === 'blank' || k === 'nolease') ? GOLDD : REDD })).slice(0, 4),
+        val: wSelSet.size ? f2(metric(r)) : ('' + r.fails.length + ' ⚑'), valCol: r.closeW > 0.005 ? REDD : (r.closeW < -0.005 ? GREEND : MUT),
+      });
+    });
+    const wValHead = selOne ? tests[selOne].lab.toUpperCase() : (wSelSet.size ? 'CLOSING' : 'FLAGS · WORST FIRST');
+    const wSub = 'the plan: every tenant pays in full, every month · ' + universe.length + ' ledgers trip at least one test';
+    const wFoot = 'Tests run on the selected span: balance every month-end > $50 · closing ≥ 2 months’ lease rent · balance grew > $50 · owes with zero receipts · credit beyond $50 (inflated until true charges land) · no lease on file · blank Dec-25 opening. Chips combine with AND. Consistent-balance tenants are the eviction/settlement conversation list.';
+
+    // ══ where the cash went ══
+    const opexAccts = {};
+    for (const d of scoped) { const A = DOORS[d].opexByAcct; for (const k in A) opexAccts[k] = (opexAccts[k] || 0) + sum(winIdx.map(i => A[k][i])); }
+    if (unfiltered) { for (const k in OH.opexByAcct) opexAccts[k] = (opexAccts[k] || 0) + sum(winIdx.map(i => OH.opexByAcct[k][i])); }
+    const opexSorted = Object.entries(opexAccts).filter(([k, v]) => Math.abs(v) > 0.005).sort((a, b) => b[1] - a[1]);
+    const opMax = Math.max(...opexSorted.map(x => Math.abs(x[1])), 1);
+    const ofOp = opexSorted.map(([k, v]) => ({ k, v: fN(v), w: Math.round(Math.abs(v) / opMax * 100) + '%', pct: coll > 0 ? (v / coll * 100).toFixed(1) + '%' : '—' }));
+    const ofOpTot = fN(opex);
+    const ofStat = [
+      { k: 'T&I escrow to lenders', tag: 'ENGINE', tagBg: '#EFF3FA', tagCol: BLUE, v: fN(escW) },
+      { k: 'Insurance — paid direct', tag: 'CASH · FILE', tagBg: '#F2F7F0', tagCol: GREEND, v: fN(insDirW) },
+      { k: 'Property tax — paid direct', tag: 'CASH · FILE', tagBg: '#F2F7F0', tagCol: GREEND, v: fN(ptDirW) },
+      { k: 'HOA fees', tag: 'GL PROXY', tagBg: '#FBF6EA', tagCol: GOLDD, v: fN(hoaProxyW) },
+    ];
+    const ofStatTot = fN(statCash);
+    const ofStatNote = 'GL accrual for property tax, insurance & HOA in this scope is ' + fN(statAccr) + ' vs ' + fN(statCash) + ' cash shown — a ' + fN(statAccr - statCash) + ' timing gap. Most non-escrowed tax and insurance bills land seasonally; the gap will close as actual payment data arrives.' + (unfiltered ? '' : ' Direct-paid tax/insurance actuals are portfolio-level in the file and drop out of door-filtered scopes.');
+    const dIntFile = sum(winIdx.map(i => RC.interest.file[i])), dIntGl = sum(winIdx.map(i => RC.interest.gl[i]));
+    const dPrinFile = sum(winIdx.map(i => RC.principal.file[i])), dPrinEng = sum(winIdx.map(i => RC.principal.engineSched[i]));
+    const ofDebt = [
+      { k: 'Interest', chip: unfiltered ? 'GL · file Δ ' + f2(dIntFile - dIntGl) : 'GL actuals', chipBg: unfiltered && Math.abs(dIntFile - dIntGl) <= 0.25 ? '#F2F7F0' : '#FBF6EA', chipCol: unfiltered && Math.abs(dIntFile - dIntGl) <= 0.25 ? GREEND : GOLDD, v: fN(intW) },
+      { k: 'Principal — scheduled', chip: unfiltered ? 'ENGINE · file gap ' + fK(dPrinEng - dPrinFile) : 'ENGINE · scheduled', chipBg: '#FBF6EA', chipCol: GOLDD, v: fN(prinW) },
+      { k: 'Escrow (inside EMI)', chip: 'counted above', chipBg: '#F0EEE6', chipCol: MUT, v: 'in statutory' },
+    ];
+    const ofDebtTot = fN(intW + prinW);
+    const ofSub = spanLab + (unfiltered ? ' · portfolio incl. company overhead' : ' · filtered scope, overhead excluded');
+    const ofFoot = 'Cash kept = collected + insurance claims − these three blocks. Capex per GL (' + fN(capexW) + ') sits in investing, not operating. Prepayments, payoffs and releases are financing events at right.';
+
+    // ══ financing events ══
+    const evs = (CF.events || []).filter(e => MO.indexOf(e.m) >= firstI && MO.indexOf(e.m) <= lastI);
+    const evByM = {};
+    evs.forEach(e => { (evByM[e.m] = evByM[e.m] || []).push(e); });
+    const evGroups = Object.keys(evByM).sort().map(m => {
+      const rows = evByM[m].map(e => {
+        if (e.type === 'draw') return { icon: '＋', iconBg: '#F2F7F0', iconCol: GREEND, title: 'New note ' + e.loan + ' — ' + e.lender, sub: e.doors + ' door' + (e.doors > 1 ? 's' : '') + ' · first payment ' + mmyy(e.firstPay), amt: '+' + fK(e.amt), amtCol: GREEND };
+        if (e.type === 'release') return { icon: '−', iconBg: '#FBF0ED', iconCol: REDD, title: 'Sale release — ' + e.prop, sub: 'note ' + e.loan + ' · ' + e.lender + ' · base ' + fK(e.base) + (Math.abs(e.excess) > 0.005 ? ' · excess ' + fK(e.excess) + ' to survivors' : ''), amt: '−' + fK(e.paid), amtCol: REDD };
+        if (e.type === 'payoff') return { icon: '✓', iconBg: '#FBF6EA', iconCol: GOLDD, title: 'Note paid off — ' + e.loan, sub: e.lender + ' · balance settled', amt: '−' + fK(e.amt), amtCol: REDD };
+        return { icon: '↓', iconBg: '#FBF0ED', iconCol: REDD, title: 'Prepayment — note ' + e.loan, sub: e.lender + ' · extra principal across allocation', amt: '−' + fK(e.amt), amtCol: REDD };
+      });
+      const net = evByM[m].reduce((s, e) => s + (e.type === 'draw' ? e.amt : -(e.paid || e.amt)), 0);
+      return { m: mmyy(m).toUpperCase(), rows, net: (net >= 0 ? 'net +' : 'net −') + fK(Math.abs(net)), netCol: net >= 0 ? GREEND : REDD };
+    });
+    const evDraws = evs.filter(e => e.type === 'draw').reduce((s, e) => s + e.amt, 0);
+    const evOut = evs.filter(e => e.type !== 'draw').reduce((s, e) => s + (e.paid || e.amt), 0);
+    const evSub = spanLab + ' · draws +' + fK(evDraws) + ' · payoffs/releases −' + fK(evOut);
+    const evOn = evGroups.length > 0, evEmpty = !evOn;
+    const evFoot = 'Portfolio-wide (month filter only). Sale releases are settled from sale closings, not operating cash — sale proceeds pending, so the net cash of each sale isn’t computable yet. The May Pinnacle payoff was refinanced by note 90666132-R the same month.';
+
+    // ══ checks & balances ══
+    const badge = ok => ok ? { badge: 'TIES', bg: '#E4F0E7', col: GREEND, bd: '#D6E4D2' } : { badge: 'CHECK', bg: '#FBF0ED', col: REDD, bd: '#EAD1C8' };
+    const gold = { badge: 'PENDING', bg: '#FBF6EA', col: GOLDD, bd: '#EAD9C0' };
+    const idResid = Math.abs(idOpen + idChgV - idCollV - idCloseV);
+    const ckList = (id) => ({ onClick: () => this.setState({ ckOpen: S.ckOpen === id ? null : id }), listOn: S.ckOpen === id });
+    const pScope = unfiltered ? [] : [{ k: 'Scope', v: 'portfolio-wide recon', vc: FAINT }];
+    const naPrin = RC.principal.naCells || [], naColl = RC.collections.naCells || [];
+    const tiRows = Object.entries(RC.escrow.tiRows || {}).map(([k, v]) => ({ t: k, v: fN(sum(winIdx.map(i => v[i]))) })).filter(x => x.v !== '$0');
+    const memoOI = sum(winIdx.map(i => RC.memo['Other Income'][i])), memoCL = sum(winIdx.map(i => RC.memo['Collection Loss'][i])), memoSD = sum(winIdx.map(i => RC.memo['SD - Forfeit Income'][i]));
+    const covLists = {
+      noAr: doorNames.filter(d => DOORS[d].flags.includes('no-ar-row')).map(d => ({ t: d, v: 'no Dec-25 AR row' })),
+      noLease: doorNames.filter(d => DOORS[d].flags.includes('no-lease')).map(d => ({ t: d, v: 'no lease on file' })),
+      noGl: doorNames.filter(d => !DOORS[d].inGL).map(d => ({ t: d, v: DOORS[d].arTenant || 'file-only' })),
+      mismatch: doorNames.filter(d => DOORS[d].flags.includes('ar-tenant-not-in-leases')).map(d => ({ t: d, v: DOORS[d].arTenant || '' })),
+      blank: doorNames.filter(d => DOORS[d].tenants.some(t => t.openingBlank)).map(d => ({ t: d, v: (DOORS[d].tenants.find(t => t.openingBlank) || {}).tenant || '' })),
+    };
+    const fileEsc = sum(winIdx.map(i => RC.escrow.fileTI[i])), engEsc = sum(winIdx.map(i => RC.escrow.engine[i]));
+    const nrecW = scoped.reduce((s, d) => s + sum(winIdx.map(i => DOORS[d].nrec[i])), 0);
+    const ckCards = [
+      Object.assign({ title: 'Ledger identity', lines: [
+        { k: 'Opening + charges', v: f2(idOpen + idChgV), vc: INK }, { k: '− collected', v: f2(idCollV), vc: INK },
+        { k: '= closing', v: f2(idCloseV), vc: idCloseV < 0 ? GREEND : REDD }, { k: 'Residual', v: f2(idResid), vc: idResid < 0.02 ? GREEND : REDD },
+      ], hasList: false, listOn: false, listLab: '', list: [], onClick: () => {} }, badge(idResid < 0.02)),
+      Object.assign({ title: 'Interest — file vs GL', lines: [
+        ...pScope,
+        { k: 'Cashflow.xlsx', v: f2(dIntFile), vc: INK }, { k: 'GL Interest Cost', v: f2(dIntGl), vc: INK },
+        { k: 'Δ', v: f2(dIntFile - dIntGl), vc: Math.abs(dIntFile - dIntGl) <= 0.25 ? GREEND : REDD },
+        { k: 'Engine (memo)', v: f2(sum(winIdx.map(i => RC.interest.engine[i]))), vc: FAINT },
+      ], hasList: false, listOn: false, listLab: '', list: [], onClick: () => {} }, badge(Math.abs(dIntFile - dIntGl) <= 0.25)),
+      Object.assign({ title: 'Principal — file vs engine', lines: [
+        ...pScope,
+        { k: 'Cashflow.xlsx', v: f2(dPrinFile), vc: INK }, { k: 'Engine scheduled', v: f2(dPrinEng), vc: INK },
+        { k: 'Gap', v: f2(dPrinEng - dPrinFile), vc: GOLDD }, { k: '“NA” cells in file', v: '' + naPrin.length, vc: naPrin.length ? GOLDD : GREEND },
+      ], hasList: naPrin.length > 0, listLab: S.ckOpen === 'prin' ? 'Hide NA cells ▲' : 'Show NA cells ▼', list: naPrin.map(x => ({ t: x[0], v: mmyy(x[1]) })) }, gold, ckList('prin')),
+      Object.assign({ title: 'Escrow — file vs engine', lines: [
+        ...pScope,
+        { k: 'File T&I payments', v: f2(fileEsc), vc: INK }, { k: 'Engine (loan sheet)', v: f2(engEsc), vc: INK },
+        { k: 'Δ', v: f2(fileEsc - engEsc), vc: GOLDD }, { k: 'Grain', v: 'mixed: company + door', vc: FAINT },
+      ], hasList: tiRows.length > 0, listLab: S.ckOpen === 'ti' ? 'Hide file rows ▲' : 'Show file rows ▼', list: tiRows }, gold, ckList('ti')),
+      Object.assign({ title: 'Charges completeness', lines: [
+        { k: 'Collected − charged', v: f2(coll - chg), vc: GOLDD },
+        { k: 'Other Income (GL, not in charges)', v: f2(memoOI), vc: FAINT },
+        { k: 'SD forfeits (GL)', v: f2(memoSD), vc: FAINT },
+        { k: 'Collection Loss (GL) — write-offs?', v: f2(memoCL), vc: REDD },
+      ], hasList: false, listOn: false, listLab: '', list: [], onClick: () => {} }, gold),
+      Object.assign({ title: 'Coverage & source', lines: [
+        { k: 'Receipts in span', v: nrecW + ' rows', vc: INK }, { k: 'Collections “NA” cells', v: '' + naColl.length, vc: naColl.length ? GOLDD : GREEND },
+        { k: 'GL doors without AR row', v: '' + covLists.noAr.length, vc: covLists.noAr.length ? GOLDD : GREEND },
+        { k: 'Doors w/o lease · file-only · name gaps · blank open', v: covLists.noLease.length + ' · ' + covLists.noGl.length + ' · ' + covLists.mismatch.length + ' · ' + covLists.blank.length, vc: GOLDD },
+      ], hasList: true, listLab: S.ckOpen === 'cov' ? 'Hide lists ▲' : 'Show all lists ▼', list: [
+        ...covLists.noAr.map(x => ({ t: '• no AR row — ' + x.t, v: '' })),
+        ...covLists.noLease.map(x => ({ t: '• no lease — ' + x.t, v: '' })),
+        ...covLists.mismatch.map(x => ({ t: '• AR name ≠ leases — ' + x.t, v: x.v })),
+        ...naColl.map(x => ({ t: '• collections NA — ' + x[0], v: mmyy(x[1]) })),
+        ...covLists.noGl.map(x => ({ t: '• file-only door — ' + x.t, v: x.v })),
+        ...covLists.blank.map(x => ({ t: '• blank Dec-25 — ' + x.t, v: x.v })),
+      ] }, gold, ckList('cov')),
+    ];
+    const ckFoot = 'Interest ties the file to the GL within pennies. The principal gap is the file’s scheduled-EMI capture vs the lender-verified engine (NA cells + rounding) — engine is canonical. The escrow Δ (' + f2(fileEsc - engEsc) + ') is recorded T&I vs the loan sheet’s escrow column, and includes the Apr-26 ' + fK(24029.40) + ' item on 1520 Nicklaus Drive. Charges completeness closes when true tenant charges (incl. SD & fees) arrive; Collection Loss treatment (write-off vs memo) is an owner decision pending.';
+
+    // ══ assumptions & pending ══
+    const asRows = (CF.meta.assumptions || []).map(t => ({ t }));
+    const pendRows = [
+      { t: 'True tenant charges by month — rent, SD, late fees, utility recoveries (replaces the GL-rent proxy; kills the credit-balance drift).' },
+      { t: 'Collections at tenant grain (receipts currently attach to properties; two-tenant months use the later lease).' },
+      { t: 'Bank balances by entity/account, month-end — activates the bank tie-out: derived cash kept vs actual bank movement.' },
+      { t: 'Contributions & distributions — separates owner cash from portfolio cash.' },
+      { t: 'Sale proceeds per exited door — completes financing events and the gain-on-sale story.' },
+      { t: 'HOA / property-tax / insurance direct-payment actuals (HOA currently “NA” in the file; GL accrual used as proxy).' },
+    ];
+    const asFoot = 'This page is a derived mock: cf-data.json is computed from PL.xlsx (GL), Loans engine, AR Balances.xlsx, Leases.csv and Cashflow.xlsx. Nothing is published; publish gates + verify harness run before it ships.';
+
+    return {
+      ready: true, loading: false, loadError: false, retryLoad: () => this.loadData(), stopProp,
+      scopeLine, filters, hasActive, onReset, asOfLine,
+      kpis, keptCol, keptBig, keptCap, collBig, collCap, rateCol, rateBig, rateCap,
+      wfConn, wfCols, driftOn, driftLine, wfFoot,
+      trSub, trAreaK, trPathC, trPathK, trPtsC, trPtsK, trX, trFoot,
+      ldSub, idOpen: f2(idOpen), idChg: f2(idChgV), idColl: f2(idCollV), idClose: f2(idCloseV), idCloseCol: idCloseV < 0 ? GREEND : REDD, idNote,
+      lq: S.lq, onLq: e => this.setState({ lq: e.target.value, lAll: false }), lBucketChips, lSortChips,
+      lRows, lEmpty: lShown.length === 0, lEmptyTxt: 'No tenant ledgers match — clear the search or chips.',
+      lMoreShow: !S.lAll && !lqv && lFiltered.length > CAP, onLMore: () => this.setState({ lAll: true }), lMoreLab: 'Show all ' + lFiltered.length + ' ledgers ▾', lFoot,
+      wSub, wTiles, wChips, wq: S.wq, onWq: e => this.setState({ wq: e.target.value, wAll: false }), wValHead,
+      wRows: wRowsList, wEmpty: wShown.length === 0, wEmptyTxt: 'Nothing trips the selected tests in this scope.',
+      wMoreShow: !S.wAll && !wqv && wView.length > 10, onWMore: () => this.setState({ wAll: true }), wMoreLab: 'Show all ' + wView.length + ' flagged ▾', wFoot,
+      ofSub, ofOp, ofOpTot, ofStat, ofStatTot, ofStatNote, ofDebt, ofDebtTot, ofFoot,
+      evSub, evOn, evEmpty, evGroups, evFoot,
+      ckCards, ckFoot,
+      asRows, pendRows, asFoot,
+    };
+  }
+}
+</script>
 </body>
 </html>
