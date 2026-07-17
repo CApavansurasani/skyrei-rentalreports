@@ -119,11 +119,11 @@ input:focus{outline:2px solid #C9A45C;outline-offset:1px}
       </sc-for>
     </div>
 
-    <!-- ══ HERO: rent charged → cash kept ══ -->
+    <!-- ══ HERO: How rent becomes income — operating / investing / financing ══ -->
     <div style="margin-top:16px;background:linear-gradient(135deg,#0E1830,#16233A);border-radius:18px;padding:24px 28px;color:#E9EDF5">
       <div style="display:flex;justify-content:space-between;align-items:flex-start;gap:20px;flex-wrap:wrap">
         <div>
-          <div style="font-size:10.5px;letter-spacing:0.12em;font-weight:700;color:#C9A45C">FROM RENT CHARGED TO CASH KEPT</div>
+          <div style="font-size:10.5px;letter-spacing:0.12em;font-weight:700;color:#C9A45C">HOW RENT BECOMES INCOME</div>
           <div style="margin-top:6px;display:flex;align-items:baseline;gap:12px;flex-wrap:wrap">
             <span style="font-family:'Source Serif 4',Georgia,serif;font-size:38px;font-weight:600;line-height:1;color:{{ keptCol }}">{{ keptBig }}</span>
             <span style="font-size:12.5px;font-weight:600;color:#8A96AD">{{ keptCap }}</span>
@@ -142,37 +142,87 @@ input:focus{outline:2px solid #C9A45C;outline-offset:1px}
           </div>
         </div>
       </div>
-      <div style="position:relative;height:216px;margin-top:16px">
-        <sc-for list="{{ wfConn }}" as="wc" hint-placeholder-count="8">
-          <div style="position:absolute;left:{{ wc.l }};width:{{ wc.w }};top:{{ wc.t }};border-top:1.5px dashed rgba(233,237,245,0.35)"></div>
-        </sc-for>
-        <div style="display:flex;height:216px">
-          <sc-for list="{{ wfCols }}" as="wf" hint-placeholder-count="9">
-            <div style="flex:1;position:relative" title="{{ wf.tip }}">
-              <div style="position:absolute;bottom:{{ wf.vB }};left:0;right:0;text-align:center;font-size:12px;font-weight:700;color:{{ wf.vc }};font-variant-numeric:tabular-nums;white-space:nowrap">{{ wf.val }}</div>
-              <div style="position:absolute;bottom:{{ wf.b }};height:{{ wf.h }};left:20%;width:60%;background:{{ wf.bg }};border-radius:5px"></div>
+
+      <!-- flow strip: the story in six stones -->
+      <div style="margin-top:18px;display:flex;align-items:stretch;gap:0;flex-wrap:wrap">
+        <sc-for list="{{ fsSteps }}" as="fs" hint-placeholder-count="6">
+          <div style="display:flex;align-items:center;flex:1;min-width:120px">
+            <div title="{{ fs.tip }}" style="flex:1;background:{{ fs.bg }};border:1px solid {{ fs.bd }};border-radius:10px;padding:8px 10px;text-align:center">
+              <div style="font-size:8.5px;letter-spacing:0.08em;font-weight:800;color:{{ fs.lc }};white-space:nowrap">{{ fs.lab }}</div>
+              <div style="margin-top:2px;font-size:14px;font-weight:800;color:{{ fs.vc }};font-variant-numeric:tabular-nums;white-space:nowrap">{{ fs.val }}</div>
             </div>
-          </sc-for>
-        </div>
-      </div>
-      <div style="display:flex;margin-top:8px">
-        <sc-for list="{{ wfCols }}" as="wf" hint-placeholder-count="9">
-          <div style="flex:1;text-align:center;min-width:0">
-            <div style="font-size:9px;letter-spacing:0.05em;font-weight:800;color:#C9D2E4;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">{{ wf.label }}</div>
-            <div style="margin-top:2px;font-size:9px;color:#8A96AD;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">{{ wf.cap }}</div>
+            <sc-if value="{{ fs.arrow }}" hint-placeholder-val="{{ true }}">
+              <div style="width:16px;text-align:center;font-size:11px;color:#5E6B82;flex:none">→</div>
+            </sc-if>
           </div>
         </sc-for>
       </div>
+
+      <!-- the statement: three activities -->
+      <div style="margin-top:16px;display:grid;grid-template-columns:repeat(auto-fit,minmax(300px,1fr));gap:12px;align-items:start">
+        <sc-for list="{{ stBands }}" as="sb" hint-placeholder-count="3">
+          <div style="background:rgba(255,255,255,0.04);border:1px solid rgba(233,237,245,0.14);border-radius:12px;padding:14px 16px">
+            <div style="display:flex;justify-content:space-between;align-items:baseline;gap:8px">
+              <div style="font-size:9.5px;letter-spacing:0.1em;font-weight:800;color:#C9A45C">{{ sb.title }}</div>
+              <div style="font-size:9px;color:#8A96AD">{{ sb.cap }}</div>
+            </div>
+            <sc-for list="{{ sb.rows }}" as="sr" hint-placeholder-count="8">
+              <div onClick="{{ sr.onClick }}" style-hover="background:rgba(255,255,255,0.05)" style="margin-top:6px;border-radius:8px;cursor:{{ sr.cur }};padding:5px 7px;background:{{ sr.bg }}">
+                <div style="display:flex;justify-content:space-between;align-items:baseline;gap:8px">
+                  <span style="font-size:11.5px;font-weight:{{ sr.fw }};color:{{ sr.lc }};white-space:nowrap;overflow:hidden;text-overflow:ellipsis">{{ sr.lab }} <span style="font-size:9px;font-weight:600;color:#5E6B82">{{ sr.chev }}</span></span>
+                  <span style="font-size:12px;font-weight:{{ sr.fw }};color:{{ sr.vc }};font-variant-numeric:tabular-nums;white-space:nowrap">{{ sr.val }}</span>
+                </div>
+                <div style="margin-top:3px;height:3px;border-radius:2px;background:rgba(233,237,245,0.08)">
+                  <div style="height:3px;border-radius:2px;width:{{ sr.barW }};background:{{ sr.barC }}"></div>
+                </div>
+                <sc-if value="{{ sr.subOn }}" hint-placeholder-val="{{ false }}">
+                  <div style="margin-top:2px;font-size:9px;color:#8A96AD">{{ sr.sub }}</div>
+                </sc-if>
+              </div>
+              <sc-if value="{{ sr.open }}" hint-placeholder-val="{{ false }}">
+                <div style="margin:4px 0 6px;padding:8px 10px;background:rgba(10,18,38,0.55);border:1px solid rgba(201,164,92,0.25);border-radius:10px">
+                  <sc-for list="{{ sr.detail }}" as="sd" hint-placeholder-count="10">
+                    <div style="display:flex;justify-content:space-between;gap:10px;padding:2.5px 0;font-size:10.5px">
+                      <span style="color:#C9D2E4;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">{{ sd.t }}</span>
+                      <span style="color:#F5D9A8;font-weight:700;font-variant-numeric:tabular-nums;white-space:nowrap">{{ sd.v }}</span>
+                    </div>
+                  </sc-for>
+                  <sc-if value="{{ sr.moreOn }}" hint-placeholder-val="{{ false }}">
+                    <div style="margin-top:4px;font-size:9.5px;color:#8A96AD">{{ sr.more }}</div>
+                  </sc-if>
+                  <div style="margin-top:7px;display:flex;gap:8px;flex-wrap:wrap">
+                    <sc-for list="{{ sr.links }}" as="sl" hint-placeholder-count="3">
+                      <a href="{{ sl.href }}" style="font-size:9.5px;font-weight:800;letter-spacing:0.05em;color:#C9A45C;text-decoration:none;border:1px solid rgba(201,164,92,0.4);border-radius:99px;padding:3px 10px">{{ sl.lab }}</a>
+                    </sc-for>
+                    <sc-if value="{{ sr.jumpOn }}" hint-placeholder-val="{{ false }}">
+                      <span onClick="{{ sr.onJump }}" style-hover="background:rgba(201,164,92,0.18)" style="font-size:9.5px;font-weight:800;letter-spacing:0.05em;color:#F5D9A8;cursor:pointer;border:1px solid rgba(201,164,92,0.4);border-radius:99px;padding:3px 10px">{{ sr.jumpLab }}</span>
+                    </sc-if>
+                  </div>
+                </div>
+              </sc-if>
+            </sc-for>
+            <div style="margin-top:10px;padding-top:8px;border-top:1px solid rgba(233,237,245,0.16);display:flex;justify-content:space-between;align-items:baseline">
+              <span style="font-size:10px;letter-spacing:0.06em;font-weight:800;color:#E9EDF5">{{ sb.netLab }}</span>
+              <span style="font-size:15px;font-weight:800;color:{{ sb.netCol }};font-variant-numeric:tabular-nums">{{ sb.net }}</span>
+            </div>
+          </div>
+        </sc-for>
+      </div>
+
+      <div style="margin-top:14px;padding:10px 14px;background:rgba(201,164,92,0.10);border:1px solid rgba(201,164,92,0.35);border-radius:10px;display:flex;justify-content:space-between;align-items:center;gap:14px;flex-wrap:wrap">
+        <span style="font-size:11px;color:#F5D9A8;font-weight:600">{{ stIdent }}</span>
+        <span style="font-size:13.5px;font-weight:800;color:{{ keptCol }};font-variant-numeric:tabular-nums">{{ stNetLine }}</span>
+      </div>
       <sc-if value="{{ driftOn }}" hint-placeholder-val="{{ false }}">
-        <div style="margin-top:14px;padding:10px 14px;background:rgba(201,164,92,0.12);border:1px solid rgba(201,164,92,0.4);border-radius:10px;font-size:11px;line-height:1.6;color:#F5D9A8">{{ driftLine }}</div>
+        <div style="margin-top:10px;padding:9px 14px;background:rgba(176,74,51,0.14);border:1px solid rgba(196,87,60,0.4);border-radius:10px;font-size:10.5px;line-height:1.6;color:#E8C4B8">{{ driftLine }}</div>
       </sc-if>
       <div style="margin-top:12px;padding-top:10px;border-top:1px solid rgba(233,237,245,0.12);font-size:10.5px;color:#8A96AD;line-height:1.6">{{ wfFoot }}</div>
     </div>
 
-    <!-- ══ Collection rate — the walk ══ -->
+    <!-- ══ Collection rate — trend + why-not-100% ══ -->
     <div style="margin-top:16px;background:#FFFFFF;border:1px solid #E5E3DC;border-radius:16px;padding:22px 26px">
       <div style="display:flex;justify-content:space-between;align-items:baseline;flex-wrap:wrap;gap:8px">
-        <div style="font-family:'Source Serif 4',Georgia,serif;font-size:18px;font-weight:600;color:#16233A">Collection rate — the monthly walk</div>
+        <div style="font-family:'Source Serif 4',Georgia,serif;font-size:18px;font-weight:600;color:#16233A">Collection rate — and who is holding it back</div>
         <div style="font-size:11.5px;color:#8A93A6">{{ rwSub }}</div>
       </div>
       <div style="margin-top:14px;display:flex;align-items:flex-end;gap:26px;flex-wrap:wrap">
@@ -191,68 +241,102 @@ input:focus{outline:2px solid #C9A45C;outline-offset:1px}
           </sc-for>
         </div>
       </div>
-      <div class="scr" style="margin-top:14px;overflow-x:auto">
-        <div style="min-width:640px">
-          <div style="display:flex;padding:6px 10px;font-size:9px;letter-spacing:0.06em;font-weight:800;color:#8A93A6;border-bottom:1px solid #EDEBE2">
-            <span style="flex:2.2">PARTICULARS</span>
-            <sc-for list="{{ rwCols }}" as="rc" hint-placeholder-count="5">
-              <span onClick="{{ rc.onClick }}" style="flex:1;text-align:right;cursor:pointer;color:{{ rc.col }};font-weight:{{ rc.fw }}">{{ rc.lab }}</span>
-            </sc-for>
-            <span style="flex:1.1;text-align:right;color:#96742F">{{ rwTotLab }}</span>
+
+      <div style="margin-top:16px;display:grid;grid-template-columns:minmax(340px,3fr) minmax(300px,2fr);gap:20px;align-items:start">
+        <!-- LEFT: due vs collected bars + rate, clickable months -->
+        <div>
+          <div style="display:flex;gap:16px;flex-wrap:wrap">
+            <span style="font-size:10.5px;color:#5E6B82;display:flex;align-items:center;gap:5px;font-weight:600"><span style="width:9px;height:9px;border-radius:3px;background:#8FA8CE"></span>Due for the month <span style="color:#9AA3B5;font-weight:500">(invoices + opening due)</span></span>
+            <span style="font-size:10.5px;color:#5E6B82;display:flex;align-items:center;gap:5px;font-weight:600"><span style="width:9px;height:9px;border-radius:3px;background:#C9A45C"></span>Actually collected <span style="color:#9AA3B5;font-weight:500">(collections + adv in − adv out)</span></span>
           </div>
-          <sc-for list="{{ rwRows }}" as="rr" hint-placeholder-count="10">
-            <div style="display:flex;padding:6px 10px;font-size:11.5px;font-variant-numeric:tabular-nums;border-bottom:1px solid #F4F2EA;background:{{ rr.bg }}">
-              <span style="flex:2.2;font-weight:{{ rr.fw }};color:{{ rr.kcol }}">{{ rr.k }}</span>
-              <sc-for list="{{ rr.vals }}" as="rv" hint-placeholder-count="5">
-                <span style="flex:1;text-align:right;color:{{ rv.c }};font-weight:{{ rv.f }}">{{ rv.v }}</span>
+          <div style="margin-top:12px;display:flex;align-items:flex-end;gap:6px;height:190px">
+            <sc-for list="{{ crBars }}" as="cb" hint-placeholder-count="5">
+              <div onClick="{{ cb.onClick }}" style-hover="background:#FBFAF6" title="{{ cb.tip }}" style="flex:1;height:190px;display:flex;flex-direction:column;justify-content:flex-end;cursor:pointer;border-radius:10px;border:1.5px solid {{ cb.bd }};background:{{ cb.bg }};padding:6px 6px 4px">
+                <div style="text-align:center;font-size:10px;font-weight:800;color:#96742F;font-variant-numeric:tabular-nums;white-space:nowrap">{{ cb.rate }}</div>
+                <div style="flex:1;display:flex;align-items:flex-end;justify-content:center;gap:4px;margin-top:3px">
+                  <div style="width:34%;display:flex;flex-direction:column;justify-content:flex-end">
+                    <div title="{{ cb.dueTip }}" style="height:{{ cb.dueH }};background:#8FA8CE;border-radius:4px 4px 0 0"></div>
+                  </div>
+                  <div style="width:34%;display:flex;flex-direction:column;justify-content:flex-end">
+                    <div title="{{ cb.actTip }}" style="height:{{ cb.actH }};background:#C9A45C;border-radius:4px 4px 0 0"></div>
+                  </div>
+                </div>
+                <div style="margin-top:4px;text-align:center;font-size:10px;font-weight:{{ cb.mfw }};color:{{ cb.mcol }};white-space:nowrap">{{ cb.m }}</div>
+              </div>
+            </sc-for>
+          </div>
+          <div style="margin-top:6px;font-size:10px;color:#9AA3B5">{{ crBarsFoot }}</div>
+
+          <!-- month summary strip -->
+          <div style="margin-top:12px;background:#FBFAF6;border:1px solid #EDEBE2;border-radius:12px;padding:12px 16px">
+            <div style="font-size:9.5px;letter-spacing:0.09em;font-weight:800;color:#96742F">{{ crSumLab }}</div>
+            <div style="margin-top:8px;display:flex;gap:22px;flex-wrap:wrap">
+              <sc-for list="{{ crSum }}" as="cs" hint-placeholder-count="5">
+                <div>
+                  <div style="font-size:9px;letter-spacing:0.06em;font-weight:800;color:#8A93A6">{{ cs.k }}</div>
+                  <div style="margin-top:2px;font-size:16px;font-weight:700;color:{{ cs.col }};font-variant-numeric:tabular-nums">{{ cs.v }}</div>
+                </div>
               </sc-for>
-              <span style="flex:1.1;text-align:right;font-weight:800;color:{{ rr.tcol }}">{{ rr.tot }}</span>
+            </div>
+            <div style="margin-top:8px;font-size:10px;color:#9AA3B5;line-height:1.55">{{ crSumFoot }}</div>
+          </div>
+        </div>
+
+        <!-- RIGHT: the properties holding the rate back -->
+        <div style="border-left:1px solid #F0EEE7;padding-left:20px">
+          <div style="display:flex;justify-content:space-between;align-items:baseline;gap:8px;flex-wrap:wrap">
+            <div style="font-size:10px;letter-spacing:0.09em;font-weight:800;color:#B04A33">{{ crRightLab }}</div>
+            <div style="font-size:10px;color:#9AA3B5">{{ crRightCap }}</div>
+          </div>
+          <input onInput="{{ onCrq }}" value="{{ crqVal }}" placeholder="Search property or tenant…" style="margin-top:8px;width:100%;box-sizing:border-box;padding:7px 12px;font-size:11.5px;font-family:'Libre Franklin',sans-serif;border:1px solid #D8D4C8;border-radius:9px;outline:none;background:#FDFCFA"/>
+          <sc-if value="{{ crEmpty }}" hint-placeholder-val="{{ false }}">
+            <div style="margin-top:12px;padding:16px;text-align:center;font-size:11.5px;color:#8A93A6;background:#F8F7F2;border-radius:10px">{{ crEmptyTxt }}</div>
+          </sc-if>
+          <sc-for list="{{ crRows }}" as="cr" hint-placeholder-count="8">
+            <div onClick="{{ cr.onClick }}" style-hover="background:#FBFAF6" style="margin-top:6px;border:1px solid {{ cr.bd }};border-radius:10px;padding:8px 10px;cursor:pointer;background:{{ cr.bg }}">
+              <div style="display:flex;justify-content:space-between;align-items:baseline;gap:8px">
+                <span style="min-width:0">
+                  <span style="font-size:12px;font-weight:700;color:#16233A">{{ cr.prop }}</span>
+                  <span style="font-size:10.5px;color:#8A93A6"> · {{ cr.tenant }}</span>
+                </span>
+                <span style="font-size:12.5px;font-weight:800;color:#B04A33;font-variant-numeric:tabular-nums;white-space:nowrap">{{ cr.bal }}</span>
+              </div>
+              <div style="margin-top:4px;height:4px;border-radius:2px;background:#F4F2EA">
+                <div style="height:4px;border-radius:2px;width:{{ cr.shareW }};background:#B04A33;opacity:0.75"></div>
+              </div>
+              <div style="margin-top:5px;display:flex;justify-content:space-between;align-items:center;gap:8px;flex-wrap:wrap">
+                <span style="display:flex;gap:5px;flex-wrap:wrap">
+                  <span style="font-size:8.5px;font-weight:800;letter-spacing:0.05em;padding:2px 8px;border-radius:99px;background:{{ cr.mbBg }};color:{{ cr.mbCol }}">{{ cr.mb }}</span>
+                  <sc-for list="{{ cr.badges }}" as="crb" hint-placeholder-count="2">
+                    <span style="font-size:8.5px;font-weight:800;letter-spacing:0.05em;padding:2px 8px;border-radius:99px;background:{{ crb.bg }};color:{{ crb.col }}">{{ crb.t }}</span>
+                  </sc-for>
+                </span>
+                <span style="font-size:9.5px;color:#9AA3B5;font-variant-numeric:tabular-nums;white-space:nowrap">{{ cr.shareLab }}</span>
+              </div>
+              <sc-if value="{{ cr.open }}" hint-placeholder-val="{{ false }}">
+                <div style="margin-top:8px;padding:9px 11px;background:#FBFAF6;border:1px solid #EDEBE2;border-radius:9px">
+                  <sc-for list="{{ cr.facts }}" as="cf" hint-placeholder-count="6">
+                    <div style="display:flex;justify-content:space-between;gap:10px;padding:2px 0;font-size:10.5px">
+                      <span style="color:#5E6B82">{{ cf.k }}</span>
+                      <span style="font-weight:700;color:{{ cf.col }};font-variant-numeric:tabular-nums">{{ cf.v }}</span>
+                    </div>
+                  </sc-for>
+                  <div style="margin-top:7px;display:flex;gap:8px;flex-wrap:wrap">
+                    <a href="{{ cr.plHref }}" style="font-size:9.5px;font-weight:800;letter-spacing:0.05em;color:#96742F;text-decoration:none;border:1px solid #E2D9C4;border-radius:99px;padding:3px 10px">P&L →</a>
+                    <a href="{{ cr.invHref }}" style="font-size:9.5px;font-weight:800;letter-spacing:0.05em;color:#96742F;text-decoration:none;border:1px solid #E2D9C4;border-radius:99px;padding:3px 10px">INVESTMENTS →</a>
+                    <a href="{{ cr.loanHref }}" style="font-size:9.5px;font-weight:800;letter-spacing:0.05em;color:#96742F;text-decoration:none;border:1px solid #E2D9C4;border-radius:99px;padding:3px 10px">LOANS →</a>
+                    <span onClick="{{ cr.onFocus }}" style-hover="background:#F6ECD9" style="font-size:9.5px;font-weight:800;letter-spacing:0.05em;color:#96742F;cursor:pointer;border:1px solid #E2D9C4;border-radius:99px;padding:3px 10px">{{ cr.focusLab }}</span>
+                  </div>
+                </div>
+              </sc-if>
             </div>
           </sc-for>
+          <sc-if value="{{ crMoreShow }}" hint-placeholder-val="{{ false }}">
+            <div onClick="{{ onCrMore }}" style-hover="background:#F6ECD9" style="margin-top:8px;text-align:center;padding:7px;border:1px solid #D8D4C8;border-radius:9px;font-size:11px;font-weight:700;color:#96742F;cursor:pointer">{{ crMoreLab }}</div>
+          </sc-if>
         </div>
       </div>
-      <div style="margin-top:10px;font-size:10.5px;color:#9AA3B5;line-height:1.65">{{ rwFoot }}</div>
-    </div>
-
-    <!-- ══ Monthly trend ══ -->
-    <div style="margin-top:16px;background:#FFFFFF;border:1px solid #E5E3DC;border-radius:16px;padding:22px 26px">
-      <div style="display:flex;justify-content:space-between;align-items:baseline;flex-wrap:wrap;gap:8px">
-        <div style="font-family:'Source Serif 4',Georgia,serif;font-size:18px;font-weight:600;color:#16233A">Charged vs collected, month by month</div>
-        <div style="font-size:11.5px;color:#8A93A6">{{ trSub }}</div>
-      </div>
-      <div style="margin-top:6px;display:flex;gap:16px;flex-wrap:wrap">
-        <span style="font-size:10.5px;color:#5E6B82;display:flex;align-items:center;gap:5px;font-weight:600"><span style="width:9px;height:9px;border-radius:3px;background:#C9A45C"></span>Cash collected</span>
-        <span style="font-size:10.5px;color:#5E6B82;display:flex;align-items:center;gap:5px;font-weight:600"><span style="width:9px;height:9px;border-radius:3px;background:#3D64A8"></span>Rent charged</span>
-      </div>
-      <div style="margin-top:16px;position:relative">
-        <svg viewBox="0 0 660 170" style="width:100%;display:block;overflow:visible">
-          <path d="{{ trAreaK }}" fill="#C9A45C" opacity="0.08"></path>
-          <path d="{{ trPathC }}" fill="none" stroke="#3D64A8" stroke-width="2" stroke-linejoin="round" stroke-linecap="round"></path>
-          <path d="{{ trPathK }}" fill="none" stroke="#C9A45C" stroke-width="2" stroke-linejoin="round" stroke-linecap="round"></path>
-          <sc-for list="{{ trPtsC }}" as="tpc" hint-placeholder-count="5">
-            <circle cx="{{ tpc.cx }}" cy="{{ tpc.cy }}" r="4" fill="#FFFFFF" stroke="#3D64A8" stroke-width="2"><title>{{ tpc.tip }}</title></circle>
-          </sc-for>
-          <sc-for list="{{ trPtsK }}" as="tpk" hint-placeholder-count="5">
-            <circle cx="{{ tpk.cx }}" cy="{{ tpk.cy }}" r="{{ tpk.r }}" fill="{{ tpk.fill }}" stroke="#C9A45C" stroke-width="2"><title>{{ tpk.tip }}</title></circle>
-            <circle onClick="{{ tpk.onClick }}" cx="{{ tpk.cx }}" cy="{{ tpk.cy }}" r="14" fill="transparent" style="cursor:pointer"><title>{{ tpk.tip }}</title></circle>
-          </sc-for>
-        </svg>
-        <sc-for list="{{ trPtsK }}" as="tpk" hint-placeholder-count="5">
-          <div title="{{ tpk.tip }}" style="position:absolute;left:{{ tpk.leftPct }};top:{{ tpk.topPct }};transform:translate(-50%,-100%);pointer-events:none;font-size:10px;font-weight:{{ tpk.vfw }};color:#96742F;font-variant-numeric:tabular-nums;white-space:nowrap">{{ tpk.vlab }}</div>
-        </sc-for>
-        <sc-for list="{{ trPtsC }}" as="tpc" hint-placeholder-count="5">
-          <div title="{{ tpc.tip }}" style="position:absolute;left:{{ tpc.leftPct }};top:{{ tpc.topPct }};transform:translate(-50%,{{ tpc.shift }});pointer-events:none;font-size:10px;font-weight:600;color:#3D64A8;font-variant-numeric:tabular-nums;white-space:nowrap">{{ tpc.vlab }}</div>
-        </sc-for>
-      </div>
-      <div style="margin-top:6px;display:flex">
-        <sc-for list="{{ trX }}" as="tx" hint-placeholder-count="5">
-          <div onClick="{{ tx.onClick }}" style-hover="color:#16233A" style="flex:1;text-align:center;cursor:pointer">
-            <div style="font-size:10px;font-weight:{{ tx.xfw }};color:{{ tx.xcol }};white-space:nowrap">{{ tx.lab }}</div>
-            <div style="margin-top:2px;font-size:9.5px;font-weight:700;color:{{ tx.rcol }};font-variant-numeric:tabular-nums">{{ tx.rate }}</div>
-          </div>
-        </sc-for>
-      </div>
-      <div style="margin-top:10px;font-size:10.5px;color:#9AA3B5;line-height:1.6">{{ trFoot }}</div>
+      <div style="margin-top:12px;padding-top:10px;border-top:1px solid #F0EEE7;font-size:10.5px;color:#9AA3B5;line-height:1.65">{{ rwFoot }}</div>
     </div>
 
     <!-- ══ Tenant ledger ══ -->
@@ -597,6 +681,7 @@ class Component extends DCLogic {
     lq: '', lSort: 'bal', lBucket: null, lExp: null, lAll: false,
     wSel: [], wq: '', wExp: null, wAll: false,
     ckOpen: null,
+    stOpen: null, crM: null, crq: '', crExp: null, crAll: false,
   };
 
   loadData() {
@@ -657,9 +742,10 @@ class Component extends DCLogic {
       filters: [], hasActive: false, onReset: () => {}, asOfLine: '',
       kpis: [],
       keptCol: '#F5D9A8', keptBig: '', keptCap: '', collBig: '', collCap: '', rateCol: '#F5D9A8', rateBig: '', rateCap: '',
-      wfConn: [], wfCols: [], driftOn: false, driftLine: '', wfFoot: '',
-      trSub: '', trAreaK: '', trPathC: '', trPathK: '', trPtsC: [], trPtsK: [], trX: [], trFoot: '',
-      rwSub: '', rwHeadLab: '', rwHead: '', rwHeadCol: '#16233A', rwHeadCap: '', rwTiles: [], rwCols: [], rwTotLab: '', rwRows: [], rwFoot: '',
+      fsSteps: [], stBands: [], stIdent: '', stNetLine: '', driftOn: false, driftLine: '', wfFoot: '',
+      crBars: [], crBarsFoot: '', crSum: [], crSumLab: '', crSumFoot: '', crRightLab: '', crRightCap: '',
+      crRows: [], crEmpty: false, crEmptyTxt: '', crMoreShow: false, crMoreLab: '', onCrMore: () => {}, onCrq: () => {}, crqVal: '',
+      rwSub: '', rwHeadLab: '', rwHead: '', rwHeadCol: '#16233A', rwHeadCap: '', rwTiles: [], rwFoot: '',
       ldSub: '', idOpen: '', idChg: '', idColl: '', idCl: '', idClose: '', idCloseCol: INK, idNote: '',
       lq: '', onLq: () => {}, lBucketChips: [], lSortChips: [],
       lRows: [], lEmpty: false, lEmptyTxt: '', lMoreShow: false, onLMore: () => {}, lMoreLab: '', lFoot: '',
@@ -722,7 +808,7 @@ class Component extends DCLogic {
     const statCash = escW + insDirW + ptDirW + hoaProxyW;
     const statAccr = tot('stat') + ohW('stat');
     const intW = tot('int'), prinW = tot('prinSched'), capexW = tot('capex') + ohW('capex');
-    const kept = coll + claims - refOutW - opex - statCash - intW - prinW;
+    const kept = coll + claims - refOutW - opex - statCash - intW - prinW - capexW;   // net cash: operating + investing + financing
     const rate = chg > 0 ? coll / chg * 100 : 0;
 
     // ══ tenant ledger rows (scope-aware) ══
@@ -832,106 +918,189 @@ class Component extends DCLogic {
       kTile('Collection rate', spanRate !== null ? spanRate.toFixed(2) + '%' : '—', 'actual collection ÷ due for the span', spanRate !== null && spanRate >= 85 ? GREEND : (spanRate !== null && spanRate >= 75 ? NAVY : REDD), 'Owner formula: (collections + opening advances − closing advances) ÷ (invoices + opening due)'),
       kTile('Owed by tenants', fN(rsM[lastI].cd), 'at ' + mmyy(MO[lastI]) + ' · gross dues', REDD, 'Sum of positive tenant balances at span end (before that month\u2019s write-offs)'),
       kTile('Advances held', fN(rsM[lastI].ca), 'prepaid for future months', GREEND, 'Sum of negative tenant balances at span end'),
-      kTile('Cash kept', fN(kept), 'after refunds, opex, statutory & full EMI', kept >= 0 ? GREEND : REDD, 'Collections + claims − refunds paid out − operating − statutory − interest − scheduled principal', kept >= 0 ? '#F2F7F0' : '#FBF0ED', kept >= 0 ? '#D6E4D2' : '#EAD1C8'),
+      kTile('Cash kept', fN(kept), 'net of all three activities', kept >= 0 ? GREEND : REDD, 'Operating (collections + claims − refunds − opex − statutory − interest) + Investing (− capex) + Financing (− scheduled principal)', kept >= 0 ? '#F2F7F0' : '#FBF0ED', kept >= 0 ? '#D6E4D2' : '#EAD1C8'),
     ];
 
-    // ══ hero waterfall ══
-    const keptBig = fN(kept), keptCol = kept >= 0 ? '#8FD0A8' : '#E8A896';
-    const keptCap = 'kept from ' + fN(coll) + ' collected · ' + spanLab;
+    // ══ hero: How rent becomes income — operating / investing / financing ══
+    const unpaid = chg - coll;      // + means charges went unpaid into AR; − means arrears/deposits drawn down
+    const netOp = coll + claims - refOutW - opex - statCash - intW;
+    const netInv = -capexW;
+    const netFin = -prinW;
+    const netCash = kept;   // = netOp + netInv + netFin by construction
+    const keptBig = fN(netCash), keptCol = netCash >= 0 ? '#8FD0A8' : '#E8A896';
     const collBig = fN(coll), collCap = 'of ' + fN(chg) + ' charged';
     const rateBig = chg > 0 ? rate.toFixed(1) + '%' : '—', rateCol = rate >= 100 ? '#8FD0A8' : '#F5D9A8';
     const rateCap = rate > 100 ? 'over 100% — balances drawn down' : 'of charged rent';
-    const dBal = coll - chg; // + means collected more than charged
-    const steps = [
-      { label: 'CHARGES RAISED', cap: 'rent · SD · fees', v: chg, kind: 'anchor', col: '#3D64A8' },
-      { label: dBal >= 0 ? 'FROM BALANCES' : 'TO BALANCES', cap: dBal >= 0 ? 'arrears & deposits in' : 'unpaid → AR', v: dBal, kind: 'delta' },
-      { label: 'CASH COLLECTED', cap: 'actual receipts', v: coll, kind: 'anchor', col: GOLD },
-      ...(refOutW > 0.005 ? [{ label: 'REFUNDS PAID OUT', cap: 'SD returns · outside AR', v: -refOutW, kind: 'delta' }] : []),
-      { label: 'INSURANCE CLAIMS', cap: 'per GL', v: claims, kind: 'delta' },
-      { label: 'OPERATING', cap: 'cash-basis GL', v: -opex, kind: 'delta' },
-      { label: 'STATUTORY & ESCROW', cap: 'escrow + direct + HOA', v: -statCash, kind: 'delta' },
-      { label: 'INTEREST', cap: 'GL actuals', v: -intW, kind: 'delta' },
-      { label: 'PRINCIPAL', cap: 'scheduled · engine', v: -prinW, kind: 'delta' },
-      { label: 'CASH KEPT', cap: kept >= 0 ? 'yours' : 'shortfall', v: kept, kind: 'anchor', col: kept >= 0 ? '#3E8E63' : '#C4573C' },
+    const keptCap = 'net cash kept · ' + spanLab + ' · operating ' + fK(netOp) + ' − capex ' + fK(capexW) + ' − principal ' + fK(prinW);
+    // financing events in scope (memo — cash settles from sale proceeds / new notes)
+    const evWin = (CF.events || []).filter(e => { const i = MO.indexOf(e.m); return i >= firstI && i <= lastI; });
+    const evDraw = sum(evWin.filter(e => e.type === 'draw').map(e => Math.abs(e.amt || 0)));
+    const evOutW = sum(evWin.filter(e => e.type !== 'draw').map(e => Math.abs(e.paid || e.amt || 0)));
+    // per-door helpers for statement drills
+    const doorSum = key => {
+      const out = [];
+      for (const d of scoped) { let s = 0; for (const i of winIdx) s += DOORS[d][key][i]; if (Math.abs(s) > 0.005) out.push([d, s]); }
+      out.sort((x, y) => Math.abs(y[1]) - Math.abs(x[1])); return out;
+    };
+    const detTop = (pairs, n) => pairs.slice(0, n).map(p => ({ t: p[0], v: f2(p[1]) }));
+    const stO = id => S.stOpen === id;
+    const stClick = id => () => this.setState({ stOpen: S.stOpen === id ? null : id });
+    const stRow = (id, lab, val, o) => {
+      o = o || {};
+      const drill = !!(o.detail && o.detail.length) || !!(o.links && o.links.length) || !!o.jump;
+      return {
+        lab, val: (o.fmt || fN)(val), fw: o.strong ? 800 : 600,
+        lc: o.lc || '#C9D2E4', vc: o.vc || (val >= -0.005 ? '#8FD0A8' : '#E8A896'),
+        bg: stO(id) ? 'rgba(255,255,255,0.06)' : 'transparent', cur: drill ? 'pointer' : 'default',
+        chev: drill ? (stO(id) ? '▲' : '▼') : '', onClick: drill ? stClick(id) : () => {},
+        barW: Math.min(Math.abs(val) / stMax * 100, 100).toFixed(1) + '%',
+        barC: o.barC || (val >= 0 ? 'rgba(143,208,168,0.7)' : 'rgba(196,87,60,0.8)'),
+        subOn: !!o.sub, sub: o.sub || '',
+        open: stO(id), detail: (o.detail || []).slice(0, 10),
+        moreOn: (o.detail || []).length > 10, more: (o.detail || []).length > 10 ? '… ' + ((o.detail || []).length - 10) + ' more — search the sections below for the rest' : '',
+        links: o.links || [], jumpOn: !!o.jump, onJump: o.jump || (() => {}), jumpLab: o.jumpLab || '',
+      };
+    };
+    const stMax = Math.max(chg, coll, opex, statCash, intW, prinW, capexW, 1);
+    const opexByA = {};
+    for (const d of scoped) { const oa = DOORS[d].opexByAcct || {}; for (const a2 in oa) for (const i of winIdx) opexByA[a2] = (opexByA[a2] || 0) + oa[a2][i]; }
+    if (unfiltered) { const oo = OH.opexByAcct || {}; for (const a2 in oo) for (const i of winIdx) opexByA[a2] = (opexByA[a2] || 0) + oo[a2][i]; }
+    const opexDet = Object.entries(opexByA).filter(([, v]) => Math.abs(v) > 0.005).sort((x, y) => y[1] - x[1]).map(([k2, v]) => ({ t: k2, v: f2(v) }));
+    const statDet = [
+      { t: 'T&I escrow to lenders (engine)', v: f2(escW) },
+      ...(unfiltered ? [{ t: 'Insurance — paid direct (file)', v: f2(insDirW) }, { t: 'Property tax — paid direct (file)', v: f2(ptDirW) }] : []),
+      { t: 'HOA fees (GL proxy)', v: f2(hoaProxyW) },
     ];
-    let run = 0; const pts = [], ends = [];
-    steps.forEach((st, i) => { if (st.kind === 'anchor') { run = st.v; pts.push({ lo: Math.min(0, st.v), hi: Math.max(0, st.v) }); } else { const a = run; run += st.v; pts.push({ lo: Math.min(a, run), hi: Math.max(a, run) }); } ends.push(run); });
-    const wMaxV = Math.max(...pts.map(p => p.hi), 1), wMinV = Math.min(...pts.map(p => p.lo), 0);
-    const H = 170;
-    const yPx = v => (v - wMinV) / (wMaxV - wMinV) * H;
-    const wfCols = steps.map((st, i) => {
-      const p = pts[i]; const b = yPx(p.lo), h = Math.max(yPx(p.hi) - yPx(p.lo), 2);
-      const bg = st.kind === 'anchor' ? st.col : (st.v >= 0 ? 'rgba(143,208,168,0.85)' : 'rgba(196,87,60,0.85)');
-      return { label: st.label, cap: st.cap, val: fK(st.v), vc: st.kind === 'anchor' ? '#F5D9A8' : (st.v >= 0 ? '#8FD0A8' : '#E8A896'),
-        b: b + 'px', h: h + 'px', bg, vB: (b + h + 8) + 'px', tip: st.label + ': ' + f2(st.v) };
-    });
-    const wfN = steps.length;
-    const wfConn = steps.slice(0, -1).map((st, i) => {
-      const t = Math.max(Math.min(216 - yPx(ends[i]), 214), 2);
-      return { l: ((i + 0.8) * (100 / wfN)) + '%', w: (0.4 * (100 / wfN)) + '%', t: t + 'px' };
-    });
+    const chgDet = detTop(doorSum('chg'), 10), collDet = detTop(doorSum('coll'), 10);
+    const intDet = detTop(doorSum('int'), 10), prinDet = detTop(doorSum('prinSched'), 10), capexDet = detTop(doorSum('capex'), 10);
+    const claimsDet = detTop(doorSum('claims'), 10);
+    const refDet = (CLX.sdRefunds || []).filter(x => x.cash && scopedSet.has(x.prop) && (i => i >= firstI && i <= lastI)(MO.indexOf(x.m))).map(x => ({ t: x.prop + ' · ' + mmyy(x.m), v: f2(-x.amt) }));
+    const laggardsAtLast = (() => { let n = 0; for (const r of allRows) if (r.t.close[lastI] > 0.005) n++; return n; })();
+    const stBands = [
+      { title: 'OPERATING ACTIVITIES', cap: 'the rent engine', netLab: 'NET OPERATING CASH', net: fN(netOp), netCol: netOp >= 0 ? '#8FD0A8' : '#E8A896',
+        rows: [
+          stRow('chg', 'Charges raised', chg, { vc: '#9FBAE8', barC: 'rgba(61,100,168,0.85)', detail: chgDet, sub: 'rent · SD · fees · utilities', links: [{ lab: 'P&L →', href: './PL%20Story%20-%20Main.dc.html' }] }),
+          stRow('unpaid', unpaid >= 0 ? '− Unpaid → receivables' : '+ Drawn from balances', -Math.abs(unpaid) * (unpaid >= 0 ? 1 : -1), { vc: unpaid >= 0 ? '#E8A896' : '#8FD0A8', sub: unpaid >= 0 ? laggardsAtLast + ' tenants owe at ' + mmyy(MO[lastI]) + ' — the panel below names them' : 'arrears & advances consumed', jump: () => this.setState({ crM: lastI, crq: '', crExp: null }), jumpLab: 'SEE WHO ▼' }),
+          stRow('coll', '= Cash collected', coll, { strong: true, vc: '#F5D9A8', barC: 'rgba(201,164,92,0.9)', detail: collDet }),
+          ...(refOutW > 0.005 ? [stRow('refout', '− Refunds paid out', -refOutW, { sub: 'SD returns · outside AR', detail: refDet })] : []),
+          stRow('claims', '+ Insurance claims', claims, { detail: claimsDet, links: [{ lab: 'P&L →', href: './PL%20Story%20-%20Main.dc.html' }] }),
+          stRow('opex', '− Operating expenses', -opex, { detail: opexDet, sub: 'cash-basis GL', links: [{ lab: 'P&L →', href: './PL%20Story%20-%20Main.dc.html' }] }),
+          stRow('stat', '− Statutory & escrow', -statCash, { detail: statDet, sub: 'escrow + direct PT/Ins + HOA proxy' }),
+          stRow('int', '− Interest', -intW, { detail: intDet, links: [{ lab: 'LOANS →', href: './loans.dc.html' }] }),
+        ] },
+      { title: 'INVESTING ACTIVITIES', cap: 'building the portfolio', netLab: 'NET INVESTING CASH', net: fN(netInv), netCol: netInv >= 0 ? '#8FD0A8' : '#E8A896',
+        rows: [
+          stRow('capex', '− Capital expenditure', -capexW, { detail: capexDet, sub: 'per GL — renovations & improvements', links: [{ lab: 'INVESTMENTS →', href: './investments.dc.html' }] }),
+        ] },
+      { title: 'FINANCING ACTIVITIES', cap: 'the debt engine', netLab: 'NET FINANCING CASH', net: fN(netFin), netCol: netFin >= 0 ? '#8FD0A8' : '#E8A896',
+        rows: [
+          stRow('prin', '− Scheduled principal', -prinW, { detail: prinDet, sub: 'lender-verified engine · builds equity', links: [{ lab: 'LOANS →', href: './loans.dc.html' }] }),
+          stRow('events', 'Capital events (memo)', evDraw - evOutW, { fmt: v => fK(evDraw) + ' in · ' + fK(evOutW) + ' out', vc: '#C9D2E4', barC: 'rgba(201,164,92,0.4)',
+            sub: evWin.length + ' draws, payoffs & releases — settled from sale proceeds / new notes, not counted in net cash', detail: evWin.slice(0, 10).map(e => ({ t: mmyy(e.m) + ' · ' + e.type + ' — ' + (e.lender || '') + ' ' + (e.loan || '') + (e.prop ? ' · ' + e.prop : ''), v: (e.type === 'draw' ? '+' : '−') + fK(Math.abs(e.amt || 0)) })), links: [{ lab: 'LOANS →', href: './loans.dc.html' }] }),
+        ] },
+    ];
+    const fsSteps = [
+      { lab: 'CHARGES RAISED', val: fK(chg), bg: 'rgba(61,100,168,0.2)', bd: 'rgba(61,100,168,0.55)', lc: '#9FBAE8', vc: '#E9EDF5', arrow: true, tip: 'Charges raised: ' + f2(chg) },
+      { lab: 'CASH COLLECTED', val: fK(coll), bg: 'rgba(201,164,92,0.16)', bd: 'rgba(201,164,92,0.5)', lc: '#C9A45C', vc: '#F5D9A8', arrow: true, tip: 'Cash collected: ' + f2(coll) + ' (unpaid → receivables: ' + f2(unpaid) + ')' },
+      { lab: 'OPERATING', val: fK(netOp), bg: 'rgba(255,255,255,0.05)', bd: 'rgba(233,237,245,0.2)', lc: '#8A96AD', vc: netOp >= 0 ? '#8FD0A8' : '#E8A896', arrow: true, tip: 'Net operating cash: ' + f2(netOp) },
+      { lab: 'INVESTING', val: fK(netInv), bg: 'rgba(255,255,255,0.05)', bd: 'rgba(233,237,245,0.2)', lc: '#8A96AD', vc: netInv >= 0 ? '#8FD0A8' : '#E8A896', arrow: true, tip: 'Net investing cash (CapEx): ' + f2(netInv) },
+      { lab: 'FINANCING', val: fK(netFin), bg: 'rgba(255,255,255,0.05)', bd: 'rgba(233,237,245,0.2)', lc: '#8A96AD', vc: netFin >= 0 ? '#8FD0A8' : '#E8A896', arrow: true, tip: 'Net financing cash (scheduled principal): ' + f2(netFin) },
+      { lab: 'CASH KEPT', val: fK(netCash), bg: netCash >= 0 ? 'rgba(62,142,99,0.25)' : 'rgba(176,74,51,0.25)', bd: netCash >= 0 ? 'rgba(62,142,99,0.6)' : 'rgba(196,87,60,0.6)', lc: netCash >= 0 ? '#8FD0A8' : '#E8A896', vc: netCash >= 0 ? '#8FD0A8' : '#E8A896', arrow: false, tip: 'Net cash kept: ' + f2(netCash) },
+    ];
+    const stIdent = 'Operating ' + fK(netOp) + '  +  Investing ' + fK(netInv) + '  +  Financing ' + fK(netFin) + '  =';
+    const stNetLine = fN(netCash) + ' net cash kept';
     const driftOn = Math.abs(spanCL) > 0.5;
     const rdAll = CLX.reconDiffs || [];
     const rdMat = rdAll.filter(x => !x.crumb && !x.ack), rdCrumb = rdAll.filter(x => x.crumb && !x.ack), rdAck = rdAll.filter(x => x.ack);
-    const driftLine = 'Collection loss recognised in this span: ' + fN(spanCL) + ' — your AR-file write-offs plus in-window movers\u2019 residuals per your lease rule (' + (CLX.clDetail || []).length + ' events; the walk below and Checks & balances carry the detail). ' + (CLX.pendingWriteoffs || []).length + ' window-end recognitions await the June AR column.';
-    const wfFoot = 'Charges & collections from the Buildium journals at tenant grain. Operating cash only. Capex per GL: ' + fN(capexW) + ' · financing events (draws, payoffs, releases) shown separately at right — sale-funded payoffs are settled from sale proceeds, not operating cash. Escrow uses the loans-engine T&I; the file’s recorded T&I differs by a reconciled delta (see Checks & balances). HOA cash pending — GL accrual used as proxy.';
+    const driftLine = 'Collection loss recognised in this span: ' + fN(spanCL) + ' — your AR-file write-offs plus in-window movers\u2019 residuals per your lease rule (' + (CLX.clDetail || []).length + ' events). ' + (CLX.pendingWriteoffs || []).length + ' window-end recognitions await the June AR column.';
+    const wfFoot = 'Statement basis: Buildium journals at tenant grain, cash figures only. Every line expands — click it — and links through to the P&L, Loans and Investments pages pre-scoped. Capital events settle from sale proceeds / new notes, so they sit as a memo, not inside net cash. Escrow uses the loans-engine T&I (recorded-file delta in Checks & balances). HOA cash pending — GL accrual as proxy. Bank tie-out activates when balances land.';
 
-    // ══ trend ══
-    const chgM = totM('chg'), collM = totM('coll');
-    const TW = 660, TH = 170, TPAD = 30;
-    const allVals = [...chgM, ...collM];
-    const tMax = Math.max(...allVals, 1), tMin = Math.min(...allVals, tMax);
-    const tSpanV = Math.max(tMax - tMin, 1);
-    const ty = v => TPAD + (TH - 2 * TPAD) * (1 - (v - tMin) / tSpanV);
-    const tx = i => (i + 0.5) * TW / NM;
-    const mkPath = arr => arr.map((v, i) => (i === 0 ? 'M' : 'L') + tx(i).toFixed(1) + ' ' + ty(v).toFixed(1)).join(' ');
-    const trPathC = mkPath(chgM), trPathK = mkPath(collM);
-    const trAreaK = 'M' + tx(0).toFixed(1) + ' ' + (TH - 6) + ' ' + collM.map((v, i) => 'L' + tx(i).toFixed(1) + ' ' + ty(v).toFixed(1)).join(' ') + ' L' + tx(NM - 1).toFixed(1) + ' ' + (TH - 6) + ' Z';
-    const inSpan = i => i >= firstI && i <= lastI;
-    const trPtsK = collM.map((v, i) => ({
-      cx: tx(i).toFixed(1), cy: ty(v).toFixed(1), r: inSpan(i) && selM.length ? 5 : 4,
-      fill: inSpan(i) && selM.length ? GOLD : '#FFFFFF',
-      tip: mmyy(MO[i]) + ' — collected ' + f2(collM[i]) + ' vs charged ' + f2(chgM[i]),
-      onClick: () => this.setF({ fm: S.fm.length === 1 && S.fm[0] === MO[i] ? [] : [MO[i]] }),
-      leftPct: (tx(i) / TW * 100) + '%', topPct: (ty(v) / TH * 100 - 5) + '%', vfw: inSpan(i) && selM.length ? 800 : 600, vlab: fK(v),
-    }));
-    const trPtsC = chgM.map((v, i) => ({
-      cx: tx(i).toFixed(1), cy: ty(v).toFixed(1),
-      tip: mmyy(MO[i]) + ' — charged ' + f2(v),
-      leftPct: (tx(i) / TW * 100) + '%', topPct: (ty(v) / TH * 100 + 6) + '%', shift: '0%',
-      vlab: (i === 0 || i === NM - 1) ? fK(v) : '',
-    }));
-    const trX = MO.map((m, i) => ({
-      lab: mmyy(m), onClick: () => this.setF({ fm: S.fm.length === 1 && S.fm[0] === m ? [] : [m] }),
-      xfw: inSpan(i) && selM.length ? 800 : 600, xcol: inSpan(i) && selM.length ? NAVY : FAINT,
-      rate: rsM[i].rate !== null ? rsM[i].rate.toFixed(1) + '%' : '—', rcol: rsM[i].rate !== null && rsM[i].rate >= 85 ? GREEND : GOLDD,
-    }));
-    const trSub = 'every month in the ledger · click a point to focus the page on that month';
-    const trFoot = 'The rate under each month is the owner-formula collection rate (see the walk above). Y-axis zoomed to the data range; every point labeled. Charged = Buildium invoices; collected = receipts.';
-
-    // ══ collection-rate walk card ══
+    // ══ collection rate — trend + why-not-100% ══
     const fR = v => v === null ? '—' : v.toFixed(2) + '%';
-    const rwCols = spanIdx.map(i => ({
-      lab: mmyy(MO[i]), col: NAVY, fw: 800,
-      onClick: () => this.setF({ fm: S.fm.length === 1 && S.fm[0] === MO[i] ? [] : [MO[i]] }),
-    }));
-    const rwTotLab = spanIdx.length > 1 ? 'SPAN' : '';
-    const mkVals = (f, opts) => spanIdx.map(i => {
-      const v = f(i);
-      return { v: typeof v === 'string' ? v : fN(v), c: (opts && opts.c) || INK, f: (opts && opts.f) || 500 };
+    const crMi = (S.crM !== null && S.crM !== undefined && winIdx.includes(S.crM)) ? S.crM : lastI;
+    const barMax = Math.max(...winIdx.map(i => Math.max(rsM[i].due, rsM[i].act)), 1);
+    const crBars = winIdx.map(i => {
+      const sel = i === crMi;
+      return {
+        m: mmyy(MO[i]), mfw: sel ? 800 : 600, mcol: sel ? NAVY : FAINT,
+        rate: rsM[i].rate === null ? '—' : rsM[i].rate.toFixed(1) + '%',
+        dueH: Math.max(rsM[i].due / barMax * 130, 2).toFixed(0) + 'px',
+        actH: Math.max(rsM[i].act / barMax * 130, 2).toFixed(0) + 'px',
+        bd: sel ? GOLD : '#EDEBE2', bg: sel ? '#FDF9F0' : 'transparent',
+        dueTip: mmyy(MO[i]) + ' due: ' + f2(rsM[i].due), actTip: mmyy(MO[i]) + ' collected: ' + f2(rsM[i].act),
+        tip: mmyy(MO[i]) + ' — due ' + f2(rsM[i].due) + ' · collected ' + f2(rsM[i].act) + ' · rate ' + fR(rsM[i].rate) + ' · uncollected (closing dues) ' + f2(rsM[i].cd),
+        onClick: () => this.setState({ crM: i, crExp: null, crAll: false }),
+      };
     });
-    const rwRows = [
-      { k: 'Invoices for the month', vals: mkVals(i => rsM[i].inv), tot: fN(spanInv), bg: 'transparent', fw: 600, kcol: INK, tcol: INK },
-      { k: '+ Opening due', vals: mkVals(i => rsM[i].od), tot: fN(rsM[firstI].od), bg: 'transparent', fw: 500, kcol: MUT, tcol: MUT },
-      { k: '= Due for the month', vals: mkVals(i => rsM[i].due), tot: fN(spanDue), bg: '#FBFAF6', fw: 800, kcol: NAVY, tcol: NAVY },
-      { k: 'Collections received', vals: mkVals(i => rsM[i].col), tot: fN(spanColl), bg: 'transparent', fw: 600, kcol: GOLDD, tcol: GOLDD },
-      { k: '+ Opening advances applied', vals: mkVals(i => rsM[i].oa), tot: fN(rsM[firstI].oa), bg: 'transparent', fw: 500, kcol: MUT, tcol: MUT },
-      { k: '− Advances for future months', vals: mkVals(i => rsM[i].ca), tot: fN(rsM[lastI].ca), bg: 'transparent', fw: 500, kcol: MUT, tcol: MUT },
-      { k: '= Actual collection', vals: mkVals(i => rsM[i].act), tot: fN(spanAct), bg: '#FBFAF6', fw: 800, kcol: GREEND, tcol: GREEND },
-      { k: 'COLLECTION RATE', vals: spanIdx.map(i => ({ v: fR(rsM[i].rate), c: rsM[i].rate !== null && rsM[i].rate >= 85 ? GREEND : (rsM[i].rate !== null && rsM[i].rate >= 75 ? NAVY : REDD), f: 800 })), tot: fR(spanRate), bg: '#F6ECD9', fw: 800, kcol: '#96742F', tcol: '#96742F' },
-      { k: 'Collection loss written off', vals: mkVals(i => rsM[i].cl), tot: fN(spanCL), bg: 'transparent', fw: 500, kcol: REDD, tcol: REDD },
-      { k: 'Closing due (gross)', vals: mkVals(i => rsM[i].cd), tot: fN(rsM[lastI].cd), bg: 'transparent', fw: 500, kcol: MUT, tcol: MUT },
+    const crBarsFoot = 'Click a month to inspect it. The gap between the bars IS the shortfall: due − collected = that month\u2019s closing dues, named property by property at right.';
+    // laggards at the selected month
+    const crqv = (S.crq || '').toLowerCase();
+    const rentOf = t => (t.lease && t.lease.rent > 0) ? t.lease.rent : Math.max(0, ...t.chg);
+    const lagAll = allRows
+      .filter(r => r.t.close[crMi] > 0.005)
+      .map(r => {
+        const bal = r.t.close[crMi];
+        const prev = crMi === 0 ? r.t.opening : r.t.close[crMi - 1];
+        const rent = rentOf(r.t);
+        const mb = rent > 0 ? bal / rent : null;
+        return { r, bal, prev, rent, mb };
+      })
+      .sort((x, y) => y.bal - x.bal);
+    const lagSum = sum(lagAll.map(x => x.bal));
+    const lagMatch = lagAll.filter(x => !crqv || x.r.d.toLowerCase().includes(crqv) || x.r.t.tenant.toLowerCase().includes(crqv));
+    const CR_CAP = 8;
+    const crShown = (S.crAll || crqv) ? lagMatch : lagMatch.slice(0, CR_CAP);
+    const crKey = x => x.r.d + '||' + x.r.t.tenant;
+    const mbLab = mb => mb === null ? 'no rent on file' : (mb >= 1 ? mb.toFixed(1) + ' months behind' : (mb * 30).toFixed(0) + ' days behind');
+    const crRows = crShown.map(x => {
+      const open = S.crExp === crKey(x);
+      const F2 = x.r.t.flags || [];
+      const badges = [];
+      if (F2.includes('pending-writeoff')) badges.push({ t: 'CL · JUNE CONFIRMS', bg: '#FBF0ED', col: REDD });
+      else if (F2.includes('written-off')) badges.push({ t: 'WRITTEN OFF', bg: '#FBF6EA', col: GOLDD });
+      else if (F2.includes('moved-out')) badges.push({ t: 'MOVED OUT', bg: '#F0EEE6', col: MUT });
+      if (x.prev > 0.005 && x.bal > x.prev + 0.005) badges.push({ t: 'GROWING', bg: '#FBF0ED', col: REDD });
+      return {
+        prop: x.r.d, tenant: x.r.t.tenant, bal: f2(x.bal),
+        shareW: Math.min(x.bal / Math.max(lagSum, 1) * 100, 100).toFixed(1) + '%',
+        shareLab: (x.bal / Math.max(lagSum, 1) * 100).toFixed(1) + '% of the gap',
+        mb: mbLab(x.mb), mbBg: x.mb !== null && x.mb >= 2 ? '#FBF0ED' : '#F6ECD9', mbCol: x.mb !== null && x.mb >= 2 ? REDD : GOLDD,
+        badges, bd: open ? GOLD : '#EDEBE2', bg: open ? '#FDF9F0' : 'transparent',
+        onClick: () => this.setState({ crExp: open ? null : crKey(x) }),
+        open,
+        facts: [
+          { k: 'Closing balance · ' + mmyy(MO[crMi]), v: f2(x.bal), col: REDD },
+          { k: 'Previous closing (' + (crMi === 0 ? 'Dec-25' : mmyy(MO[crMi - 1])) + ')', v: f2(x.prev), col: x.prev > 0.005 ? REDD : (x.prev < -0.005 ? GREEND : MUT) },
+          { k: 'Movement this month', v: (x.bal - x.prev >= 0 ? '+' : '') + f2(x.bal - x.prev), col: x.bal - x.prev > 0.005 ? REDD : GREEND },
+          { k: 'Charges · collected this month', v: f2(x.r.t.chg[crMi]) + ' · ' + f2(x.r.t.coll[crMi]), col: INK },
+          { k: 'Monthly rent (lease)', v: x.rent > 0 ? f2(x.rent) + '/mo' : '—', col: INK },
+          { k: 'Months behind = balance ÷ monthly rent', v: x.mb === null ? '—' : x.mb.toFixed(2), col: x.mb !== null && x.mb >= 2 ? REDD : GOLDD },
+        ],
+        plHref: './PL%20Story%20-%20Main.dc.html?door=' + esc(x.r.d),
+        invHref: './investments.dc.html?door=' + esc(x.r.d),
+        loanHref: './loans.dc.html?door=' + esc(x.r.d),
+        onFocus: () => this.setF({ fp: S.fp.length === 1 && S.fp[0] === x.r.d ? [] : [x.r.d] }),
+        focusLab: S.fp.length === 1 && S.fp[0] === x.r.d ? 'RELEASE FOCUS ✕' : 'FOCUS PAGE ⌖',
+      };
+    });
+    const crEmpty = lagMatch.length === 0;
+    const crEmptyTxt = crqv ? 'No open balances match "' + S.crq + '" in ' + mmyy(MO[crMi]) + '.' : 'Every tenant stands fully collected at ' + mmyy(MO[crMi]) + ' — the rate gap is zero.';
+    const crMoreShow = !S.crAll && !crqv && lagMatch.length > CR_CAP;
+    const crMoreLab = 'Show all ' + lagMatch.length + ' open balances ▾';
+    const onCrMore = () => this.setState({ crAll: true });
+    const onCrq = e => this.setState({ crq: e && e.target ? e.target.value : '' });
+    const crqVal = S.crq || '';
+    const crRightLab = 'WHY NOT 100% — ' + mmyy(MO[crMi]).toUpperCase();
+    const crRightCap = lagAll.length + ' propert' + (lagAll.length === 1 ? 'y' : 'ies') + ' · ' + fN(lagSum) + ' still due';
+    const crSumLab = mmyy(MO[crMi]).toUpperCase() + ' AT A GLANCE — YOUR FORMULA';
+    const crSum = [
+      { k: 'DUE FOR THE MONTH', v: fN(rsM[crMi].due), col: NAVY },
+      { k: 'ACTUALLY COLLECTED', v: fN(rsM[crMi].act), col: GOLDD },
+      { k: 'COLLECTION RATE', v: fR(rsM[crMi].rate), col: rsM[crMi].rate !== null && rsM[crMi].rate >= 85 ? GREEND : REDD },
+      { k: 'STILL DUE (' + lagAll.length + ' PROPERTIES)', v: fN(rsM[crMi].cd), col: REDD },
+      { k: 'WRITTEN OFF THIS MONTH', v: fN(rsM[crMi].cl), col: rsM[crMi].cl > 0.005 ? REDD : MUT },
     ];
+    const crSumFoot = 'Due (' + fK(rsM[crMi].due) + ') − actually collected (' + fK(rsM[crMi].act) + ') = still due ' + fK(rsM[crMi].cd) + ' — the identity holds to the cent; the panel at right splits it property by property. Advances held at month-end: ' + fN(rsM[crMi].ca) + '.';
     const ytdArr = CLX.monthly.ytdRate || [];
     const rwHead = spanIdx.length > 1 ? fR(spanRate) : fR(rsM[firstI].rate);
     const rwHeadLab = spanIdx.length > 1 ? 'SPAN RATE · ' + spanLab + ' (TELESCOPED)' : 'COLLECTION RATE · ' + spanLab;
@@ -943,8 +1112,8 @@ class Component extends DCLogic {
       { k: 'COLLECTION LOSS', v: fN(spanCL), sub: (CLX.pendingWriteoffs || []).length + ' lease-rule sweeps await June file', col: REDD },
       { k: 'REFUNDS PAID OUT (OUTSIDE AR)', v: fN(Math.abs(sum((CLX.sdRefunds || []).filter(x => x.cash && (i => i >= firstI && i <= lastI)(MO.indexOf(x.m))).map(x => x.amt)))), sub: 'deducted from cash kept' + ((CLX.arRefundExceptions || []).length ? ' · ' + CLX.arRefundExceptions.length + ' in-month settlement in ledger' : ''), col: MUT },
     ];
-    const rwSub = 'your formula, live — click a month column to focus the page';
-    const rwFoot = 'Monthly rate = (collections + opening advances − closing advances) ÷ (invoices + opening due) — advances for future months never flatter a month, and months collecting past advances get credit for the dues they cleared. The SPAN/YTD column counts each due once: Σ actual collections ÷ (opening due at span start + Σ invoices) — monthly denominators re-count carried dues by design (the arrears-drag view). Write-offs stay in the denominator. Openings chain: closing − collection loss = next opening, to the cent.';
+    const rwSub = 'your formula, live — click a month to inspect it · search the laggards · every row drills';
+    const rwFoot = 'Monthly rate = (collections + opening advances − closing advances) ÷ (invoices + opening due) — advances for future months never flatter a month, and months collecting past advances get credit for the dues they cleared. The span rate counts each due once: Σ actual collections ÷ (opening due at span start + Σ invoices). Write-offs stay in the denominator. Openings chain: closing − collection loss = next opening, to the cent.';
 
     // ══ ledger table ══
     const lqv = (S.lq || '').toLowerCase();
@@ -1194,9 +1363,10 @@ class Component extends DCLogic {
       ready: true, loading: false, loadError: false, retryLoad: () => this.loadData(), stopProp,
       scopeLine, filters, hasActive, onReset, asOfLine,
       kpis, keptCol, keptBig, keptCap, collBig, collCap, rateCol, rateBig, rateCap,
-      wfConn, wfCols, driftOn, driftLine, wfFoot,
-      trSub, trAreaK, trPathC, trPathK, trPtsC, trPtsK, trX, trFoot,
-      rwSub, rwHeadLab, rwHead, rwHeadCol, rwHeadCap, rwTiles, rwCols, rwTotLab, rwRows, rwFoot,
+      fsSteps, stBands, stIdent, stNetLine, driftOn, driftLine, wfFoot,
+      crBars, crBarsFoot, crSum, crSumLab, crSumFoot, crRightLab, crRightCap,
+      crRows, crEmpty, crEmptyTxt, crMoreShow, crMoreLab, onCrMore, onCrq, crqVal,
+      rwSub, rwHeadLab, rwHead, rwHeadCol, rwHeadCap, rwTiles, rwFoot,
       ldSub, idOpen: f2(idOpen), idChg: f2(idChgV), idColl: f2(idCollV), idCl: f2(idClV), idClose: f2(idCloseV), idCloseCol: idCloseV < 0 ? GREEND : REDD, idNote,
       lq: S.lq, onLq: e => this.setState({ lq: e.target.value, lAll: false }), lBucketChips, lSortChips,
       lRows, lEmpty: lShown.length === 0, lEmptyTxt: 'No tenant ledgers match — clear the search or chips.',
