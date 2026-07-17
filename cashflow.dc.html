@@ -872,7 +872,7 @@ class Component extends DCLogic {
     });
     const driftOn = Math.abs(spanCL) > 0.5;
     const rdAll = CLX.reconDiffs || [];
-    const rdMat = rdAll.filter(x => !x.crumb), rdCrumb = rdAll.filter(x => x.crumb);
+    const rdMat = rdAll.filter(x => !x.crumb && !x.ack), rdCrumb = rdAll.filter(x => x.crumb && !x.ack), rdAck = rdAll.filter(x => x.ack);
     const driftLine = 'Collection loss recognised in this span: ' + fN(spanCL) + ' — your AR-file write-offs plus in-window movers\u2019 residuals per your lease rule (' + (CLX.clDetail || []).length + ' events; the walk below and Checks & balances carry the detail). ' + (CLX.pendingWriteoffs || []).length + ' window-end recognitions await the June AR column.';
     const wfFoot = 'Charges & collections from the Buildium journals at tenant grain. Operating cash only. Capex per GL: ' + fN(capexW) + ' · financing events (draws, payoffs, releases) shown separately at right — sale-funded payoffs are settled from sale proceeds, not operating cash. Escrow uses the loans-engine T&I; the file’s recorded T&I differs by a reconciled delta (see Checks & balances). HOA cash pending — GL accrual used as proxy.';
 
@@ -1147,10 +1147,11 @@ class Component extends DCLogic {
         { k: 'Cells compared (tenant × month)', v: '' + (1265 - 0), vc: FAINT },
         { k: 'Material differences', v: '' + rdMat.length + ' cells', vc: rdMat.length ? GOLDD : GREEND },
         { k: 'Crumbs ≤ $1.51 (ignored per owner)', v: '' + rdCrumb.length + ' cells · ' + f2(rdCrumb.reduce((s, x) => s + Math.abs(x.diff), 0)), vc: FAINT },
+        { k: 'Owner-acknowledged', v: '' + rdAck.length + (rdAck.length ? ' cell · ' + f2(rdAck.reduce((s, x) => s + Math.abs(x.diff), 0)) : ''), vc: FAINT },
         { k: 'Σ |Δ|', v: f2(sum((CLX.reconDiffs || []).map(x => Math.abs(x.diff)))), vc: GOLDD },
         { k: 'Largest', v: rdMat.length ? fK(Math.max(...rdMat.map(x => Math.abs(x.diff)))) : '—', vc: GOLDD },
       ], hasList: (CLX.reconDiffs || []).length > 0, listLab: S.ckOpen === 'recon' ? 'Hide differences ▲' : 'Show every difference ▼',
-      list: [...rdMat.map(x => ({ t: '• ' + x.prop + ' — ' + x.tenant + ' · ' + mmyy(x.m), v: f2(x.computed) + ' vs ' + f2(x.file) })), ...rdCrumb.map(x => ({ t: '· crumb (ignored) — ' + x.prop + ' — ' + x.tenant + ' · ' + mmyy(x.m), v: f2(x.diff) }))] }, gold, ckList('recon')),
+      list: [...rdMat.map(x => ({ t: '• ' + x.prop + ' — ' + x.tenant + ' · ' + mmyy(x.m), v: f2(x.computed) + ' vs ' + f2(x.file) })), ...rdAck.map(x => ({ t: '✓ acknowledged — ' + x.prop + ' — ' + x.tenant + ' · ' + mmyy(x.m) + ' (' + x.ack + ')', v: f2(x.diff) })), ...rdCrumb.map(x => ({ t: '· crumb (ignored) — ' + x.prop + ' — ' + x.tenant + ' · ' + mmyy(x.m), v: f2(x.diff) }))] }, gold, ckList('recon')),
       Object.assign({ title: 'Collection loss', lines: [
         { k: 'Written off (file, span)', v: f2(spanCL), vc: REDD },
         { k: 'Stated lease rule (memo)', v: f2(sum(winIdx.map(i => (CLX.statedCL || z())[i] || 0))), vc: FAINT },
@@ -1181,7 +1182,7 @@ class Component extends DCLogic {
     const asRows = (CF.meta.assumptions || []).map(t => ({ t }));
     const pendRows = [
       { t: 'June AR Balances column — confirms the ' + (CLX.pendingWriteoffs || []).length + ' window-end lease-rule recognitions (incl. Randy Vickerie’s −$3,300 recovery).' },
-      { t: 'The ' + rdMat.length + ' material ledger differences — each needs your eye (see the review notes; one Aftonshire credit row still marked Active Tenant).' },
+      ...(rdMat.length ? [{ t: 'The ' + rdMat.length + ' material ledger difference' + (rdMat.length === 1 ? '' : 's') + ' — each needs your eye.' }] : []),
       { t: 'Bank balances by entity/account, month-end — activates the bank tie-out: derived cash kept vs actual bank movement.' },
       { t: 'Contributions & distributions — separates owner cash from portfolio cash.' },
       { t: 'Sale proceeds per exited door — completes financing events and the gain-on-sale story.' },
