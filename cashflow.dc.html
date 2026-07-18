@@ -149,7 +149,7 @@ input:focus{outline:2px solid #C9A45C;outline-offset:1px}
       <div style="margin-top:14px;display:flex;align-items:center;gap:8px;flex-wrap:wrap;position:relative;z-index:40" onClick="{{ stopProp }}">
         <span style="font-size:9px;letter-spacing:0.1em;font-weight:800;color:#96742F">VIEW</span>
         <div style="position:relative">
-          <div onClick="{{ onHvToggle }}" style-hover="border-color:#C9A45C" style="display:flex;align-items:center;gap:7px;padding:7px 13px;border-radius:10px;border:1.5px solid {{ hvBd }};background:{{ hvBg }};font-size:11.5px;font-weight:700;color:#16233A;cursor:pointer;white-space:nowrap">
+          <div onClick="{{ onHvToggle }}" style-hover="border-color:#C9A45C" style="display:flex;align-items:center;gap:7px;padding:7px 13px;border-radius:10px;border:1px solid {{ hvBd }};background:{{ hvBg }};font-size:11.5px;font-weight:700;color:#16233A;cursor:pointer;white-space:nowrap">
             <span style="font-size:9px;letter-spacing:0.07em;font-weight:800;color:#5E6B82">MONTHS</span>
             <span style="max-width:190px;overflow:hidden;text-overflow:ellipsis">{{ hvVal }}</span>
             <span style="font-size:8.5px;color:#5E6B82">▾</span>
@@ -167,11 +167,11 @@ input:focus{outline:2px solid #C9A45C;outline-offset:1px}
           </sc-if>
         </div>
         <span style="width:1px;height:18px;background:#E5E3DC"></span>
-        <div onClick="{{ onCmpToggle }}" style-hover="border-color:#C9A45C" style="padding:7px 12px;border-radius:10px;border:1.5px solid {{ cmpBd }};background:{{ cmpBg }};font-size:11px;font-weight:800;color:#3D64A8;cursor:pointer;white-space:nowrap">⇄ COMPARE</div>
+        <div onClick="{{ onCmpToggle }}" style-hover="border-color:#C9A45C" style="padding:7px 12px;border-radius:10px;border:1px solid {{ cmpBd }};background:{{ cmpBg }};font-size:11px;font-weight:800;color:#2A3550;cursor:pointer;white-space:nowrap">⇄ COMPARE</div>
         <sc-if value="{{ cmpOn }}" hint-placeholder-val="{{ false }}">
           <span style="font-size:9px;letter-spacing:0.08em;font-weight:800;color:#5E6B82">FROM</span>
           <div style="position:relative">
-            <div onClick="{{ onHaToggle }}" style-hover="border-color:#8FA8CE" style="display:flex;align-items:center;gap:7px;padding:7px 13px;border-radius:10px;border:1.5px solid {{ haBd }};background:{{ haBg }};font-size:11.5px;font-weight:700;color:#2A3550;cursor:pointer;white-space:nowrap">
+            <div onClick="{{ onHaToggle }}" style-hover="border-color:#8FA8CE" style="display:flex;align-items:center;gap:7px;padding:7px 13px;border-radius:10px;border:1px solid {{ haBd }};background:{{ haBg }};font-size:11.5px;font-weight:700;color:#2A3550;cursor:pointer;white-space:nowrap">
               <span style="max-width:170px;overflow:hidden;text-overflow:ellipsis">{{ haVal }}</span>
               <span style="font-size:8.5px;color:#5E6B82">▾</span>
             </div>
@@ -189,7 +189,7 @@ input:focus{outline:2px solid #C9A45C;outline-offset:1px}
           </div>
           <span style="font-size:9px;letter-spacing:0.08em;font-weight:800;color:#96742F">TO</span>
           <div style="position:relative">
-            <div onClick="{{ onHbToggle }}" style-hover="border-color:#C9A45C" style="display:flex;align-items:center;gap:7px;padding:7px 13px;border-radius:10px;border:1.5px solid {{ hbBd }};background:{{ hbBg }};font-size:11.5px;font-weight:700;color:#2A3550;cursor:pointer;white-space:nowrap">
+            <div onClick="{{ onHbToggle }}" style-hover="border-color:#C9A45C" style="display:flex;align-items:center;gap:7px;padding:7px 13px;border-radius:10px;border:1px solid {{ hbBd }};background:{{ hbBg }};font-size:11.5px;font-weight:700;color:#2A3550;cursor:pointer;white-space:nowrap">
               <span style="max-width:190px;overflow:hidden;text-overflow:ellipsis">{{ hbVal }}</span>
               <span style="font-size:8.5px;color:#5E6B82">▾</span>
             </div>
@@ -207,7 +207,7 @@ input:focus{outline:2px solid #C9A45C;outline-offset:1px}
           </div>
         </sc-if>
         <div style="margin-left:auto;position:relative;min-width:260px">
-          <input value="{{ spotQ }}" onInput="{{ onSpotQ }}" placeholder="⌖ Spotlight a property — type to search…" style="width:100%;box-sizing:border-box;padding:8px 12px;border-radius:9px;border:1.5px solid {{ spotBd }};font-size:11.5px;font-family:inherit;color:#16233A;background:#FDFCFA">
+          <input value="{{ spotQ }}" onInput="{{ onSpotQ }}" placeholder="⌖ Spotlight a property — type to search…" style="width:100%;box-sizing:border-box;padding:8px 12px;border-radius:9px;border:1px solid {{ spotBd }};font-size:11.5px;font-family:inherit;color:#16233A;background:#FDFCFA">
           <sc-if value="{{ spotOpen }}" hint-placeholder-val="{{ false }}">
             <div class="scr" style="position:absolute;top:38px;right:0;width:320px;background:#FFFFFF;border:1px solid #D8D4C8;border-radius:12px;box-shadow:0 14px 36px rgba(14,24,48,0.20);z-index:80;padding:6px;max-height:280px;overflow-y:auto">
               <sc-for list="{{ spotOpts }}" as="so" hint-placeholder-count="6">
@@ -221,88 +221,94 @@ input:focus{outline:2px solid #C9A45C;outline-offset:1px}
           </sc-if>
         </div>
         <sc-if value="{{ spotChipOn }}" hint-placeholder-val="{{ false }}">
-          <div onClick="{{ onSpotClear }}" style-hover="background:#16233A;color:#FFFFFF" style="padding:6px 12px;border-radius:9px;background:#FBF6EA;border:1.5px solid #C9A45C;font-size:11px;font-weight:800;color:#96742F;cursor:pointer;white-space:nowrap">{{ spotChip }} ✕</div>
+          <div onClick="{{ onSpotClear }}" style-hover="background:#16233A;color:#FFFFFF" style="padding:6px 12px;border-radius:9px;background:#FBF6EA;border:1px solid #C9A45C;font-size:11px;font-weight:800;color:#96742F;cursor:pointer;white-space:nowrap">{{ spotChip }} ✕</div>
         </sc-if>
       </div>
 
       <!-- the walk (span / selected-months view) — every line expands IN PLACE -->
       <sc-if value="{{ walkOn }}" hint-placeholder-val="{{ true }}">
-        <div style="margin-top:14px">
+        <div style="margin-top:10px">
           <sc-for list="{{ wkRows }}" as="wk" hint-placeholder-count="16">
             <div>
-              <div onClick="{{ wk.onClick }}" style-hover="background:#F6F2E7" style="display:grid;grid-template-columns:252px 1fr 110px 150px;align-items:stretch;background:{{ wk.cellBg }};border-radius:8px;cursor:{{ wk.cur }};height:{{ wk.rh }}px;margin-top:{{ wk.mt }}px">
-                <div style="display:flex;flex-direction:column;justify-content:center;padding-left:{{ wk.lpl }}px;overflow:hidden">
-                  <span style="display:flex;align-items:center;gap:7px;min-width:0">
-                    <span style="font-size:{{ wk.lfs }}px;font-weight:{{ wk.lfw }};letter-spacing:{{ wk.lsp }};color:{{ wk.lcol }};white-space:nowrap;overflow:hidden;text-overflow:ellipsis">{{ wk.label }}</span>
-                    <span style="display:inline-flex;align-items:center;justify-content:center;width:16px;height:16px;border-radius:99px;border:1.5px solid {{ wk.chevBd }};background:{{ wk.chevBg }};color:#96742F;font-size:8.5px;font-weight:800;flex:none">{{ wk.chev }}</span>
-                  </span>
-                  <sc-if value="{{ wk.subOn }}" hint-placeholder-val="{{ false }}"><span style="font-size:9px;color:#9AA3B5;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">{{ wk.sub }}</span></sc-if>
+              <sc-if value="{{ wk.head }}" hint-placeholder-val="{{ false }}">
+                <div style="margin-top:20px;margin-bottom:2px;display:flex;align-items:center;gap:10px;padding:0 2px">
+                  <span style="font-size:10px;letter-spacing:0.12em;font-weight:800;color:#96742F;white-space:nowrap">{{ wk.label }}</span>
+                  <span style="flex:1;height:1px;background:#E5E3DC"></span>
                 </div>
-                <div style="position:relative;margin:0 4px">
-                  <sc-if value="{{ wk.connInOn }}" hint-placeholder-val="{{ false }}"><div style="position:absolute;left:{{ wk.connInX }};top:0;height:50%;border-left:1.5px dashed #CEC6B3"></div></sc-if>
-                  <sc-if value="{{ wk.connOutOn }}" hint-placeholder-val="{{ false }}"><div style="position:absolute;left:{{ wk.connOutX }};top:50%;height:50%;border-left:1.5px dashed #CEC6B3"></div></sc-if>
-                  <sc-if value="{{ wk.barOn }}" hint-placeholder-val="{{ false }}"><div style="position:absolute;left:{{ wk.barX }};width:{{ wk.barW }};top:50%;transform:translateY(-50%);height:{{ wk.barH }}px;border-radius:3px;background:{{ wk.barC }}"></div></sc-if>
-                </div>
-                <div style="display:flex;flex-direction:column;align-items:center;justify-content:center">
-                  <sc-if value="{{ wk.spkOn }}" hint-placeholder-val="{{ false }}">
-                    <div title="{{ wk.spkTip }}" style="position:relative">
-                      <svg viewBox="0 0 64 16" style="width:64px;height:16px;display:block;overflow:visible">
-                        <polyline points="{{ wk.spkPath }}" fill="none" stroke="{{ wk.spkCol }}" stroke-width="1.4" stroke-linejoin="round" stroke-linecap="round"></polyline>
-                        <sc-for list="{{ wk.spkPts }}" as="sk" hint-placeholder-count="5">
-                          <circle cx="{{ sk.cx }}" cy="{{ sk.cy }}" r="{{ sk.r }}" fill="{{ sk.fill }}"></circle>
-                          <circle onClick="{{ sk.onClick }}" cx="{{ sk.cx }}" cy="{{ sk.cy }}" r="6" fill="transparent" style="cursor:pointer"></circle>
-                        </sc-for>
-                      </svg>
-                    </div>
-                    <div style="margin-top:1px;font-size:8.5px;font-weight:700;color:{{ wk.deltaCol }};font-variant-numeric:tabular-nums;white-space:nowrap">{{ wk.delta }}</div>
-                  </sc-if>
-                </div>
-                <div style="display:flex;align-items:center;justify-content:flex-end;font-size:{{ wk.vfs }}px;font-weight:{{ wk.vfw }};color:{{ wk.vcol }};font-variant-numeric:tabular-nums;padding-right:8px;white-space:nowrap">{{ wk.val }}</div>
-              </div>
-              <sc-if value="{{ wk.exp }}" hint-placeholder-val="{{ false }}">
-                <div style="margin:4px 0 10px 14px;background:#FAF9F5;border:1px solid #EDEAE0;border-radius:12px;padding:12px 16px" onClick="{{ stopProp }}">
-                  <div style="display:flex;justify-content:space-between;align-items:center;gap:10px;flex-wrap:wrap">
-                    <div>
-                      <span style="font-family:'Source Serif 4',Georgia,serif;font-size:14px;font-weight:600;color:#16233A">{{ wk.exTitle }}</span>
-                      <span style="margin-left:9px;font-size:11px;color:#8A93A6">{{ wk.exSub }}</span>
-                    </div>
-                    <div style="display:flex;gap:8px;align-items:center;flex-wrap:wrap">
-                      <sc-if value="{{ wk.exJumpOn }}" hint-placeholder-val="{{ false }}">
-                        <span onClick="{{ wk.onExJump }}" style-hover="background:#F6ECD9" style="font-size:9.5px;font-weight:800;letter-spacing:0.05em;color:#96742F;cursor:pointer;border:1px solid #E2D9C4;border-radius:99px;padding:4px 11px">{{ wk.exJumpLab }}</span>
-                      </sc-if>
-                      <input value="{{ wk.exQ }}" onInput="{{ wk.onExQ }}" placeholder="Search…" style="width:180px;box-sizing:border-box;padding:7px 11px;border-radius:8px;border:1px solid #D8D4C8;font-family:'Libre Franklin',system-ui,sans-serif;font-size:11.5px;color:#16233A;background:#FFFFFF">
-                    </div>
+              </sc-if>
+              <sc-if value="{{ wk.body }}" hint-placeholder-val="{{ true }}">
+                <div onClick="{{ wk.onClick }}" style-hover="background:#FBFAF6" style="display:grid;grid-template-columns:18px 240px 1fr 76px 132px;align-items:stretch;background:{{ wk.cellBg }};border-top:{{ wk.bt }};border-radius:4px;cursor:{{ wk.cur }};height:{{ wk.rh }}px">
+                  <div style="display:flex;align-items:center;justify-content:center;font-size:10px;font-weight:700;color:{{ wk.chevCol }}">{{ wk.chev }}</div>
+                  <div style="display:flex;flex-direction:column;justify-content:center;overflow:hidden">
+                    <span style="font-size:{{ wk.lfs }}px;font-weight:{{ wk.lfw }};color:{{ wk.lcol }};white-space:nowrap;overflow:hidden;text-overflow:ellipsis">{{ wk.label }}</span>
+                    <sc-if value="{{ wk.subOn }}" hint-placeholder-val="{{ false }}"><span style="font-size:9px;color:#9AA3B5;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">{{ wk.sub }}</span></sc-if>
                   </div>
-                  <div class="scr" style="margin-top:8px;max-height:340px;overflow-y:auto;padding-right:4px">
-                    <sc-for list="{{ wk.eRows }}" as="er" hint-placeholder-count="8">
-                      <div onClick="{{ er.onClick }}" style-hover="background:#F3F0E6" style="display:flex;align-items:center;gap:8px;padding:6px 8px;border-top:1px solid #F0EEE7;cursor:{{ er.cur }};background:{{ er.bg }};border-radius:6px;margin-left:{{ er.ind }}px">
-                        <span style="display:inline-flex;align-items:center;justify-content:center;width:15px;height:15px;border-radius:99px;border:1.5px solid {{ er.chevBd }};background:{{ er.chevBg }};color:#96742F;font-size:8px;font-weight:800;flex:none">{{ er.chev }}</span>
-                        <span style="flex:1;min-width:0;display:flex;flex-direction:column">
-                          <span style="font-size:12px;font-weight:{{ er.nameFw }};color:{{ er.nameCol }};white-space:nowrap;overflow:hidden;text-overflow:ellipsis">{{ er.name }}</span>
-                          <sc-if value="{{ er.sub2On }}" hint-placeholder-val="{{ false }}"><span style="font-size:9.5px;color:#9AA3B5;font-variant-numeric:tabular-nums;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">{{ er.sub2 }}</span></sc-if>
-                        </span>
-                        <sc-if value="{{ er.hasLinks }}" hint-placeholder-val="{{ false }}">
-                          <span style="display:flex;gap:4px;flex:none">
-                            <sc-for list="{{ er.links }}" as="el" hint-placeholder-count="3">
-                              <a href="{{ el.href }}" onClick="{{ stopProp }}" style-hover="background:#F6ECD9" style="font-size:8px;font-weight:800;letter-spacing:0.04em;color:#96742F;text-decoration:none;border:1px solid #E2D9C4;border-radius:99px;padding:2px 7px">{{ el.lab }}</a>
-                            </sc-for>
-                          </span>
-                        </sc-if>
-                        <span style="width:130px;flex:none;height:5px;background:#F0EDE3;border-radius:3px;overflow:hidden"><span style="display:block;height:5px;border-radius:3px;background:{{ er.barC }};width:{{ er.barW }}"></span></span>
-                        <span style="width:110px;flex:none;text-align:right;font-size:12px;font-weight:700;color:{{ er.vcol }};font-variant-numeric:tabular-nums;white-space:nowrap">{{ er.val }}</span>
+                  <div style="position:relative;margin:0 6px">
+                    <sc-if value="{{ wk.connInOn }}" hint-placeholder-val="{{ false }}"><div style="position:absolute;left:{{ wk.connInX }};top:0;height:50%;border-left:1.5px dashed #DFD9CB"></div></sc-if>
+                    <sc-if value="{{ wk.connOutOn }}" hint-placeholder-val="{{ false }}"><div style="position:absolute;left:{{ wk.connOutX }};top:50%;height:50%;border-left:1.5px dashed #DFD9CB"></div></sc-if>
+                    <sc-if value="{{ wk.barOn }}" hint-placeholder-val="{{ false }}"><div style="position:absolute;left:{{ wk.barX }};width:{{ wk.barW }};top:50%;transform:translateY(-50%);height:{{ wk.barH }}px;border-radius:2px;background:{{ wk.barC }}"></div></sc-if>
+                  </div>
+                  <div style="display:flex;flex-direction:column;align-items:center;justify-content:center">
+                    <sc-if value="{{ wk.spkOn }}" hint-placeholder-val="{{ false }}">
+                      <div title="{{ wk.spkTip }}" style="position:relative">
+                        <svg viewBox="0 0 64 16" style="width:64px;height:16px;display:block;overflow:visible">
+                          <polyline points="{{ wk.spkPath }}" fill="none" stroke="{{ wk.spkCol }}" stroke-width="1.4" stroke-linejoin="round" stroke-linecap="round"></polyline>
+                          <sc-for list="{{ wk.spkPts }}" as="sk" hint-placeholder-count="5">
+                            <circle cx="{{ sk.cx }}" cy="{{ sk.cy }}" r="{{ sk.r }}" fill="{{ sk.fill }}"></circle>
+                            <circle onClick="{{ sk.onClick }}" cx="{{ sk.cx }}" cy="{{ sk.cy }}" r="6" fill="transparent" style="cursor:pointer"></circle>
+                          </sc-for>
+                        </svg>
                       </div>
-                    </sc-for>
-                    <sc-if value="{{ wk.eEmpty }}" hint-placeholder-val="{{ false }}"><div style="padding:10px;font-size:11.5px;color:#8A93A6">Nothing matches</div></sc-if>
+                      <div style="margin-top:1px;font-size:8px;font-weight:600;color:{{ wk.deltaCol }};font-variant-numeric:tabular-nums;white-space:nowrap">{{ wk.delta }}</div>
+                    </sc-if>
                   </div>
-                  <div style="margin-top:9px;display:flex;justify-content:space-between;align-items:flex-start;gap:12px;flex-wrap:wrap;border-top:1px solid #EDEAE0;padding-top:9px">
-                    <div style="display:flex;gap:8px;flex-wrap:wrap;align-items:center">
-                      <sc-for list="{{ wk.exLinks }}" as="el" hint-placeholder-count="3">
-                        <a href="{{ el.href }}" style="font-size:9.5px;font-weight:800;letter-spacing:0.05em;color:#96742F;text-decoration:none;border:1px solid #E2D9C4;border-radius:99px;padding:4px 11px">{{ el.lab }}</a>
-                      </sc-for>
-                    </div>
-                    <span style="font-size:10px;color:#9AA3B5;text-align:right;max-width:600px;line-height:1.5">{{ wk.exProv }}</span>
-                  </div>
+                  <div style="display:flex;align-items:center;justify-content:flex-end;font-size:{{ wk.vfs }}px;font-weight:{{ wk.vfw }};color:{{ wk.vcol }};font-variant-numeric:tabular-nums;padding-right:8px;white-space:nowrap">{{ wk.val }}</div>
                 </div>
+                <sc-if value="{{ wk.exp }}" hint-placeholder-val="{{ false }}">
+                  <div style="margin:4px 0 10px 18px;background:#FCFBF8;border:1px solid #EDEAE0;border-radius:12px;padding:12px 16px" onClick="{{ stopProp }}">
+                    <div style="display:flex;justify-content:space-between;align-items:center;gap:10px;flex-wrap:wrap">
+                      <div>
+                        <span style="font-family:'Source Serif 4',Georgia,serif;font-size:14px;font-weight:600;color:#16233A">{{ wk.exTitle }}</span>
+                        <span style="margin-left:9px;font-size:11px;color:#8A93A6">{{ wk.exSub }}</span>
+                      </div>
+                      <div style="display:flex;gap:8px;align-items:center;flex-wrap:wrap">
+                        <sc-if value="{{ wk.exJumpOn }}" hint-placeholder-val="{{ false }}">
+                          <span onClick="{{ wk.onExJump }}" style-hover="background:#F6ECD9" style="font-size:9.5px;font-weight:800;letter-spacing:0.05em;color:#96742F;cursor:pointer;border:1px solid #E2D9C4;border-radius:99px;padding:4px 11px">{{ wk.exJumpLab }}</span>
+                        </sc-if>
+                        <input value="{{ wk.exQ }}" onInput="{{ wk.onExQ }}" placeholder="Search…" style="width:180px;box-sizing:border-box;padding:7px 11px;border-radius:8px;border:1px solid #D8D4C8;font-family:'Libre Franklin',system-ui,sans-serif;font-size:11.5px;color:#16233A;background:#FFFFFF">
+                      </div>
+                    </div>
+                    <div class="scr" style="margin-top:8px;max-height:340px;overflow-y:auto;padding-right:4px">
+                      <sc-for list="{{ wk.eRows }}" as="er" hint-placeholder-count="8">
+                        <div onClick="{{ er.onClick }}" style-hover="background:#F3F0E6" style="display:flex;align-items:center;gap:8px;padding:6px 8px;border-top:1px solid #F0EEE7;cursor:{{ er.cur }};background:{{ er.bg }};border-radius:6px;margin-left:{{ er.ind }}px">
+                          <span style="width:14px;flex:none;font-size:9.5px;font-weight:700;color:{{ er.chevCol }};text-align:center">{{ er.chev }}</span>
+                          <span style="flex:1;min-width:0;display:flex;flex-direction:column">
+                            <span style="font-size:12px;font-weight:{{ er.nameFw }};color:{{ er.nameCol }};white-space:nowrap;overflow:hidden;text-overflow:ellipsis">{{ er.name }}</span>
+                            <sc-if value="{{ er.sub2On }}" hint-placeholder-val="{{ false }}"><span style="font-size:9.5px;color:#9AA3B5;font-variant-numeric:tabular-nums;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">{{ er.sub2 }}</span></sc-if>
+                          </span>
+                          <sc-if value="{{ er.hasLinks }}" hint-placeholder-val="{{ false }}">
+                            <span style="display:flex;gap:4px;flex:none">
+                              <sc-for list="{{ er.links }}" as="el" hint-placeholder-count="3">
+                                <a href="{{ el.href }}" onClick="{{ stopProp }}" style-hover="background:#F6ECD9" style="font-size:8px;font-weight:800;letter-spacing:0.04em;color:#96742F;text-decoration:none;border:1px solid #E2D9C4;border-radius:99px;padding:2px 7px">{{ el.lab }}</a>
+                              </sc-for>
+                            </span>
+                          </sc-if>
+                          <span style="width:130px;flex:none;height:5px;background:#F0EDE3;border-radius:3px;overflow:hidden"><span style="display:block;height:5px;border-radius:3px;background:{{ er.barC }};width:{{ er.barW }}"></span></span>
+                          <span style="width:110px;flex:none;text-align:right;font-size:12px;font-weight:700;color:{{ er.vcol }};font-variant-numeric:tabular-nums;white-space:nowrap">{{ er.val }}</span>
+                        </div>
+                      </sc-for>
+                      <sc-if value="{{ wk.eEmpty }}" hint-placeholder-val="{{ false }}"><div style="padding:10px;font-size:11.5px;color:#8A93A6">Nothing matches</div></sc-if>
+                    </div>
+                    <div style="margin-top:9px;display:flex;justify-content:space-between;align-items:flex-start;gap:12px;flex-wrap:wrap;border-top:1px solid #EDEAE0;padding-top:9px">
+                      <div style="display:flex;gap:8px;flex-wrap:wrap;align-items:center">
+                        <sc-for list="{{ wk.exLinks }}" as="el" hint-placeholder-count="3">
+                          <a href="{{ el.href }}" style="font-size:9.5px;font-weight:800;letter-spacing:0.05em;color:#96742F;text-decoration:none;border:1px solid #E2D9C4;border-radius:99px;padding:4px 11px">{{ el.lab }}</a>
+                        </sc-for>
+                      </div>
+                      <span style="font-size:10px;color:#9AA3B5;text-align:right;max-width:600px;line-height:1.5">{{ wk.exProv }}</span>
+                    </div>
+                  </div>
+                </sc-if>
               </sc-if>
             </div>
           </sc-for>
@@ -311,67 +317,73 @@ input:focus{outline:2px solid #C9A45C;outline-offset:1px}
 
       <!-- the walk (compare mode) — FROM vs TO (months or BUDGET slot), same inline drills -->
       <sc-if value="{{ cmpOn }}" hint-placeholder-val="{{ false }}">
-        <div style="margin-top:14px">
-          <div style="display:grid;grid-template-columns:252px 1fr 128px 128px 108px;padding-bottom:4px;border-bottom:1px solid #EDEBE2;font-size:9px;letter-spacing:0.08em;font-weight:800;color:#8A93A6">
-            <span></span><span></span>
+        <div style="margin-top:10px">
+          <div style="display:grid;grid-template-columns:18px 240px 1fr 118px 118px 100px;padding-bottom:4px;border-bottom:1px solid #EDEBE2;font-size:9px;letter-spacing:0.08em;font-weight:800;color:#8A93A6">
+            <span></span><span></span><span></span>
             <span style="text-align:right;color:#5E6B82">{{ cmpALab }}</span>
             <span style="text-align:right;color:#96742F">{{ cmpBLab }}</span>
             <span style="text-align:right;padding-right:6px">CHANGE</span>
           </div>
           <sc-for list="{{ cmpRows }}" as="cp" hint-placeholder-count="16">
             <div>
-              <div onClick="{{ cp.onClick }}" style-hover="background:#F6F2E7" style="display:grid;grid-template-columns:252px 1fr 128px 128px 108px;align-items:center;height:{{ cp.rh }}px;background:{{ cp.cellBg }};border-radius:6px;cursor:{{ cp.cur }};margin-top:{{ cp.mt }}px">
-                <span style="display:flex;align-items:center;gap:7px;min-width:0;padding-left:{{ cp.lpl }}px">
-                  <span style="font-size:{{ cp.lfs }}px;font-weight:{{ cp.lfw }};letter-spacing:{{ cp.lsp }};color:{{ cp.lcol }};white-space:nowrap;overflow:hidden;text-overflow:ellipsis">{{ cp.label }}</span>
-                  <span style="display:inline-flex;align-items:center;justify-content:center;width:16px;height:16px;border-radius:99px;border:1.5px solid {{ cp.chevBd }};background:{{ cp.chevBg }};color:#96742F;font-size:8.5px;font-weight:800;flex:none">{{ cp.chev }}</span>
-                </span>
-                <span style="display:flex;flex-direction:column;gap:2px;padding:0 10px">
-                  <span style="height:7px;border-radius:3px;background:#EFF2F7;overflow:hidden"><span style="display:block;height:7px;border-radius:3px;background:#8FA8CE;width:{{ cp.aW }}"></span></span>
-                  <span style="height:7px;border-radius:3px;background:#F6F1E4;overflow:hidden"><span style="display:block;height:7px;border-radius:3px;background:#C9A45C;width:{{ cp.bW }}"></span></span>
-                </span>
-                <span style="text-align:right;font-size:12px;font-weight:{{ cp.vfw }};color:#5E6B82;font-variant-numeric:tabular-nums;white-space:nowrap">{{ cp.aVal }}</span>
-                <span style="text-align:right;font-size:12px;font-weight:{{ cp.vfw }};color:#2A3550;font-variant-numeric:tabular-nums;white-space:nowrap">{{ cp.bVal }}</span>
-                <span style="text-align:right;font-size:12px;font-weight:800;color:{{ cp.dCol }};font-variant-numeric:tabular-nums;padding-right:6px;white-space:nowrap">{{ cp.dVal }}</span>
-              </div>
-              <sc-if value="{{ cp.exp }}" hint-placeholder-val="{{ false }}">
-                <div style="margin:4px 0 10px 14px;background:#FAF9F5;border:1px solid #EDEAE0;border-radius:12px;padding:12px 16px" onClick="{{ stopProp }}">
-                  <div style="display:flex;justify-content:space-between;align-items:center;gap:10px;flex-wrap:wrap">
-                    <div>
-                      <span style="font-family:'Source Serif 4',Georgia,serif;font-size:14px;font-weight:600;color:#16233A">{{ cp.exTitle }}</span>
-                      <span style="margin-left:9px;font-size:11px;color:#8A93A6">{{ cp.exSub }}</span>
-                    </div>
-                    <input value="{{ cp.exQ }}" onInput="{{ cp.onExQ }}" placeholder="Search…" style="width:180px;box-sizing:border-box;padding:7px 11px;border-radius:8px;border:1px solid #D8D4C8;font-family:'Libre Franklin',system-ui,sans-serif;font-size:11.5px;color:#16233A;background:#FFFFFF">
-                  </div>
-                  <div class="scr" style="margin-top:8px;max-height:340px;overflow-y:auto;padding-right:4px">
-                    <sc-for list="{{ cp.eRows }}" as="er" hint-placeholder-count="8">
-                      <div onClick="{{ er.onClick }}" style-hover="background:#F3F0E6" style="display:flex;align-items:center;gap:8px;padding:6px 8px;border-top:1px solid #F0EEE7;cursor:{{ er.cur }};background:{{ er.bg }};border-radius:6px;margin-left:{{ er.ind }}px">
-                        <span style="display:inline-flex;align-items:center;justify-content:center;width:15px;height:15px;border-radius:99px;border:1.5px solid {{ er.chevBd }};background:{{ er.chevBg }};color:#96742F;font-size:8px;font-weight:800;flex:none">{{ er.chev }}</span>
-                        <span style="flex:1;min-width:0;display:flex;flex-direction:column">
-                          <span style="font-size:12px;font-weight:{{ er.nameFw }};color:{{ er.nameCol }};white-space:nowrap;overflow:hidden;text-overflow:ellipsis">{{ er.name }}</span>
-                          <sc-if value="{{ er.sub2On }}" hint-placeholder-val="{{ false }}"><span style="font-size:9.5px;color:#9AA3B5;font-variant-numeric:tabular-nums;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">{{ er.sub2 }}</span></sc-if>
-                        </span>
-                        <sc-if value="{{ er.hasLinks }}" hint-placeholder-val="{{ false }}">
-                          <span style="display:flex;gap:4px;flex:none">
-                            <sc-for list="{{ er.links }}" as="el" hint-placeholder-count="3">
-                              <a href="{{ el.href }}" onClick="{{ stopProp }}" style-hover="background:#F6ECD9" style="font-size:8px;font-weight:800;letter-spacing:0.04em;color:#96742F;text-decoration:none;border:1px solid #E2D9C4;border-radius:99px;padding:2px 7px">{{ el.lab }}</a>
-                            </sc-for>
-                          </span>
-                        </sc-if>
-                        <span style="width:130px;flex:none;height:5px;background:#F0EDE3;border-radius:3px;overflow:hidden"><span style="display:block;height:5px;border-radius:3px;background:{{ er.barC }};width:{{ er.barW }}"></span></span>
-                        <span style="width:110px;flex:none;text-align:right;font-size:12px;font-weight:700;color:{{ er.vcol }};font-variant-numeric:tabular-nums;white-space:nowrap">{{ er.val }}</span>
-                      </div>
-                    </sc-for>
-                    <sc-if value="{{ cp.eEmpty }}" hint-placeholder-val="{{ false }}"><div style="padding:10px;font-size:11.5px;color:#8A93A6">Nothing matches</div></sc-if>
-                  </div>
-                  <div style="margin-top:9px;display:flex;justify-content:space-between;align-items:flex-start;gap:12px;flex-wrap:wrap;border-top:1px solid #EDEAE0;padding-top:9px">
-                    <div style="display:flex;gap:8px;flex-wrap:wrap;align-items:center">
-                      <sc-for list="{{ cp.exLinks }}" as="el" hint-placeholder-count="3">
-                        <a href="{{ el.href }}" style="font-size:9.5px;font-weight:800;letter-spacing:0.05em;color:#96742F;text-decoration:none;border:1px solid #E2D9C4;border-radius:99px;padding:4px 11px">{{ el.lab }}</a>
-                      </sc-for>
-                    </div>
-                    <span style="font-size:10px;color:#9AA3B5;text-align:right;max-width:600px;line-height:1.5">{{ cp.exProv }}</span>
-                  </div>
+              <sc-if value="{{ cp.head }}" hint-placeholder-val="{{ false }}">
+                <div style="margin-top:20px;margin-bottom:2px;display:flex;align-items:center;gap:10px;padding:0 2px">
+                  <span style="font-size:10px;letter-spacing:0.12em;font-weight:800;color:#96742F;white-space:nowrap">{{ cp.label }}</span>
+                  <span style="flex:1;height:1px;background:#E5E3DC"></span>
                 </div>
+              </sc-if>
+              <sc-if value="{{ cp.body }}" hint-placeholder-val="{{ true }}">
+                <div onClick="{{ cp.onClick }}" style-hover="background:#FBFAF6" style="display:grid;grid-template-columns:18px 240px 1fr 118px 118px 100px;align-items:center;height:{{ cp.rh }}px;background:{{ cp.cellBg }};border-top:{{ cp.bt }};border-radius:4px;cursor:{{ cp.cur }}">
+                  <span style="display:flex;align-items:center;justify-content:center;font-size:10px;font-weight:700;color:{{ cp.chevCol }}">{{ cp.chev }}</span>
+                  <span style="font-size:{{ cp.lfs }}px;font-weight:{{ cp.lfw }};color:{{ cp.lcol }};white-space:nowrap;overflow:hidden;text-overflow:ellipsis">{{ cp.label }}</span>
+                  <span style="display:flex;flex-direction:column;gap:2px;padding:0 10px">
+                    <span style="height:7px;border-radius:3px;background:#EFF2F7;overflow:hidden"><span style="display:block;height:7px;border-radius:3px;background:#8FA8CE;width:{{ cp.aW }}"></span></span>
+                    <span style="height:7px;border-radius:3px;background:#F6F1E4;overflow:hidden"><span style="display:block;height:7px;border-radius:3px;background:#C9A45C;width:{{ cp.bW }}"></span></span>
+                  </span>
+                  <span style="text-align:right;font-size:12px;font-weight:{{ cp.vfw }};color:#5E6B82;font-variant-numeric:tabular-nums;white-space:nowrap">{{ cp.aVal }}</span>
+                  <span style="text-align:right;font-size:12px;font-weight:{{ cp.vfw }};color:#2A3550;font-variant-numeric:tabular-nums;white-space:nowrap">{{ cp.bVal }}</span>
+                  <span style="text-align:right;font-size:12px;font-weight:800;color:{{ cp.dCol }};font-variant-numeric:tabular-nums;padding-right:6px;white-space:nowrap">{{ cp.dVal }}</span>
+                </div>
+                <sc-if value="{{ cp.exp }}" hint-placeholder-val="{{ false }}">
+                  <div style="margin:4px 0 10px 18px;background:#FCFBF8;border:1px solid #EDEAE0;border-radius:12px;padding:12px 16px" onClick="{{ stopProp }}">
+                    <div style="display:flex;justify-content:space-between;align-items:center;gap:10px;flex-wrap:wrap">
+                      <div>
+                        <span style="font-family:'Source Serif 4',Georgia,serif;font-size:14px;font-weight:600;color:#16233A">{{ cp.exTitle }}</span>
+                        <span style="margin-left:9px;font-size:11px;color:#8A93A6">{{ cp.exSub }}</span>
+                      </div>
+                      <input value="{{ cp.exQ }}" onInput="{{ cp.onExQ }}" placeholder="Search…" style="width:180px;box-sizing:border-box;padding:7px 11px;border-radius:8px;border:1px solid #D8D4C8;font-family:'Libre Franklin',system-ui,sans-serif;font-size:11.5px;color:#16233A;background:#FFFFFF">
+                    </div>
+                    <div class="scr" style="margin-top:8px;max-height:340px;overflow-y:auto;padding-right:4px">
+                      <sc-for list="{{ cp.eRows }}" as="er" hint-placeholder-count="8">
+                        <div onClick="{{ er.onClick }}" style-hover="background:#F3F0E6" style="display:flex;align-items:center;gap:8px;padding:6px 8px;border-top:1px solid #F0EEE7;cursor:{{ er.cur }};background:{{ er.bg }};border-radius:6px;margin-left:{{ er.ind }}px">
+                          <span style="width:14px;flex:none;font-size:9.5px;font-weight:700;color:{{ er.chevCol }};text-align:center">{{ er.chev }}</span>
+                          <span style="flex:1;min-width:0;display:flex;flex-direction:column">
+                            <span style="font-size:12px;font-weight:{{ er.nameFw }};color:{{ er.nameCol }};white-space:nowrap;overflow:hidden;text-overflow:ellipsis">{{ er.name }}</span>
+                            <sc-if value="{{ er.sub2On }}" hint-placeholder-val="{{ false }}"><span style="font-size:9.5px;color:#9AA3B5;font-variant-numeric:tabular-nums;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">{{ er.sub2 }}</span></sc-if>
+                          </span>
+                          <sc-if value="{{ er.hasLinks }}" hint-placeholder-val="{{ false }}">
+                            <span style="display:flex;gap:4px;flex:none">
+                              <sc-for list="{{ er.links }}" as="el" hint-placeholder-count="3">
+                                <a href="{{ el.href }}" onClick="{{ stopProp }}" style-hover="background:#F6ECD9" style="font-size:8px;font-weight:800;letter-spacing:0.04em;color:#96742F;text-decoration:none;border:1px solid #E2D9C4;border-radius:99px;padding:2px 7px">{{ el.lab }}</a>
+                              </sc-for>
+                            </span>
+                          </sc-if>
+                          <span style="width:130px;flex:none;height:5px;background:#F0EDE3;border-radius:3px;overflow:hidden"><span style="display:block;height:5px;border-radius:3px;background:{{ er.barC }};width:{{ er.barW }}"></span></span>
+                          <span style="width:110px;flex:none;text-align:right;font-size:12px;font-weight:700;color:{{ er.vcol }};font-variant-numeric:tabular-nums;white-space:nowrap">{{ er.val }}</span>
+                        </div>
+                      </sc-for>
+                      <sc-if value="{{ cp.eEmpty }}" hint-placeholder-val="{{ false }}"><div style="padding:10px;font-size:11.5px;color:#8A93A6">Nothing matches</div></sc-if>
+                    </div>
+                    <div style="margin-top:9px;display:flex;justify-content:space-between;align-items:flex-start;gap:12px;flex-wrap:wrap;border-top:1px solid #EDEAE0;padding-top:9px">
+                      <div style="display:flex;gap:8px;flex-wrap:wrap;align-items:center">
+                        <sc-for list="{{ cp.exLinks }}" as="el" hint-placeholder-count="3">
+                          <a href="{{ el.href }}" style="font-size:9.5px;font-weight:800;letter-spacing:0.05em;color:#96742F;text-decoration:none;border:1px solid #E2D9C4;border-radius:99px;padding:4px 11px">{{ el.lab }}</a>
+                        </sc-for>
+                      </div>
+                      <span style="font-size:10px;color:#9AA3B5;text-align:right;max-width:600px;line-height:1.5">{{ cp.exProv }}</span>
+                    </div>
+                  </div>
+                </sc-if>
               </sc-if>
             </div>
           </sc-for>
@@ -1222,7 +1234,7 @@ class Component extends DCLogic {
     const onHvToggle = ddTog('view'), hvOpen = hDd === 'view';
     const hvBd = hmSel.length ? GOLD : '#D8D4C8', hvBg = hmSel.length ? '#FBF6EA' : '#FFFFFF';
     const onCmpToggle = () => this.setState({ hcmp: !S.hcmp, hDd: null });
-    const cmpBd = cmpOn ? '#3D64A8' : '#D8D4C8', cmpBg = cmpOn ? '#EFF3FA' : '#FFFFFF';
+    const cmpBd = cmpOn ? GOLD : '#D8D4C8', cmpBg = cmpOn ? '#FBF6EA' : '#FFFFFF';
     const haOpts = winIdx.map(i => optRow(mmyy(MO[i]), aSet.includes(i) && aSetRaw.length > 0 || (aSetRaw.length === 0 && aSet.includes(i)), togIn('haSel', i)));
     const haVal = labSet(aSet), onHaToggle = ddTog('from'), haOpen = hDd === 'from';
     const haBd = '#8FA8CE', haBg = '#EFF3FA';
@@ -1265,7 +1277,7 @@ class Component extends DCLogic {
     rowsDef.push({ type: 'total', id: 'coll', label: 'Cash collected', color: GOLD });
     rowsDef.push({ type: 'flow', id: 'claims', label: 'Insurance claims', ms: claimsMs, color: '#4A5C7E' });
     if (refOutOn) rowsDef.push({ type: 'flow', id: 'refout', label: 'Refunds paid out', ms: negMs(refOutMs), color: '#B04A33', sub: 'SD returns · outside AR' });
-    rowsDef.push({ type: 'flow', id: 'opex', label: 'Operating expenses', ms: negMs(opexAllMs), color: '#B04A33', sub: 'cash-basis GL · incl. CapEx (your call, 17 Jul)' });
+    rowsDef.push({ type: 'flow', id: 'opex', label: 'Operating expenses', ms: negMs(opexAllMs), color: '#B04A33', sub: 'cash-basis GL · incl. CapEx' });
     rowsDef.push({ type: 'flow', id: 'stat', label: 'Statutory & escrow', ms: negMs(statMs), color: '#8A5A3C', sub: 'Cashflow.xlsx T&I + direct PT/Ins + HOA proxy' });
     rowsDef.push({ type: 'total', id: 'netop', label: 'Net operating cash', color: GREEN });
     rowsDef.push({ type: 'head', label: 'INVESTING ACTIVITIES — PURCHASES & SALES' });
@@ -1345,8 +1357,8 @@ class Component extends DCLogic {
       { lab: 'LOANS', href: './loans.dc.html?door=' + esc(d) },
     ];
     const spotClickE = d => (e) => { if (e && e.stopPropagation) e.stopPropagation(); this.setF({ fp: S.fp.length === 1 && S.fp[0] === d ? [] : [d] }); };
-    const baseE = { ind: 0, chev: '', chevBd: 'transparent', chevBg: 'transparent', name: '', nameFw: 600, nameCol: INK, sub2On: false, sub2: '', hasLinks: false, links: [], barW: '0%', barC: NAVY, val: '', vcol: INK, onClick: () => {}, cur: 'default', bg: 'transparent', tip: '' };
-    const chevE = open => ({ chev: open ? '▾' : '▸', chevBd: '#D9C89E', chevBg: '#FBF6EA' });
+    const baseE = { ind: 0, chev: '', chevCol: 'transparent', name: '', nameFw: 600, nameCol: INK, sub2On: false, sub2: '', hasLinks: false, links: [], barW: '0%', barC: NAVY, val: '', vcol: INK, onClick: () => {}, cur: 'default', bg: 'transparent', tip: '' };
+    const chevE = open => ({ chev: open ? '▾' : '▸', chevCol: open ? GOLDD : '#B9C2D2' });
     const cashD = p => (p.vb || 0) - (p.va || 0);
     const mkPropEntries = (pairs, opts) => {
       opts = opts || {};
@@ -1432,10 +1444,10 @@ class Component extends DCLogic {
             barC: cmpOn ? (gd < 0 ? RED : NAVY) : '#B04A33',
             val: cmpOn ? ((gd >= 0 ? '+' : '−') + fN(Math.abs(gd)).replace('(', '').replace(')', '')) : f2(gv),
             vcol: cmpOn ? (Math.abs(gd) < 0.005 ? FAINT : gd > 0 ? GREEND : REDD) : INK,
-            onClick: grpToggle(g), cur: 'pointer', bg: openG ? '#F6ECD9' : 'transparent' });
+            onClick: grpToggle(g), cur: 'pointer', bg: openG ? '#FBF6EA' : 'transparent' });
           if (openG && multi) {
             const allOpen = S.stLed === '__all';
-            eRows.push({ ...baseE, ...chevE(allOpen), ind: 20, name: 'All ' + g + ' — by property', nameFw: 700, nameCol: GOLDD, onClick: ledToggle('__all'), cur: 'pointer', bg: allOpen ? '#F6ECD9' : 'transparent' });
+            eRows.push({ ...baseE, ...chevE(allOpen), ind: 20, name: 'All ' + g + ' — by property', nameFw: 700, nameCol: GOLDD, onClick: ledToggle('__all'), cur: 'pointer', bg: allOpen ? '#FBF6EA' : 'transparent' });
             if (allOpen) {
               const pairs = scoped.map(d => ({ name: d, v: sum(accts.map(a => a === CAPX ? dS(d, 'capex', idxSel) : sum(idxSel.map(i => ((DOORS[d].opexByAcct || {})[a] || ZH)[i])))), va: sum(accts.map(a => a === CAPX ? dS(d, 'capex', aSet) : sum(aSet.map(i => ((DOORS[d].opexByAcct || {})[a] || ZH)[i])))), vb: budB ? 0 : sum(accts.map(a => a === CAPX ? dS(d, 'capex', bSet) : sum(bSet.map(i => ((DOORS[d].opexByAcct || {})[a] || ZH)[i])))), door: true }));
               const r2 = mkPropEntries(pairs, { ind: 40, sign: -1 }); eRows.push(...r2.out); counts = counts || r2;
@@ -1448,7 +1460,7 @@ class Component extends DCLogic {
                 sub2On: cmpOn, sub2: cmpOn ? labSet(aSet) + ' ' + f2(aa) + ' → ' + labSet(bSet) + ' ' + f2(ab) : '',
                 val: cmpOn ? ((ad >= 0 ? '+' : '−') + fN(Math.abs(ad)).replace('(', '').replace(')', '')) : f2(av),
                 vcol: cmpOn ? (Math.abs(ad) < 0.005 ? FAINT : ad > 0 ? GREEND : REDD) : INK,
-                onClick: ledToggle(a), cur: 'pointer', bg: openL ? '#F6ECD9' : 'transparent' });
+                onClick: ledToggle(a), cur: 'pointer', bg: openL ? '#FBF6EA' : 'transparent' });
               if (openL) { const r3 = mkPropEntries(acctDoorPairs(a), { ind: 40, sign: -1 }); eRows.push(...r3.out); counts = counts || r3; }
             }
           } else if (openG && !multi && S.stLed === '__all') {
@@ -1469,7 +1481,7 @@ class Component extends DCLogic {
           const openL = df.k && S.stGrp === df.k;
           eRows.push({ ...baseE, ...(df.k ? chevE(openL) : {}), name: df.name, nameFw: 700, nameCol: df.k ? NAVY : FAINT,
             sub2On: !df.k, sub2: !df.k ? 'not door-attributable — mixed grain in Cashflow.xlsx' : '',
-            val: f2(df.v), vcol: INK, onClick: df.k ? ((e) => { if (e && e.stopPropagation) e.stopPropagation(); this.setState({ stGrp: S.stGrp === df.k ? null : df.k, stAll: false }); }) : () => {}, cur: df.k ? 'pointer' : 'default', bg: openL ? '#F6ECD9' : 'transparent' });
+            val: f2(df.v), vcol: INK, onClick: df.k ? ((e) => { if (e && e.stopPropagation) e.stopPropagation(); this.setState({ stGrp: S.stGrp === df.k ? null : df.k, stAll: false }); }) : () => {}, cur: df.k ? 'pointer' : 'default', bg: openL ? '#FBF6EA' : 'transparent' });
           if (openL) {
             const pairs = df.hoa ? scoped.map(d => ({ name: d, v: dHoaS(d, idxSel), va: dHoaS(d, aSet), vb: budB ? 0 : dHoaS(d, bSet), door: true }))
               : [
@@ -1535,8 +1547,16 @@ class Component extends DCLogic {
     const stepOpen = steps.find(s => s.id && s.id === S.stOpen && drillable[s.id]);
     const exPack = stepOpen ? buildEx(stepOpen) : null;
 
-    // ── walk rows (selected-months view) ──
+    // ── walk rows (selected-months view) — statement styling: ink/brick/gold/green budget, rules not fills ──
     const monthSeries = id => id === 'coll' ? collMs : id === 'netop' ? netOpMs : id === 'netinv' ? netInvMs : id === 'netfin' ? netFinMs : id === 'kept' ? keptMs : null;
+    const GREEN2 = '#2E7D54', SLATE = '#5E6B82', CHEVMUT = '#B9C2D2';
+    const barColorOf = s => {
+      if (s.type === 'flow') return s.v >= 0 ? NAVY : '#B04A33';
+      if (s.id === 'coll') return GOLD;
+      if (s.id === 'kept') return s.v >= -0.005 ? GREEN2 : '#B04A33';
+      if (Math.abs(s.v) < 0.005) return '#C9CFDA';
+      return s.v < 0 ? '#B04A33' : SLATE;
+    };
     const wkRows = steps.map((s, i) => {
       const isHead = s.type === 'head', isMemo = s.type === 'memo', isTot = s.type === 'total';
       const drill = !isHead && drillable[s.id];
@@ -1553,8 +1573,8 @@ class Component extends DCLogic {
         });
         spkPath = n === 1 ? '' : pts.map(p => p.x.toFixed(1) + ',' + p.y.toFixed(1)).join(' ');
         spkPts = pts.map(p => ({ cx: p.x.toFixed(1), cy: p.y.toFixed(1),
-          r: hmSel.includes(p.ix) ? '2.6' : '1.4',
-          fill: hmSel.includes(p.ix) ? '#C9A45C' : '#B9C2D2',
+          r: hmSel.includes(p.ix) ? '2.6' : '1.3',
+          fill: hmSel.includes(p.ix) ? '#C9A45C' : '#CBD2DD',
           onClick: (e) => { if (e && e.stopPropagation) e.stopPropagation(); this.setState({ hmSel: [p.ix], hcmp: false }); } }));
         spkTip = winIdx.map(ix => mmyy(MO[ix]) + ' ' + fK(series[ix])).join(' · ') + ' — click a point to view that month alone';
       }
@@ -1572,34 +1592,34 @@ class Component extends DCLogic {
       const next = i < steps.length - 1 ? steps[i + 1] : null;
       const open = !isHead && stO(s.id);
       return Object.assign({
+        head: isHead, body: !isHead,
         label: isHead ? s.label : label,
-        lfs: isHead ? 10 : isTot ? 13.5 : 12.5, lfw: isHead ? 800 : isTot ? 700 : 500,
-        lsp: isHead ? '0.1em' : 'normal',
-        lcol: isHead ? '#C9A45C' : isTot ? NAVY : INK, lpl: isHead ? 12 : isTot ? 10 : 22,
-        rh: isHead ? 34 : isMemo ? 34 : isTot ? (s.id === 'kept' ? 46 : 44) : 40,
-        mt: isHead ? 6 : 0,
-        cellBg: open ? '#F6ECD9' : (isTot ? (totBg[s.id] || 'transparent') : (isHead ? '#16233A' : 'transparent')),
+        lfs: isTot ? 13 : 12.5, lfw: isTot ? 700 : 500,
+        lcol: isTot ? NAVY : INK,
+        rh: isHead ? 0 : isMemo ? 34 : isTot ? (s.id === 'kept' ? 48 : 42) : 38,
+        bt: isHead ? 'none' : s.id === 'kept' ? '3px double #16233A' : isTot ? '1px solid #D8D4C8' : '1px solid transparent',
+        cellBg: open ? '#FBF6EA' : 'transparent',
         cur: drill ? 'pointer' : 'default',
         chev: drill ? (open ? '▾' : '▸') : '',
-        chevBd: drill ? '#D9C89E' : 'transparent', chevBg: drill ? (open ? '#F0DFBC' : '#FBF6EA') : 'transparent',
+        chevCol: drill ? (open ? GOLDD : CHEVMUT) : 'transparent',
         onClick: drill ? stClick(s.id) : () => {},
         subOn: (!!s.sub && !isHead) || s.id === 'netinv' || s.id === 'netfin',
         sub: (s.id === 'netinv' || s.id === 'netfin') ? 'cash so far: ' + fN(s.after) + (s.sub ? ' · ' + s.sub : '') : (s.sub || ''),
         barOn: !isHead && !isMemo,
         barX: (s.type === 'flow' ? xfN(Math.min(s.start, s.after)) : 2).toFixed(2) + '%',
         barW: (s.type === 'flow' ? Math.max(0.8, xfN(Math.max(s.start, s.after)) - xfN(Math.min(s.start, s.after))) : Math.max(0.8, xfN(Math.abs(s.v)) - 2)).toFixed(2) + '%',
-        barH: isTot ? (s.id === 'kept' ? 19 : 17) : 13,
-        barC: isTot ? (s.v < -0.005 ? '#B04A33' : (Math.abs(s.v) < 0.005 ? '#C9CFDA' : s.color)) : (s.color || NAVY),
+        barH: isTot ? (s.id === 'kept' ? 17 : 15) : 12,
+        barC: isHead ? 'transparent' : barColorOf(s),
         connInOn: !!(prev && !isHead && prev.type !== 'head'), connInX: prev ? xfN(prev.after).toFixed(2) + '%' : '0%',
         connOutOn: !!(next && !isHead && next.type !== 'head' && !open), connOutX: xfN(s.after).toFixed(2) + '%',
-        spkOn: !!series, spkPath, spkCol: '#A8B4C9', spkPts, spkTip, delta, deltaCol,
-        vfs: s.id === 'kept' ? 14.5 : 13, vfw: isTot ? 800 : 500,
-        vcol: isHead ? '#C9A45C' : isMemo ? MUT : isTot ? (s.v >= 0 ? (s.id === 'kept' ? GREEND : NAVY) : REDD) : (s.v >= 0 ? INK : REDD),
+        spkOn: !!series, spkPath, spkCol: '#C5CDD9', spkPts, spkTip, delta, deltaCol,
+        vfs: s.id === 'kept' ? 15 : 13, vfw: isTot ? 800 : 600,
+        vcol: isHead ? FAINT : isMemo ? MUT : isTot ? (s.id === 'kept' ? (s.v >= -0.005 ? GREEN2 : REDD) : (s.v >= 0 ? NAVY : REDD)) : (s.v >= 0 ? INK : REDD),
         val: valTxt,
       }, open && exPack ? exPack : emptyEx);
     });
 
-    // ── compare rows: FROM set vs TO set (or BUDGET slot) ──
+    // ── compare rows: FROM set vs TO set (or BUDGET slot) — same statement styling ──
     const runsAtSet = set => {
       let r2 = 0; const out = [];
       for (const rd of rowsDef) {
@@ -1620,14 +1640,15 @@ class Component extends DCLogic {
       if (s.type === 'flow') label = (((budB ? a : b) || 0) >= 0 ? (s.id === 'chg' ? '' : '+ ') : '− ') + label;
       const open = !isHead && stO(s.id);
       return Object.assign({
+        head: isHead, body: !isHead,
         label: isHead ? s.label : label,
-        lfs: isHead ? 10 : isTot ? 13.5 : 12.5, lfw: isHead ? 800 : isTot ? 700 : 500,
-        lsp: isHead ? '0.1em' : 'normal', lcol: isHead ? '#C9A45C' : isTot ? NAVY : INK, lpl: isHead ? 12 : isTot ? 10 : 22,
-        rh: isHead ? 34 : isTot ? 44 : 40, mt: isHead ? 6 : 0,
-        cellBg: open ? '#F6ECD9' : (isTot ? (totBg[s.id] || 'transparent') : (isHead ? '#16233A' : 'transparent')),
+        lfs: isTot ? 13 : 12.5, lfw: isTot ? 700 : 500, lcol: isTot ? NAVY : INK,
+        rh: isHead ? 0 : isTot ? 42 : 38,
+        bt: isHead ? 'none' : s.id === 'kept' ? '3px double #16233A' : isTot ? '1px solid #D8D4C8' : '1px solid transparent',
+        cellBg: open ? '#FBF6EA' : 'transparent',
         cur: drill ? 'pointer' : 'default',
         chev: drill ? (open ? '▾' : '▸') : '',
-        chevBd: drill ? '#D9C89E' : 'transparent', chevBg: drill ? (open ? '#F0DFBC' : '#FBF6EA') : 'transparent',
+        chevCol: drill ? (open ? GOLDD : CHEVMUT) : 'transparent',
         onClick: drill ? stClick(s.id) : () => {},
         aW: isHead || isMemo ? '0%' : Math.max(1, Math.abs(a || 0) / cmpMax * 100).toFixed(1) + '%',
         bW: isHead || isMemo || budB ? '0%' : Math.max(1, Math.abs(b || 0) / cmpMax * 100).toFixed(1) + '%',
@@ -1635,10 +1656,10 @@ class Component extends DCLogic {
         bVal: isHead ? '' : isMemo ? '·' : budB ? '—' : fN(b || 0),
         dVal: isHead || isMemo ? '' : budB ? '—' : (dd >= 0 ? '+' : '−') + fN(Math.abs(dd)).replace('(', '').replace(')', ''),
         dCol: isHead || isMemo || budB ? FAINT : Math.abs(dd) < 0.005 ? FAINT : dd > 0 ? GREEND : REDD,
-        vfw: isTot ? 800 : 500,
+        vfw: isTot ? 800 : 600,
       }, open && exPack ? exPack : emptyEx);
     });
-    const cmpALab = labSet(aSet).toUpperCase() + ' (FROM)';
+        const cmpALab = labSet(aSet).toUpperCase() + ' (FROM)';
     const cmpBLab = budB ? 'BUDGET × ' + aSet.length + ' MO (PENDING)' : labSet(bSet).toUpperCase() + ' (TO)';
     const cmpFoot = budB ? 'The BUDGET column is a wired placeholder — hand me monthly standards (per ledger or per line) and this column shows budget × the FROM month-count (' + aSet.length + ') with variance, verified to the cent.'
       : 'blue bar = ' + labSet(aSet) + ', gold bar = ' + labSet(bSet) + ', common scale · CHANGE = TO − FROM in cash terms — green means more cash kept. Pick two or more months on either side to compare combined periods. Click any line for the doors (or ledgers) that drove the change.';
