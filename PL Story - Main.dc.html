@@ -29,7 +29,6 @@ input:focus{outline:2px solid #C9A45C;outline-offset:1px}
       <a href="./PL%20Story%20-%20Main.dc.html" style="text-decoration:none;font-size:12px;font-weight:700;color:#E9EDF5;border-bottom:2px solid #C9A45C;padding-bottom:2px;white-space:nowrap">P&amp;L</a>
       <a href="./investments.dc.html" style-hover="color:#C9A45C" style="text-decoration:none;font-size:12px;font-weight:600;color:#8A96AD;white-space:nowrap">Investments &amp; Balance Sheet</a>
       <a href="./cashflow.dc.html" style-hover="color:#C9A45C" style="text-decoration:none;font-size:12px;font-weight:600;color:#8A96AD;white-space:nowrap">Cash Flow</a>
-      <a href="./loans.dc.html" style-hover="color:#C9A45C" style="text-decoration:none;font-size:12px;font-weight:600;color:#8A96AD;white-space:nowrap">Loans</a>
       <a href="./property-index.dc.html" style-hover="color:#C9A45C" style="text-decoration:none;font-size:12px;font-weight:600;color:#8A96AD;white-space:nowrap">Property Index</a>
       <span style="margin-left:auto;font-size:10px;letter-spacing:0.28em;font-weight:700;color:#5E6B82">PORTFOLIO&nbsp;INTELLIGENCE</span>
     </div>
@@ -232,8 +231,90 @@ input:focus{outline:2px solid #C9A45C;outline-offset:1px}
     <div style="margin-top:16px;background:#FFFFFF;border:1px solid #E5E3DC;border-radius:16px;padding:24px 30px">
       <div style="display:flex;justify-content:space-between;align-items:baseline;flex-wrap:wrap;gap:8px">
         <div style="font-family:'Source Serif 4',Georgia,serif;font-size:18px;font-weight:600;color:#16233A">How rent became income</div>
-        <div style="font-size:12px;color:#8A93A6">Rent roll → what stayed in the business · {{ periodShort }} · click any line to see the doors behind it</div>
+        <div style="font-size:12px;color:#8A93A6">Rent roll → what stayed in the business · {{ wvScopeLine }} · click any line to see the doors behind it</div>
       </div>
+
+      <!-- view controls: months multi-select · compare (months or budget slot) · door spotlight — scopes this waterfall only -->
+      <div style="margin-top:12px;display:flex;align-items:center;gap:8px;flex-wrap:wrap;position:relative;z-index:40" onClick="{{ stopProp }}">
+        <span style="font-size:9px;letter-spacing:0.1em;font-weight:800;color:#96742F">VIEW</span>
+        <div style="position:relative">
+          <div onClick="{{ onWvMToggle }}" style-hover="border-color:#C9A45C" style="display:flex;align-items:center;gap:7px;padding:7px 13px;border-radius:10px;border:1px solid {{ wvMBd }};background:{{ wvMBg }};font-size:11.5px;font-weight:700;color:#16233A;cursor:pointer;white-space:nowrap">
+            <span style="font-size:9px;letter-spacing:0.07em;font-weight:800;color:#5E6B82">MONTHS</span>
+            <span style="max-width:190px;overflow:hidden;text-overflow:ellipsis">{{ wvMLab }}</span>
+            <span style="font-size:8.5px;color:#5E6B82">▾</span>
+          </div>
+          <sc-if value="{{ wvMOpen }}" hint-placeholder-val="{{ false }}">
+            <div style="position:absolute;top:40px;left:0;width:240px;background:#FFFFFF;border:1px solid #D8D4C8;border-radius:12px;box-shadow:0 14px 36px rgba(14,24,48,0.20);z-index:80;padding:6px;max-height:320px;overflow-y:auto">
+              <sc-for list="{{ wvOpts }}" as="wvo" hint-placeholder-count="6">
+                <div onClick="{{ wvo.onClick }}" style-hover="background:#F6F4EC" style="padding:7px 10px;border-radius:7px;font-size:12px;font-weight:{{ wvo.fw }};color:{{ wvo.col }};cursor:pointer;background:{{ wvo.bg }};display:flex;justify-content:space-between;align-items:center;gap:10px">
+                  <span style="white-space:nowrap;overflow:hidden;text-overflow:ellipsis">{{ wvo.label }}</span>
+                  <span style="color:#96742F;font-weight:700;width:12px">{{ wvo.check }}</span>
+                </div>
+              </sc-for>
+              <div style="padding:6px 10px 3px;font-size:9.5px;color:#9AA3B5;border-top:1px solid #F0EEE7;margin-top:4px">{{ wvMHint }}</div>
+            </div>
+          </sc-if>
+        </div>
+        <span style="width:1px;height:18px;background:#E5E3DC"></span>
+        <div onClick="{{ onWvCmpToggle }}" style-hover="border-color:#C9A45C" style="padding:7px 12px;border-radius:10px;border:1px solid {{ wvCmpBd }};background:{{ wvCmpBg }};font-size:11px;font-weight:800;color:#2A3550;cursor:pointer;white-space:nowrap">⇄ COMPARE</div>
+        <sc-if value="{{ wfCmpOn }}" hint-placeholder-val="{{ false }}">
+          <span style="font-size:9px;letter-spacing:0.08em;font-weight:800;color:#5E6B82">FROM</span>
+          <div style="position:relative">
+            <div onClick="{{ onWvAToggle }}" style-hover="border-color:#8FA8CE" style="display:flex;align-items:center;gap:7px;padding:7px 13px;border-radius:10px;border:1px solid #8FA8CE;background:#EFF3FA;font-size:11.5px;font-weight:700;color:#2A3550;cursor:pointer;white-space:nowrap">
+              <span style="max-width:170px;overflow:hidden;text-overflow:ellipsis">{{ wvALab }}</span>
+              <span style="font-size:8.5px;color:#5E6B82">▾</span>
+            </div>
+            <sc-if value="{{ wvAOpen }}" hint-placeholder-val="{{ false }}">
+              <div style="position:absolute;top:40px;left:0;width:230px;background:#FFFFFF;border:1px solid #D8D4C8;border-radius:12px;box-shadow:0 14px 36px rgba(14,24,48,0.20);z-index:80;padding:6px;max-height:320px;overflow-y:auto">
+                <sc-for list="{{ wao }}" as="wat" hint-placeholder-count="5">
+                  <div onClick="{{ wat.onClick }}" style-hover="background:#F6F4EC" style="padding:7px 10px;border-radius:7px;font-size:12px;font-weight:{{ wat.fw }};color:{{ wat.col }};cursor:pointer;background:{{ wat.bg }};display:flex;justify-content:space-between;align-items:center;gap:10px">
+                    <span style="white-space:nowrap;overflow:hidden;text-overflow:ellipsis">{{ wat.label }}</span>
+                    <span style="color:#3D64A8;font-weight:700;width:12px">{{ wat.check }}</span>
+                  </div>
+                </sc-for>
+                <div style="padding:6px 10px 3px;font-size:9.5px;color:#9AA3B5;border-top:1px solid #F0EEE7;margin-top:4px">pick two or more months to compare a combined period</div>
+              </div>
+            </sc-if>
+          </div>
+          <span style="font-size:9px;letter-spacing:0.08em;font-weight:800;color:#96742F">TO</span>
+          <div style="position:relative">
+            <div onClick="{{ onWvBToggle }}" style-hover="border-color:#C9A45C" style="display:flex;align-items:center;gap:7px;padding:7px 13px;border-radius:10px;border:1px solid {{ wvBBd }};background:#FBF6EA;font-size:11.5px;font-weight:700;color:#2A3550;cursor:pointer;white-space:nowrap">
+              <span style="max-width:190px;overflow:hidden;text-overflow:ellipsis">{{ wvBLab }}</span>
+              <span style="font-size:8.5px;color:#5E6B82">▾</span>
+            </div>
+            <sc-if value="{{ wvBOpen }}" hint-placeholder-val="{{ false }}">
+              <div style="position:absolute;top:40px;left:0;width:250px;background:#FFFFFF;border:1px solid #D8D4C8;border-radius:12px;box-shadow:0 14px 36px rgba(14,24,48,0.20);z-index:80;padding:6px;max-height:340px;overflow-y:auto">
+                <sc-for list="{{ wbo }}" as="wbt" hint-placeholder-count="6">
+                  <div onClick="{{ wbt.onClick }}" style-hover="background:#F6F4EC" style="padding:7px 10px;border-radius:7px;font-size:12px;font-weight:{{ wbt.fw }};color:{{ wbt.col }};cursor:pointer;background:{{ wbt.bg }};display:flex;justify-content:space-between;align-items:center;gap:10px">
+                    <span style="white-space:nowrap;overflow:hidden;text-overflow:ellipsis">{{ wbt.label }}</span>
+                    <span style="color:#96742F;font-weight:700;width:12px">{{ wbt.check }}</span>
+                  </div>
+                </sc-for>
+                <div style="padding:6px 10px 3px;font-size:9.5px;color:#9AA3B5;border-top:1px solid #F0EEE7;margin-top:4px">{{ wvBHint }}</div>
+              </div>
+            </sc-if>
+          </div>
+        </sc-if>
+        <div style="margin-left:auto;position:relative;min-width:260px">
+          <input value="{{ wvSpotQ }}" onInput="{{ onWvSpotQ }}" placeholder="⌖ Spotlight a door — type to search…" style="width:100%;box-sizing:border-box;padding:8px 12px;border-radius:9px;border:1px solid {{ wvSpotBd }};font-size:11.5px;font-family:inherit;color:#16233A;background:#FDFCFA">
+          <sc-if value="{{ wvSpotOpen }}" hint-placeholder-val="{{ false }}">
+            <div style="position:absolute;top:38px;right:0;width:320px;background:#FFFFFF;border:1px solid #D8D4C8;border-radius:12px;box-shadow:0 14px 36px rgba(14,24,48,0.20);z-index:80;padding:6px;max-height:280px;overflow-y:auto">
+              <sc-for list="{{ wvSpotOpts }}" as="wso" hint-placeholder-count="6">
+                <div onClick="{{ wso.onClick }}" style-hover="background:#F6F4EC" style="padding:7px 10px;border-radius:7px;font-size:12px;cursor:pointer;display:flex;justify-content:space-between;gap:10px">
+                  <span style="font-weight:600;color:#16233A;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">{{ wso.label }}</span>
+                  <span style="font-size:10.5px;color:#8A93A6;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;max-width:130px">{{ wso.sub }}</span>
+                </div>
+              </sc-for>
+              <sc-if value="{{ wvSpotNone }}" hint-placeholder-val="{{ false }}"><div style="padding:8px 10px;font-size:11.5px;color:#8A93A6">No door matches</div></sc-if>
+            </div>
+          </sc-if>
+        </div>
+        <sc-if value="{{ wvSpotChipOn }}" hint-placeholder-val="{{ false }}">
+          <div onClick="{{ onWvSpotClear }}" style-hover="background:#16233A;color:#FFFFFF" style="padding:6px 12px;border-radius:9px;background:#FBF6EA;border:1px solid #C9A45C;font-size:11px;font-weight:800;color:#96742F;cursor:pointer;white-space:nowrap">{{ wvSpotChip }} ✕</div>
+        </sc-if>
+      </div>
+
+      <sc-if value="{{ wfWalkOn }}" hint-placeholder-val="{{ true }}">
       <div style="margin-top:14px;display:grid;grid-template-columns:230px 1fr 128px">
         <div style="display:flex;flex-direction:column">
           <sc-for list="{{ wfRows }}" as="r" hint-placeholder-count="16">
@@ -251,6 +332,31 @@ input:focus{outline:2px solid #C9A45C;outline-offset:1px}
           </sc-for>
         </div>
       </div>
+      </sc-if>
+
+      <!-- compare mode: FROM vs TO (months or BUDGET slot) — same lines, A / B / CHANGE -->
+      <sc-if value="{{ wfCmpOn }}" hint-placeholder-val="{{ false }}">
+        <div style="margin-top:14px">
+          <div style="display:grid;grid-template-columns:230px 1fr 128px 128px 128px;padding-bottom:5px;border-bottom:1px solid #EDEBE2;font-size:9px;letter-spacing:0.08em;font-weight:800;color:#8A93A6">
+            <span></span><span></span>
+            <span style="text-align:right;color:#5E6B82">{{ wfCmpALab }}</span>
+            <span style="text-align:right;color:#96742F">{{ wfCmpBLab }}</span>
+            <span style="text-align:right;padding-right:6px">CHANGE</span>
+          </div>
+          <sc-for list="{{ wfCmpRows }}" as="wc" hint-placeholder-count="16">
+            <div onClick="{{ wc.onClick }}" style-hover="background:#F6F2E7" style="height:34px;display:grid;grid-template-columns:230px 1fr 128px 128px 128px;align-items:center;background:{{ wc.cellBg }};border-radius:6px;cursor:pointer">
+              <span style="font-size:{{ wc.lfs }}px;font-weight:{{ wc.lfw }};color:{{ wc.lcol }};padding-left:{{ wc.lpl }}px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">{{ wc.label }}<span style="margin-left:7px;font-size:9.5px;color:#C9A45C">{{ wc.chev }}</span></span>
+              <span></span>
+              <span style="text-align:right;font-variant-numeric:tabular-nums;font-size:13px;font-weight:{{ wc.vfw }};color:{{ wc.acol }}">{{ wc.aVal }}</span>
+              <span style="text-align:right;font-variant-numeric:tabular-nums;font-size:13px;font-weight:{{ wc.vfw }};color:{{ wc.acol }}">{{ wc.bVal }}</span>
+              <span style="text-align:right;font-variant-numeric:tabular-nums;font-size:13px;font-weight:700;color:{{ wc.dCol }};padding-right:6px">{{ wc.dVal }}</span>
+            </div>
+          </sc-for>
+          <sc-if value="{{ wfBudOn }}" hint-placeholder-val="{{ false }}">
+            <div style="margin-top:10px;padding:9px 14px;background:#FBF6EA;border:1px solid #E2D9C4;border-radius:9px;font-size:11px;color:#96742F;font-weight:600">{{ wfBudTxt }}</div>
+          </sc-if>
+        </div>
+      </sc-if>
       <sc-if value="{{ wfHasPanel }}" hint-placeholder-val="{{ false }}">
         <div data-wf-panel="1" style="margin-top:14px;background:#FAF9F5;border:1px solid #EDEAE0;border-radius:12px;padding:16px 20px">
           <div style="display:flex;justify-content:space-between;align-items:center;gap:12px;flex-wrap:wrap">
@@ -263,11 +369,29 @@ input:focus{outline:2px solid #C9A45C;outline-offset:1px}
               <div onClick="{{ wfPanel.onClose }}" style-hover="background:#16233A;color:#FFFFFF;border-color:#16233A" style="padding:7px 13px;border-radius:8px;border:1px solid #D8D4C8;background:#FFFFFF;color:#16233A;font-size:11.5px;font-weight:700;cursor:pointer;white-space:nowrap">✕ Close</div>
             </div>
           </div>
-          <div style="margin-top:10px;max-height:300px;overflow-y:auto;padding-right:6px;display:grid;grid-template-columns:1fr 1fr;gap:0 40px;align-items:start">
-            <sc-for list="{{ wfPanel.rows }}" as="p" hint-placeholder-count="8">
-              <div style="padding:7px 0;border-top:1px solid #F0EEE7">
-                <div style="display:flex;justify-content:space-between;font-size:12.5px;color:#2A3550;gap:10px"><span style="font-weight:500;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;min-width:0;flex:1">{{ p.name }}</span><span style="font-weight:700;font-variant-numeric:tabular-nums;color:{{ p.vcol }};flex:none">{{ p.val }}</span></div>
-                <div style="margin-top:4px;height:5px;background:#F0EDE3;border-radius:3px"><div style="width:{{ p.w }};height:5px;background:{{ p.bg }};border-radius:3px"></div></div>
+          <div style="margin-top:10px;max-height:340px;overflow-y:auto;padding-right:6px;display:grid;grid-template-columns:1fr 1fr;gap:0 40px;align-items:start">
+            <sc-for list="{{ wfPanel.rows }}" as="wd" hint-placeholder-count="8">
+              <div onClick="{{ wd.onClick }}" style-hover="background:#F3F0E6" style="padding:7px 6px;border-top:1px solid #F0EEE7;grid-column:{{ wd.gcol }};margin-left:{{ wd.ind }}px;background:{{ wd.rowBg }};border-radius:6px;cursor:{{ wd.cur }}">
+                <div style="display:flex;align-items:center;font-size:12.5px;color:#2A3550;gap:7px">
+                  <span style="flex:1;min-width:0;font-weight:{{ wd.nameFw }};color:{{ wd.nameCol }};white-space:nowrap;overflow:hidden;text-overflow:ellipsis">{{ wd.name }}</span>
+                  <sc-if value="{{ wd.hasLinks }}" hint-placeholder-val="{{ false }}">
+                    <span style="display:flex;gap:4px;flex:none">
+                      <sc-for list="{{ wd.links }}" as="wl" hint-placeholder-count="3">
+                        <a href="{{ wl.href }}" onClick="{{ stopProp }}" style-hover="background:#F6ECD9" style="font-size:8px;font-weight:800;letter-spacing:0.04em;color:#96742F;text-decoration:none;border:1px solid #E2D9C4;border-radius:99px;padding:2px 7px">{{ wl.lab }}</a>
+                      </sc-for>
+                    </span>
+                  </sc-if>
+                  <sc-if value="{{ wd.txOn }}" hint-placeholder-val="{{ false }}">
+                    <span onClick="{{ wd.onTx }}" style-hover="background:#F6ECD9" style="font-size:8px;font-weight:800;letter-spacing:0.04em;color:#96742F;cursor:pointer;border:1.5px solid #C9A45C;border-radius:99px;padding:2px 7px;flex:none;background:#FBF6EA">{{ wd.txLab }}</span>
+                  </sc-if>
+                  <span style="font-weight:700;font-variant-numeric:tabular-nums;color:{{ wd.vcol }};flex:none">{{ wd.val }}</span>
+                </div>
+                <sc-if value="{{ wd.sub2On }}" hint-placeholder-val="{{ false }}">
+                  <div style="margin-top:2px;font-size:9.5px;color:#9AA3B5;font-variant-numeric:tabular-nums;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">{{ wd.sub2 }}</div>
+                </sc-if>
+                <sc-if value="{{ wd.barOn }}" hint-placeholder-val="{{ true }}">
+                  <div style="margin-top:4px;height:5px;background:#F0EDE3;border-radius:3px"><div style="width:{{ wd.w }};height:5px;background:{{ wd.bg }};border-radius:3px"></div></div>
+                </sc-if>
               </div>
             </sc-for>
             <sc-if value="{{ wfPanel.empty }}" hint-placeholder-val="{{ false }}"><div style="padding:12px;font-size:12px;color:#8A93A6">No doors match</div></sc-if>
@@ -722,6 +846,8 @@ class Component extends DCLogic {
     topShowAll: false, rincShowAll: false, rdecShowAll: false,
     topClass: null, othersOpen: false,
     wfSel: null, wfQ: '',
+    wvSel: [], wvDd: null, wvCmp: false, wvASel: [], wvBSel: [], wvBud: false, wvSpotQ: '',
+    wfAll: false, wfTxOpen: null, wfTxAll: false, txd: null, txErr: false,
   };
 
   loadData() {
@@ -730,6 +856,16 @@ class Component extends DCLogic {
       .then(r => { if (!r.ok) throw new Error('HTTP ' + r.status + ' fetching pl-data.json'); return r.json(); })
       .then(raw => this.setState({ data: this.normalizeData(raw) }))
       .catch(e => this.setState({ data: null, loadError: (e && e.message ? e.message : String(e)) }));
+  }
+
+  loadTx() {
+    if (this.state.txd || this.state._txLoading) return;
+    if (typeof fetch === 'undefined') return;
+    this.setState({ _txLoading: true, txErr: false });
+    fetch('./tx-data.json')
+      .then(r => { if (!r.ok) throw new Error('HTTP ' + r.status); return r.json(); })
+      .then(tx => { if (!tx || tx.schema !== 'tx.v1' || !Array.isArray(tx.tx)) throw new Error('bad tx.v1'); this.setState({ txd: tx, _txLoading: false }); })
+      .catch(() => this.setState({ txErr: true, _txLoading: false }));
   }
 
   normalizeData(raw) {
@@ -761,7 +897,11 @@ class Component extends DCLogic {
     } catch (e) {}
     this._doc = () => {
       const s = this.state;
-      if (s.monthOpen || s.coOpen || s.propOpen || s.tselOpen || s.othersOpen) this.setState({ monthOpen: false, coOpen: false, propOpen: false, tselOpen: false, othersOpen: false, monthQ: '', coQ: '', propQ: '' });
+      const patch = {};
+      if (s.monthOpen || s.coOpen || s.propOpen || s.tselOpen || s.othersOpen) Object.assign(patch, { monthOpen: false, coOpen: false, propOpen: false, tselOpen: false, othersOpen: false, monthQ: '', coQ: '', propQ: '' });
+      if (s.wvDd) patch.wvDd = null;
+      if (s.wvSpotQ) patch.wvSpotQ = '';
+      if (Object.keys(patch).length) this.setState(patch);
     };
     document.addEventListener('click', this._doc);
   }
@@ -805,6 +945,15 @@ class Component extends DCLogic {
       retryLoad: () => this.loadData(),
       scopeLine: S.loadError ? 'Ledger failed to load' : 'Loading…',
       compareNote: '', filters: [], stopProp,
+      // waterfall VIEW row + compare + drill tokens — inert so every template token resolves pre-data
+      wvScopeLine: '', wvMLab: '', wvMHint: '', wvMOpen: false, onWvMToggle: () => {}, wvOpts: [], wvMBd: '#D8D4C8', wvMBg: '#FFFFFF',
+      onWvCmpToggle: () => {}, wvCmpBd: '#D8D4C8', wvCmpBg: '#FFFFFF', wfCmpOn: false, wfWalkOn: false,
+      wvALab: '', wvAOpen: false, onWvAToggle: () => {}, wao: [],
+      wvBLab: '', wvBHint: '', wvBOpen: false, onWvBToggle: () => {}, wbo: [], wvBBd: '#C9A45C',
+      wvSpotQ: '', onWvSpotQ: () => {}, wvSpotOpen: false, wvSpotOpts: [], wvSpotNone: false, wvSpotChipOn: false, wvSpotChip: '', onWvSpotClear: () => {}, wvSpotBd: '#D8D4C8',
+      wfCmpALab: '', wfCmpBLab: '', wfCmpRows: [], wfBudOn: false, wfBudTxt: '',
+      wfHasPanel: false, wfPanel: { title: '', sub: '', q: '', onQ: () => {}, onClose: () => {}, rows: [], empty: false },
+      wfRows: [], wfBars: [], wfConn: [], wfBg: [], wfSvgH: 0,
     };
 
     // ---- period selection (multi-month) ----
@@ -1161,30 +1310,51 @@ class Component extends DCLogic {
       };
     });
 
-    // ---- waterfall (connected cascade, drillable) ----
+    // ---- waterfall (connected cascade, drillable) — scoped by its own VIEW row ----
     const wRent = per(M.rent);
+    // wv* = the waterfall's private view state (ported from the Cash Flow hero):
+    // months multi-select (empty = full span), compare FROM/TO month-sets, exclusive BUDGET slot.
+    const wvClean = v => [...new Set((Array.isArray(v) ? v : []).filter(i => Number.isInteger(i) && i >= 0 && i < N))].sort((x, y) => x - y);
+    const wvSel = wvClean(S.wvSel);
+    const wvIdx = wvSel.length ? wvSel : ALL_IDX;
+    const wvCmp = !!S.wvCmp && N >= 2;
+    const wvBud = !!S.wvBud;
+    const wvARaw = wvClean(S.wvASel);
+    const wvA = wvARaw.length ? wvARaw : [Math.max(0, N - 2)];
+    const wvBRaw = wvClean(S.wvBSel);
+    const wvB = wvBud ? [] : (wvBRaw.length ? wvBRaw : [N - 1]);
+    const wvS = (ser, set) => set.reduce((s, i) => s + ser[i], 0);
+    const wvV = ser => wvS(ser, wvIdx);
+    const wvLabSet = set => set.length === 0 ? '—' : set.length <= 2 ? set.map(i => MNY[i]).join(' + ') : set.length + ' months (' + MNY[set[0]] + '…' + MNY[set[set.length - 1]] + ')';
+    const wvSpan = N === 1 ? MNY[0] : MNY[0] + '–' + MNY[N - 1];
+    const wvLab = wvCmp ? (wvLabSet(wvA) + ' → ' + (wvBud ? 'Budget (pending)' : wvLabSet(wvB))) : (wvSel.length ? wvLabSet(wvSel) : 'Full span · ' + wvSpan);
+    const wvScopeLine = wvLab;
+    const sgnF = dv => (dv >= 0 ? '+' : '−') + fN(Math.abs(dv)).replace('(', '').replace(')', '');
+    const wvNeg = ser => ser.map(x => -x);
+
+    // every step carries its signed monthly series so any month-set (view, FROM, TO) can be summed per line
     const wfSteps = [];
     let wrun = 0;
-    const addF = (label, v, color, parts, cat) => { const start = wrun; wrun += v; wfSteps.push({ type: 'flow', label, v, start, after: wrun, color, parts, cat }); };
-    const addT = (label, color, parts, cat) => wfSteps.push({ type: 'total', label, v: wrun, start: wrun, after: wrun, color, parts, cat });
+    const addF = (label, ser, color, parts, cat) => { const v = wvV(ser); const start = wrun; wrun += v; wfSteps.push({ type: 'flow', label, v, ser, start, after: wrun, color, parts, cat }); };
+    const addT = (label, ser, color, parts, cat) => wfSteps.push({ type: 'total', label, v: wrun, ser, start: wrun, after: wrun, color, parts, cat });
     const P_INC = [[G.rent, 1], [G.vac, 1], [G.coll, -1], [G.other, 1], [G.sdf, 1], [G.ins, 1]];
     const P_OPEX = [[G.statutory, -1], [G.pm, -1], [G.othx, -1], [G.rep, -1], [G.turn, -1], [G.capex, -1]];
-    addF('Scheduled rent', wRent, NAVY, [[G.rent, 1]], 'rent');
-    addF('Vacancy loss', per(M.vac), BRICK, [[G.vac, 1]], 'vac');
-    addF('Collection loss', -per(M.coll), BRICK, [[G.coll, -1]], 'coll');
-    addF('Other income', per(M.other), '#4A5C7E', [[G.other, 1]], 'other');
-    addF('SD forfeit income', per(M.sdf), '#4A5C7E', [[G.sdf, 1]], 'sdf');
-    addF('Insurance claims', per(M.ins), '#4A5C7E', [[G.ins, 1]], 'ins');
-    addT('Total income', NAVY, P_INC, 'inc');
-    addF('Statutory (tax · ins · HOA)', -per(M.statutory), BRICK, [[G.statutory, -1]], 'statutory');
-    addF('Property management', -per(M.pm), BRICK, [[G.pm, -1]], 'pm');
-    addF("Other expenses (utilities · renter's ins · misc)", -per(M.othx), BRICK, [[G.othx, -1]], 'othx');
-    addF('Repairs & maintenance', -per(M.rep), BRICK, [[G.rep, -1]], 'rep');
-    addF('Rent-ready turns', -per(M.turn), BRICK, [[G.turn, -1]], 'turn');
-    addF('CapEx (HVAC · appliances)', -per(M.capex), BRICK, [[G.capex, -1]], 'capex');
-    addT('Net operating income', GOLD, [...P_INC, ...P_OPEX], 'noi');
-    addF('Debt service (interest)', -per(M.int), '#8A5A3C', [[G.int, -1]], 'int');
-    addT('Kept in the business', wrun >= 0 ? GREEN : RED, [...P_INC, ...P_OPEX, [G.int, -1]], 'net');
+    addF('Scheduled rent', M.rent, NAVY, [[G.rent, 1]], 'rent');
+    addF('Vacancy loss', M.vac, BRICK, [[G.vac, 1]], 'vac');
+    addF('Collection loss', wvNeg(M.coll), BRICK, [[G.coll, -1]], 'coll');
+    addF('Other income', M.other, '#4A5C7E', [[G.other, 1]], 'other');
+    addF('SD forfeit income', M.sdf, '#4A5C7E', [[G.sdf, 1]], 'sdf');
+    addF('Insurance claims', M.ins, '#4A5C7E', [[G.ins, 1]], 'ins');
+    addT('Total income', incM, NAVY, P_INC, 'inc');
+    addF('Statutory (tax · ins · HOA)', wvNeg(M.statutory), BRICK, [[G.statutory, -1]], 'statutory');
+    addF('Property management', wvNeg(M.pm), BRICK, [[G.pm, -1]], 'pm');
+    addF("Other expenses (utilities · renter's ins · misc)", wvNeg(M.othx), BRICK, [[G.othx, -1]], 'othx');
+    addF('Repairs & maintenance', wvNeg(M.rep), BRICK, [[G.rep, -1]], 'rep');
+    addF('Rent-ready turns', wvNeg(M.turn), BRICK, [[G.turn, -1]], 'turn');
+    addF('CapEx (HVAC · appliances)', wvNeg(M.capex), BRICK, [[G.capex, -1]], 'capex');
+    addT('Net operating income', noiM, GOLD, [...P_INC, ...P_OPEX], 'noi');
+    addF('Debt service (interest)', wvNeg(M.int), '#8A5A3C', [[G.int, -1]], 'int');
+    addT('Kept in the business', netM, wrun >= 0 ? GREEN : RED, [...P_INC, ...P_OPEX, [G.int, -1]], 'net');
 
     const wfRowH = 34, wfSvgH = wfSteps.length * wfRowH;
     const wfMax = Math.max(...wfSteps.flatMap(s => [Math.abs(s.start), Math.abs(s.after)]), 1);
@@ -1192,6 +1362,12 @@ class Component extends DCLogic {
     const xf = v => wfX0 + (Math.max(0, v) / wfMax) * (wfX1 - wfX0);
     // Connected cascade: every bar hangs off the running total — income steps adjust scheduled
     // rent up/down into total income (at the right), then expenses cascade down to what was kept.
+    const wfRowClick = (i, s) => () => {
+      const willOpen = this.state.wfSel !== i;
+      const extra = willOpen && s.cat ? { tcat: s.cat, trendShowAll: false, othersOpen: false } : {};
+      this.setState({ wfSel: willOpen ? i : null, wfQ: '', wfAll: false, wfTxOpen: null, wfTxAll: false, ...extra });
+      if (willOpen) setTimeout(() => this.scrollToWfPanel(), 80);
+    };
     const wfBg = [], wfConn = [], wfBars = [], wfRows = [];
     wfSteps.forEach((s, i) => {
       const cy = i * wfRowH + wfRowH / 2;
@@ -1214,12 +1390,7 @@ class Component extends DCLogic {
       wfRows.push({
         label: s.label, val: valTxt,
         chev: selHere ? '▾' : '▸',
-        onClick: () => {
-          const willOpen = this.state.wfSel !== i;
-          const extra = willOpen && s.cat ? { tcat: s.cat, trendShowAll: false, othersOpen: false } : {};
-          this.setState({ wfSel: willOpen ? i : null, wfQ: '', ...extra });
-          if (willOpen) setTimeout(() => this.scrollToWfPanel(), 80);
-        },
+        onClick: wfRowClick(i, s),
         cellBg: selHere ? '#F6ECD9' : (isTotal ? bandBg : 'transparent'),
         lfs: isTotal ? 14.5 : 13, lfw: isTotal ? 700 : 500,
         lcol: isTotal ? NAVY : INK, lpl: isTotal ? 6 : 18,
@@ -1228,30 +1399,165 @@ class Component extends DCLogic {
       });
     });
 
-    // ---- waterfall drill panel ----
+    // ---- waterfall compare mode: same lines, FROM / TO (or BUDGET slot) / CHANGE ----
+    const wfCmpOn = wvCmp;
+    const wfWalkOn = !wvCmp;
+    const wfCmpALab = wvLabSet(wvA).toUpperCase() + ' (FROM)';
+    const wfCmpBLab = wvBud ? 'BUDGET × ' + wvA.length + ' MO (PENDING)' : wvLabSet(wvB).toUpperCase() + ' (TO)';
+    const wfCmpRows = wfSteps.map((s, i) => {
+      const isTotal = s.type === 'total';
+      const isNoi = s.label === 'Net operating income';
+      const isKept = s.label === 'Kept in the business';
+      const bandBg = isNoi ? '#FBF4E4' : (isKept ? '#EAF3EC' : '#F5F2E9');
+      const av = wvS(s.ser, wvA);
+      const bv = wvBud ? null : wvS(s.ser, wvB);
+      const dv = wvBud ? null : bv - av;
+      const fmt1 = x => isTotal ? fN(x) : (x >= 0 ? '+' : '−') + fN(Math.abs(x)).replace('(', '').replace(')', '');
+      const selHere = S.wfSel === i;
+      return {
+        label: s.label, chev: selHere ? '▾' : '▸',
+        onClick: wfRowClick(i, s),
+        cellBg: selHere ? '#F6ECD9' : (isTotal ? bandBg : 'transparent'),
+        lfs: isTotal ? 14.5 : 13, lfw: isTotal ? 700 : 500, lcol: isTotal ? NAVY : INK, lpl: isTotal ? 6 : 18,
+        vfw: isTotal ? 700 : 500,
+        acol: isTotal ? NAVY : MUT,
+        aVal: fmt1(av),
+        bVal: wvBud ? '—' : fmt1(bv),
+        dVal: wvBud ? '—' : sgnF(dv),
+        dCol: wvBud ? '#8A93A6' : (Math.abs(dv) < 0.005 ? '#8A93A6' : (dv >= 0 ? '#2F7351' : '#A03E28')),
+      };
+    });
+    const wfBudOn = wvCmp && wvBud;
+    const wfBudTxt = wfBudOn ? 'Budget standards are pending — the TO column stays “—” until they land, then fills in scaled × ' + wvA.length + ' month' + (wvA.length === 1 ? '' : 's') + ' to match the FROM period.' : '';
+
+    // ---- waterfall VIEW controls (months dropdown · compare FROM/TO with budget slot · door spotlight) ----
+    const wvDd = S.wvDd || null;
+    const wvTog = id => (e) => { if (e && e.stopPropagation) e.stopPropagation(); this.setState({ wvDd: wvDd === id ? null : id }); };
+    const wvOptRow = (label, on, onClick, extra) => Object.assign({ label, check: on ? '✓' : '', fw: on ? 700 : 500, bg: on ? '#F6F2E7' : 'transparent', col: '#2A3550', onClick }, extra || {});
+    const wvTogIn = (key, i, extraPatch) => (e) => { if (e && e.stopPropagation) e.stopPropagation(); const cur = new Set(wvClean(S[key])); cur.has(i) ? cur.delete(i) : cur.add(i); this.setState({ [key]: [...cur], ...(extraPatch || {}) }); };
+    const wvOpts = [
+      wvOptRow('All months — full span', wvSel.length === 0, (e) => { if (e && e.stopPropagation) e.stopPropagation(); this.setState({ wvSel: [], wvCmp: false }); }, { col: GOLDD, fw: 700 }),
+      ...ALL_IDX.map(i => wvOptRow(MNY[i], wvSel.includes(i), wvTogIn('wvSel', i, { wvCmp: false }))),
+    ];
+    const wvMLab = wvSel.length ? wvLabSet(wvSel) : 'Full span · ' + wvSpan;
+    const wvMHint = 'pick any set of months — the waterfall recomputes over exactly those months';
+    const onWvMToggle = wvTog('view'), wvMOpen = wvDd === 'view';
+    const wvMBd = wvSel.length ? GOLD : '#D8D4C8', wvMBg = wvSel.length ? '#FBF6EA' : '#FFFFFF';
+    const onWvCmpToggle = (e) => { if (e && e.stopPropagation) e.stopPropagation(); this.setState({ wvCmp: !S.wvCmp, wvDd: null }); };
+    const wvCmpBd = wvCmp ? GOLD : '#D8D4C8', wvCmpBg = wvCmp ? '#FBF6EA' : '#FFFFFF';
+    const wao = ALL_IDX.map(i => wvOptRow(MNY[i], wvA.includes(i), wvTogIn('wvASel', i)));
+    const wvALab = wvLabSet(wvA), onWvAToggle = wvTog('from'), wvAOpen = wvDd === 'from';
+    const wbo = [
+      ...ALL_IDX.map(i => wvOptRow(MNY[i] + (wvBud ? ' — picking exits budget' : ''), !wvBud && wvB.includes(i), (e) => { if (e && e.stopPropagation) e.stopPropagation(); const cur = new Set(wvBud ? [] : wvClean(S.wvBSel)); cur.has(i) ? cur.delete(i) : cur.add(i); this.setState({ wvBSel: [...cur], wvBud: false }); }, wvBud ? { col: '#8A93A6', fw: 500 } : {})),
+      wvOptRow('BUDGET · PENDING — locks out month picks', wvBud, (e) => { if (e && e.stopPropagation) e.stopPropagation(); this.setState({ wvBud: true, wvBSel: [] }); }, { col: GOLDD, fw: 800 }),
+    ];
+    const wvBLab = wvBud ? 'Budget · pending' : wvLabSet(wvB);
+    const wvBHint = wvBud ? 'budget is exclusive — picking a month switches back to month compare. Standards will scale × the FROM month-count.' : 'pick months — or the BUDGET slot (exclusive of months)';
+    const onWvBToggle = wvTog('to'), wvBOpen = wvDd === 'to';
+    const wvBBd = wvBud ? GOLD : '#C9A45C';
+    // door spotlight → drives the page's existing DOOR filter (S.doors), so the whole page re-scopes
+    const doorEnt = new Map();
+    for (const rr of coRows) if (!doorEnt.has(rr[1])) doorEnt.set(rr[1], rr[0]);
+    const wvSpotQ = S.wvSpotQ || '';
+    const wvSpotV = wvSpotQ.trim().toLowerCase();
+    const wvSpotOpen = wvSpotV.length >= 2;
+    const wvSpotOpts = !wvSpotOpen ? [] : props.filter(d => d.toLowerCase().includes(wvSpotV)).slice(0, 8)
+      .map(d => ({ label: d, sub: doorEnt.get(d) || '', onClick: (e) => { if (e && e.stopPropagation) e.stopPropagation(); this.setState({ wvSpotQ: '', doors: [d] }); } }));
+    const wvSpotNone = wvSpotOpen && wvSpotOpts.length === 0;
+    const wvSpotChipOn = doorSel.length === 1;
+    const wvSpotChip = wvSpotChipOn ? '⌖ ' + doorSel[0] : '';
+    const onWvSpotClear = (e) => { if (e && e.stopPropagation) e.stopPropagation(); this.setState({ doors: [] }); };
+    const onWvSpotQ = e => this.setState({ wvSpotQ: e && e.target ? e.target.value : '' });
+    const wvSpotBd = wvSpotChipOn ? GOLD : '#D8D4C8';
+
+    // ---- waterfall drill panel: top-5 + Show-all + search · door rows link out + inline TXN register ----
     let wfPanel = { title: '', sub: '', q: '', onQ: () => {}, onClose: () => {}, rows: [], empty: false };
     let wfHasPanel = false;
     if (S.wfSel != null && wfSteps[S.wfSel]) {
       wfHasPanel = true;
       const st = wfSteps[S.wfSel];
-      const map = new Map();
-      for (const [keys, sign] of st.parts) {
-        for (const k of keys) {
-          const pmm = byAcctProp[k]; if (!pmm) continue;
-          for (const [p, pv] of pmm) map.set(p, (map.get(p) || 0) + sign * per(pv));
+      const acctSign = new Map();
+      for (const [keys, sign] of st.parts) for (const k of keys) acctSign.set(k, sign);
+      const lineAccts = [...acctSign.keys()];
+      const dmap = new Map();
+      for (const [k, sign] of acctSign) {
+        const pmm = byAcctProp[k]; if (!pmm) continue;
+        for (const [p, pv] of pmm) {
+          let o = dmap.get(p); if (!o) { o = { v: 0, va: 0, vb: 0 }; dmap.set(p, o); }
+          o.v += sign * wvS(pv, wvIdx);
+          o.va += sign * wvS(pv, wvA);
+          o.vb += wvBud ? 0 : sign * wvS(pv, wvB);
         }
       }
+      const cmpHere = wvCmp && !wvBud;
+      const keyOf = o => wvCmp ? (wvBud ? o.va : o.vb - o.va) : o.v;
       const q = S.wfQ.trim().toLowerCase();
-      const arrAll = [...map.entries()].filter(([, v]) => Math.abs(v) > 0.5).sort((a, b) => Math.abs(b[1]) - Math.abs(a[1]));
+      const arrAll = [...dmap.entries()].filter(([, o]) => Math.abs(keyOf(o)) > 0.5).sort((a2, b2) => Math.abs(keyOf(b2[1])) - Math.abs(keyOf(a2[1])));
       const arr = q ? arrAll.filter(([p]) => p.toLowerCase().includes(q)) : arrAll;
-      const mxx = Math.max(...arr.map(([, v]) => Math.abs(v)), 1);
+      const CAPD = 5;
+      const shownD = (S.wfAll || q) ? arr : arr.slice(0, CAPD);
+      const mxx = Math.max(...shownD.map(([, o]) => Math.abs(keyOf(o))), 1);
+      const esc2 = encodeURIComponent;
+      const linkMonths = (wvCmp ? [...new Set([...wvA, ...wvB])].sort((x, y) => x - y) : wvIdx).map(i => PERIODS[i]).join(',');
+      const acctParam = esc2(lineAccts.join(','));
+      const wvPSet = new Set(wvIdx.map(i => PERIODS[i]));
+      const fCent = n => (n < 0 ? '−$' : '$') + Math.abs(n).toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+      const noRow = { name: '', nameFw: 500, nameCol: '#2A3550', val: '', vcol: INK, w: '0%', bg: NAVY, barOn: false, sub2On: false, sub2: '', hasLinks: false, links: [], txOn: false, txLab: '', onTx: () => {}, onClick: () => {}, cur: 'default', rowBg: 'transparent', gcol: 'auto', ind: 0 };
+      const regRows = door => {
+        // inline dated register: tx-data.json rows for door × this line's accounts × the selected months,
+        // sign-weighted by the line's parts so the Σ ties the door cell exactly (the tx gate guarantees it)
+        const out2 = [];
+        const base2 = { ...noRow, gcol: '1 / -1', ind: 18, rowBg: '#FBFAF3', nameCol: MUT };
+        if (!S.txd) {
+          out2.push({ ...base2, name: S.txErr ? 'Couldn’t load the register — click to retry' : 'Loading the transaction register…', nameFw: 700, nameCol: GOLDD, rowBg: '#FBF6EA', cur: S.txErr ? 'pointer' : 'default', onClick: S.txErr ? (e => { if (e && e.stopPropagation) e.stopPropagation(); this.setState({ txErr: false }); this.loadTx(); }) : (() => {}) });
+          return out2;
+        }
+        const txs = [];
+        for (const t of S.txd.tx) { const sg2 = acctSign.get(t[1]); if (sg2 === undefined || t[0] !== door || !wvPSet.has(t[2].slice(0, 7))) continue; txs.push([t[2], sg2 * t[3]]); }
+        txs.sort((x2, y2) => Math.abs(y2[1]) - Math.abs(x2[1]) || x2[0].localeCompare(y2[0]));
+        const totTx = txs.reduce((s2, t) => s2 + t[1], 0);
+        const shown2 = S.wfTxAll ? txs : txs.slice(0, 8);
+        for (const t of shown2) out2.push({ ...base2, name: t[0] + ' · ' + fCent(t[1]) });
+        if (!S.wfTxAll && txs.length > 8) out2.push({ ...base2, name: 'Show all ' + txs.length + ' transactions ▾', nameFw: 800, nameCol: GOLDD, cur: 'pointer', onClick: e => { if (e && e.stopPropagation) e.stopPropagation(); this.setState({ wfTxAll: true }); } });
+        out2.push({ ...base2, name: 'Σ ' + txs.length + ' transaction' + (txs.length === 1 ? '' : 's') + ' = ' + fCent(totTx) + ' — ties this cell to the cent', nameFw: 700, nameCol: '#2F7351', rowBg: '#F2F7F0' });
+        return out2;
+      };
+      const rows = [];
+      if (wfBudOn) rows.push({ ...noRow, gcol: '1 / -1', name: 'Budget standards pending — doors shown over the FROM months (' + wvLabSet(wvA) + '); the budget side will fill in scaled × ' + wvA.length + ' month' + (wvA.length === 1 ? '' : 's') + '.', nameFw: 700, nameCol: GOLDD, rowBg: '#FBF6EA' });
+      for (const [p, o] of shownD) {
+        const kv = keyOf(o);
+        const isOv = OVERHEAD.has(p);
+        const focused = doorSel.length === 1 && doorSel[0] === p;
+        const txOpenHere = S.wfTxOpen === p;
+        rows.push({
+          ...noRow,
+          name: p, nameFw: focused ? 700 : 500, nameCol: focused ? GOLDD : '#2A3550',
+          rowBg: focused ? '#FBF6EA' : 'transparent',
+          onClick: isOv ? (() => {}) : (e => { if (e && e.stopPropagation) e.stopPropagation(); this.setState({ doors: focused ? [] : [p] }); }),
+          cur: isOv ? 'default' : 'pointer',
+          sub2On: wvCmp, sub2: !wvCmp ? '' : (wvBud ? wvLabSet(wvA) + ' ' + fK(o.va) + ' → budget pending' : wvLabSet(wvA) + ' ' + fK(o.va) + ' → ' + wvLabSet(wvB) + ' ' + fK(o.vb)),
+          val: cmpHere ? sgnF(kv) : fK(kv),
+          vcol: cmpHere ? (Math.abs(kv) < 0.005 ? '#8A93A6' : (kv >= 0 ? '#2F7351' : '#A03E28')) : (kv < 0 ? RED : INK),
+          barOn: true, w: Math.max(2, Math.abs(kv) / mxx * 100).toFixed(1) + '%', bg: kv < 0 ? RED : NAVY,
+          hasLinks: true,
+          links: [
+            { lab: 'BS', href: './investments.dc.html?door=' + esc2(p) },
+            { lab: 'LOANS', href: './loans.dc.html?door=' + esc2(p) },
+            { lab: 'TXN', href: './transactions.dc.html?door=' + esc2(p) + '&acct=' + acctParam + '&m=' + esc2(linkMonths) },
+          ],
+          txOn: !wvCmp, txLab: txOpenHere ? 'TXN ▾' : 'TXN ▸',
+          onTx: e => { if (e && e.stopPropagation) e.stopPropagation(); this.loadTx(); this.setState({ wfTxOpen: txOpenHere ? null : p, wfTxAll: false }); },
+        });
+        if (!wvCmp && txOpenHere) rows.push(...regRows(p));
+      }
+      if (!S.wfAll && !q && arrAll.length > CAPD) rows.push({ ...noRow, gcol: '1 / -1', name: 'Show all ' + arrAll.length + ' ▾ — or type to search', nameFw: 800, nameCol: GOLDD, cur: 'pointer', onClick: e => { if (e && e.stopPropagation) e.stopPropagation(); this.setState({ wfAll: true }); } });
       wfPanel = {
         title: st.label + ' — by door',
-        sub: arr.length + ' of ' + arrAll.length + ' doors · ' + periodShort + ' · sorted by size',
+        sub: shownD.length + ' of ' + arrAll.length + ' doors · ' + wvLab + ' · sorted by ' + (cmpHere ? '|change|' : 'size') + (wvCmp ? '' : ' · click a door to focus the whole page on it'),
         q: S.wfQ,
         onQ: e => this.setState({ wfQ: e.target.value }),
-        onClose: () => this.setState({ wfSel: null, wfQ: '' }),
-        rows: arr.map(([p, v]) => ({ name: p, val: fK(v), vcol: v < 0 ? RED : INK, w: Math.max(2, Math.abs(v) / mxx * 100) + '%', bg: v < 0 ? RED : NAVY })),
+        onClose: () => this.setState({ wfSel: null, wfQ: '', wfAll: false, wfTxOpen: null, wfTxAll: false }),
+        rows,
         empty: arr.length === 0,
       };
     }
@@ -2078,6 +2384,12 @@ class Component extends DCLogic {
       niPath, niArea, niPts, niZeroY,
       incBig: fK(cInc), netBig: fK(cNet), netBigCol: cNet < 0 ? '#E8A896' : '#6FBF8F',
       sparks, wfSvgH, wfBg, wfConn, wfBars, wfRows, wfPanel, wfHasPanel,
+      wvScopeLine, wvMLab, wvMHint, wvMOpen, onWvMToggle, wvOpts, wvMBd, wvMBg,
+      onWvCmpToggle, wvCmpBd, wvCmpBg, wfCmpOn, wfWalkOn,
+      wvALab, wvAOpen, onWvAToggle, wao,
+      wvBLab, wvBHint, wvBOpen, onWvBToggle, wbo, wvBBd,
+      wvSpotQ, onWvSpotQ, wvSpotOpen, wvSpotOpts, wvSpotNone, wvSpotChipOn, wvSpotChip, onWvSpotClear, wvSpotBd,
+      wfCmpALab, wfCmpBLab, wfCmpRows, wfBudOn, wfBudTxt,
       othersChip, topLegend, topEmpty,
       allocSub, baseRentW, baseOtherW, rentAmt, otherLbl, donutBg, keptPctBig, keptCol, allocSummary, allocRows, allocFormula,
       catChips, trendName: cat.label, trendCur: fK(per(catSeries)), trendNote, trendProps,

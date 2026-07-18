@@ -324,6 +324,7 @@ input:focus{outline:2px solid #C9A45C;outline-offset:1px}
               <div style="margin-top:10px;display:flex;gap:14px;flex-wrap:wrap;font-size:11px">
                 <a href="{{ lr.hrefPl }}" style="font-weight:700">Open in P&amp;L →</a>
                 <sc-if value="{{ lr.hasLoan }}" hint-placeholder-val="{{ false }}"><a href="{{ lr.hrefLoan }}" style="font-weight:700">Open its note in Loans →</a></sc-if>
+                <a href="{{ lr.hrefTx }}" style="font-weight:700">TXN →</a>
               </div>
             </div>
           </sc-if>
@@ -480,6 +481,7 @@ input:focus{outline:2px solid #C9A45C;outline-offset:1px}
                   <div style="margin-top:9px;display:flex;gap:12px;flex-wrap:wrap;font-size:10.5px">
                     <a href="{{ gr.hrefPl }}" style="font-weight:700">Open in P&amp;L →</a>
                     <sc-if value="{{ gr.hasLoan }}" hint-placeholder-val="{{ false }}"><a href="{{ gr.hrefLoan }}" style="font-weight:700">Open its note in Loans →</a></sc-if>
+                    <a href="{{ gr.hrefTx }}" style="font-weight:700">TXN →</a>
                   </div>
                 </div>
               </sc-if>
@@ -565,6 +567,7 @@ input:focus{outline:2px solid #C9A45C;outline-offset:1px}
               <div style="margin-top:10px;display:flex;gap:14px;flex-wrap:wrap;font-size:11px">
                 <a href="{{ wr.hrefPl }}" style="font-weight:700">Open in P&amp;L →</a>
                 <sc-if value="{{ wr.hasLoan }}" hint-placeholder-val="{{ false }}"><a href="{{ wr.hrefLoan }}" style="font-weight:700">Open its note in Loans →</a></sc-if>
+                <a href="{{ wr.hrefTx }}" style="font-weight:700">TXN →</a>
               </div>
             </div>
           </sc-if>
@@ -608,6 +611,7 @@ input:focus{outline:2px solid #C9A45C;outline-offset:1px}
                     <div></div>
                     <div style="min-width:0;padding-left:4px">
                       <a href="{{ d.href }}" style="font-size:11.5px;font-weight:600;color:#1F3A6E;text-decoration:none;border-bottom:1px dotted #C9A45C;white-space:nowrap">{{ d.name }}</a>
+                      <a href="{{ d.hrefTx }}" style="font-size:11.5px;font-weight:600;color:#1F3A6E;text-decoration:none;border-bottom:1px dotted #C9A45C;white-space:nowrap">TXN →</a>
                       <div style="font-size:9px;color:#9AA3B5;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">{{ d.sub }}</div>
                     </div>
                     <sc-for list="{{ d.cells }}" as="c" hint-placeholder-count="8">
@@ -1247,6 +1251,7 @@ class Component extends DCLogic {
         hasLoan: !!doorNotes[r.p.door],
         hrefPl: './PL%20Story%20-%20Main.dc.html?door=' + encodeURIComponent(r.p.door),
         hrefLoan: './loans.dc.html?door=' + encodeURIComponent(r.p.door),
+        hrefTx: './transactions.dc.html?door=' + encodeURIComponent(r.p.door),
         onClick: () => this.setState({ mosSel: isExp ? null : r.p.door }),
       };
     });
@@ -1463,6 +1468,7 @@ class Component extends DCLogic {
           name: p.door,
           sub: p.status + (p.value > 0 && p.valueSource !== 'arv' ? ' · ' + p.valueSource + ' value' : ''),
           href: './PL%20Story%20-%20Main.dc.html?door=' + encodeURIComponent(p.door),
+          hrefTx: './transactions.dc.html?door=' + encodeURIComponent(p.door),
           cells: doorCellsOf(p),
         })),
         moreN: isExpE && !entQ2 && dsAll.length > 7, more: '… ' + Math.max(dsAll.length - 7, 0) + ' more — search to find any door',
@@ -1609,6 +1615,7 @@ class Component extends DCLogic {
         hasLoan: !!lnd.length,
         hrefPl: './PL%20Story%20-%20Main.dc.html?door=' + encodeURIComponent(p.door),
         hrefLoan: './loans.dc.html?door=' + encodeURIComponent(p.door),
+        hrefTx: './transactions.dc.html?door=' + encodeURIComponent(p.door),
         onClick: () => this.setState({ wExp: isExp ? null : x.p.door }),
       };
     });
@@ -1808,6 +1815,7 @@ class Component extends DCLogic {
         hasLoan: !!lnd.length,
         hrefPl: './PL%20Story%20-%20Main.dc.html?door=' + encodeURIComponent(p.door),
         hrefLoan: './loans.dc.html?door=' + encodeURIComponent(p.door),
+        hrefTx: './transactions.dc.html?door=' + encodeURIComponent(p.door),
         onClick: () => this.setState({ gsel: isExp ? null : p.door }),
       };
     });

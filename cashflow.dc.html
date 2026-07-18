@@ -566,6 +566,7 @@ input:focus{outline:2px solid #C9A45C;outline-offset:1px}
                     <a href="{{ cr.plHref }}" style="font-size:9.5px;font-weight:800;letter-spacing:0.05em;color:#96742F;text-decoration:none;border:1px solid #E2D9C4;border-radius:99px;padding:3px 10px">P&L →</a>
                     <a href="{{ cr.invHref }}" style="font-size:9.5px;font-weight:800;letter-spacing:0.05em;color:#96742F;text-decoration:none;border:1px solid #E2D9C4;border-radius:99px;padding:3px 10px">INVESTMENTS →</a>
                     <a href="{{ cr.loanHref }}" style="font-size:9.5px;font-weight:800;letter-spacing:0.05em;color:#96742F;text-decoration:none;border:1px solid #E2D9C4;border-radius:99px;padding:3px 10px">LOANS →</a>
+                    <a href="{{ cr.txHref }}" style="font-size:9.5px;font-weight:800;letter-spacing:0.05em;color:#96742F;text-decoration:none;border:1px solid #E2D9C4;border-radius:99px;padding:3px 10px">TXN →</a>
                     <span onClick="{{ cr.onFocus }}" style-hover="background:#F6ECD9" style="font-size:9.5px;font-weight:800;letter-spacing:0.05em;color:#96742F;cursor:pointer;border:1px solid #E2D9C4;border-radius:99px;padding:3px 10px">{{ cr.focusLab }}</span>
                   </div>
                 </div>
@@ -656,6 +657,7 @@ input:focus{outline:2px solid #C9A45C;outline-offset:1px}
                     <div style="margin-top:10px;display:flex;gap:12px;flex-wrap:wrap">
                       <a href="{{ r.plHref }}" style="font-size:11px;font-weight:700;color:#96742F;text-decoration:none">P&amp;L →</a>
                       <a href="{{ r.loanHref }}" style="font-size:11px;font-weight:700;color:#96742F;text-decoration:none">Loans →</a>
+                      <a href="{{ r.txHref }}" style="font-size:11px;font-weight:700;color:#96742F;text-decoration:none">Txn →</a>
                       <div onClick="{{ r.onFocus }}" style-hover="color:#16233A" style="font-size:11px;font-weight:700;color:#3D64A8;cursor:pointer">{{ r.focusLab }}</div>
                     </div>
                   </div>
@@ -739,6 +741,7 @@ input:focus{outline:2px solid #C9A45C;outline-offset:1px}
                     <div style="margin-top:10px;display:flex;gap:12px;flex-wrap:wrap">
                       <a href="{{ wr.plHref }}" style="font-size:11px;font-weight:700;color:#96742F;text-decoration:none">P&amp;L →</a>
                       <a href="{{ wr.loanHref }}" style="font-size:11px;font-weight:700;color:#96742F;text-decoration:none">Loans →</a>
+                      <a href="{{ wr.txHref }}" style="font-size:11px;font-weight:700;color:#96742F;text-decoration:none">Txn →</a>
                       <div onClick="{{ wr.onFocus }}" style-hover="color:#16233A" style="font-size:11px;font-weight:700;color:#3D64A8;cursor:pointer">{{ wr.focusLab }}</div>
                     </div>
                   </div>
@@ -1376,31 +1379,75 @@ class Component extends DCLogic {
     const baseE = { ind: 0, chev: '', chevCol: 'transparent', name: '', nameFw: 600, nameCol: INK, sub2On: false, sub2: '', hasLinks: false, links: [], barW: '0%', barC: NAVY, val: '', vcol: INK, onClick: () => {}, cur: 'default', bg: 'transparent', tip: '', txOn: false, txLab: '', onTx: () => {} };
     const CAPX_GL = ['Capex - HVAC', 'Capex - Appliances'];
     const glAccts = a => a === 'Capital expenditure' ? CAPX_GL : [a];
-    const txKeyOf = (door, accts) => door + '@@' + accts.join('|');
-    const txRegRows = (door, accts, ind) => {
-      const out2 = [];
+    const txKeyOf = (door, src) => door + '@@' + (src.kind === 'gl' ? src.accts.join('|') : src.kind + ':' + (src.key || src.id || ''));
+    const txPageHref = (door, src) => {
       const mParam = '&m=' + idxSel.map(i => MO[i]).join(',');
-      const pageHref = './transactions.dc.html?door=' + esc(door) + '&acct=' + esc(accts.join(',')) + mParam;
-      if (!S.txd) {
+      if (src.kind === 'gl') return './transactions.dc.html?door=' + esc(door) + '&acct=' + esc(src.accts.join(',')) + mParam;
+      if (src.kind === 'cash') return './transactions.dc.html?door=' + esc(door) + mParam;
+      return null;   // Buildium / Cashflow.xlsx grains have no GL page register — inline only, honestly labeled
+    };
+    const txRegList = (door, src) => {
+      // returns { rows: [{name, v}], note, needsTx }
+      if (src.kind === 'gl') {
+        if (!S.txd) return { rows: null, note: '', needsTx: true };
+        const selM = new Set(idxSel.map(i => MO[i]));
+        const list = S.txd.tx.filter(t => t[0] === door && src.accts.includes(t[1]) && selM.has(t[2].slice(0, 7)))
+          .map(t => ({ name: t[2] + (t.length > 4 && (t[4] || t[5]) ? ' · ' + [t[4], t[5]].filter(Boolean).join(' · ') : ''), v: t[3] }));
+        return { rows: list, note: S.txd.meta.hasMemo ? '' : ' · vendor & memo land with your GL re-upload', needsTx: false };
+      }
+      if (src.kind === 'bt') {
+        const rows = [];
+        for (const i of idxSel) for (const t of (DOORS[door] ? DOORS[door].tenants : [])) {
+          const v = src.key === 'chg' ? t.chg[i] : src.key === 'coll' ? t.coll[i] : t.chg[i] - t.coll[i];
+          if (Math.abs(v) > 0.005) rows.push({ name: mmyy(MO[i]) + ' · ' + t.tenant, v });
+        }
+        return { rows, note: ' · tenant × month grain — Buildium receipt-level rows land with the next data publish', needsTx: false };
+      }
+      if (src.kind === 'mo') {
+        const rows = [];
+        for (const i of idxSel) {
+          const v = src.key === 'esc' ? ((TIW[door] || [])[i] || 0) : DOORS[door][src.key][i];
+          if (Math.abs(v) > 0.005) rows.push({ name: mmyy(MO[i]) + ' · monthly payment (Cashflow.xlsx)', v });
+        }
+        return { rows, note: '', needsTx: false };
+      }
+      // src.kind === 'cash' — the door's full cash story, component grain; Σ = the door net by construction
+      const comp = [];
+      const add = (nm, v) => { if (Math.abs(v) > 0.005) comp.push({ name: nm, v }); };
+      if (src.id !== 'netfin') {
+        add('Collections (Buildium)', dS(door, 'coll', idxSel));
+        add('Insurance claims (GL)', dS(door, 'claims', idxSel));
+        add('Refunds paid out', -dRefS(door, idxSel));
+        add('Operating expenses (GL)', -dS(door, 'opex', idxSel));
+        add('CapEx (GL)', -dS(door, 'capex', idxSel));
+        add('T&I escrow (Cashflow.xlsx)', -dEscS(door, idxSel));
+        add('HOA (GL proxy)', -dHoaS(door, idxSel));
+      }
+      if (src.id !== 'netop') {
+        add('Interest (GL)', -dS(door, 'int', idxSel));
+        add('Principal repaid (Cashflow.xlsx)', -dS(door, 'filePrin', idxSel));
+      }
+      return { rows: comp, note: ' · component grain — expand each line above for its own register', needsTx: false };
+    };
+    const txRegRows = (door, src, ind) => {
+      const out2 = [];
+      const reg = txRegList(door, src);
+      if (reg.needsTx) {
         out2.push({ ...baseE, ind, name: S.txErr ? 'Couldn’t load the register — click to retry' : 'Loading the transaction register…', nameFw: 700, nameCol: GOLDD, bg: '#FBF6EA', cur: S.txErr ? 'pointer' : 'default', onClick: S.txErr ? ((e) => { if (e && e.stopPropagation) e.stopPropagation(); this.setState({ txd: null, txErr: false }); this.loadTx(); }) : (() => {}) });
         return out2;
       }
-      const selM = new Set(idxSel.map(i => MO[i]));
-      const list = S.txd.tx.filter(t => t[0] === door && accts.includes(t[1]) && selM.has(t[2].slice(0, 7)));
-      list.sort((x, y) => Math.abs(y[3]) - Math.abs(x[3]) || x[2].localeCompare(y[2]));
-      const tot = list.reduce((s2, t) => s2 + t[3], 0);
-      const mx = Math.max(...list.map(t => Math.abs(t[3])), 1);
+      const list = reg.rows.sort((x, y) => Math.abs(y.v) - Math.abs(x.v) || x.name.localeCompare(y.name));
+      const tot = list.reduce((s2, t) => s2 + t.v, 0);
+      const mx = Math.max(...list.map(t => Math.abs(t.v)), 1);
       const capT = 8;
       const shown2 = (S.txAll || q2) ? list : list.slice(0, capT);
       shown2.forEach((t, ti) => {
-        const memo = t.length > 4 ? [t[4], t[5]].filter(Boolean).join(' · ') : '';
-        out2.push({ ...baseE, ind, name: t[2] + (memo ? ' · ' + memo : ''), nameFw: ti === 0 ? 700 : 500, nameCol: ti === 0 ? NAVY : MUT,
-          barW: Math.max(2, Math.abs(t[3]) / mx * 100).toFixed(1) + '%', barC: '#A8B4C9',
-          val: f2(t[3]), vcol: INK });
+        out2.push({ ...baseE, ind, name: t.name, nameFw: ti === 0 ? 700 : 500, nameCol: ti === 0 ? NAVY : MUT,
+          barW: Math.max(2, Math.abs(t.v) / mx * 100).toFixed(1) + '%', barC: t.v < 0 ? '#C9A8A0' : '#A8B4C9',
+          val: f2(t.v), vcol: t.v < 0 ? REDD : INK });
       });
-      if (!S.txAll && !q2 && list.length > capT) out2.push({ ...baseE, ind, name: 'Show all ' + list.length + ' transactions ▾', nameFw: 800, nameCol: GOLDD, cur: 'pointer', onClick: (e) => { if (e && e.stopPropagation) e.stopPropagation(); this.setState({ txAll: true }); } });
-      out2.push({ ...baseE, ind, name: 'Σ ' + list.length + ' transaction' + (list.length === 1 ? '' : 's') + ' = ' + f2(tot) + ' — ties this cell to the cent' + (S.txd.meta.hasMemo ? '' : ' · vendor & memo land with your GL re-upload'), nameFw: 700, nameCol: GREEND, bg: '#F2F7F0' });
-      out2.push({ ...baseE, ind, name: 'Open the full register — filters pre-set', nameFw: 800, nameCol: GOLDD, hasLinks: true, links: [{ lab: 'TXN PAGE →', href: pageHref }] });
+      if (!S.txAll && !q2 && list.length > capT) out2.push({ ...baseE, ind, name: 'Show all ' + list.length + ' rows ▾', nameFw: 800, nameCol: GOLDD, cur: 'pointer', onClick: (e) => { if (e && e.stopPropagation) e.stopPropagation(); this.setState({ txAll: true }); } });
+      out2.push({ ...baseE, ind, name: 'Σ ' + list.length + ' row' + (list.length === 1 ? '' : 's') + ' = ' + f2(tot) + ' — ties this cell to the cent' + reg.note, nameFw: 700, nameCol: GREEND, bg: '#F2F7F0' });
       return out2;
     };
     const chevE = open => ({ chev: open ? '▾' : '▸', chevCol: open ? GOLDD : '#B9C2D2' });
@@ -1429,16 +1476,18 @@ class Component extends DCLogic {
           tip: p.door ? 'Click to spotlight ' + p.name + ' page-wide' : '',
         };
       });
-      if (opts.txAcct) {
+      if (opts.txSrc) {
         const withTx = [];
         for (const e2 of out) {
           withTx.push(e2);
           if (e2.hasLinks && e2.links.length === 3) {
-            const tkey = txKeyOf(e2.name, opts.txAcct);
+            const tkey = txKeyOf(e2.name, opts.txSrc);
             const topen = S.txOpen === tkey;
+            const pHref = txPageHref(e2.name, opts.txSrc);
+            if (pHref) e2.links = [...e2.links, { lab: 'TXN →', href: pHref }];
             e2.txOn = true; e2.txLab = topen ? 'TXN ▾' : 'TXN ▸';
-            e2.onTx = (ev) => { if (ev && ev.stopPropagation) ev.stopPropagation(); this.loadTx(); this.setState({ txOpen: topen ? null : tkey, txAll: false }); };
-            if (topen && !cmpOn) withTx.push(...txRegRows(e2.name, opts.txAcct, (opts.ind || 0) + 18));
+            e2.onTx = (ev) => { if (ev && ev.stopPropagation) ev.stopPropagation(); if (opts.txSrc.kind === 'gl') this.loadTx(); this.setState({ txOpen: topen ? null : tkey, txAll: false }); };
+            if (topen && !cmpOn) withTx.push(...txRegRows(e2.name, opts.txSrc, (opts.ind || 0) + 18));
           }
         }
         out.length = 0; out.push(...withTx);
@@ -1512,7 +1561,7 @@ class Component extends DCLogic {
             eRows.push({ ...baseE, ...chevE(allOpen), ind: 20, name: 'All ' + g + ' — by property', nameFw: 700, nameCol: GOLDD, onClick: ledToggle('__all'), cur: 'pointer', bg: allOpen ? '#FBF6EA' : 'transparent' });
             if (allOpen) {
               const pairs = scoped.map(d => ({ name: d, v: sum(accts.map(a => a === CAPX ? dS(d, 'capex', idxSel) : sum(idxSel.map(i => ((DOORS[d].opexByAcct || {})[a] || ZH)[i])))), va: sum(accts.map(a => a === CAPX ? dS(d, 'capex', aSet) : sum(aSet.map(i => ((DOORS[d].opexByAcct || {})[a] || ZH)[i])))), vb: budB ? 0 : sum(accts.map(a => a === CAPX ? dS(d, 'capex', bSet) : sum(bSet.map(i => ((DOORS[d].opexByAcct || {})[a] || ZH)[i])))), door: true }));
-              const r2 = mkPropEntries(pairs, { ind: 40, sign: -1, txAcct: accts.flatMap(glAccts) }); eRows.push(...r2.out); counts = counts || r2;
+              const r2 = mkPropEntries(pairs, { ind: 40, sign: -1, txSrc: { kind: 'gl', accts: accts.flatMap(glAccts) } }); eRows.push(...r2.out); counts = counts || r2;
             }
             for (const a of accts) {
               const openL = S.stLed === a;
@@ -1524,10 +1573,10 @@ class Component extends DCLogic {
                 val: cmpOn ? ((ad >= 0 ? '+' : '−') + fN(Math.abs(ad)).replace('(', '').replace(')', '')) : f2(av),
                 vcol: cmpOn ? (Math.abs(ad) < 0.005 ? FAINT : ad > 0 ? GREEND : REDD) : INK,
                 onClick: ledToggle(a), cur: 'pointer', bg: openL ? '#FBF6EA' : 'transparent' });
-              if (openL) { const r3 = mkPropEntries(acctDoorPairs(a), { ind: 40, sign: -1, txAcct: glAccts(a) }); eRows.push(...r3.out); counts = counts || r3; }
+              if (openL) { const r3 = mkPropEntries(acctDoorPairs(a), { ind: 40, sign: -1, txSrc: { kind: 'gl', accts: glAccts(a) } }); eRows.push(...r3.out); counts = counts || r3; }
             }
           } else if (openG && !multi && S.stLed === '__all') {
-            const r4 = mkPropEntries(acctDoorPairs(accts[0]), { ind: 20, sign: -1, txAcct: glAccts(accts[0]) }); eRows.push(...r4.out); counts = counts || r4;
+            const r4 = mkPropEntries(acctDoorPairs(accts[0]), { ind: 20, sign: -1, txSrc: { kind: 'gl', accts: glAccts(accts[0]) } }); eRows.push(...r4.out); counts = counts || r4;
           }
         }
       } else if (id === 'stat') {
@@ -1551,7 +1600,7 @@ class Component extends DCLogic {
                 ...tiDoorKeys.filter(d => scopedSet.has(d)).map(d => ({ name: d, v: dEscS(d, idxSel), va: dEscS(d, aSet), vb: budB ? 0 : dEscS(d, bSet), door: true })),
                 ...(unfiltered ? tiOtherKeys.map(k2 => ({ name: k2 + ' — company level (file row)', v: sum(idxSel.map(i => ((TIW[k2] || ZH)[i] || 0))), va: sum(aSet.map(i => ((TIW[k2] || ZH)[i] || 0))), vb: budB ? 0 : sum(bSet.map(i => ((TIW[k2] || ZH)[i] || 0))), door: false })) : []),
               ];
-            const r5 = mkPropEntries(pairs, { ind: 20, sign: -1 }); eRows.push(...r5.out); counts = counts || r5;
+            const r5 = mkPropEntries(pairs, { ind: 20, sign: -1, txSrc: df.hoa ? { kind: 'gl', accts: ['HOA Fee'] } : { kind: 'mo', key: 'esc' } }); eRows.push(...r5.out); counts = counts || r5;
           }
         }
       } else if (id === 'events') {
@@ -1595,7 +1644,13 @@ class Component extends DCLogic {
             pairs.push({ name: 'Direct property tax & insurance — portfolio grain', v: -(ptDirS(idxSel) + insDirS(idxSel)), va: -(ptDirS(aSet) + insDirS(aSet)), vb: budB ? 0 : -(ptDirS(bSet) + insDirS(bSet)), door: false });
           }
         } else pairs = [];
-        const r6 = mkPropEntries(pairs, { sign, txAcct: id === 'int' ? ['Interest Cost'] : id === 'claims' ? ['Insurance Claim'] : null });
+        const txSrcOf = id === 'int' ? { kind: 'gl', accts: ['Interest Cost'] }
+          : id === 'claims' ? { kind: 'gl', accts: ['Insurance Claim'] }
+          : id === 'prin' ? { kind: 'mo', key: 'filePrin' }
+          : (id === 'chg' || id === 'coll' || id === 'unpaid') ? { kind: 'bt', key: id }
+          : (id === 'netop' || id === 'netfin' || id === 'kept') ? { kind: 'cash', id }
+          : null;
+        const r6 = mkPropEntries(pairs, { sign, txSrc: txSrcOf });
         eRows = r6.out; counts = r6;
       }
       return {
@@ -1903,6 +1958,7 @@ class Component extends DCLogic {
         plHref: './PL%20Story%20-%20Main.dc.html?door=' + esc(g.d),
         invHref: './investments.dc.html?door=' + esc(g.d),
         loanHref: './loans.dc.html?door=' + esc(g.d),
+        txHref: './transactions.dc.html?door=' + esc(g.d),
         onFocus: (e) => { if (e && e.stopPropagation) e.stopPropagation(); this.setF({ fp: S.fp.length === 1 && S.fp[0] === g.d ? [] : [g.d] }); },
         focusLab: S.fp.length === 1 && S.fp[0] === g.d ? 'RELEASE FOCUS ✕' : 'FOCUS PAGE ⌖',
       };
@@ -2017,7 +2073,7 @@ class Component extends DCLogic {
       moveLab: (r.move > 0.005 ? '▲ ' : r.move < -0.005 ? '▼ ' : '· ') + fK(Math.abs(r.move)),
       moveCol: r.move > 0.005 ? REDD : (r.move < -0.005 ? GREEND : FAINT),
       mini: mkMini(r), leaseLine: leaseLine(r), flagsLine: flagsLine(r),
-      plHref: './PL%20Story%20-%20Main.dc.html?door=' + esc(r.d), loanHref: './loans.dc.html?door=' + esc(r.d),
+      plHref: './PL%20Story%20-%20Main.dc.html?door=' + esc(r.d), loanHref: './loans.dc.html?door=' + esc(r.d), txHref: './transactions.dc.html?door=' + esc(r.d),
       onFocus: () => this.setF({ fp: S.fp.length === 1 && S.fp[0] === r.d ? [] : [r.d] }),
       focusLab: S.fp.length === 1 && S.fp[0] === r.d ? 'Release focus ✕' : 'Focus property ⌖',
     });
