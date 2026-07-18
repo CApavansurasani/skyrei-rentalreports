@@ -231,9 +231,8 @@ input:focus{outline:2px solid #C9A45C;outline-offset:1px}
           <sc-for list="{{ wkRows }}" as="wk" hint-placeholder-count="16">
             <div>
               <sc-if value="{{ wk.head }}" hint-placeholder-val="{{ false }}">
-                <div style="margin-top:20px;margin-bottom:2px;display:flex;align-items:center;gap:10px;padding:0 2px">
-                  <span style="font-size:10px;letter-spacing:0.12em;font-weight:800;color:#96742F;white-space:nowrap">{{ wk.label }}</span>
-                  <span style="flex:1;height:1px;background:#E5E3DC"></span>
+                <div style="margin-top:18px;margin-bottom:4px;display:flex;align-items:center;background:#16233A;border-radius:8px;padding:9px 14px">
+                  <span style="font-size:10px;letter-spacing:0.12em;font-weight:800;color:#C9A45C;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">{{ wk.label }}</span>
                 </div>
               </sc-if>
               <sc-if value="{{ wk.body }}" hint-placeholder-val="{{ true }}">
@@ -327,9 +326,8 @@ input:focus{outline:2px solid #C9A45C;outline-offset:1px}
           <sc-for list="{{ cmpRows }}" as="cp" hint-placeholder-count="16">
             <div>
               <sc-if value="{{ cp.head }}" hint-placeholder-val="{{ false }}">
-                <div style="margin-top:20px;margin-bottom:2px;display:flex;align-items:center;gap:10px;padding:0 2px">
-                  <span style="font-size:10px;letter-spacing:0.12em;font-weight:800;color:#96742F;white-space:nowrap">{{ cp.label }}</span>
-                  <span style="flex:1;height:1px;background:#E5E3DC"></span>
+                <div style="margin-top:18px;margin-bottom:4px;display:flex;align-items:center;background:#16233A;border-radius:8px;padding:9px 14px">
+                  <span style="font-size:10px;letter-spacing:0.12em;font-weight:800;color:#C9A45C;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">{{ cp.label }}</span>
                 </div>
               </sc-if>
               <sc-if value="{{ cp.body }}" hint-placeholder-val="{{ true }}">
@@ -340,8 +338,8 @@ input:focus{outline:2px solid #C9A45C;outline-offset:1px}
                     <span style="height:7px;border-radius:3px;background:#EFF2F7;overflow:hidden"><span style="display:block;height:7px;border-radius:3px;background:#8FA8CE;width:{{ cp.aW }}"></span></span>
                     <span style="height:7px;border-radius:3px;background:#F6F1E4;overflow:hidden"><span style="display:block;height:7px;border-radius:3px;background:#C9A45C;width:{{ cp.bW }}"></span></span>
                   </span>
-                  <span style="text-align:right;font-size:12px;font-weight:{{ cp.vfw }};color:#5E6B82;font-variant-numeric:tabular-nums;white-space:nowrap">{{ cp.aVal }}</span>
-                  <span style="text-align:right;font-size:12px;font-weight:{{ cp.vfw }};color:#2A3550;font-variant-numeric:tabular-nums;white-space:nowrap">{{ cp.bVal }}</span>
+                  <span style="text-align:right;font-size:12px;font-weight:{{ cp.vfw }};color:{{ cp.aCol }};font-variant-numeric:tabular-nums;white-space:nowrap">{{ cp.aVal }}</span>
+                  <span style="text-align:right;font-size:12px;font-weight:{{ cp.vfw }};color:{{ cp.bCol }};font-variant-numeric:tabular-nums;white-space:nowrap">{{ cp.bVal }}</span>
                   <span style="text-align:right;font-size:12px;font-weight:800;color:{{ cp.dCol }};font-variant-numeric:tabular-nums;padding-right:6px;white-space:nowrap">{{ cp.dVal }}</span>
                 </div>
                 <sc-if value="{{ cp.exp }}" hint-placeholder-val="{{ false }}">
@@ -1574,13 +1572,13 @@ class Component extends DCLogic {
         spkPath = n === 1 ? '' : pts.map(p => p.x.toFixed(1) + ',' + p.y.toFixed(1)).join(' ');
         spkPts = pts.map(p => ({ cx: p.x.toFixed(1), cy: p.y.toFixed(1),
           r: hmSel.includes(p.ix) ? '2.6' : '1.3',
-          fill: hmSel.includes(p.ix) ? '#C9A45C' : '#CBD2DD',
+          fill: hmSel.includes(p.ix) ? '#C9A45C' : (s.id === 'kept' ? '#8FA0B8' : '#CBD2DD'),
           onClick: (e) => { if (e && e.stopPropagation) e.stopPropagation(); this.setState({ hmSel: [p.ix], hcmp: false }); } }));
         spkTip = winIdx.map(ix => mmyy(MO[ix]) + ' ' + fK(series[ix])).join(' · ') + ' — click a point to view that month alone';
       }
-      let delta = '', deltaCol = FAINT;
+      let delta = '', deltaCol = s.id === 'kept' ? '#8A96AD' : FAINT;
       if (series && oneSel !== null) {
-        if (oneSel > 0) { const dd = series[oneSel] - series[oneSel - 1]; delta = (dd >= 0 ? '▲ ' : '▼ ') + fK(Math.abs(dd)) + ' vs ' + mmyy(MO[oneSel - 1]); deltaCol = Math.abs(dd) < 0.005 ? FAINT : (dd > 0 ? GREEND : REDD); }
+        if (oneSel > 0) { const dd = series[oneSel] - series[oneSel - 1]; delta = (dd >= 0 ? '▲ ' : '▼ ') + fK(Math.abs(dd)) + ' vs ' + mmyy(MO[oneSel - 1]); deltaCol = Math.abs(dd) < 0.005 ? deltaCol : (dd > 0 ? (s.id === 'kept' ? '#8FD0A8' : GREEND) : (s.id === 'kept' ? '#E8A896' : REDD)); }
         else delta = 'first month';
       } else if (series && hmSel.length > 1) delta = hmSel.length + ' months summed';
       let label = s.label;
@@ -1595,13 +1593,13 @@ class Component extends DCLogic {
         head: isHead, body: !isHead,
         label: isHead ? s.label : label,
         lfs: isTot ? 13 : 12.5, lfw: isTot ? 700 : 500,
-        lcol: isTot ? NAVY : INK,
+        lcol: s.id === 'kept' ? '#E9EDF5' : (isTot ? NAVY : INK),
         rh: isHead ? 0 : isMemo ? 34 : isTot ? (s.id === 'kept' ? 48 : 42) : 38,
         bt: isHead ? 'none' : s.id === 'kept' ? '3px double #16233A' : isTot ? '1px solid #D8D4C8' : '1px solid transparent',
-        cellBg: open ? '#FBF6EA' : 'transparent',
+        cellBg: s.id === 'kept' ? '#16233A' : (open ? '#FBF6EA' : (isTot ? '#F6F3EA' : 'transparent')),
         cur: drill ? 'pointer' : 'default',
         chev: drill ? (open ? '▾' : '▸') : '',
-        chevCol: drill ? (open ? GOLDD : CHEVMUT) : 'transparent',
+        chevCol: s.id === 'kept' ? (open ? '#C9A45C' : '#8A96AD') : (drill ? (open ? GOLDD : CHEVMUT) : 'transparent'),
         onClick: drill ? stClick(s.id) : () => {},
         subOn: (!!s.sub && !isHead) || s.id === 'netinv' || s.id === 'netfin',
         sub: (s.id === 'netinv' || s.id === 'netfin') ? 'cash so far: ' + fN(s.after) + (s.sub ? ' · ' + s.sub : '') : (s.sub || ''),
@@ -1612,9 +1610,9 @@ class Component extends DCLogic {
         barC: isHead ? 'transparent' : barColorOf(s),
         connInOn: !!(prev && !isHead && prev.type !== 'head'), connInX: prev ? xfN(prev.after).toFixed(2) + '%' : '0%',
         connOutOn: !!(next && !isHead && next.type !== 'head' && !open), connOutX: xfN(s.after).toFixed(2) + '%',
-        spkOn: !!series, spkPath, spkCol: '#C5CDD9', spkPts, spkTip, delta, deltaCol,
+        spkOn: !!series, spkPath, spkCol: s.id === 'kept' ? '#5E6B82' : '#C5CDD9', spkPts, spkTip, delta, deltaCol,
         vfs: s.id === 'kept' ? 15 : 13, vfw: isTot ? 800 : 600,
-        vcol: isHead ? FAINT : isMemo ? MUT : isTot ? (s.id === 'kept' ? (s.v >= -0.005 ? GREEN2 : REDD) : (s.v >= 0 ? NAVY : REDD)) : (s.v >= 0 ? INK : REDD),
+        vcol: isHead ? FAINT : isMemo ? MUT : isTot ? (s.id === 'kept' ? (s.v >= -0.005 ? '#8FD0A8' : '#E8A896') : (s.v >= 0 ? NAVY : REDD)) : (s.v >= 0 ? INK : REDD),
         val: valTxt,
       }, open && exPack ? exPack : emptyEx);
     });
@@ -1642,20 +1640,21 @@ class Component extends DCLogic {
       return Object.assign({
         head: isHead, body: !isHead,
         label: isHead ? s.label : label,
-        lfs: isTot ? 13 : 12.5, lfw: isTot ? 700 : 500, lcol: isTot ? NAVY : INK,
+        lfs: isTot ? 13 : 12.5, lfw: isTot ? 700 : 500, lcol: s.id === 'kept' ? '#E9EDF5' : (isTot ? NAVY : INK),
         rh: isHead ? 0 : isTot ? 42 : 38,
         bt: isHead ? 'none' : s.id === 'kept' ? '3px double #16233A' : isTot ? '1px solid #D8D4C8' : '1px solid transparent',
-        cellBg: open ? '#FBF6EA' : 'transparent',
+        cellBg: s.id === 'kept' ? '#16233A' : (open ? '#FBF6EA' : (isTot ? '#F6F3EA' : 'transparent')),
         cur: drill ? 'pointer' : 'default',
         chev: drill ? (open ? '▾' : '▸') : '',
-        chevCol: drill ? (open ? GOLDD : CHEVMUT) : 'transparent',
+        chevCol: s.id === 'kept' ? (open ? '#C9A45C' : '#8A96AD') : (drill ? (open ? GOLDD : CHEVMUT) : 'transparent'),
         onClick: drill ? stClick(s.id) : () => {},
+        aCol: s.id === 'kept' ? '#B9C2D2' : '#5E6B82', bCol: s.id === 'kept' ? '#E9EDF5' : '#2A3550',
         aW: isHead || isMemo ? '0%' : Math.max(1, Math.abs(a || 0) / cmpMax * 100).toFixed(1) + '%',
         bW: isHead || isMemo || budB ? '0%' : Math.max(1, Math.abs(b || 0) / cmpMax * 100).toFixed(1) + '%',
         aVal: isHead ? '' : isMemo ? '·' : fN(a || 0),
         bVal: isHead ? '' : isMemo ? '·' : budB ? '—' : fN(b || 0),
         dVal: isHead || isMemo ? '' : budB ? '—' : (dd >= 0 ? '+' : '−') + fN(Math.abs(dd)).replace('(', '').replace(')', ''),
-        dCol: isHead || isMemo || budB ? FAINT : Math.abs(dd) < 0.005 ? FAINT : dd > 0 ? GREEND : REDD,
+        dCol: isHead || isMemo || budB ? FAINT : Math.abs(dd) < 0.005 ? FAINT : dd > 0 ? (s.id === 'kept' ? '#8FD0A8' : GREEND) : (s.id === 'kept' ? '#E8A896' : REDD),
         vfw: isTot ? 800 : 600,
       }, open && exPack ? exPack : emptyEx);
     });
