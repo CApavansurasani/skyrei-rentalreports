@@ -1,0 +1,375 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet data-dc-atomics="">
+<title>SKY REI · Transactions</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Libre+Franklin:wght@400;500;600;700&amp;family=Source+Serif+4:opsz,wght@8..60,400;8..60,600;8..60,700&amp;display=swap" rel="stylesheet">
+<style>
+body{margin:0;background:#EFEDE7;font-family:"Libre Franklin",system-ui,sans-serif;color:#16233A}
+a{color:#1F3A6E}a:hover{color:#C9A45C}
+input:focus{outline:2px solid #C9A45C;outline-offset:1px}
+.scr::-webkit-scrollbar{width:8px;height:8px}
+.scr::-webkit-scrollbar-thumb{background:#D8D4C8;border-radius:4px}
+</style>
+</helmet>
+
+<div data-screen-label="Transactions" style="min-height:100vh;background:#EFEDE7;padding-bottom:64px">
+
+  <!-- ══ Section navigation ══ -->
+  <div style="background:#0A1226;border-bottom:1px solid rgba(201,164,92,0.25)">
+    <div style="max-width:1320px;margin:0 auto;padding:10px 40px;display:flex;align-items:center;gap:22px;flex-wrap:wrap">
+      <a href="./index.html" style="text-decoration:none;font-family:'Source Serif 4',Georgia,serif;font-size:13px;font-weight:700;letter-spacing:0.06em;color:#C9A45C">SKY&nbsp;REI</a>
+      <span style="width:1px;height:14px;background:rgba(233,237,245,0.2)"></span>
+      <a href="./executive-summary.dc.html" style-hover="color:#C9A45C" style="text-decoration:none;font-size:12px;font-weight:600;color:#8A96AD;white-space:nowrap">Executive Summary</a>
+      <a href="./PL%20Story%20-%20Main.dc.html" style-hover="color:#C9A45C" style="text-decoration:none;font-size:12px;font-weight:600;color:#8A96AD;white-space:nowrap">P&amp;L</a>
+      <a href="./investments.dc.html" style-hover="color:#C9A45C" style="text-decoration:none;font-size:12px;font-weight:600;color:#8A96AD;white-space:nowrap">Investments &amp; Balance Sheet</a>
+      <a href="./cashflow.dc.html" style-hover="color:#C9A45C" style="text-decoration:none;font-size:12px;font-weight:600;color:#8A96AD;white-space:nowrap">Cash Flow</a>
+      <a href="./loans.dc.html" style-hover="color:#C9A45C" style="text-decoration:none;font-size:12px;font-weight:600;color:#8A96AD;white-space:nowrap">Loans</a>
+      <a href="./transactions.dc.html" style="text-decoration:none;font-size:12px;font-weight:700;color:#E9EDF5;border-bottom:2px solid #C9A45C;padding-bottom:2px;white-space:nowrap">Transactions</a>
+      <a href="./property-index.dc.html" style-hover="color:#C9A45C" style="text-decoration:none;font-size:12px;font-weight:600;color:#8A96AD;white-space:nowrap">Property Index</a>
+      <span style="margin-left:auto;font-size:10px;letter-spacing:0.28em;font-weight:700;color:#5E6B82">PORTFOLIO&nbsp;INTELLIGENCE</span>
+    </div>
+  </div>
+
+  <!-- ══ Header ══ -->
+  <div style="background:#0E1830;padding:26px 40px 24px;overflow:hidden">
+    <div style="max-width:1320px;margin:0 auto">
+      <div style="font-family:'Source Serif 4',Georgia,serif;font-size:15px;font-weight:700;letter-spacing:0.06em;color:#C9A45C">SKY&nbsp;REI</div>
+      <div style="margin-top:6px;font-family:'Source Serif 4',Georgia,serif;font-size:32px;font-weight:600;color:#E9EDF5;line-height:1.1">Transactions</div>
+      <div style="margin-top:7px;font-size:12.5px;color:#8A96AD">{{ scopeLine }}</div>
+    </div>
+  </div>
+
+  <div style="max-width:1320px;margin:0 auto;padding:0 40px">
+
+    <sc-if value="{{ ready }}" hint-placeholder-val="{{ false }}">
+
+    <!-- ══ Filter bar ══ -->
+    <div style="margin-top:18px;background:#FFFFFF;border:1px solid #E5E3DC;border-radius:16px;padding:12px 16px;display:flex;align-items:center;gap:8px;flex-wrap:wrap;position:relative;z-index:50" onClick="{{ stopProp }}">
+      <span style="font-size:10px;letter-spacing:0.1em;font-weight:700;color:#96742F;margin-right:2px">SCOPE</span>
+      <sc-for list="{{ filters }}" as="fb" hint-placeholder-count="5">
+        <div style="position:relative">
+          <div onClick="{{ fb.onToggle }}" style-hover="border-color:#C9A45C" style="display:flex;align-items:center;gap:7px;padding:8px 13px;border-radius:10px;border:1px solid {{ fb.bd }};background:{{ fb.bg }};font-size:12px;font-weight:600;color:#16233A;cursor:pointer;white-space:nowrap">
+            <span style="font-size:9.5px;letter-spacing:0.07em;font-weight:700;color:#5E6B82">{{ fb.label }}</span>
+            <span style="max-width:150px;overflow:hidden;text-overflow:ellipsis">{{ fb.value }}</span>
+            <span style="font-size:8.5px;color:#5E6B82">▾</span>
+          </div>
+          <sc-if value="{{ fb.open }}" hint-placeholder-val="{{ false }}">
+            <div style="position:absolute;top:42px;left:0;width:{{ fb.w }};background:#FFFFFF;border:1px solid #D8D4C8;border-radius:12px;box-shadow:0 14px 36px rgba(14,24,48,0.20);z-index:80;padding:6px;max-height:340px;display:flex;flex-direction:column">
+              <sc-if value="{{ fb.hasSearch }}" hint-placeholder-val="{{ false }}">
+                <input value="{{ fb.q }}" onInput="{{ fb.onQ }}" placeholder="Type to search…" style="margin:2px 2px 6px;padding:7px 10px;border-radius:8px;border:1px solid #D8D4C8;font-size:12px;font-family:inherit;color:#16233A">
+              </sc-if>
+              <div onClick="{{ fb.onClear }}" style-hover="background:#F6F4EC" style="padding:7px 10px;border-radius:7px;font-size:12px;font-weight:700;color:#96742F;cursor:pointer;display:flex;justify-content:space-between"><span>All {{ fb.allLabel }}</span><span>{{ fb.allCheck }}</span></div>
+              <div class="scr" style="overflow-y:auto;flex:1">
+                <sc-for list="{{ fb.opts }}" as="op" hint-placeholder-count="6">
+                  <div onClick="{{ op.onClick }}" style-hover="background:#F6F4EC" style="padding:7px 10px;border-radius:7px;font-size:12.5px;font-weight:{{ op.fw }};color:#2A3550;cursor:pointer;background:{{ op.bg }};display:flex;justify-content:space-between;align-items:center;gap:10px">
+                    <span style="white-space:nowrap;overflow:hidden;text-overflow:ellipsis">{{ op.label }}</span>
+                    <span style="display:flex;gap:8px;align-items:center"><span style="font-size:10.5px;color:#8A93A6">{{ op.n }}</span><span style="color:#96742F;font-weight:700;width:12px">{{ op.check }}</span></span>
+                  </div>
+                </sc-for>
+              </div>
+            </div>
+          </sc-if>
+        </div>
+      </sc-for>
+      <input value="{{ q }}" onInput="{{ onQ }}" placeholder="Search property · ledger · memo…" style="min-width:210px;padding:8px 12px;border-radius:10px;border:1px solid #D8D4C8;font-size:12px;font-family:inherit;color:#16233A">
+      <sc-if value="{{ hasActive }}" hint-placeholder-val="{{ false }}">
+        <div onClick="{{ onReset }}" style-hover="background:#16233A;color:#FFFFFF" style="padding:8px 13px;border-radius:10px;background:#F3E2DB;color:#A03E28;font-size:11.5px;font-weight:700;cursor:pointer;white-space:nowrap">Reset ✕</div>
+      </sc-if>
+      <span style="margin-left:auto;font-size:11px;color:#8A93A6;white-space:nowrap">{{ asOfLine }}</span>
+    </div>
+
+    <!-- ══ KPI strip ══ -->
+    <div style="margin-top:16px;display:grid;grid-template-columns:repeat(5,1fr);gap:12px">
+      <sc-for list="{{ kpis }}" as="k" hint-placeholder-count="5">
+        <div title="{{ k.tip }}" style="background:#FFFFFF;border:1px solid #E5E3DC;border-radius:14px;padding:14px 16px">
+          <div style="font-size:9.5px;letter-spacing:0.07em;font-weight:700;color:#5E6B82;text-transform:uppercase;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">{{ k.label }}</div>
+          <div style="margin-top:5px;font-family:'Source Serif 4',Georgia,serif;font-size:21px;font-weight:600;color:{{ k.col }};font-variant-numeric:tabular-nums;white-space:nowrap">{{ k.val }}</div>
+          <div style="margin-top:3px;font-size:10px;color:#8A93A6;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">{{ k.sub }}</div>
+        </div>
+      </sc-for>
+    </div>
+
+    <!-- ══ The register ══ -->
+    <div style="margin-top:16px;background:#FFFFFF;border:1px solid #E5E3DC;border-radius:16px;padding:22px 26px">
+      <div style="display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:10px">
+        <div style="font-family:'Source Serif 4',Georgia,serif;font-size:18px;font-weight:600;color:#16233A">GL register — every transaction behind the statements</div>
+        <div style="display:flex;gap:8px;align-items:center;flex-wrap:wrap">
+          <sc-for list="{{ sortChips }}" as="sc" hint-placeholder-count="3">
+            <div onClick="{{ sc.onClick }}" style-hover="border-color:#C9A45C" style="padding:7px 12px;border-radius:9px;border:1px solid {{ sc.bd }};background:{{ sc.bg }};font-size:11px;font-weight:700;color:#2A3550;cursor:pointer;white-space:nowrap">{{ sc.label }}</div>
+          </sc-for>
+        </div>
+      </div>
+      <div style="margin-top:12px;display:flex;padding:0 12px;font-size:9px;letter-spacing:0.07em;font-weight:800;color:#8A93A6">
+        <span style="width:84px;flex:none">DATE</span>
+        <span style="flex:2.2">PROPERTY</span>
+        <span style="flex:1.7">LEDGER</span>
+        <span style="flex:1.6">{{ memoHead }}</span>
+        <span style="width:110px;flex:none;text-align:right">AMOUNT</span>
+      </div>
+      <div>
+        <sc-for list="{{ rows }}" as="r" hint-placeholder-count="20">
+          <div style="border-top:1px solid #F4F2EA">
+            <div style="display:flex;align-items:center;padding:7px 12px">
+              <span style="width:84px;flex:none;font-size:11.5px;font-weight:600;color:#5E6B82;font-variant-numeric:tabular-nums">{{ r.date }}</span>
+              <span style="flex:2.2;min-width:0;display:flex;align-items:center;gap:8px">
+                <span onClick="{{ r.onFocus }}" style-hover="color:#96742F" style="min-width:0;cursor:pointer">
+                  <span style="display:block;font-size:12px;font-weight:600;color:#16233A;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">{{ r.prop }}</span>
+                  <span style="display:block;font-size:9.5px;color:#9AA3B5;white-space:nowrap">{{ r.entity }}</span>
+                </span>
+                <span style="display:flex;gap:4px;flex:none">
+                  <a href="{{ r.plHref }}" style-hover="background:#F6ECD9" style="font-size:8px;font-weight:800;letter-spacing:0.04em;color:#96742F;text-decoration:none;border:1px solid #E2D9C4;border-radius:99px;padding:2px 7px">P&L</a>
+                  <a href="{{ r.bsHref }}" style-hover="background:#F6ECD9" style="font-size:8px;font-weight:800;letter-spacing:0.04em;color:#96742F;text-decoration:none;border:1px solid #E2D9C4;border-radius:99px;padding:2px 7px">BS</a>
+                  <a href="{{ r.loanHref }}" style-hover="background:#F6ECD9" style="font-size:8px;font-weight:800;letter-spacing:0.04em;color:#96742F;text-decoration:none;border:1px solid #E2D9C4;border-radius:99px;padding:2px 7px">LOANS</a>
+                </span>
+              </span>
+              <span style="flex:1.7;min-width:0">
+                <span style="display:block;font-size:11.5px;font-weight:600;color:#2A3550;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">{{ r.acct }}</span>
+                <span style="display:block;font-size:9px;letter-spacing:0.05em;font-weight:700;color:#9AA3B5">{{ r.bucket }}</span>
+              </span>
+              <span style="flex:1.6;min-width:0;font-size:11px;color:{{ r.memoCol }};white-space:nowrap;overflow:hidden;text-overflow:ellipsis">{{ r.memo }}</span>
+              <span style="width:110px;flex:none;text-align:right;font-size:12.5px;font-weight:700;color:{{ r.amtCol }};font-variant-numeric:tabular-nums">{{ r.amt }}</span>
+            </div>
+          </div>
+        </sc-for>
+      </div>
+      <sc-if value="{{ emptyOn }}" hint-placeholder-val="{{ false }}">
+        <div style="padding:26px;text-align:center;font-size:12px;color:#8A93A6">{{ emptyTxt }}</div>
+      </sc-if>
+      <sc-if value="{{ moreOn }}" hint-placeholder-val="{{ false }}">
+        <div style="display:flex;justify-content:center;margin-top:10px">
+          <div onClick="{{ onMore }}" style-hover="background:#16233A;color:#FFFFFF;border-color:#16233A" style="padding:8px 16px;border-radius:9px;border:1px solid #D8D4C8;background:#FFFFFF;font-size:11.5px;font-weight:700;color:#2A3550;cursor:pointer">{{ moreLab }}</div>
+        </div>
+      </sc-if>
+      <div style="margin-top:12px;padding:10px 14px;background:#FBF6EA;border:1px solid #EAD9C0;border-radius:10px;display:flex;justify-content:space-between;align-items:center;gap:14px;flex-wrap:wrap">
+        <span style="font-size:11px;color:#96742F;font-weight:700">{{ sumLab }}</span>
+        <span style="font-size:13.5px;font-weight:800;color:#16233A;font-variant-numeric:tabular-nums">{{ sumVal }}</span>
+      </div>
+      <div style="margin-top:12px;padding-top:10px;border-top:1px solid #F0EEE7;font-size:10.5px;color:#9AA3B5;line-height:1.65">{{ foot }}</div>
+    </div>
+
+    </sc-if>
+
+    <sc-if value="{{ loading }}" hint-placeholder-val="{{ true }}">
+      <div style="margin-top:18px;background:#FFFFFF;border:1px solid #E5E3DC;border-radius:16px;padding:48px;text-align:center;font-size:13px;color:#8A93A6">Loading the transaction register…</div>
+    </sc-if>
+
+    <sc-if value="{{ loadError }}" hint-placeholder-val="{{ false }}">
+      <div style="margin-top:18px;background:#FFFFFF;border:1px solid #E5C9BE;border-radius:16px;padding:40px;text-align:center">
+        <div style="font-family:'Source Serif 4',Georgia,serif;font-size:18px;font-weight:600;color:#A03E28">Couldn&#8217;t load the data</div>
+        <div style="margin-top:8px;font-size:12.5px;color:#5E6B82;line-height:1.6;max-width:560px;margin-left:auto;margin-right:auto">{{ loadError }}</div>
+        <div style="margin-top:16px;display:flex;justify-content:center">
+          <div onClick="{{ retryLoad }}" style-hover="background:#16233A;color:#FFFFFF;border-color:#16233A" style="display:inline-flex;padding:9px 18px;border-radius:9px;border:1px solid #D8D4C8;background:#FFFFFF;color:#16233A;font-size:12.5px;font-weight:700;cursor:pointer">Retry</div>
+        </div>
+      </div>
+    </sc-if>
+
+  </div>
+</div>
+</x-dc>
+
+<script type="text/x-dc" data-dc-script>
+class Component extends DCLogic {
+  state = {
+    tx: null, loadError: null,
+    fm: [], fe: [], fp: [], fg: [], fa: [],
+    q: '', sort: 'new', shown: 60,
+    ddOpen: null, fq: '',
+  };
+
+  loadData() {
+    this.setState({ loadError: null });
+    fetch('./tx-data.json')
+      .then(r => { if (!r.ok) throw new Error('HTTP ' + r.status + ' fetching ./tx-data.json'); return r.json(); })
+      .then(tx => {
+        if (!tx || tx.schema !== 'tx.v1' || !Array.isArray(tx.tx) || !tx.meta) throw new Error('tx-data.json is not a valid tx.v1 file');
+        this.setState({ tx }, () => this.applyQuery());
+      })
+      .catch(e => this.setState({ tx: null, loadError: (e && e.message ? e.message : String(e)) }));
+  }
+
+  applyQuery() {
+    try {
+      if (typeof location === 'undefined' || !location.search || !this.state.tx) return;
+      const qq = new URLSearchParams(location.search);
+      const li = (k) => (qq.get(k) || '').split(',').map(s => s.trim()).filter(Boolean);
+      const patch = {};
+      if (qq.get('m')) patch.fm = li('m');
+      if (qq.get('entity')) patch.fe = li('entity');
+      if (qq.get('door')) patch.fp = li('door');
+      if (qq.get('grp')) patch.fg = li('grp');
+      if (qq.get('acct')) patch.fa = li('acct');
+      if (qq.get('q')) patch.q = qq.get('q');
+      if (Object.keys(patch).length) this.setState(patch);
+    } catch (e) {}
+  }
+
+  syncUrl() {
+    try {
+      if (typeof history === 'undefined' || typeof location === 'undefined') return;
+      const S = this.state, qq = new URLSearchParams();
+      if (S.fm.length) qq.set('m', S.fm.join(','));
+      if (S.fe.length) qq.set('entity', S.fe.join(','));
+      if (S.fp.length) qq.set('door', S.fp.join(','));
+      if (S.fg.length) qq.set('grp', S.fg.join(','));
+      if (S.fa.length) qq.set('acct', S.fa.join(','));
+      if (S.q) qq.set('q', S.q);
+      const s = qq.toString();
+      history.replaceState(null, '', location.pathname + (s ? '?' + s : ''));
+    } catch (e) {}
+  }
+
+  setF(patch) { this.setState(Object.assign({ shown: 60 }, patch), () => this.syncUrl()); }
+
+  componentDidMount() {
+    this.loadData();
+    this._doc = () => { if (this.state.ddOpen) this.setState({ ddOpen: null }); };
+    document.addEventListener('click', this._doc);
+  }
+  componentWillUnmount() { document.removeEventListener('click', this._doc); }
+
+  renderVals() {
+    const S = this.state;
+    const NAVY = '#16233A', INK = '#2A3550', MUT = '#5E6B82', FAINT = '#8A93A6', REDD = '#A03E28', GREEND = '#2A6F4E', GOLD = '#C9A45C', GOLDD = '#96742F', BRICK = '#B04A33';
+    const stopProp = e => e.stopPropagation();
+    if (!S.tx) return {
+      ready: false, loading: !S.loadError, loadError: S.loadError || false,
+      retryLoad: () => this.loadData(), stopProp,
+      scopeLine: S.loadError ? 'Data failed to load' : 'Loading…',
+      filters: [], hasActive: false, onReset: () => {}, asOfLine: '', q: '', onQ: () => {},
+      kpis: [], sortChips: [], memoHead: 'MEMO / VENDOR', rows: [], emptyOn: false, emptyTxt: '',
+      moreOn: false, moreLab: '', onMore: () => {}, sumLab: '', sumVal: '', foot: '',
+    };
+
+    const TX = S.tx, META = TX.meta, MO = META.months;
+    const f2 = n => { const s = '$' + Math.abs(n).toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 }); return n < -0.004 ? '(' + s + ')' : s; };
+    const fN = n => { const r = Math.round(n); const s = '$' + Math.abs(r).toLocaleString('en-US'); return r < 0 ? '(' + s + ')' : s; };
+    const MMM = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
+    const mmyy = m => MMM[+m.slice(5, 7) - 1] + '-' + m.slice(2, 4);
+    const esc = s => encodeURIComponent(s);
+    const BK = META.bucket || {};
+    const GRPS = [['income', 'Income'], ['opex', 'Operating expenses'], ['capex', 'CapEx'], ['statutory', 'Statutory (accrual)'], ['interest', 'Interest'], ['claims', 'Insurance claims']];
+    const grpLab = Object.fromEntries(GRPS);
+    const doorEnt = META.doorEntity || {};
+
+    // ── filter the register ──
+    const qv = (S.q || '').trim().toLowerCase();
+    const inSel = (sel, v) => !sel.length || sel.includes(v);
+    const all = TX.tx;
+    const filt = [];
+    for (const t of all) {
+      const door = t[0], acct = t[1], date = t[2], amt = t[3];
+      const m = date.slice(0, 7);
+      if (!inSel(S.fm, m)) continue;
+      if (!inSel(S.fe, doorEnt[door] || '')) continue;
+      if (!inSel(S.fp, door)) continue;
+      if (!inSel(S.fg, BK[acct] || 'other')) continue;
+      if (!inSel(S.fa, acct)) continue;
+      if (qv) {
+        const memo = (t.length > 4 ? (t[4] || '') + ' ' + (t[5] || '') : '');
+        if (!(door + ' ' + acct + ' ' + memo).toLowerCase().includes(qv)) continue;
+      }
+      filt.push(t);
+    }
+    const sums = filt.reduce((s, t) => s + t[3], 0);
+
+    // ── filter bar ──
+    const openDd = (id) => (e) => { e.stopPropagation(); this.setState({ ddOpen: S.ddOpen === id ? null : id, fq: '' }); };
+    const togList = (key, v) => (e) => { if (e && e.stopPropagation) e.stopPropagation(); const cur = new Set(S[key]); cur.has(v) ? cur.delete(v) : cur.add(v); this.setF({ [key]: [...cur] }); };
+    const doors = [...new Set(all.map(t => t[0]))].sort();
+    const accts = [...new Set(all.map(t => t[1]))].sort();
+    const fqv = (S.fq || '').toLowerCase();
+    const mkOpts = (list, key, labOf, nOf) => list.map(v => ({
+      label: labOf ? labOf(v) : v, n: nOf ? nOf(v) : '', check: S[key].includes(v) ? '✓' : '',
+      fw: S[key].includes(v) ? 700 : 500, bg: S[key].includes(v) ? '#FBF6EA' : 'transparent', onClick: togList(key, v),
+    }));
+    const filtDef = [
+      { id: 'MONTH', key: 'fm', label: 'MONTH', all: 'months', w: '190px', search: false, list: MO, labOf: mmyy, val: S.fm.length ? S.fm.map(mmyy).join(', ') : 'All months' },
+      { id: 'ENTITY', key: 'fe', label: 'ENTITY', all: 'entities', w: '220px', search: false, list: META.entities || [], val: S.fe.length ? (S.fe.length > 2 ? S.fe.length + ' selected' : S.fe.join(', ')) : 'All entities' },
+      { id: 'PROPERTY', key: 'fp', label: 'PROPERTY', all: 'properties', w: '300px', search: true, list: doors, nOf: v => doorEnt[v] || '', val: S.fp.length ? (S.fp.length > 1 ? S.fp.length + ' selected' : S.fp[0]) : 'All properties' },
+      { id: 'GROUP', key: 'fg', label: 'GROUP', all: 'groups', w: '230px', search: false, list: GRPS.map(g => g[0]), labOf: v => grpLab[v] || v, val: S.fg.length ? S.fg.map(v => grpLab[v] || v).join(', ') : 'All groups' },
+      { id: 'LEDGER', key: 'fa', label: 'LEDGER', all: 'ledgers', w: '280px', search: true, list: accts, nOf: v => grpLab[BK[v]] || '', val: S.fa.length ? (S.fa.length > 1 ? S.fa.length + ' selected' : S.fa[0]) : 'All ledgers' },
+    ];
+    const filters = filtDef.map(f => {
+      const open = S.ddOpen === f.id;
+      const shown2 = open && f.search && fqv ? f.list.filter(v => v.toLowerCase().includes(fqv)) : f.list;
+      return {
+        onToggle: openDd(f.id), bd: S[f.key].length ? GOLD : '#D8D4C8', bg: S[f.key].length ? '#FBF6EA' : '#FFFFFF',
+        label: f.label, value: f.val, open, w: f.w, hasSearch: !!f.search, q: S.fq,
+        onQ: e => this.setState({ fq: e.target.value }),
+        onClear: (e) => { if (e && e.stopPropagation) e.stopPropagation(); this.setF({ [f.key]: [] }); }, allLabel: f.all, allCheck: S[f.key].length ? '' : '✓',
+        opts: mkOpts(shown2.slice(0, 260), f.key, f.labOf, f.nOf),
+      };
+    });
+    const hasActive = !!(S.fm.length || S.fe.length || S.fp.length || S.fg.length || S.fa.length || S.q);
+    const onReset = () => this.setF({ fm: [], fe: [], fp: [], fg: [], fa: [], q: '' });
+    const scopeLine = filt.length.toLocaleString('en-US') + ' of ' + all.length.toLocaleString('en-US') + ' GL transactions · ' + mmyy(MO[0]) + ' – ' + mmyy(MO[MO.length - 1]) + ' · every register ties its statement cell to the cent';
+    const asOfLine = 'tx.v1 · built from PL.xlsx with publish gates · ' + (META.hasMemo ? 'memo live' : 'memo/vendor pending your GL re-upload');
+
+    // ── KPIs ──
+    const largest = filt.reduce((b, t) => Math.abs(t[3]) > Math.abs(b ? b[3] : 0) ? t : b, null);
+    const kpis = [
+      { label: 'Transactions in view', val: filt.length.toLocaleString('en-US'), sub: 'of ' + all.length.toLocaleString('en-US') + ' in the window', col: NAVY, tip: '' },
+      { label: 'Total in view', val: fN(sums), sub: 'GL amounts, sign as booked', col: NAVY, tip: '' },
+      { label: 'Largest single', val: largest ? f2(largest[3]) : '—', sub: largest ? largest[0] + ' · ' + largest[1] : '—', col: Math.abs(largest ? largest[3] : 0) > 0 ? REDD : FAINT, tip: '' },
+      { label: 'Properties touched', val: '' + new Set(filt.map(t => t[0])).size, sub: 'in the current view', col: NAVY, tip: '' },
+      { label: 'Memo & vendor', val: META.hasMemo || META.hasVendor ? 'LIVE' : 'PENDING', sub: META.hasMemo || META.hasVendor ? 'from your GL columns' : 'slot wired — re-upload GL with the columns', col: GOLDD, tip: '' },
+    ];
+
+    // ── sort + rows ──
+    const sorters = {
+      new: (a, b) => b[2].localeCompare(a[2]) || Math.abs(b[3]) - Math.abs(a[3]),
+      big: (a, b) => Math.abs(b[3]) - Math.abs(a[3]),
+      az: (a, b) => a[0].localeCompare(b[0]) || b[2].localeCompare(a[2]),
+    };
+    const sorted = [...filt].sort(sorters[S.sort] || sorters.new);
+    const sortChips = [['new', 'Newest first'], ['big', 'Largest first'], ['az', 'Property A–Z']].map(([id, lab]) => ({
+      label: lab, onClick: () => this.setState({ sort: id, shown: 60 }),
+      bd: S.sort === id ? GOLD : '#D8D4C8', bg: S.sort === id ? '#FBF6EA' : '#FFFFFF',
+    }));
+    const showN = Math.max(60, S.shown | 0);
+    const shown = sorted.slice(0, showN);
+    const expBucket = { income: 'INCOME', opex: 'OPEX', capex: 'CAPEX', statutory: 'STATUTORY · ACCRUAL', interest: 'INTEREST', claims: 'CLAIMS' };
+    const rows = shown.map(t => {
+      const [door, acct, date, amt] = t;
+      const memo = t.length > 4 ? [t[4], t[5]].filter(Boolean).join(' · ') : '';
+      const bucket = BK[acct] || 'other';
+      const isExp = bucket === 'opex' || bucket === 'capex' || bucket === 'interest' || bucket === 'statutory';
+      return {
+        date, prop: door, entity: doorEnt[door] || '', acct, bucket: expBucket[bucket] || bucket.toUpperCase(),
+        memo: memo || '—', memoCol: memo ? INK : '#C9CBD4',
+        amt: f2(amt), amtCol: amt < 0 ? GREEND : (isExp ? BRICK : NAVY),
+        onFocus: () => this.setF({ fp: S.fp.length === 1 && S.fp[0] === door ? [] : [door] }),
+        plHref: './PL%20Story%20-%20Main.dc.html?door=' + esc(door),
+        bsHref: './investments.dc.html?door=' + esc(door),
+        loanHref: './loans.dc.html?door=' + esc(door),
+      };
+    });
+    const emptyOn = filt.length === 0;
+    const emptyTxt = 'No transactions match this scope — clear a filter or the search.';
+    const moreOn = sorted.length > showN;
+    const moreLab = 'Show ' + Math.min(120, sorted.length - showN) + ' more ▾ (' + showN + ' of ' + sorted.length.toLocaleString('en-US') + ' shown)';
+    const onMore = () => this.setState({ shown: showN + 120 });
+    const sumLab = 'FULL SELECTION — ' + filt.length.toLocaleString('en-US') + ' transactions across ' + new Set(filt.map(t => t[0])).size + ' properties (sum covers ALL matches, not just the rows shown)';
+    const sumVal = f2(sums);
+    const foot = 'GL register at transaction grain from PL.xlsx — accrual basis, amounts with their booked sign (negative shown in parentheses). Publish gate: for every property × ledger × month, these rows sum to the published statement cell to the cent — the register can never disagree with the dashboards. Income rows are the accrual story; cash collections live on the Cash Flow page at receipt grain. Click a property to focus it; pills deep-link to P&L / Balance Sheet / Loans. Memo & vendor columns light up automatically when the re-uploaded GL lands.';
+
+    return {
+      ready: true, loading: false, loadError: false, retryLoad: () => this.loadData(), stopProp,
+      scopeLine, filters, hasActive, onReset, asOfLine,
+      q: S.q, onQ: e => this.setF({ q: e && e.target ? e.target.value : '' }),
+      kpis, sortChips, memoHead: META.hasMemo || META.hasVendor ? 'MEMO / VENDOR' : 'MEMO / VENDOR (PENDING)',
+      rows, emptyOn, emptyTxt, moreOn, moreLab, onMore, sumLab, sumVal, foot,
+    };
+  }
+}
+</script>
+</body>
+</html>
