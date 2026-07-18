@@ -145,14 +145,67 @@ input:focus{outline:2px solid #C9A45C;outline-offset:1px}
         </div>
       </div>
 
-      <!-- view controls: month scrubber · compare · property spotlight -->
+      <!-- view controls: months multi-select · compare · property spotlight -->
       <div style="margin-top:14px;display:flex;align-items:center;gap:8px;flex-wrap:wrap;position:relative;z-index:40" onClick="{{ stopProp }}">
         <span style="font-size:9px;letter-spacing:0.1em;font-weight:800;color:#96742F">VIEW</span>
-        <sc-for list="{{ hvChips }}" as="hv" hint-placeholder-count="6">
-          <div onClick="{{ hv.onClick }}" style-hover="border-color:#C9A45C" style="padding:6px 12px;border-radius:9px;border:1.5px solid {{ hv.bd }};background:{{ hv.bg }};font-size:11px;font-weight:{{ hv.fw }};color:{{ hv.col }};cursor:pointer;white-space:nowrap">{{ hv.label }}</div>
-        </sc-for>
+        <div style="position:relative">
+          <div onClick="{{ onHvToggle }}" style-hover="border-color:#C9A45C" style="display:flex;align-items:center;gap:7px;padding:7px 13px;border-radius:10px;border:1.5px solid {{ hvBd }};background:{{ hvBg }};font-size:11.5px;font-weight:700;color:#16233A;cursor:pointer;white-space:nowrap">
+            <span style="font-size:9px;letter-spacing:0.07em;font-weight:800;color:#5E6B82">MONTHS</span>
+            <span style="max-width:190px;overflow:hidden;text-overflow:ellipsis">{{ hvVal }}</span>
+            <span style="font-size:8.5px;color:#5E6B82">▾</span>
+          </div>
+          <sc-if value="{{ hvOpen }}" hint-placeholder-val="{{ false }}">
+            <div class="scr" style="position:absolute;top:40px;left:0;width:230px;background:#FFFFFF;border:1px solid #D8D4C8;border-radius:12px;box-shadow:0 14px 36px rgba(14,24,48,0.20);z-index:80;padding:6px;max-height:320px;overflow-y:auto">
+              <sc-for list="{{ hvOpts }}" as="vo" hint-placeholder-count="6">
+                <div onClick="{{ vo.onClick }}" style-hover="background:#F6F4EC" style="padding:7px 10px;border-radius:7px;font-size:12px;font-weight:{{ vo.fw }};color:{{ vo.col }};cursor:pointer;background:{{ vo.bg }};display:flex;justify-content:space-between;align-items:center;gap:10px">
+                  <span style="white-space:nowrap;overflow:hidden;text-overflow:ellipsis">{{ vo.label }}</span>
+                  <span style="color:#96742F;font-weight:700;width:12px">{{ vo.check }}</span>
+                </div>
+              </sc-for>
+              <div style="padding:6px 10px 3px;font-size:9.5px;color:#9AA3B5;border-top:1px solid #F0EEE7;margin-top:4px">{{ hvHint }}</div>
+            </div>
+          </sc-if>
+        </div>
         <span style="width:1px;height:18px;background:#E5E3DC"></span>
-        <div onClick="{{ onCmpToggle }}" style-hover="border-color:#C9A45C" style="padding:6px 12px;border-radius:9px;border:1.5px solid {{ cmpBd }};background:{{ cmpBg }};font-size:11px;font-weight:800;color:#3D64A8;cursor:pointer;white-space:nowrap">⇄ COMPARE MONTHS</div>
+        <div onClick="{{ onCmpToggle }}" style-hover="border-color:#C9A45C" style="padding:7px 12px;border-radius:10px;border:1.5px solid {{ cmpBd }};background:{{ cmpBg }};font-size:11px;font-weight:800;color:#3D64A8;cursor:pointer;white-space:nowrap">⇄ COMPARE</div>
+        <sc-if value="{{ cmpOn }}" hint-placeholder-val="{{ false }}">
+          <span style="font-size:9px;letter-spacing:0.08em;font-weight:800;color:#5E6B82">FROM</span>
+          <div style="position:relative">
+            <div onClick="{{ onHaToggle }}" style-hover="border-color:#8FA8CE" style="display:flex;align-items:center;gap:7px;padding:7px 13px;border-radius:10px;border:1.5px solid {{ haBd }};background:{{ haBg }};font-size:11.5px;font-weight:700;color:#2A3550;cursor:pointer;white-space:nowrap">
+              <span style="max-width:170px;overflow:hidden;text-overflow:ellipsis">{{ haVal }}</span>
+              <span style="font-size:8.5px;color:#5E6B82">▾</span>
+            </div>
+            <sc-if value="{{ haOpen }}" hint-placeholder-val="{{ false }}">
+              <div class="scr" style="position:absolute;top:40px;left:0;width:230px;background:#FFFFFF;border:1px solid #D8D4C8;border-radius:12px;box-shadow:0 14px 36px rgba(14,24,48,0.20);z-index:80;padding:6px;max-height:320px;overflow-y:auto">
+                <sc-for list="{{ haOpts }}" as="fo" hint-placeholder-count="5">
+                  <div onClick="{{ fo.onClick }}" style-hover="background:#F6F4EC" style="padding:7px 10px;border-radius:7px;font-size:12px;font-weight:{{ fo.fw }};color:{{ fo.col }};cursor:pointer;background:{{ fo.bg }};display:flex;justify-content:space-between;align-items:center;gap:10px">
+                    <span style="white-space:nowrap;overflow:hidden;text-overflow:ellipsis">{{ fo.label }}</span>
+                    <span style="color:#3D64A8;font-weight:700;width:12px">{{ fo.check }}</span>
+                  </div>
+                </sc-for>
+                <div style="padding:6px 10px 3px;font-size:9.5px;color:#9AA3B5;border-top:1px solid #F0EEE7;margin-top:4px">pick two or more months to compare a combined period</div>
+              </div>
+            </sc-if>
+          </div>
+          <span style="font-size:9px;letter-spacing:0.08em;font-weight:800;color:#96742F">TO</span>
+          <div style="position:relative">
+            <div onClick="{{ onHbToggle }}" style-hover="border-color:#C9A45C" style="display:flex;align-items:center;gap:7px;padding:7px 13px;border-radius:10px;border:1.5px solid {{ hbBd }};background:{{ hbBg }};font-size:11.5px;font-weight:700;color:#2A3550;cursor:pointer;white-space:nowrap">
+              <span style="max-width:190px;overflow:hidden;text-overflow:ellipsis">{{ hbVal }}</span>
+              <span style="font-size:8.5px;color:#5E6B82">▾</span>
+            </div>
+            <sc-if value="{{ hbOpen }}" hint-placeholder-val="{{ false }}">
+              <div class="scr" style="position:absolute;top:40px;left:0;width:250px;background:#FFFFFF;border:1px solid #D8D4C8;border-radius:12px;box-shadow:0 14px 36px rgba(14,24,48,0.20);z-index:80;padding:6px;max-height:340px;overflow-y:auto">
+                <sc-for list="{{ hbOpts }}" as="bo" hint-placeholder-count="6">
+                  <div onClick="{{ bo.onClick }}" style-hover="background:#F6F4EC" style="padding:7px 10px;border-radius:7px;font-size:12px;font-weight:{{ bo.fw }};color:{{ bo.col }};cursor:pointer;background:{{ bo.bg }};display:flex;justify-content:space-between;align-items:center;gap:10px">
+                    <span style="white-space:nowrap;overflow:hidden;text-overflow:ellipsis">{{ bo.label }}</span>
+                    <span style="color:#96742F;font-weight:700;width:12px">{{ bo.check }}</span>
+                  </div>
+                </sc-for>
+                <div style="padding:6px 10px 3px;font-size:9.5px;color:#9AA3B5;border-top:1px solid #F0EEE7;margin-top:4px">{{ hbHint }}</div>
+              </div>
+            </sc-if>
+          </div>
+        </sc-if>
         <div style="margin-left:auto;position:relative;min-width:260px">
           <input value="{{ spotQ }}" onInput="{{ onSpotQ }}" placeholder="⌖ Spotlight a property — type to search…" style="width:100%;box-sizing:border-box;padding:8px 12px;border-radius:9px;border:1.5px solid {{ spotBd }};font-size:11.5px;font-family:inherit;color:#16233A;background:#FDFCFA">
           <sc-if value="{{ spotOpen }}" hint-placeholder-val="{{ false }}">
@@ -172,28 +225,17 @@ input:focus{outline:2px solid #C9A45C;outline-offset:1px}
         </sc-if>
       </div>
 
-      <sc-if value="{{ cmpOn }}" hint-placeholder-val="{{ false }}">
-        <div style="margin-top:10px;display:flex;align-items:center;gap:8px;flex-wrap:wrap">
-          <span style="font-size:9px;letter-spacing:0.08em;font-weight:800;color:#5E6B82">FROM</span>
-          <sc-for list="{{ haChips }}" as="ha" hint-placeholder-count="5">
-            <div onClick="{{ ha.onClick }}" style-hover="border-color:#8FA8CE" style="padding:5px 11px;border-radius:8px;border:1.5px solid {{ ha.bd }};background:{{ ha.bg }};font-size:10.5px;font-weight:700;color:#2A3550;cursor:pointer">{{ ha.label }}</div>
-          </sc-for>
-          <span style="margin-left:10px;font-size:9px;letter-spacing:0.08em;font-weight:800;color:#96742F">TO</span>
-          <sc-for list="{{ hbChips }}" as="hb" hint-placeholder-count="6">
-            <div onClick="{{ hb.onClick }}" style-hover="border-color:#C9A45C" style="padding:5px 11px;border-radius:8px;border:1.5px solid {{ hb.bd }};background:{{ hb.bg }};font-size:10.5px;font-weight:{{ hb.fw }};color:{{ hb.col }};cursor:pointer;white-space:nowrap">{{ hb.label }}</div>
-          </sc-for>
-          <span style="margin-left:auto;font-size:10.5px;color:#8A93A6">{{ cmpHint }}</span>
-        </div>
-      </sc-if>
-
-      <!-- the walk (span / single-month view) — every line expands IN PLACE -->
+      <!-- the walk (span / selected-months view) — every line expands IN PLACE -->
       <sc-if value="{{ walkOn }}" hint-placeholder-val="{{ true }}">
         <div style="margin-top:14px">
           <sc-for list="{{ wkRows }}" as="wk" hint-placeholder-count="16">
             <div>
-              <div onClick="{{ wk.onClick }}" style-hover="background:#F6F2E7" style="display:grid;grid-template-columns:252px 1fr 110px 150px;align-items:stretch;background:{{ wk.cellBg }};border-radius:8px;cursor:{{ wk.cur }};height:{{ wk.rh }}px">
+              <div onClick="{{ wk.onClick }}" style-hover="background:#F6F2E7" style="display:grid;grid-template-columns:252px 1fr 110px 150px;align-items:stretch;background:{{ wk.cellBg }};border-radius:8px;cursor:{{ wk.cur }};height:{{ wk.rh }}px;margin-top:{{ wk.mt }}px">
                 <div style="display:flex;flex-direction:column;justify-content:center;padding-left:{{ wk.lpl }}px;overflow:hidden">
-                  <span style="font-size:{{ wk.lfs }}px;font-weight:{{ wk.lfw }};letter-spacing:{{ wk.lsp }};color:{{ wk.lcol }};white-space:nowrap;overflow:hidden;text-overflow:ellipsis">{{ wk.label }} <span style="font-size:9.5px;color:#C9A45C">{{ wk.chev }}</span></span>
+                  <span style="display:flex;align-items:center;gap:7px;min-width:0">
+                    <span style="font-size:{{ wk.lfs }}px;font-weight:{{ wk.lfw }};letter-spacing:{{ wk.lsp }};color:{{ wk.lcol }};white-space:nowrap;overflow:hidden;text-overflow:ellipsis">{{ wk.label }}</span>
+                    <span style="display:inline-flex;align-items:center;justify-content:center;width:16px;height:16px;border-radius:99px;border:1.5px solid {{ wk.chevBd }};background:{{ wk.chevBg }};color:#96742F;font-size:8.5px;font-weight:800;flex:none">{{ wk.chev }}</span>
+                  </span>
                   <sc-if value="{{ wk.subOn }}" hint-placeholder-val="{{ false }}"><span style="font-size:9px;color:#9AA3B5;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">{{ wk.sub }}</span></sc-if>
                 </div>
                 <div style="position:relative;margin:0 4px">
@@ -207,10 +249,9 @@ input:focus{outline:2px solid #C9A45C;outline-offset:1px}
                       <svg viewBox="0 0 64 16" style="width:64px;height:16px;display:block;overflow:visible">
                         <polyline points="{{ wk.spkPath }}" fill="none" stroke="{{ wk.spkCol }}" stroke-width="1.4" stroke-linejoin="round" stroke-linecap="round"></polyline>
                         <sc-for list="{{ wk.spkPts }}" as="sk" hint-placeholder-count="5">
-                          <circle cx="{{ sk.cx }}" cy="{{ sk.cy }}" r="1.4" fill="{{ sk.fill }}"></circle>
+                          <circle cx="{{ sk.cx }}" cy="{{ sk.cy }}" r="{{ sk.r }}" fill="{{ sk.fill }}"></circle>
                           <circle onClick="{{ sk.onClick }}" cx="{{ sk.cx }}" cy="{{ sk.cy }}" r="6" fill="transparent" style="cursor:pointer"></circle>
                         </sc-for>
-                        <sc-if value="{{ wk.spkDotOn }}" hint-placeholder-val="{{ false }}"><circle cx="{{ wk.spkDotX }}" cy="{{ wk.spkDotY }}" r="2.6" fill="#C9A45C"></circle></sc-if>
                       </svg>
                     </div>
                     <div style="margin-top:1px;font-size:8.5px;font-weight:700;color:{{ wk.deltaCol }};font-variant-numeric:tabular-nums;white-space:nowrap">{{ wk.delta }}</div>
@@ -235,7 +276,7 @@ input:focus{outline:2px solid #C9A45C;outline-offset:1px}
                   <div class="scr" style="margin-top:8px;max-height:340px;overflow-y:auto;padding-right:4px">
                     <sc-for list="{{ wk.eRows }}" as="er" hint-placeholder-count="8">
                       <div onClick="{{ er.onClick }}" style-hover="background:#F3F0E6" style="display:flex;align-items:center;gap:8px;padding:6px 8px;border-top:1px solid #F0EEE7;cursor:{{ er.cur }};background:{{ er.bg }};border-radius:6px;margin-left:{{ er.ind }}px">
-                        <span style="width:12px;flex:none;font-size:9.5px;color:#C9A45C;text-align:center">{{ er.chev }}</span>
+                        <span style="display:inline-flex;align-items:center;justify-content:center;width:15px;height:15px;border-radius:99px;border:1.5px solid {{ er.chevBd }};background:{{ er.chevBg }};color:#96742F;font-size:8px;font-weight:800;flex:none">{{ er.chev }}</span>
                         <span style="flex:1;min-width:0;display:flex;flex-direction:column">
                           <span style="font-size:12px;font-weight:{{ er.nameFw }};color:{{ er.nameCol }};white-space:nowrap;overflow:hidden;text-overflow:ellipsis">{{ er.name }}</span>
                           <sc-if value="{{ er.sub2On }}" hint-placeholder-val="{{ false }}"><span style="font-size:9.5px;color:#9AA3B5;font-variant-numeric:tabular-nums;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">{{ er.sub2 }}</span></sc-if>
@@ -268,10 +309,10 @@ input:focus{outline:2px solid #C9A45C;outline-offset:1px}
         </div>
       </sc-if>
 
-      <!-- the walk (compare mode) — FROM vs TO (or BUDGET slot), same inline drills -->
+      <!-- the walk (compare mode) — FROM vs TO (months or BUDGET slot), same inline drills -->
       <sc-if value="{{ cmpOn }}" hint-placeholder-val="{{ false }}">
         <div style="margin-top:14px">
-          <div style="display:grid;grid-template-columns:252px 1fr 118px 118px 108px;padding-bottom:4px;border-bottom:1px solid #EDEBE2;font-size:9px;letter-spacing:0.08em;font-weight:800;color:#8A93A6">
+          <div style="display:grid;grid-template-columns:252px 1fr 128px 128px 108px;padding-bottom:4px;border-bottom:1px solid #EDEBE2;font-size:9px;letter-spacing:0.08em;font-weight:800;color:#8A93A6">
             <span></span><span></span>
             <span style="text-align:right;color:#5E6B82">{{ cmpALab }}</span>
             <span style="text-align:right;color:#96742F">{{ cmpBLab }}</span>
@@ -279,8 +320,11 @@ input:focus{outline:2px solid #C9A45C;outline-offset:1px}
           </div>
           <sc-for list="{{ cmpRows }}" as="cp" hint-placeholder-count="16">
             <div>
-              <div onClick="{{ cp.onClick }}" style-hover="background:#F6F2E7" style="display:grid;grid-template-columns:252px 1fr 118px 118px 108px;align-items:center;height:{{ cp.rh }}px;background:{{ cp.cellBg }};border-radius:6px;cursor:{{ cp.cur }}">
-                <span style="font-size:{{ cp.lfs }}px;font-weight:{{ cp.lfw }};letter-spacing:{{ cp.lsp }};color:{{ cp.lcol }};padding-left:{{ cp.lpl }}px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">{{ cp.label }} <span style="font-size:9.5px;color:#C9A45C">{{ cp.chev }}</span></span>
+              <div onClick="{{ cp.onClick }}" style-hover="background:#F6F2E7" style="display:grid;grid-template-columns:252px 1fr 128px 128px 108px;align-items:center;height:{{ cp.rh }}px;background:{{ cp.cellBg }};border-radius:6px;cursor:{{ cp.cur }};margin-top:{{ cp.mt }}px">
+                <span style="display:flex;align-items:center;gap:7px;min-width:0;padding-left:{{ cp.lpl }}px">
+                  <span style="font-size:{{ cp.lfs }}px;font-weight:{{ cp.lfw }};letter-spacing:{{ cp.lsp }};color:{{ cp.lcol }};white-space:nowrap;overflow:hidden;text-overflow:ellipsis">{{ cp.label }}</span>
+                  <span style="display:inline-flex;align-items:center;justify-content:center;width:16px;height:16px;border-radius:99px;border:1.5px solid {{ cp.chevBd }};background:{{ cp.chevBg }};color:#96742F;font-size:8.5px;font-weight:800;flex:none">{{ cp.chev }}</span>
+                </span>
                 <span style="display:flex;flex-direction:column;gap:2px;padding:0 10px">
                   <span style="height:7px;border-radius:3px;background:#EFF2F7;overflow:hidden"><span style="display:block;height:7px;border-radius:3px;background:#8FA8CE;width:{{ cp.aW }}"></span></span>
                   <span style="height:7px;border-radius:3px;background:#F6F1E4;overflow:hidden"><span style="display:block;height:7px;border-radius:3px;background:#C9A45C;width:{{ cp.bW }}"></span></span>
@@ -301,7 +345,7 @@ input:focus{outline:2px solid #C9A45C;outline-offset:1px}
                   <div class="scr" style="margin-top:8px;max-height:340px;overflow-y:auto;padding-right:4px">
                     <sc-for list="{{ cp.eRows }}" as="er" hint-placeholder-count="8">
                       <div onClick="{{ er.onClick }}" style-hover="background:#F3F0E6" style="display:flex;align-items:center;gap:8px;padding:6px 8px;border-top:1px solid #F0EEE7;cursor:{{ er.cur }};background:{{ er.bg }};border-radius:6px;margin-left:{{ er.ind }}px">
-                        <span style="width:12px;flex:none;font-size:9.5px;color:#C9A45C;text-align:center">{{ er.chev }}</span>
+                        <span style="display:inline-flex;align-items:center;justify-content:center;width:15px;height:15px;border-radius:99px;border:1.5px solid {{ er.chevBd }};background:{{ er.chevBg }};color:#96742F;font-size:8px;font-weight:800;flex:none">{{ er.chev }}</span>
                         <span style="flex:1;min-width:0;display:flex;flex-direction:column">
                           <span style="font-size:12px;font-weight:{{ er.nameFw }};color:{{ er.nameCol }};white-space:nowrap;overflow:hidden;text-overflow:ellipsis">{{ er.name }}</span>
                           <sc-if value="{{ er.sub2On }}" hint-placeholder-val="{{ false }}"><span style="font-size:9.5px;color:#9AA3B5;font-variant-numeric:tabular-nums;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">{{ er.sub2 }}</span></sc-if>
@@ -862,7 +906,7 @@ class Component extends DCLogic {
     wSel: [], wq: '', wExp: null, wAll: false,
     ckOpen: null,
     stOpen: null, stQ: '', stGrp: null, stLed: null, stAll: false, crM: null, crq: '', crExp: null, crAll: false,
-    hm: null, hcmp: false, hca: null, hcb: null, heroQ: '', agSel: null, crBy: 'tenant',
+    hmSel: [], hcmp: false, haSel: [], hbSel: [], hbBud: false, hDd: null, heroQ: '', agSel: null, crBy: 'tenant',
   };
 
   loadData() {
@@ -907,7 +951,7 @@ class Component extends DCLogic {
 
   componentDidMount() {
     this.loadData();
-    this._doc = () => { const p = {}; if (this.state.ddOpen) p.ddOpen = null; if (this.state.heroQ) p.heroQ = ''; if (Object.keys(p).length) this.setState(p); };
+    this._doc = () => { const p = {}; if (this.state.ddOpen) p.ddOpen = null; if (this.state.heroQ) p.heroQ = ''; if (this.state.hDd) p.hDd = null; if (Object.keys(p).length) this.setState(p); };
     document.addEventListener('click', this._doc);
   }
   componentWillUnmount() { document.removeEventListener('click', this._doc); }
@@ -923,8 +967,11 @@ class Component extends DCLogic {
       filters: [], hasActive: false, onReset: () => {}, asOfLine: '',
       kpis: [],
       keptCol: '#2A6F4E', keptBig: '', keptCap: '', keptLab: '', collBig: '', collCap: '', rateCol: '#96742F', rateBig: '', rateCap: '',
-      heroSub: '', hvChips: [], onCmpToggle: () => {}, cmpBd: '#D8D4C8', cmpBg: '#FFFFFF', cmpOn: false, walkOn: false,
-      haChips: [], hbChips: [], cmpHint: '', cmpALab: '', cmpBLab: '', cmpRows: [], cmpFoot: '',
+      heroSub: '', onCmpToggle: () => {}, cmpBd: '#D8D4C8', cmpBg: '#FFFFFF', cmpOn: false, walkOn: false,
+      hvVal: '', hvHint: '', onHvToggle: () => {}, hvOpen: false, hvOpts: [], hvBd: '#D8D4C8', hvBg: '#FFFFFF',
+      haVal: '', onHaToggle: () => {}, haOpen: false, haOpts: [], haBd: '#D8D4C8', haBg: '#FFFFFF',
+      hbVal: '', hbHint: '', onHbToggle: () => {}, hbOpen: false, hbOpts: [], hbBd: '#D8D4C8', hbBg: '#FFFFFF',
+      cmpALab: '', cmpBLab: '', cmpRows: [], cmpFoot: '',
       wkRows: [],
       spotQ: '', onSpotQ: () => {}, spotOpen: false, spotOpts: [], spotNone: false, spotChipOn: false, spotChip: '', onSpotClear: () => {}, spotBd: '#D8D4C8',
       stIdent: '', stNetLine: '', driftOn: false, driftLine: '', wfFoot: '',
@@ -985,16 +1032,21 @@ class Component extends DCLogic {
       .filter(x => x.cash && scopedSet.has(x.prop) && (i => i >= firstI && i <= lastI)(MO.indexOf(x.m)))
       .map(x => x.amt));
     const opex = tot('opex') + ohW('opex');
-    const escW = tot('escrow');
+    const escEngW = tot('escrow');                                    // lender-engine T&I — cross-check memo (owner 17 Jul: file wins)
+    const TIW = RC.escrow.tiRows || {};
+    const tiDoorKeys = Object.keys(TIW).filter(k => DOORS[k]);        // file escrow rows named by property
+    const tiOtherKeys = Object.keys(TIW).filter(k => !DOORS[k]);      // company-level file rows (e.g. General Company Expenses)
+    const fileEscM = MO.map((_, i) => scoped.reduce((s, d) => s + ((TIW[d] || [])[i] || 0), 0) + (unfiltered ? tiOtherKeys.reduce((s, k) => s + ((TIW[k] || [])[i] || 0), 0) : 0));
+    const fileEscW = sum(winIdx.map(i => fileEscM[i]));
     // direct statutory cash is portfolio-level in the file (mixed grain); door-filtered scopes drop it with a note
     const insDirW = unfiltered ? sum(winIdx.map(i => RC.statutoryCash.insurance[i])) : 0;
     const ptDirW = unfiltered ? sum(winIdx.map(i => RC.statutoryCash.propertyTax[i])) : 0;
     const hoaProxy = MO.map((_, i) => scoped.reduce((s, d) => s + (DOORS[d].statByAcct['HOA Fee'] ? DOORS[d].statByAcct['HOA Fee'][i] : 0), 0));
     const hoaProxyW = sum(winIdx.map(i => hoaProxy[i]));
-    const statCash = escW + insDirW + ptDirW + hoaProxyW;
+    const statCash = fileEscW + insDirW + ptDirW + hoaProxyW;         // escrow from Cashflow.xlsx (owner 2026-07-17)
     const statAccr = tot('stat') + ohW('stat');
-    const intW = tot('int'), prinW = tot('prinSched'), capexW = tot('capex') + ohW('capex');
-    const kept = coll + claims - refOutW - opex - statCash - intW - prinW - capexW;   // net cash: operating + investing + financing
+    const intW = tot('int'), prinW = tot('filePrin'), prinEngW = tot('prinSched'), capexW = tot('capex') + ohW('capex');
+    const kept = coll + claims - refOutW - opex - statCash - intW - prinW - capexW;   // net cash — escrow & principal per Cashflow.xlsx
     const rate = chg > 0 ? coll / chg * 100 : 0;
 
     // ══ tenant ledger rows (scope-aware) ══
@@ -1104,63 +1156,84 @@ class Component extends DCLogic {
       kTile('Collection rate', spanRate !== null ? spanRate.toFixed(2) + '%' : '—', 'actual collection ÷ due for the span', spanRate !== null && spanRate >= 85 ? GREEND : (spanRate !== null && spanRate >= 75 ? NAVY : REDD), 'Owner formula: (collections + opening advances − closing advances) ÷ (invoices + opening due)'),
       kTile('Owed by tenants', fN(rsM[lastI].cd), 'at ' + mmyy(MO[lastI]) + ' · gross dues', REDD, 'Sum of positive tenant balances at span end (before that month\u2019s write-offs)'),
       kTile('Advances held', fN(rsM[lastI].ca), 'prepaid for future months', GREEND, 'Sum of negative tenant balances at span end'),
-      kTile('Cash kept', fN(kept), 'net of all three activities', kept >= 0 ? GREEND : REDD, 'Operating (collections + claims − refunds − operating expenses incl. CapEx − statutory) + Investing (purchases & sale proceeds — pending) + Financing (− interest − scheduled principal)', kept >= 0 ? '#F2F7F0' : '#FBF0ED', kept >= 0 ? '#D6E4D2' : '#EAD1C8'),
+      kTile('Cash kept', fN(kept), 'net of all three activities', kept >= 0 ? GREEND : REDD, 'Operating (collections + claims − refunds − operating expenses incl. CapEx − statutory w/ Cashflow.xlsx escrow) + Investing (purchases & sale proceeds — pending) + Financing (− interest − principal repaid per Cashflow.xlsx)', kept >= 0 ? '#F2F7F0' : '#FBF0ED', kept >= 0 ? '#D6E4D2' : '#EAD1C8'),
     ];
 
     // ══ hero: the statement walk — operating / investing / financing (P&L waterfall idiom) ══
-    // v2 (owner 2026-07-17): interest → financing · capex → inside operating expenses · claims after collected ·
-    // inline hierarchical drills (row → groups → ledgers → top-5 properties + search) · line sparklines · budget slot
-    const Z5 = MO.map(() => 0);
+    // v3 (owner 2026-07-17 night): months are MULTI-SELECT dropdowns (view + compare FROM/TO) · TO carries the BUDGET
+    // slot (exclusive of months; budget scales × FROM month-count when standards land) · principal & escrow now read
+    // from Cashflow.xlsx (engine kept as cross-check memo) · activity heads promoted, expand affordance visible ·
+    // subtotal bars draw their own net (running total stays on the connectors)
     const refOutMs = MO.map((_, i) => sum((CLX.sdRefunds || []).filter(x => x.cash && scopedSet.has(x.prop) && MO.indexOf(x.m) === i).map(x => Math.abs(x.amt))));
-    const chgMs = totM('chg'), collMs = totM('coll'), intMs = totM('int'), prinMs = totM('prinSched');
+    const chgMs = totM('chg'), collMs = totM('coll'), intMs = totM('int'), prinMs = totM('filePrin'), prinEngMs = totM('prinSched');
     const claimsMs = MO.map((_, i) => scoped.reduce((s, d) => s + DOORS[d].claims[i], 0) + (unfiltered ? OH.claims[i] : 0));
     const opexOnlyMs = MO.map((_, i) => scoped.reduce((s, d) => s + DOORS[d].opex[i], 0) + (unfiltered ? OH.opex[i] : 0));
     const capexMs = MO.map((_, i) => scoped.reduce((s, d) => s + DOORS[d].capex[i], 0) + (unfiltered ? OH.capex[i] : 0));
-    const opexAllMs = MO.map((_, i) => opexOnlyMs[i] + capexMs[i]);   // capex is an operating ledger now (owner 5b)
-    const statMs = MO.map((_, i) => scoped.reduce((s, d) => s + DOORS[d].escrow[i], 0) + (unfiltered ? RC.statutoryCash.insurance[i] + RC.statutoryCash.propertyTax[i] : 0) + hoaProxy[i]);
+    const opexAllMs = MO.map((_, i) => opexOnlyMs[i] + capexMs[i]);   // capex is an operating ledger (owner 17 Jul)
+    const statMs = MO.map((_, i) => fileEscM[i] + (unfiltered ? RC.statutoryCash.insurance[i] + RC.statutoryCash.propertyTax[i] : 0) + hoaProxy[i]);
     const unpaidMs = MO.map((_, i) => chgMs[i] - collMs[i]);
     const netOpMs = MO.map((_, i) => collMs[i] + claimsMs[i] - refOutMs[i] - opexAllMs[i] - statMs[i]);
     const netInvMs = MO.map(() => 0);   // purchases & sale proceeds — pending data slot
     const netFinMs = MO.map((_, i) => -intMs[i] - prinMs[i]);
-    const keptMs = MO.map((_, i) => netOpMs[i] + netInvMs[i] + netFinMs[i]);   // identical bottom line to v1
+    const keptMs = MO.map((_, i) => netOpMs[i] + netInvMs[i] + netFinMs[i]);
     const netCash = kept;
 
-    // view state
-    const hmi = (S.hm !== null && S.hm !== undefined && winIdx.includes(S.hm)) ? S.hm : null;
+    // ── view state: hmSel = selected months (empty = full window) · compare aSet/bSet or BUDGET ──
+    const cleanSet = v => [...new Set((Array.isArray(v) ? v : []).filter(i => winIdx.includes(i)))].sort((x, y) => x - y);
+    const hmSel = cleanSet(S.hmSel);
+    const idxSel = hmSel.length ? hmSel : winIdx;
+    const oneSel = hmSel.length === 1 ? hmSel[0] : null;
     const cmpOn = !!S.hcmp && winIdx.length >= 2;
-    const cA = (S.hca !== null && S.hca !== undefined && winIdx.includes(S.hca)) ? S.hca : (winIdx.length >= 2 ? winIdx[winIdx.length - 2] : firstI);
-    const budB = S.hcb === 'bud';
-    const cB = (!budB && S.hcb !== null && S.hcb !== undefined && winIdx.includes(S.hcb)) ? S.hcb : lastI;
-    const idxSel = hmi === null ? winIdx : [hmi];
-    const lv = ms => sum(idxSel.map(i => ms[i]));
-    const viewLab = cmpOn ? (mmyy(MO[cA]) + ' → ' + (budB ? 'Budget' : mmyy(MO[cB]))) : (hmi === null ? spanLab : mmyy(MO[hmi]));
+    const budB = !!S.hbBud;
+    const aSetRaw = cleanSet(S.haSel);
+    const aSet = aSetRaw.length ? aSetRaw : [winIdx.length >= 2 ? winIdx[winIdx.length - 2] : firstI];
+    const bSetRaw = cleanSet(S.hbSel);
+    const bSet = budB ? [] : (bSetRaw.length ? bSetRaw : [lastI]);
+    const sS = (ms, set) => sum(set.map(i => ms[i]));
+    const lv = ms => sS(ms, idxSel);
+    const labSet = set => set.length === 0 ? '—' : set.length <= 2 ? set.map(i => mmyy(MO[i])).join(' + ') : set.length + ' months (' + mmyy(MO[set[0]]) + '…' + mmyy(MO[set[set.length - 1]]) + ')';
+    const viewLab = cmpOn ? (labSet(aSet) + ' → ' + (budB ? 'Budget' : labSet(bSet))) : (hmSel.length ? labSet(hmSel) : spanLab);
 
     // header stats follow the view
-    const keptView = cmpOn ? (budB ? null : keptMs[cB] - keptMs[cA]) : lv(keptMs);
+    const keptView = cmpOn ? (budB ? null : sS(keptMs, bSet) - sS(keptMs, aSet)) : lv(keptMs);
     const keptBig = keptView === null ? '—' : fN(keptView), keptCol = (keptView === null || keptView >= 0) ? GREEND : REDD;
     const keptLab = cmpOn ? (budB ? 'CASH KEPT — VS BUDGET' : 'CASH KEPT — CHANGE') : 'CASH KEPT — THE BOTTOM LINE';
-    const keptCap = cmpOn ? (budB ? 'budget standards pending — slot wired' : mmyy(MO[cA]) + ' ' + fK(keptMs[cA]) + ' → ' + mmyy(MO[cB]) + ' ' + fK(keptMs[cB]))
+    const keptCap = cmpOn ? (budB ? 'budget standards pending · will scale × ' + aSet.length + ' month' + (aSet.length === 1 ? '' : 's') : labSet(aSet) + ' ' + fK(sS(keptMs, aSet)) + ' → ' + labSet(bSet) + ' ' + fK(sS(keptMs, bSet)))
       : viewLab + ' · operating ' + fK(lv(netOpMs)) + ' + financing ' + fK(lv(netFinMs));
-    const collV = cmpOn ? collMs[cB] : lv(collMs), chgV = cmpOn ? chgMs[cB] : lv(chgMs);
-    const collBig = cmpOn && budB ? fN(collMs[cA]) : fN(collV), collCap = cmpOn && budB ? 'of ' + fN(chgMs[cA]) + ' charged · ' + mmyy(MO[cA]) : 'of ' + fN(chgV) + ' charged · ' + (cmpOn ? mmyy(MO[cB]) : viewLab);
-    const rateSrcC = cmpOn && budB ? collMs[cA] : collV, rateSrcG = cmpOn && budB ? chgMs[cA] : chgV;
-    const rateV = rateSrcG > 0 ? rateSrcC / rateSrcG * 100 : 0;
-    const rateBig = rateSrcG > 0 ? rateV.toFixed(1) + '%' : '—', rateCol = rateV >= 100 ? GREEND : GOLDD;
+    const collV = cmpOn ? (budB ? sS(collMs, aSet) : sS(collMs, bSet)) : lv(collMs);
+    const chgV = cmpOn ? (budB ? sS(chgMs, aSet) : sS(chgMs, bSet)) : lv(chgMs);
+    const collBig = fN(collV), collCap = 'of ' + fN(chgV) + ' charged · ' + (cmpOn ? (budB ? labSet(aSet) : labSet(bSet)) : viewLab);
+    const rateV = chgV > 0 ? collV / chgV * 100 : 0;
+    const rateBig = chgV > 0 ? rateV.toFixed(1) + '%' : '—', rateCol = rateV >= 100 ? GREEND : GOLDD;
     const rateCap = rateV > 100 ? 'over 100% — balances drawn down' : 'of charged rent';
-    const heroSub = 'rent charged → cash kept · ' + viewLab + ' · click any line — it opens in place: groups → ledgers → top-5 properties, searchable · click a property to spotlight it page-wide';
+    const heroSub = 'rent charged → cash kept · ' + viewLab + ' · pick any set of months · click any line — it opens in place: groups → ledgers → top-5 properties, searchable';
 
-    // month scrubber + compare chips (TO row carries the BUDGET slot)
-    const hvChips = [{ label: 'FULL SPAN', sel: hmi === null && !cmpOn, onClick: () => this.setState({ hm: null, hcmp: false }) },
-      ...winIdx.map(i => ({ label: mmyy(MO[i]).toUpperCase(), sel: hmi === i && !cmpOn, onClick: () => this.setState({ hm: i, hcmp: false }) }))]
-      .map(c => ({ label: c.label, onClick: c.onClick, bd: c.sel ? GOLD : '#D8D4C8', bg: c.sel ? '#FBF6EA' : '#FFFFFF', fw: c.sel ? 800 : 600, col: c.sel ? GOLDD : INK }));
-    const onCmpToggle = () => this.setState({ hcmp: !S.hcmp });
-    const cmpBd = cmpOn ? '#3D64A8' : '#D8D4C8', cmpBg = cmpOn ? '#EFF3FA' : '#FFFFFF';
-    const haChips = winIdx.map(i => ({ label: mmyy(MO[i]), onClick: () => this.setState({ hca: i }), bd: i === cA ? '#3D64A8' : '#D8D4C8', bg: i === cA ? '#EFF3FA' : '#FFFFFF' }));
-    const hbChips = [
-      ...winIdx.map(i => ({ label: mmyy(MO[i]), onClick: () => this.setState({ hcb: i }), bd: (!budB && i === cB) ? GOLD : '#D8D4C8', bg: (!budB && i === cB) ? '#FBF6EA' : '#FFFFFF', fw: 700, col: '#2A3550' })),
-      { label: 'BUDGET · PENDING', onClick: () => this.setState({ hcb: 'bud' }), bd: budB ? GOLD : '#D8D4C8', bg: budB ? '#FBF6EA' : '#FFFFFF', fw: 800, col: GOLDD },
+    // ── the three dropdowns (view months · compare FROM · compare TO w/ budget slot) ──
+    const hDd = S.hDd || null;
+    const ddTog = id => (e) => { if (e && e.stopPropagation) e.stopPropagation(); this.setState({ hDd: hDd === id ? null : id }); };
+    const optRow = (label, on, onClick, extra) => Object.assign({ label, check: on ? '✓' : '', fw: on ? 700 : 500, bg: on ? '#FBF6EA' : 'transparent', col: '#2A3550', onClick }, extra || {});
+    const togIn = (key, i, extraPatch) => (e) => { if (e && e.stopPropagation) e.stopPropagation(); const cur = new Set(cleanSet(S[key])); cur.has(i) ? cur.delete(i) : cur.add(i); this.setState({ [key]: [...cur], ...(extraPatch || {}) }); };
+    const hvOpts = [
+      optRow('All months — full span', hmSel.length === 0, (e) => { if (e && e.stopPropagation) e.stopPropagation(); this.setState({ hmSel: [], hcmp: false }); }, { col: GOLDD, fw: 700 }),
+      ...winIdx.map(i => optRow(mmyy(MO[i]), hmSel.includes(i), togIn('hmSel', i, { hcmp: false }))),
     ];
-    const cmpHint = budB ? 'budget standards pending — the slot is wired for your numbers' : 'every line shows FROM → TO and the change in cash terms';
+    const hvVal = hmSel.length ? labSet(hmSel) : 'Full span · ' + spanLab;
+    const hvHint = 'pick one month for MoM deltas, or two+ to view a combined period';
+    const onHvToggle = ddTog('view'), hvOpen = hDd === 'view';
+    const hvBd = hmSel.length ? GOLD : '#D8D4C8', hvBg = hmSel.length ? '#FBF6EA' : '#FFFFFF';
+    const onCmpToggle = () => this.setState({ hcmp: !S.hcmp, hDd: null });
+    const cmpBd = cmpOn ? '#3D64A8' : '#D8D4C8', cmpBg = cmpOn ? '#EFF3FA' : '#FFFFFF';
+    const haOpts = winIdx.map(i => optRow(mmyy(MO[i]), aSet.includes(i) && aSetRaw.length > 0 || (aSetRaw.length === 0 && aSet.includes(i)), togIn('haSel', i)));
+    const haVal = labSet(aSet), onHaToggle = ddTog('from'), haOpen = hDd === 'from';
+    const haBd = '#8FA8CE', haBg = '#EFF3FA';
+    const hbOpts = [
+      ...winIdx.map(i => optRow(mmyy(MO[i]) + (budB ? ' — picking exits budget' : ''), !budB && bSet.includes(i), (e) => { if (e && e.stopPropagation) e.stopPropagation(); const cur = new Set(budB ? [] : cleanSet(S.hbSel)); cur.has(i) ? cur.delete(i) : cur.add(i); this.setState({ hbSel: [...cur], hbBud: false }); }, budB ? { col: FAINT, fw: 500 } : {})),
+      optRow('BUDGET · PENDING — locks out month picks', budB, (e) => { if (e && e.stopPropagation) e.stopPropagation(); this.setState({ hbBud: true, hbSel: [] }); }, { col: GOLDD, fw: 800 }),
+    ];
+    const hbVal = budB ? 'Budget · pending' : labSet(bSet);
+    const hbHint = budB ? 'budget is exclusive — picking a month switches back to month compare. Standards will scale × the FROM month-count.' : 'pick months — or the BUDGET slot (exclusive of months)';
+    const onHbToggle = ddTog('to'), hbOpen = hDd === 'to';
+    const hbBd = budB ? GOLD : '#C9A45C', hbBg = '#FBF6EA';
 
     // property spotlight
     const spotQ = S.heroQ || '';
@@ -1179,9 +1252,10 @@ class Component extends DCLogic {
     const evSelWin = (CF.events || []).filter(e => idxSel.includes(MO.indexOf(e.m)));
     const evDraw = sum(evSelWin.filter(e => e.type === 'draw').map(e => Math.abs(e.amt || 0)));
     const evOutW = sum(evSelWin.filter(e => e.type !== 'draw').map(e => Math.abs(e.paid || e.amt || 0)));
-    const laggardsAtSel = (() => { let n = 0; for (const r of allRows) if (r.t.close[hmi === null ? lastI : hmi] > 0.005) n++; return n; })();
+    const lagAnchor = oneSel !== null ? oneSel : idxSel[idxSel.length - 1];
+    const laggardsAtSel = (() => { let n = 0; for (const r of allRows) if (r.t.close[lagAnchor] > 0.005) n++; return n; })();
 
-    // ── the statement rows (owner order v2) ──
+    // ── the statement rows (owner order) ──
     const refOutOn = sum(winIdx.map(i => refOutMs[i])) > 0.005;
     const negMs = ms => MO.map((_, i) => -ms[i]);
     const rowsDef = [];
@@ -1192,14 +1266,14 @@ class Component extends DCLogic {
     rowsDef.push({ type: 'flow', id: 'claims', label: 'Insurance claims', ms: claimsMs, color: '#4A5C7E' });
     if (refOutOn) rowsDef.push({ type: 'flow', id: 'refout', label: 'Refunds paid out', ms: negMs(refOutMs), color: '#B04A33', sub: 'SD returns · outside AR' });
     rowsDef.push({ type: 'flow', id: 'opex', label: 'Operating expenses', ms: negMs(opexAllMs), color: '#B04A33', sub: 'cash-basis GL · incl. CapEx (your call, 17 Jul)' });
-    rowsDef.push({ type: 'flow', id: 'stat', label: 'Statutory & escrow', ms: negMs(statMs), color: '#8A5A3C', sub: 'escrow + direct PT/Ins + HOA proxy' });
+    rowsDef.push({ type: 'flow', id: 'stat', label: 'Statutory & escrow', ms: negMs(statMs), color: '#8A5A3C', sub: 'Cashflow.xlsx T&I + direct PT/Ins + HOA proxy' });
     rowsDef.push({ type: 'total', id: 'netop', label: 'Net operating cash', color: GREEN });
     rowsDef.push({ type: 'head', label: 'INVESTING ACTIVITIES — PURCHASES & SALES' });
     rowsDef.push({ type: 'memo', id: 'invpend', label: 'Purchases · sale proceeds', sub: 'pending data — slot wired' });
     rowsDef.push({ type: 'total', id: 'netinv', label: 'Net investing cash', color: '#3D64A8' });
     rowsDef.push({ type: 'head', label: 'FINANCING ACTIVITIES — THE DEBT ENGINE' });
-    rowsDef.push({ type: 'flow', id: 'int', label: 'Interest', ms: negMs(intMs), color: '#8A5A3C', sub: 'moved here per your call, 17 Jul' });
-    rowsDef.push({ type: 'flow', id: 'prin', label: 'Scheduled principal', ms: negMs(prinMs), color: '#8A5A3C', sub: 'lender-verified engine · builds equity' });
+    rowsDef.push({ type: 'flow', id: 'int', label: 'Interest', ms: negMs(intMs), color: '#8A5A3C', sub: 'GL · ties Cashflow.xlsx within 6¢' });
+    rowsDef.push({ type: 'flow', id: 'prin', label: 'Principal repaid', ms: negMs(prinMs), color: '#8A5A3C', sub: 'Cashflow.xlsx actuals · engine memo ' + fK(sum(winIdx.map(i => prinEngMs[i]))) });
     rowsDef.push({ type: 'memo', id: 'events', label: 'Capital events — memo', sub: evWin.length + ' draws · payoffs · releases — settle from sale proceeds / new notes' });
     rowsDef.push({ type: 'total', id: 'netfin', label: 'Net financing cash', color: '#8A5A3C' });
     rowsDef.push({ type: 'total', id: 'kept', label: 'NET CASH KEPT', color: netCash >= 0 ? GREEN : RED });
@@ -1209,7 +1283,7 @@ class Component extends DCLogic {
     const stClick = id => () => this.setState({ stOpen: S.stOpen === id ? null : id, stQ: '', stGrp: null, stLed: null, stAll: false });
     const totBg = { coll: '#FBF4E4', netop: '#EAF3EC', netinv: '#EFF2F7', netfin: '#F3EFE9', kept: netCash >= 0 ? '#E4F0E7' : '#FBF0ED' };
     const totVal = { coll: () => lv(collMs), netop: () => lv(netOpMs), netinv: () => lv(netInvMs), netfin: () => lv(netFinMs), kept: () => lv(keptMs) };
-    const totValAt = { coll: mi => collMs[mi], netop: mi => netOpMs[mi], netinv: mi => netInvMs[mi], netfin: mi => netFinMs[mi], kept: mi => keptMs[mi] };
+    const totValS = { coll: set => sS(collMs, set), netop: set => sS(netOpMs, set), netinv: set => sS(netInvMs, set), netfin: set => sS(netFinMs, set), kept: set => sS(keptMs, set) };
 
     let run = 0;
     const steps = rowsDef.map(rd => {
@@ -1217,51 +1291,43 @@ class Component extends DCLogic {
       if (rd.type === 'total') return { ...rd, v: totVal[rd.id] ? totVal[rd.id]() : run, start: run, after: run };
       return { ...rd, v: 0, start: run, after: run };
     });
-    const wkMax = Math.max(...steps.flatMap(s => [Math.abs(s.start), Math.abs(s.after)]), 1);
+    const wkMax = Math.max(...steps.flatMap(s => [Math.abs(s.start), Math.abs(s.after), Math.abs(s.v)]), 1);
     const xfN = v => 2 + (Math.max(0, v) / wkMax) * 96;
 
-    // ── per-door helpers (idxSel-scoped and per-month) ──
+    // ── per-door helpers (any month-set) ──
     const ZH = MO.map(() => 0);
-    const dSel = (d, key) => sum(idxSel.map(i => DOORS[d][key][i]));
-    const dAt = (d, key, mi) => DOORS[d][key][mi];
-    const dHoaSel = d => sum(idxSel.map(i => (DOORS[d].statByAcct['HOA Fee'] || ZH)[i]));
-    const dHoaAt = (d, mi) => (DOORS[d].statByAcct['HOA Fee'] || ZH)[mi];
-    const dRefSel = d => sum((CLX.sdRefunds || []).filter(x => x.cash && x.prop === d && idxSel.includes(MO.indexOf(x.m))).map(x => Math.abs(x.amt)));
-    const dRefAt = (d, mi) => sum((CLX.sdRefunds || []).filter(x => x.cash && x.prop === d && MO.indexOf(x.m) === mi).map(x => Math.abs(x.amt)));
-    const dNetOpAt = (d, mi) => dAt(d, 'coll', mi) + dAt(d, 'claims', mi) - dRefAt(d, mi) - dAt(d, 'opex', mi) - dAt(d, 'capex', mi) - dAt(d, 'escrow', mi) - dHoaAt(d, mi);
-    const dNetOpSel = d => sum(idxSel.map(i => dNetOpAt(d, i)));
-    const dNetFinAt = (d, mi) => -dAt(d, 'int', mi) - dAt(d, 'prinSched', mi);
-    const dNetFinSel = d => sum(idxSel.map(i => dNetFinAt(d, i)));
-    const dKeptAt = (d, mi) => dNetOpAt(d, mi) + dNetFinAt(d, mi);
-    const dKeptSel = d => sum(idxSel.map(i => dKeptAt(d, i)));
-    const ohSel = key => unfiltered ? sum(idxSel.map(i => OH[key][i])) : 0;
-    const ohAt = (key, mi) => unfiltered ? OH[key][mi] : 0;
-    const insDirSel = unfiltered ? sum(idxSel.map(i => RC.statutoryCash.insurance[i])) : 0;
-    const ptDirSel = unfiltered ? sum(idxSel.map(i => RC.statutoryCash.propertyTax[i])) : 0;
-    const insDirAt = mi => unfiltered ? RC.statutoryCash.insurance[mi] : 0;
-    const ptDirAt = mi => unfiltered ? RC.statutoryCash.propertyTax[mi] : 0;
+    const dS = (d, key, set) => sum(set.map(i => DOORS[d][key][i]));
+    const dHoaS = (d, set) => sum(set.map(i => (DOORS[d].statByAcct['HOA Fee'] || ZH)[i]));
+    const dEscS = (d, set) => sum(set.map(i => ((TIW[d] || ZH)[i] || 0)));
+    const dRefS = (d, set) => sum((CLX.sdRefunds || []).filter(x => x.cash && x.prop === d && set.includes(MO.indexOf(x.m))).map(x => Math.abs(x.amt)));
+    const dNetOpS = (d, set) => dS(d, 'coll', set) + dS(d, 'claims', set) - dRefS(d, set) - dS(d, 'opex', set) - dS(d, 'capex', set) - dEscS(d, set) - dHoaS(d, set);
+    const dNetFinS = (d, set) => -dS(d, 'int', set) - dS(d, 'filePrin', set);
+    const dKeptS = (d, set) => dNetOpS(d, set) + dNetFinS(d, set);
+    const ohS = (key, set) => unfiltered ? sum(set.map(i => OH[key][i])) : 0;
+    const insDirS = set => unfiltered ? sum(set.map(i => RC.statutoryCash.insurance[i])) : 0;
+    const ptDirS = set => unfiltered ? sum(set.map(i => RC.statutoryCash.propertyTax[i])) : 0;
+    const tiOtherS = set => unfiltered ? tiOtherKeys.reduce((s2, k) => s2 + sum(set.map(i => ((TIW[k] || ZH)[i] || 0))), 0) : 0;
 
-    // opex ledger model: accounts grouped by prefix ('Rent Ready - *' → Rent Ready), CapEx as its own ledger
+    // opex ledger model: accounts grouped by prefix, CapEx as its own ledger
     const CAPX = 'Capital expenditure';
     const acctSet = new Set();
     for (const d of scoped) for (const a2 in (DOORS[d].opexByAcct || {})) acctSet.add(a2);
     if (unfiltered) for (const a2 in (OH.opexByAcct || {})) acctSet.add(a2);
     acctSet.add(CAPX);
-    const acctSel = a => a === CAPX ? sum(idxSel.map(i => scoped.reduce((s2, d) => s2 + DOORS[d].capex[i], 0))) + ohSel('capex')
-      : sum(idxSel.map(i => scoped.reduce((s2, d) => s2 + ((DOORS[d].opexByAcct || {})[a] || ZH)[i], 0))) + (unfiltered ? sum(idxSel.map(i => ((OH.opexByAcct || {})[a] || ZH)[i])) : 0);
-    const acctAt = (a, mi) => a === CAPX ? scoped.reduce((s2, d) => s2 + DOORS[d].capex[mi], 0) + ohAt('capex', mi)
-      : scoped.reduce((s2, d) => s2 + ((DOORS[d].opexByAcct || {})[a] || ZH)[mi], 0) + (unfiltered ? ((OH.opexByAcct || {})[a] || ZH)[mi] : 0);
+    const acctS = (a, set) => a === CAPX ? sum(set.map(i => scoped.reduce((s2, d) => s2 + DOORS[d].capex[i], 0))) + ohS('capex', set)
+      : sum(set.map(i => scoped.reduce((s2, d) => s2 + ((DOORS[d].opexByAcct || {})[a] || ZH)[i], 0))) + (unfiltered ? sum(set.map(i => ((OH.opexByAcct || {})[a] || ZH)[i])) : 0);
+    const acctSel = a => acctS(a, idxSel);
     const acctDoorPairs = a => {
       const out = [];
       for (const d of scoped) {
-        const vSel = a === CAPX ? dSel(d, 'capex') : sum(idxSel.map(i => ((DOORS[d].opexByAcct || {})[a] || ZH)[i]));
-        const va = a === CAPX ? dAt(d, 'capex', cA) : ((DOORS[d].opexByAcct || {})[a] || ZH)[cA];
-        const vb = budB ? 0 : (a === CAPX ? dAt(d, 'capex', cB) : ((DOORS[d].opexByAcct || {})[a] || ZH)[cB]);
+        const vSel = a === CAPX ? dS(d, 'capex', idxSel) : sum(idxSel.map(i => ((DOORS[d].opexByAcct || {})[a] || ZH)[i]));
+        const va = a === CAPX ? dS(d, 'capex', aSet) : sum(aSet.map(i => ((DOORS[d].opexByAcct || {})[a] || ZH)[i]));
+        const vb = budB ? 0 : (a === CAPX ? dS(d, 'capex', bSet) : sum(bSet.map(i => ((DOORS[d].opexByAcct || {})[a] || ZH)[i])));
         out.push({ name: d, v: vSel, va, vb, door: true });
       }
-      const ohV = a === CAPX ? ohSel('capex') : (unfiltered ? sum(idxSel.map(i => ((OH.opexByAcct || {})[a] || ZH)[i])) : 0);
-      const ohA = a === CAPX ? ohAt('capex', cA) : (unfiltered ? ((OH.opexByAcct || {})[a] || ZH)[cA] : 0);
-      const ohB = budB ? 0 : (a === CAPX ? ohAt('capex', cB) : (unfiltered ? ((OH.opexByAcct || {})[a] || ZH)[cB] : 0));
+      const ohV = a === CAPX ? ohS('capex', idxSel) : (unfiltered ? sum(idxSel.map(i => ((OH.opexByAcct || {})[a] || ZH)[i])) : 0);
+      const ohA = a === CAPX ? ohS('capex', aSet) : (unfiltered ? sum(aSet.map(i => ((OH.opexByAcct || {})[a] || ZH)[i])) : 0);
+      const ohB = budB ? 0 : (a === CAPX ? ohS('capex', bSet) : (unfiltered ? sum(bSet.map(i => ((OH.opexByAcct || {})[a] || ZH)[i])) : 0));
       if (Math.abs(ohV) > 0.005 || Math.abs(ohA) > 0.005 || Math.abs(ohB) > 0.005) out.push({ name: 'Company overhead — not door-attributable', v: ohV, va: ohA, vb: ohB, door: false });
       return out;
     };
@@ -1279,24 +1345,24 @@ class Component extends DCLogic {
       { lab: 'LOANS', href: './loans.dc.html?door=' + esc(d) },
     ];
     const spotClickE = d => (e) => { if (e && e.stopPropagation) e.stopPropagation(); this.setF({ fp: S.fp.length === 1 && S.fp[0] === d ? [] : [d] }); };
-    const baseE = { ind: 0, chev: '', name: '', nameFw: 600, nameCol: INK, sub2On: false, sub2: '', hasLinks: false, links: [], barW: '0%', barC: NAVY, val: '', vcol: INK, onClick: () => {}, cur: 'default', bg: 'transparent', tip: '' };
+    const baseE = { ind: 0, chev: '', chevBd: 'transparent', chevBg: 'transparent', name: '', nameFw: 600, nameCol: INK, sub2On: false, sub2: '', hasLinks: false, links: [], barW: '0%', barC: NAVY, val: '', vcol: INK, onClick: () => {}, cur: 'default', bg: 'transparent', tip: '' };
+    const chevE = open => ({ chev: open ? '▾' : '▸', chevBd: '#D9C89E', chevBg: '#FBF6EA' });
     const cashD = p => (p.vb || 0) - (p.va || 0);
     const mkPropEntries = (pairs, opts) => {
       opts = opts || {};
-      const sign = opts.sign === undefined ? 1 : opts.sign;   // cash direction of the line (+ inflow / − outflow)
+      const sign = opts.sign === undefined ? 1 : opts.sign;
       let list = pairs.filter(p => Math.abs(p.v) > 0.005 || Math.abs(p.va || 0) > 0.005 || Math.abs(p.vb || 0) > 0.005);
-      if (cmpOn && !budB) list = list.filter(p => true).sort((x, y) => Math.abs(cashD(y)) - Math.abs(cashD(x)));
+      if (cmpOn && !budB) list.sort((x, y) => Math.abs(cashD(y)) - Math.abs(cashD(x)));
       else list.sort((x, y) => Math.abs(y.v) - Math.abs(x.v));
       const matched = q2 ? list.filter(p => p.name.toLowerCase().includes(q2)) : list;
       const shown = (S.stAll || q2) ? matched : matched.slice(0, CAPN);
       const mx = Math.max(...shown.map(p => Math.abs(cmpOn && !budB ? cashD(p) : p.v)), 1);
       const out = shown.map(p => {
         const dv = cashD(p) * sign;
-        const shownV = cmpOn && !budB ? dv : p.v;
         return { ...baseE,
           ind: opts.ind || 0,
           name: p.name, nameFw: p.door ? 600 : 500, nameCol: p.door ? INK : FAINT,
-          sub2On: !!(cmpOn && !budB && p.door !== undefined), sub2: cmpOn && !budB ? mmyy(MO[cA]) + ' ' + f2(p.va || 0) + ' → ' + mmyy(MO[cB]) + ' ' + f2(p.vb || 0) : '',
+          sub2On: !!(cmpOn && !budB), sub2: cmpOn && !budB ? labSet(aSet) + ' ' + f2(p.va || 0) + ' → ' + labSet(bSet) + ' ' + f2(p.vb || 0) : '',
           hasLinks: !!p.door, links: p.door ? linkRow(p.name) : [],
           barW: Math.max(2, Math.abs(cmpOn && !budB ? cashD(p) : p.v) / mx * 100).toFixed(1) + '%',
           barC: (cmpOn && !budB ? dv < 0 : p.v < 0) ? RED : NAVY,
@@ -1309,10 +1375,10 @@ class Component extends DCLogic {
       if (!S.stAll && !q2 && matched.length > CAPN) out.push({ ...baseE, ind: opts.ind || 0, name: 'Show all ' + matched.length + ' ▾ — or type to search', nameFw: 800, nameCol: GOLDD, cur: 'pointer', onClick: (e) => { if (e && e.stopPropagation) e.stopPropagation(); this.setState({ stAll: true }); } });
       return { out, matchedN: matched.length, totalN: list.length };
     };
-    const doorPairs = key => scoped.map(d => ({ name: d, v: dSel(d, key), va: dAt(d, key, cA), vb: budB ? 0 : dAt(d, key, cB), door: true }));
-    const withOh = (pairs, key, plus) => {
-      const v = ohSel(key), va = ohAt(key, cA), vb = budB ? 0 : ohAt(key, cB);
-      if (Math.abs(v) > 0.005 || Math.abs(va) > 0.005 || Math.abs(vb) > 0.005) pairs.push({ name: 'Company overhead — not door-attributable', v: (plus ? 1 : 1) * v, va, vb, door: false });
+    const doorPairs = key => scoped.map(d => ({ name: d, v: dS(d, key, idxSel), va: dS(d, key, aSet), vb: budB ? 0 : dS(d, key, bSet), door: true }));
+    const withOh = (pairs, key) => {
+      const v = ohS(key, idxSel), va = ohS(key, aSet), vb = budB ? 0 : ohS(key, bSet);
+      if (Math.abs(v) > 0.005 || Math.abs(va) > 0.005 || Math.abs(vb) > 0.005) pairs.push({ name: 'Company overhead — not door-attributable', v, va, vb, door: false });
       return pairs;
     };
     const noteE = txt => ({ ...baseE, name: txt, nameFw: 600, nameCol: GOLDD, bg: '#FBF6EA' });
@@ -1326,15 +1392,15 @@ class Component extends DCLogic {
       claims: 'SOURCE: GL insurance-claim income (cash view) — see the P&L for the accrual story.',
       refout: 'SOURCE: Cashflow.xlsx refund rows outside tenant AR (SD returns) — deducted from cash kept, never netted into collections.',
       opex: 'SOURCE: cash-basis GL expense accounts + GL CapEx (inside operating per your 17-Jul call) · groups combine related ledgers; every ledger drills to its doors · overhead only in unfiltered views.',
-      stat: 'SOURCES: loans-engine T&I escrow (lender-verified, by door) + HOA GL proxy (by door) + direct property-tax/insurance actuals from Cashflow.xlsx (portfolio grain — listed, not door-split).',
-      netop: 'DERIVED: collected + claims − refunds − operating expenses (incl. CapEx) − statutory & escrow · door rows are door-grain; portfolio-grain items are listed so the sum ties the line to the cent.',
+      stat: 'SOURCES: T&I escrow from Cashflow.xlsx (' + Object.keys(TIW).length + ' file rows: ' + tiDoorKeys.length + ' properties + company-level) — lender-engine ' + fK(escEngW) + ' kept as cross-check in Checks & balances · direct PT/Ins actuals (portfolio grain) · HOA GL proxy.',
+      netop: 'DERIVED: collected + claims − refunds − operating expenses (incl. CapEx) − statutory & escrow (file) · door rows are door-grain; portfolio-grain items are listed so the sum ties the line to the cent.',
       invpend: 'PENDING SLOT: purchases at cost and sale proceeds land here when the data arrives (sale closings are on your pending list).',
       netinv: 'PENDING SLOT: $0 until purchase/sale-proceeds data lands — the band stays so the three-activity identity reads true.',
       int: 'SOURCE: GL Interest Cost — ties Cashflow.xlsx within 6¢ across the window · in FINANCING per your 17-Jul call.',
-      prin: 'SOURCE: lender-verified amortization engine (verify_loans 360/360 green) — scheduled principal only; prepayments & payoffs are capital events.',
+      prin: 'SOURCE: Cashflow.xlsx principal column (your actual cash; ' + (RC.principal.naCells || []).length + ' NA cells listed in Checks & balances) — lender-engine scheduled ' + fK(sum(winIdx.map(i => prinEngMs[i]))) + ' kept as cross-check memo.',
       events: 'SOURCE: Loans.xlsx releases/payoffs/draws · settle from sale proceeds or new notes, so they sit as a MEMO outside net cash until proceeds data lands.',
-      netfin: 'DERIVED: − interest − scheduled principal, by door · capital events stay memo.',
-      kept: 'DERIVED: net operating + net investing + net financing · door rows show each door’s full cash story; portfolio-grain items listed so the sum ties to the cent.',
+      netfin: 'DERIVED: − interest (GL) − principal repaid (Cashflow.xlsx), by door · capital events stay memo.',
+      kept: 'DERIVED: net operating + net investing + net financing · escrow & principal from Cashflow.xlsx per your call · door rows show each door’s full cash story; portfolio-grain items listed so the sum ties to the cent.',
     };
     const exLinksOf = id => {
       const m2 = { chg: ['pl'], coll: ['pl'], unpaid: [], claims: ['pl'], refout: [], opex: ['pl'], stat: ['loans'], netop: ['pl', 'loans', 'inv'], invpend: ['inv'], netinv: ['inv'], int: ['loans'], prin: ['loans'], events: ['loans'], netfin: ['loans'], kept: ['pl', 'loans', 'inv'] };
@@ -1348,37 +1414,38 @@ class Component extends DCLogic {
       const id = stepOpen.id;
       let eRows = [], counts = null, title = stepOpen.dynLabel ? (lv(stepOpen.ms) <= 0 ? 'Unpaid → receivables' : 'Drawn from balances') : stepOpen.label;
       if (cmpOn && budB) {
-        eRows = [noteE('Budget standards pending — the slot is wired. Send the numbers and every line gets a BUDGET column and variance, to the cent.')];
+        eRows = [noteE('Budget standards pending — the slot is wired. Send monthly standards and this column shows budget × ' + aSet.length + ' month' + (aSet.length === 1 ? '' : 's') + ' with variance, to the cent.')];
       } else if (id === 'opex') {
         const groups = Object.keys(grpMap).sort((x, y) => Math.abs(sum(grpMap[y].map(acctSel))) - Math.abs(sum(grpMap[x].map(acctSel))));
         const gMax = Math.max(...groups.map(g => Math.abs(sum(grpMap[g].map(acctSel)))), 1);
+        const gCmpMax = cmpOn ? Math.max(...groups.map(gg => Math.abs(sum(grpMap[gg].map(a => acctS(a, bSet))) - sum(grpMap[gg].map(a => acctS(a, aSet))))), 1) : 1;
         for (const g of groups) {
           const accts = grpMap[g], multi = accts.length > 1, openG = S.stGrp === g;
           const gv = sum(accts.map(acctSel));
           if (Math.abs(gv) <= 0.005 && !openG) continue;
           if (q2 && !openG && !g.toLowerCase().includes(q2) && !accts.some(a => a.toLowerCase().includes(q2))) continue;
-          const gva = sum(accts.map(a => acctAt(a, cA))), gvb = budB ? 0 : sum(accts.map(a => acctAt(a, cB)));
+          const gva = sum(accts.map(a => acctS(a, aSet))), gvb = budB ? 0 : sum(accts.map(a => acctS(a, bSet)));
           const gd = -(gvb - gva);
-          eRows.push({ ...baseE, chev: openG ? '▾' : '▸', name: g + (multi ? ' — ' + accts.length + ' ledgers' : ''), nameFw: 700, nameCol: NAVY,
-            sub2On: cmpOn, sub2: cmpOn ? mmyy(MO[cA]) + ' ' + f2(gva) + ' → ' + mmyy(MO[cB]) + ' ' + f2(gvb) : '',
-            barW: Math.max(2, Math.abs(cmpOn ? gvb - gva : gv) / (cmpOn ? Math.max(...groups.map(gg => Math.abs(sum(grpMap[gg].map(a => acctAt(a, cB))) - sum(grpMap[gg].map(a => acctAt(a, cA))))), 1) : gMax) * 100).toFixed(1) + '%',
+          eRows.push({ ...baseE, ...chevE(openG), name: g + (multi ? ' — ' + accts.length + ' ledgers' : ''), nameFw: 700, nameCol: NAVY,
+            sub2On: cmpOn, sub2: cmpOn ? labSet(aSet) + ' ' + f2(gva) + ' → ' + labSet(bSet) + ' ' + f2(gvb) : '',
+            barW: Math.max(2, Math.abs(cmpOn ? gvb - gva : gv) / (cmpOn ? gCmpMax : gMax) * 100).toFixed(1) + '%',
             barC: cmpOn ? (gd < 0 ? RED : NAVY) : '#B04A33',
             val: cmpOn ? ((gd >= 0 ? '+' : '−') + fN(Math.abs(gd)).replace('(', '').replace(')', '')) : f2(gv),
             vcol: cmpOn ? (Math.abs(gd) < 0.005 ? FAINT : gd > 0 ? GREEND : REDD) : INK,
             onClick: grpToggle(g), cur: 'pointer', bg: openG ? '#F6ECD9' : 'transparent' });
           if (openG && multi) {
             const allOpen = S.stLed === '__all';
-            eRows.push({ ...baseE, ind: 20, chev: allOpen ? '▾' : '▸', name: 'All ' + g + ' — by property', nameFw: 700, nameCol: GOLDD, onClick: ledToggle('__all'), cur: 'pointer', bg: allOpen ? '#F6ECD9' : 'transparent' });
+            eRows.push({ ...baseE, ...chevE(allOpen), ind: 20, name: 'All ' + g + ' — by property', nameFw: 700, nameCol: GOLDD, onClick: ledToggle('__all'), cur: 'pointer', bg: allOpen ? '#F6ECD9' : 'transparent' });
             if (allOpen) {
-              const pairs = scoped.map(d => ({ name: d, v: sum(accts.map(a => a === CAPX ? dSel(d, 'capex') : sum(idxSel.map(i => ((DOORS[d].opexByAcct || {})[a] || ZH)[i])))), va: sum(accts.map(a => a === CAPX ? dAt(d, 'capex', cA) : ((DOORS[d].opexByAcct || {})[a] || ZH)[cA])), vb: budB ? 0 : sum(accts.map(a => a === CAPX ? dAt(d, 'capex', cB) : ((DOORS[d].opexByAcct || {})[a] || ZH)[cB])), door: true }));
+              const pairs = scoped.map(d => ({ name: d, v: sum(accts.map(a => a === CAPX ? dS(d, 'capex', idxSel) : sum(idxSel.map(i => ((DOORS[d].opexByAcct || {})[a] || ZH)[i])))), va: sum(accts.map(a => a === CAPX ? dS(d, 'capex', aSet) : sum(aSet.map(i => ((DOORS[d].opexByAcct || {})[a] || ZH)[i])))), vb: budB ? 0 : sum(accts.map(a => a === CAPX ? dS(d, 'capex', bSet) : sum(bSet.map(i => ((DOORS[d].opexByAcct || {})[a] || ZH)[i])))), door: true }));
               const r2 = mkPropEntries(pairs, { ind: 40, sign: -1 }); eRows.push(...r2.out); counts = counts || r2;
             }
             for (const a of accts) {
               const openL = S.stLed === a;
-              const av = acctSel(a), aa = acctAt(a, cA), ab = budB ? 0 : acctAt(a, cB), ad = -(ab - aa);
+              const av = acctSel(a), aa = acctS(a, aSet), ab = budB ? 0 : acctS(a, bSet), ad = -(ab - aa);
               if (Math.abs(av) <= 0.005 && !openL) continue;
-              eRows.push({ ...baseE, ind: 20, chev: openL ? '▾' : '▸', name: a, nameFw: 600, nameCol: INK,
-                sub2On: cmpOn, sub2: cmpOn ? mmyy(MO[cA]) + ' ' + f2(aa) + ' → ' + mmyy(MO[cB]) + ' ' + f2(ab) : '',
+              eRows.push({ ...baseE, ...chevE(openL), ind: 20, name: a, nameFw: 600, nameCol: INK,
+                sub2On: cmpOn, sub2: cmpOn ? labSet(aSet) + ' ' + f2(aa) + ' → ' + labSet(bSet) + ' ' + f2(ab) : '',
                 val: cmpOn ? ((ad >= 0 ? '+' : '−') + fN(Math.abs(ad)).replace('(', '').replace(')', '')) : f2(av),
                 vcol: cmpOn ? (Math.abs(ad) < 0.005 ? FAINT : ad > 0 ? GREEND : REDD) : INK,
                 onClick: ledToggle(a), cur: 'pointer', bg: openL ? '#F6ECD9' : 'transparent' });
@@ -1389,22 +1456,26 @@ class Component extends DCLogic {
           }
         }
       } else if (id === 'stat') {
+        const escLine = sum(idxSel.map(i => fileEscM[i]));
         const defs = [
-          { k: 'esc', name: 'T&I escrow to lenders (engine)', key: 'escrow', v: sum(idxSel.map(i => scoped.reduce((s2, d) => s2 + DOORS[d].escrow[i], 0))) },
+          { k: 'esc', name: 'T&I escrow — Cashflow.xlsx (' + tiDoorKeys.length + ' properties + company)', v: escLine },
           { k: 'hoa', name: 'HOA fees (GL proxy)', hoa: true, v: sum(idxSel.map(i => hoaProxy[i])) },
           ...(unfiltered ? [
-            { k: null, name: 'Property tax — paid direct (portfolio grain)', v: ptDirSel },
-            { k: null, name: 'Insurance — paid direct (portfolio grain)', v: insDirSel },
+            { k: null, name: 'Property tax — paid direct (portfolio grain)', v: ptDirS(idxSel) },
+            { k: null, name: 'Insurance — paid direct (portfolio grain)', v: insDirS(idxSel) },
           ] : []),
         ];
         for (const df of defs) {
           const openL = df.k && S.stGrp === df.k;
-          eRows.push({ ...baseE, chev: df.k ? (openL ? '▾' : '▸') : '', name: df.name, nameFw: 700, nameCol: df.k ? NAVY : FAINT,
+          eRows.push({ ...baseE, ...(df.k ? chevE(openL) : {}), name: df.name, nameFw: 700, nameCol: df.k ? NAVY : FAINT,
             sub2On: !df.k, sub2: !df.k ? 'not door-attributable — mixed grain in Cashflow.xlsx' : '',
             val: f2(df.v), vcol: INK, onClick: df.k ? ((e) => { if (e && e.stopPropagation) e.stopPropagation(); this.setState({ stGrp: S.stGrp === df.k ? null : df.k, stAll: false }); }) : () => {}, cur: df.k ? 'pointer' : 'default', bg: openL ? '#F6ECD9' : 'transparent' });
           if (openL) {
-            const pairs = df.hoa ? scoped.map(d => ({ name: d, v: dHoaSel(d), va: dHoaAt(d, cA), vb: budB ? 0 : dHoaAt(d, cB), door: true }))
-              : scoped.map(d => ({ name: d, v: dSel(d, 'escrow'), va: dAt(d, 'escrow', cA), vb: budB ? 0 : dAt(d, 'escrow', cB), door: true }));
+            const pairs = df.hoa ? scoped.map(d => ({ name: d, v: dHoaS(d, idxSel), va: dHoaS(d, aSet), vb: budB ? 0 : dHoaS(d, bSet), door: true }))
+              : [
+                ...tiDoorKeys.filter(d => scopedSet.has(d)).map(d => ({ name: d, v: dEscS(d, idxSel), va: dEscS(d, aSet), vb: budB ? 0 : dEscS(d, bSet), door: true })),
+                ...(unfiltered ? tiOtherKeys.map(k2 => ({ name: k2 + ' — company level (file row)', v: sum(idxSel.map(i => ((TIW[k2] || ZH)[i] || 0))), va: sum(aSet.map(i => ((TIW[k2] || ZH)[i] || 0))), vb: budB ? 0 : sum(bSet.map(i => ((TIW[k2] || ZH)[i] || 0))), door: false })) : []),
+              ];
             const r5 = mkPropEntries(pairs, { ind: 20, sign: -1 }); eRows.push(...r5.out); counts = counts || r5;
           }
         }
@@ -1423,47 +1494,54 @@ class Component extends DCLogic {
         else if (id === 'coll') pairs = withOh(doorPairs('coll'), 'coll');
         else if (id === 'claims') pairs = withOh(doorPairs('claims'), 'claims');
         else if (id === 'int') { pairs = withOh(doorPairs('int'), 'int'); sign = -1; }
-        else if (id === 'prin') { pairs = doorPairs('prinSched'); sign = -1; }
-        else if (id === 'unpaid') { sign = -1; pairs = scoped.map(d => ({ name: d, v: dSel(d, 'chg') - dSel(d, 'coll'), va: dAt(d, 'chg', cA) - dAt(d, 'coll', cA), vb: budB ? 0 : dAt(d, 'chg', cB) - dAt(d, 'coll', cB), door: true })).filter(p => cmpOn ? true : p.v > 0.005); }
-        else if (id === 'netop') {
-          pairs = scoped.map(d => ({ name: d, v: dNetOpSel(d), va: dNetOpAt(d, cA), vb: budB ? 0 : dNetOpAt(d, cB), door: true }));
+        else if (id === 'prin') { pairs = doorPairs('filePrin'); sign = -1; }
+        else if (id === 'unpaid') {
+          sign = -1;
+          if (cmpOn) {
+            pairs = scoped.map(d => ({ name: d, v: dS(d, 'chg', idxSel) - dS(d, 'coll', idxSel), va: dS(d, 'chg', aSet) - dS(d, 'coll', aSet), vb: budB ? 0 : dS(d, 'chg', bSet) - dS(d, 'coll', bSet), door: true }));
+          } else {
+            pairs = scoped.map(d => ({ name: d, v: dS(d, 'chg', idxSel) - dS(d, 'coll', idxSel), va: 0, vb: 0, door: true })).filter(p => p.v > 0.005);
+          }
+        } else if (id === 'netop') {
+          pairs = scoped.map(d => ({ name: d, v: dNetOpS(d, idxSel), va: dNetOpS(d, aSet), vb: budB ? 0 : dNetOpS(d, bSet), door: true }));
           if (unfiltered) {
-            pairs.push({ name: 'Company overhead — claims · opex · capex (net)', v: ohSel('claims') - ohSel('opex') - ohSel('capex'), va: ohAt('claims', cA) - ohAt('opex', cA) - ohAt('capex', cA), vb: budB ? 0 : ohAt('claims', cB) - ohAt('opex', cB) - ohAt('capex', cB), door: false });
-            pairs.push({ name: 'Direct property tax & insurance — portfolio grain', v: -(ptDirSel + insDirSel), va: -(ptDirAt(cA) + insDirAt(cA)), vb: budB ? 0 : -(ptDirAt(cB) + insDirAt(cB)), door: false });
+            pairs.push({ name: 'Company overhead — claims · opex · capex (net)', v: ohS('claims', idxSel) - ohS('opex', idxSel) - ohS('capex', idxSel), va: ohS('claims', aSet) - ohS('opex', aSet) - ohS('capex', aSet), vb: budB ? 0 : ohS('claims', bSet) - ohS('opex', bSet) - ohS('capex', bSet), door: false });
+            pairs.push({ name: 'Company-level T&I escrow (file)', v: -tiOtherS(idxSel), va: -tiOtherS(aSet), vb: budB ? 0 : -tiOtherS(bSet), door: false });
+            pairs.push({ name: 'Direct property tax & insurance — portfolio grain', v: -(ptDirS(idxSel) + insDirS(idxSel)), va: -(ptDirS(aSet) + insDirS(aSet)), vb: budB ? 0 : -(ptDirS(bSet) + insDirS(bSet)), door: false });
           }
         } else if (id === 'netfin') {
-          pairs = scoped.map(d => ({ name: d, v: dNetFinSel(d), va: dNetFinAt(d, cA), vb: budB ? 0 : dNetFinAt(d, cB), door: true }));
-          if (unfiltered && Math.abs(ohSel('int')) > 0.005) pairs.push({ name: 'Company overhead — interest', v: -ohSel('int'), va: -ohAt('int', cA), vb: budB ? 0 : -ohAt('int', cB), door: false });
+          pairs = scoped.map(d => ({ name: d, v: dNetFinS(d, idxSel), va: dNetFinS(d, aSet), vb: budB ? 0 : dNetFinS(d, bSet), door: true }));
+          if (unfiltered && Math.abs(ohS('int', idxSel)) > 0.005) pairs.push({ name: 'Company overhead — interest', v: -ohS('int', idxSel), va: -ohS('int', aSet), vb: budB ? 0 : -ohS('int', bSet), door: false });
         } else if (id === 'kept') {
-          pairs = scoped.map(d => ({ name: d, v: dKeptSel(d), va: dKeptAt(d, cA), vb: budB ? 0 : dKeptAt(d, cB), door: true }));
+          pairs = scoped.map(d => ({ name: d, v: dKeptS(d, idxSel), va: dKeptS(d, aSet), vb: budB ? 0 : dKeptS(d, bSet), door: true }));
           if (unfiltered) {
-            pairs.push({ name: 'Company overhead — claims · opex · capex · interest (net)', v: ohSel('claims') - ohSel('opex') - ohSel('capex') - ohSel('int'), va: ohAt('claims', cA) - ohAt('opex', cA) - ohAt('capex', cA) - ohAt('int', cA), vb: budB ? 0 : ohAt('claims', cB) - ohAt('opex', cB) - ohAt('capex', cB) - ohAt('int', cB), door: false });
-            pairs.push({ name: 'Direct property tax & insurance — portfolio grain', v: -(ptDirSel + insDirSel), va: -(ptDirAt(cA) + insDirAt(cA)), vb: budB ? 0 : -(ptDirAt(cB) + insDirAt(cB)), door: false });
+            pairs.push({ name: 'Company overhead — claims · opex · capex · interest (net)', v: ohS('claims', idxSel) - ohS('opex', idxSel) - ohS('capex', idxSel) - ohS('int', idxSel), va: ohS('claims', aSet) - ohS('opex', aSet) - ohS('capex', aSet) - ohS('int', aSet), vb: budB ? 0 : ohS('claims', bSet) - ohS('opex', bSet) - ohS('capex', bSet) - ohS('int', bSet), door: false });
+            pairs.push({ name: 'Company-level T&I escrow (file)', v: -tiOtherS(idxSel), va: -tiOtherS(aSet), vb: budB ? 0 : -tiOtherS(bSet), door: false });
+            pairs.push({ name: 'Direct property tax & insurance — portfolio grain', v: -(ptDirS(idxSel) + insDirS(idxSel)), va: -(ptDirS(aSet) + insDirS(aSet)), vb: budB ? 0 : -(ptDirS(bSet) + insDirS(bSet)), door: false });
           }
         } else pairs = [];
         const r6 = mkPropEntries(pairs, { sign });
         eRows = r6.out; counts = r6;
       }
-      const nDoors = counts ? counts.matchedN : eRows.filter(r7 => r7.hasLinks).length;
       return {
         exp: true, eRows, eEmpty: eRows.length === 0,
         exTitle: title + (cmpOn && !budB ? ' — what changed' : ''),
         exSub: (counts ? (Math.min(counts.matchedN, (S.stAll || q2) ? counts.matchedN : CAPN) + ' of ' + counts.totalN + ' shown') : eRows.length + ' rows') + ' · ' + viewLab + (cmpOn && !budB ? ' · sorted by change' : ' · sorted by size'),
         exQ: S.stQ || '', onExQ: e => this.setState({ stQ: e && e.target ? e.target.value : '' }),
         exProv: provOf[id] || '', exLinks: exLinksOf(id),
-        exJumpOn: id === 'unpaid', onExJump: (e) => { if (e && e.stopPropagation) e.stopPropagation(); this.setState({ crM: hmi === null ? lastI : hmi, crq: '', crExp: null }); }, exJumpLab: 'SEE WHO — ' + laggardsAtSel + ' NAMES ▼',
+        exJumpOn: id === 'unpaid', onExJump: (e) => { if (e && e.stopPropagation) e.stopPropagation(); this.setState({ crM: lagAnchor, crq: '', crExp: null }); }, exJumpLab: 'SEE WHO — ' + laggardsAtSel + ' NAMES ▼',
       };
     };
     const stepOpen = steps.find(s => s.id && s.id === S.stOpen && drillable[s.id]);
     const exPack = stepOpen ? buildEx(stepOpen) : null;
 
-    // ── walk rows (span / single-month) ──
+    // ── walk rows (selected-months view) ──
     const monthSeries = id => id === 'coll' ? collMs : id === 'netop' ? netOpMs : id === 'netinv' ? netInvMs : id === 'netfin' ? netFinMs : id === 'kept' ? keptMs : null;
     const wkRows = steps.map((s, i) => {
       const isHead = s.type === 'head', isMemo = s.type === 'memo', isTot = s.type === 'total';
       const drill = !isHead && drillable[s.id];
       const series = isTot ? monthSeries(s.id) : (s.ms || null);
-      let spkPath = '', spkPts = [], spkDotOn = false, spkDotX = '0', spkDotY = '0', spkTip = '';
+      let spkPath = '', spkPts = [], spkTip = '';
       if (series) {
         const n = winIdx.length;
         const vsRaw = winIdx.map(ix => series[ix]);
@@ -1474,16 +1552,17 @@ class Component extends DCLogic {
           return { x, y, ix };
         });
         spkPath = n === 1 ? '' : pts.map(p => p.x.toFixed(1) + ',' + p.y.toFixed(1)).join(' ');
-        spkPts = pts.map(p => ({ cx: p.x.toFixed(1), cy: p.y.toFixed(1), fill: hmi === p.ix ? '#C9A45C' : '#B9C2D2',
-          onClick: (e) => { if (e && e.stopPropagation) e.stopPropagation(); this.setState({ hm: p.ix, hcmp: false }); } }));
-        if (hmi !== null) { const pp = pts.find(p => p.ix === hmi); if (pp) { spkDotOn = true; spkDotX = pp.x.toFixed(1); spkDotY = pp.y.toFixed(1); } }
-        spkTip = winIdx.map(ix => mmyy(MO[ix]) + ' ' + fK(series[ix])).join(' · ') + ' — click a point to view that month';
+        spkPts = pts.map(p => ({ cx: p.x.toFixed(1), cy: p.y.toFixed(1),
+          r: hmSel.includes(p.ix) ? '2.6' : '1.4',
+          fill: hmSel.includes(p.ix) ? '#C9A45C' : '#B9C2D2',
+          onClick: (e) => { if (e && e.stopPropagation) e.stopPropagation(); this.setState({ hmSel: [p.ix], hcmp: false }); } }));
+        spkTip = winIdx.map(ix => mmyy(MO[ix]) + ' ' + fK(series[ix])).join(' · ') + ' — click a point to view that month alone';
       }
       let delta = '', deltaCol = FAINT;
-      if (series && hmi !== null) {
-        if (hmi > 0) { const dd = series[hmi] - series[hmi - 1]; delta = (dd >= 0 ? '▲ ' : '▼ ') + fK(Math.abs(dd)) + ' vs ' + mmyy(MO[hmi - 1]); deltaCol = Math.abs(dd) < 0.005 ? FAINT : (dd > 0 ? GREEND : REDD); }
+      if (series && oneSel !== null) {
+        if (oneSel > 0) { const dd = series[oneSel] - series[oneSel - 1]; delta = (dd >= 0 ? '▲ ' : '▼ ') + fK(Math.abs(dd)) + ' vs ' + mmyy(MO[oneSel - 1]); deltaCol = Math.abs(dd) < 0.005 ? FAINT : (dd > 0 ? GREEND : REDD); }
         else delta = 'first month';
-      }
+      } else if (series && hmSel.length > 1) delta = hmSel.length + ' months summed';
       let label = s.label;
       if (s.dynLabel) label = lv(s.ms) <= 0 ? 'Unpaid → receivables' : 'Drawn from balances';
       if (s.type === 'flow') label = (lv(s.ms) >= 0 ? (s.id === 'chg' ? '' : '+ ') : '− ') + label;
@@ -1494,38 +1573,42 @@ class Component extends DCLogic {
       const open = !isHead && stO(s.id);
       return Object.assign({
         label: isHead ? s.label : label,
-        lfs: isHead ? 9.5 : isTot ? 13.5 : 12.5, lfw: isHead ? 800 : isTot ? 700 : 500,
-        lsp: isHead ? '0.08em' : 'normal',
-        lcol: isHead ? GOLDD : isTot ? NAVY : INK, lpl: isHead ? 8 : isTot ? 10 : 22,
-        rh: isHead ? 30 : isMemo ? 34 : isTot ? (s.id === 'kept' ? 46 : 44) : 40,
-        cellBg: open ? '#F6ECD9' : (isTot ? (totBg[s.id] || 'transparent') : (isHead ? '#FAF8F2' : 'transparent')),
-        cur: drill ? 'pointer' : 'default', chev: drill ? (open ? '▾' : '▸') : '',
+        lfs: isHead ? 10 : isTot ? 13.5 : 12.5, lfw: isHead ? 800 : isTot ? 700 : 500,
+        lsp: isHead ? '0.1em' : 'normal',
+        lcol: isHead ? '#C9A45C' : isTot ? NAVY : INK, lpl: isHead ? 12 : isTot ? 10 : 22,
+        rh: isHead ? 34 : isMemo ? 34 : isTot ? (s.id === 'kept' ? 46 : 44) : 40,
+        mt: isHead ? 6 : 0,
+        cellBg: open ? '#F6ECD9' : (isTot ? (totBg[s.id] || 'transparent') : (isHead ? '#16233A' : 'transparent')),
+        cur: drill ? 'pointer' : 'default',
+        chev: drill ? (open ? '▾' : '▸') : '',
+        chevBd: drill ? '#D9C89E' : 'transparent', chevBg: drill ? (open ? '#F0DFBC' : '#FBF6EA') : 'transparent',
         onClick: drill ? stClick(s.id) : () => {},
         subOn: (!!s.sub && !isHead) || s.id === 'netinv' || s.id === 'netfin',
-        sub: (s.id === 'netinv' || s.id === 'netfin') ? 'cash so far: ' + fN(s.after) : (s.sub || ''),
+        sub: (s.id === 'netinv' || s.id === 'netfin') ? 'cash so far: ' + fN(s.after) + (s.sub ? ' · ' + s.sub : '') : (s.sub || ''),
         barOn: !isHead && !isMemo,
         barX: (s.type === 'flow' ? xfN(Math.min(s.start, s.after)) : 2).toFixed(2) + '%',
-        barW: (s.type === 'flow' ? Math.max(0.8, xfN(Math.max(s.start, s.after)) - xfN(Math.min(s.start, s.after))) : Math.max(0.8, xfN(s.after) - 2)).toFixed(2) + '%',
-        barH: isTot ? (s.id === 'kept' ? 19 : 17) : 13, barC: s.color || NAVY,
+        barW: (s.type === 'flow' ? Math.max(0.8, xfN(Math.max(s.start, s.after)) - xfN(Math.min(s.start, s.after))) : Math.max(0.8, xfN(Math.abs(s.v)) - 2)).toFixed(2) + '%',
+        barH: isTot ? (s.id === 'kept' ? 19 : 17) : 13,
+        barC: isTot ? (s.v < -0.005 ? '#B04A33' : (Math.abs(s.v) < 0.005 ? '#C9CFDA' : s.color)) : (s.color || NAVY),
         connInOn: !!(prev && !isHead && prev.type !== 'head'), connInX: prev ? xfN(prev.after).toFixed(2) + '%' : '0%',
         connOutOn: !!(next && !isHead && next.type !== 'head' && !open), connOutX: xfN(s.after).toFixed(2) + '%',
-        spkOn: !!series, spkPath, spkCol: '#A8B4C9', spkPts, spkDotOn, spkDotX, spkDotY, spkTip, delta, deltaCol,
+        spkOn: !!series, spkPath, spkCol: '#A8B4C9', spkPts, spkTip, delta, deltaCol,
         vfs: s.id === 'kept' ? 14.5 : 13, vfw: isTot ? 800 : 500,
-        vcol: isHead ? FAINT : isMemo ? MUT : isTot ? (s.v >= 0 ? (s.id === 'kept' ? GREEND : NAVY) : REDD) : (s.v >= 0 ? INK : REDD),
+        vcol: isHead ? '#C9A45C' : isMemo ? MUT : isTot ? (s.v >= 0 ? (s.id === 'kept' ? GREEND : NAVY) : REDD) : (s.v >= 0 ? INK : REDD),
         val: valTxt,
       }, open && exPack ? exPack : emptyEx);
     });
 
-    // ── compare rows: FROM (cA) vs TO (cB or BUDGET slot) ──
-    const runsAt = mi => {
+    // ── compare rows: FROM set vs TO set (or BUDGET slot) ──
+    const runsAtSet = set => {
       let r2 = 0; const out = [];
       for (const rd of rowsDef) {
-        if (rd.type === 'flow') { r2 += rd.ms[mi]; out.push(rd.ms[mi]); }
-        else out.push(rd.type === 'total' ? (totValAt[rd.id] ? totValAt[rd.id](mi) : r2) : null);
+        if (rd.type === 'flow') { const v = sS(rd.ms, set); r2 += v; out.push(v); }
+        else out.push(rd.type === 'total' ? (totValS[rd.id] ? totValS[rd.id](set) : r2) : null);
       }
       return out;
     };
-    const valsA = runsAt(cA), valsB = budB ? rowsDef.map(() => null) : runsAt(cB);
+    const valsA = runsAtSet(aSet), valsB = budB ? rowsDef.map(() => null) : runsAtSet(bSet);
     const cmpMax = Math.max(...steps.map((s, i) => Math.max(Math.abs(valsA[i] || 0), Math.abs(valsB[i] || 0))), 1);
     const cmpRows = steps.map((s, i) => {
       const isHead = s.type === 'head', isMemo = s.type === 'memo', isTot = s.type === 'total';
@@ -1538,11 +1621,13 @@ class Component extends DCLogic {
       const open = !isHead && stO(s.id);
       return Object.assign({
         label: isHead ? s.label : label,
-        lfs: isHead ? 9.5 : isTot ? 13.5 : 12.5, lfw: isHead ? 800 : isTot ? 700 : 500,
-        lsp: isHead ? '0.08em' : 'normal', lcol: isHead ? GOLDD : isTot ? NAVY : INK, lpl: isHead ? 8 : isTot ? 10 : 22,
-        rh: isHead ? 30 : isTot ? 44 : 40,
-        cellBg: open ? '#F6ECD9' : (isTot ? (totBg[s.id] || 'transparent') : (isHead ? '#FAF8F2' : 'transparent')),
-        cur: drill ? 'pointer' : 'default', chev: drill ? (open ? '▾' : '▸') : '',
+        lfs: isHead ? 10 : isTot ? 13.5 : 12.5, lfw: isHead ? 800 : isTot ? 700 : 500,
+        lsp: isHead ? '0.1em' : 'normal', lcol: isHead ? '#C9A45C' : isTot ? NAVY : INK, lpl: isHead ? 12 : isTot ? 10 : 22,
+        rh: isHead ? 34 : isTot ? 44 : 40, mt: isHead ? 6 : 0,
+        cellBg: open ? '#F6ECD9' : (isTot ? (totBg[s.id] || 'transparent') : (isHead ? '#16233A' : 'transparent')),
+        cur: drill ? 'pointer' : 'default',
+        chev: drill ? (open ? '▾' : '▸') : '',
+        chevBd: drill ? '#D9C89E' : 'transparent', chevBg: drill ? (open ? '#F0DFBC' : '#FBF6EA') : 'transparent',
         onClick: drill ? stClick(s.id) : () => {},
         aW: isHead || isMemo ? '0%' : Math.max(1, Math.abs(a || 0) / cmpMax * 100).toFixed(1) + '%',
         bW: isHead || isMemo || budB ? '0%' : Math.max(1, Math.abs(b || 0) / cmpMax * 100).toFixed(1) + '%',
@@ -1553,19 +1638,20 @@ class Component extends DCLogic {
         vfw: isTot ? 800 : 500,
       }, open && exPack ? exPack : emptyEx);
     });
-    const cmpALab = mmyy(MO[cA]).toUpperCase() + ' (FROM)', cmpBLab = budB ? 'BUDGET (PENDING)' : mmyy(MO[cB]).toUpperCase() + ' (TO)';
-    const cmpFoot = budB ? 'The BUDGET column is a wired placeholder — hand me the standards (per month or per ledger) and every line gets budget + variance, verified to the cent.'
-      : 'blue bar = ' + mmyy(MO[cA]) + ', gold bar = ' + mmyy(MO[cB]) + ', common scale · CHANGE = TO − FROM in cash terms — green means more cash kept. Click any line for the doors (or ledgers) that drove the change.';
+    const cmpALab = labSet(aSet).toUpperCase() + ' (FROM)';
+    const cmpBLab = budB ? 'BUDGET × ' + aSet.length + ' MO (PENDING)' : labSet(bSet).toUpperCase() + ' (TO)';
+    const cmpFoot = budB ? 'The BUDGET column is a wired placeholder — hand me monthly standards (per ledger or per line) and this column shows budget × the FROM month-count (' + aSet.length + ') with variance, verified to the cent.'
+      : 'blue bar = ' + labSet(aSet) + ', gold bar = ' + labSet(bSet) + ', common scale · CHANGE = TO − FROM in cash terms — green means more cash kept. Pick two or more months on either side to compare combined periods. Click any line for the doors (or ledgers) that drove the change.';
 
     const stIdent = cmpOn
-      ? (budB ? 'Vs budget — standards pending, slot wired:' : 'Change ' + mmyy(MO[cA]) + '→' + mmyy(MO[cB]) + ': operating ' + fK(netOpMs[cB] - netOpMs[cA]) + '  ·  investing ' + fK(netInvMs[cB] - netInvMs[cA]) + '  ·  financing ' + fK(netFinMs[cB] - netFinMs[cA]) + '  =')
+      ? (budB ? 'Vs budget — standards pending, slot wired (scales × ' + aSet.length + ' month' + (aSet.length === 1 ? '' : 's') + '):' : 'Change ' + labSet(aSet) + '→' + labSet(bSet) + ': operating ' + fK(sS(netOpMs, bSet) - sS(netOpMs, aSet)) + '  ·  investing ' + fK(sS(netInvMs, bSet) - sS(netInvMs, aSet)) + '  ·  financing ' + fK(sS(netFinMs, bSet) - sS(netFinMs, aSet)) + '  =')
       : 'Operating ' + fK(lv(netOpMs)) + '  +  Investing ' + fK(lv(netInvMs)) + ' (pending)  +  Financing ' + fK(lv(netFinMs)) + '  =';
     const stNetLine = keptView === null ? '—' : fN(keptView) + (cmpOn ? ' change in cash kept' : ' net cash kept');
     const rdAll = CLX.reconDiffs || [];
     const rdMat = rdAll.filter(x => !x.crumb && !x.ack), rdCrumb = rdAll.filter(x => x.crumb && !x.ack), rdAck = rdAll.filter(x => x.ack);
     const driftOn = Math.abs(spanCL) > 0.5;
     const driftLine = 'Collection loss recognised in this span: ' + fN(spanCL) + ' — your AR-file write-offs plus in-window movers’ residuals per your lease rule (' + (CLX.clDetail || []).length + ' events). ' + (CLX.pendingWriteoffs || []).length + ' window-end recognitions await the June AR column.';
-    const wfFoot = 'Statement basis: Buildium journals at tenant grain, cash figures only — every bar hangs off the running total, so you watch the rent charge become the cash kept. Your 17-Jul structure: CapEx sits inside Operating expenses, Interest sits in Financing, Insurance claims follow Cash collected; Investing holds the wired slot for purchases & sale proceeds. Click ANY line — including every subtotal — and it opens in place: groups → ledgers → top-5 properties with search and Show-all; every property row links to P&L · BS · LOANS and clicks to a page-wide spotlight. The trend column is a per-line 5-month line chart (click a point to view that month); COMPARE holds any two months — or the BUDGET slot, pending your standards. Capital events settle from sale proceeds / new notes, so they sit as a memo outside net cash. Bank tie-out activates when balances land.';
+    const wfFoot = 'Statement basis: Buildium journals at tenant grain, cash figures only — flow bars hang off the running total (dashed line), subtotal bars show each activity’s own net. Escrow and principal are YOUR Cashflow.xlsx actuals per your 17-Jul call (escrow file rows are property-named — each drills with P&L/BS/LOANS links; the LOANS link opens that property’s note) — the lender engine stays as the cross-check in Checks & balances. MONTHS is a multi-select: any set of months re-runs the whole statement; COMPARE takes month-sets on both sides, or the BUDGET slot (pending your standards, scales × FROM months). Click ANY line — including every subtotal — and it opens in place: groups → ledgers → top-5 properties with search and Show-all. Capital events settle from sale proceeds / new notes, so they sit as a memo outside net cash. Bank tie-out activates when balances land.';
 
     // ══ collection rate — trend, the month's story, aging, and who is holding it back ══
     const fR = v => v === null ? '—' : v.toFixed(2) + '%';
@@ -1909,7 +1995,7 @@ class Component extends DCLogic {
     const ofOp = opexSorted.map(([k, v]) => ({ k, v: fN(v), w: Math.round(Math.abs(v) / opMax * 100) + '%', pct: coll > 0 ? (v / coll * 100).toFixed(1) + '%' : '—' }));
     const ofOpTot = fN(opex);
     const ofStat = [
-      { k: 'T&I escrow to lenders', tag: 'ENGINE', tagBg: '#EFF3FA', tagCol: BLUE, v: fN(escW) },
+      { k: 'T&I escrow to lenders', tag: 'CASH · FILE', tagBg: '#F2F7F0', tagCol: GREEND, v: fN(fileEscW) },
       { k: 'Insurance — paid direct', tag: 'CASH · FILE', tagBg: '#F2F7F0', tagCol: GREEND, v: fN(insDirW) },
       { k: 'Property tax — paid direct', tag: 'CASH · FILE', tagBg: '#F2F7F0', tagCol: GREEND, v: fN(ptDirW) },
       { k: 'HOA fees', tag: 'GL PROXY', tagBg: '#FBF6EA', tagCol: GOLDD, v: fN(hoaProxyW) },
@@ -1920,12 +2006,12 @@ class Component extends DCLogic {
     const dPrinFile = sum(winIdx.map(i => RC.principal.file[i])), dPrinEng = sum(winIdx.map(i => RC.principal.engineSched[i]));
     const ofDebt = [
       { k: 'Interest', chip: unfiltered ? 'GL · file Δ ' + f2(dIntFile - dIntGl) : 'GL actuals', chipBg: unfiltered && Math.abs(dIntFile - dIntGl) <= 0.25 ? '#F2F7F0' : '#FBF6EA', chipCol: unfiltered && Math.abs(dIntFile - dIntGl) <= 0.25 ? GREEND : GOLDD, v: fN(intW) },
-      { k: 'Principal — scheduled', chip: unfiltered ? 'ENGINE · file gap ' + fK(dPrinEng - dPrinFile) : 'ENGINE · scheduled', chipBg: '#FBF6EA', chipCol: GOLDD, v: fN(prinW) },
+      { k: 'Principal — repaid', chip: unfiltered ? 'CASH · FILE · engine Δ ' + fK(dPrinEng - dPrinFile) : 'CASH · FILE', chipBg: '#F2F7F0', chipCol: GREEND, v: fN(prinW) },
       { k: 'Escrow (inside EMI)', chip: 'counted above', chipBg: '#F0EEE6', chipCol: MUT, v: 'in statutory' },
     ];
     const ofDebtTot = fN(intW + prinW);
     const ofSub = spanLab + (unfiltered ? ' · portfolio incl. company overhead' : ' · filtered scope, overhead excluded');
-    const ofFoot = 'Cash kept = collected + insurance claims − refunds paid out (outside AR) − these three blocks. Capex per GL (' + fN(capexW) + ') sits in investing, not operating. Prepayments, payoffs and releases are financing events at right.';
+    const ofFoot = 'Cash kept = collected + insurance claims − refunds paid out (outside AR) − these three blocks. Capex per GL (' + fN(capexW) + ') sits inside operating expenses (your 17-Jul call). Escrow and principal are your Cashflow.xlsx actuals — the lender engine (' + fK(escEngW) + ' escrow · ' + fK(prinEngW) + ' principal) stays as the cross-check in Checks & balances. Prepayments, payoffs and releases are financing events at right.';
 
     // ══ financing events ══
     const evs = (CF.events || []).filter(e => MO.indexOf(e.m) >= firstI && MO.indexOf(e.m) <= lastI);
@@ -2037,7 +2123,11 @@ class Component extends DCLogic {
       ready: true, loading: false, loadError: false, retryLoad: () => this.loadData(), stopProp,
       scopeLine, filters, hasActive, onReset, asOfLine,
       kpis, keptCol, keptBig, keptCap, keptLab, collBig, collCap, rateCol, rateBig, rateCap,
-      heroSub, hvChips, onCmpToggle, cmpBd, cmpBg, cmpOn, walkOn: !cmpOn, haChips, hbChips, cmpHint, cmpALab, cmpBLab, cmpRows, cmpFoot,
+      heroSub, onCmpToggle, cmpBd, cmpBg, cmpOn, walkOn: !cmpOn,
+      hvVal, hvHint, onHvToggle, hvOpen, hvOpts, hvBd, hvBg,
+      haVal, onHaToggle, haOpen, haOpts, haBd, haBg,
+      hbVal, hbHint, onHbToggle, hbOpen, hbOpts, hbBd, hbBg,
+      cmpALab, cmpBLab, cmpRows, cmpFoot,
       wkRows,
       spotQ, onSpotQ, spotOpen, spotOpts, spotNone, spotChipOn, spotChip, onSpotClear, spotBd,
       stIdent, stNetLine, driftOn, driftLine, wfFoot,
