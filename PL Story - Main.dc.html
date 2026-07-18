@@ -29,6 +29,7 @@ input:focus{outline:2px solid #C9A45C;outline-offset:1px}
       <a href="./PL%20Story%20-%20Main.dc.html" style="text-decoration:none;font-size:12px;font-weight:700;color:#E9EDF5;border-bottom:2px solid #C9A45C;padding-bottom:2px;white-space:nowrap">P&amp;L</a>
       <a href="./investments.dc.html" style-hover="color:#C9A45C" style="text-decoration:none;font-size:12px;font-weight:600;color:#8A96AD;white-space:nowrap">Investments &amp; Balance Sheet</a>
       <a href="./cashflow.dc.html" style-hover="color:#C9A45C" style="text-decoration:none;font-size:12px;font-weight:600;color:#8A96AD;white-space:nowrap">Cash Flow</a>
+      <a href="./collections.dc.html" style-hover="color:#C9A45C" style="text-decoration:none;font-size:12px;font-weight:600;color:#8A96AD;white-space:nowrap">Collections</a>
       <a href="./property-index.dc.html" style-hover="color:#C9A45C" style="text-decoration:none;font-size:12px;font-weight:600;color:#8A96AD;white-space:nowrap">Property Index</a>
       <span style="margin-left:auto;font-size:10px;letter-spacing:0.28em;font-weight:700;color:#5E6B82">PORTFOLIO&nbsp;INTELLIGENCE</span>
     </div>
@@ -231,7 +232,7 @@ input:focus{outline:2px solid #C9A45C;outline-offset:1px}
     <div style="margin-top:16px;background:#FFFFFF;border:1px solid #E5E3DC;border-radius:16px;padding:24px 30px">
       <div style="display:flex;justify-content:space-between;align-items:baseline;flex-wrap:wrap;gap:8px">
         <div style="font-family:'Source Serif 4',Georgia,serif;font-size:18px;font-weight:600;color:#16233A">How rent became income</div>
-        <div style="font-size:12px;color:#8A93A6">Rent roll → what stayed in the business · {{ wvScopeLine }} · click any line to see the doors behind it</div>
+        <div style="font-size:12px;color:#8A93A6">Rent roll → what stayed in the business · {{ wvScopeLine }} · click any line — the doors behind it open right under it</div>
       </div>
 
       <!-- view controls: months multi-select · compare (months or budget slot) · door spotlight — scopes this waterfall only -->
@@ -315,22 +316,73 @@ input:focus{outline:2px solid #C9A45C;outline-offset:1px}
       </div>
 
       <sc-if value="{{ wfWalkOn }}" hint-placeholder-val="{{ true }}">
-      <div style="margin-top:14px;display:grid;grid-template-columns:230px 1fr 128px">
-        <div style="display:flex;flex-direction:column">
-          <sc-for list="{{ wfRows }}" as="r" hint-placeholder-count="16">
-            <div onClick="{{ r.onClick }}" style-hover="background:#F6F2E7" style="height:34px;display:flex;align-items:center;background:{{ r.cellBg }};font-size:{{ r.lfs }}px;font-weight:{{ r.lfw }};color:{{ r.lcol }};padding-left:{{ r.lpl }}px;border-radius:6px 0 0 6px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;cursor:pointer">{{ r.label }}<span style="margin-left:7px;font-size:9.5px;color:#C9A45C">{{ r.chev }}</span></div>
-          </sc-for>
-        </div>
-        <svg viewBox="0 0 100 {{ wfSvgH }}" preserveAspectRatio="none" style="width:100%;height:{{ wfSvgH }}px;display:block">
-          <sc-for list="{{ wfBg }}" as="b" hint-placeholder-count="3"><rect x="0" y="{{ b.y }}" width="100" height="{{ b.h }}" fill="{{ b.fill }}"></rect></sc-for>
-          <sc-for list="{{ wfConn }}" as="c" hint-placeholder-count="15"><line x1="{{ c.x }}" y1="{{ c.y1 }}" x2="{{ c.x }}" y2="{{ c.y2 }}" stroke="#CEC6B3" stroke-width="1" stroke-dasharray="2.5 2.5" vector-effect="non-scaling-stroke"></line></sc-for>
-          <sc-for list="{{ wfBars }}" as="b" hint-placeholder-count="16"><rect x="{{ b.x }}" y="{{ b.y }}" width="{{ b.w }}" height="{{ b.h }}" rx="1.5" fill="{{ b.fill }}"></rect></sc-for>
-        </svg>
-        <div style="display:flex;flex-direction:column">
-          <sc-for list="{{ wfRows }}" as="r" hint-placeholder-count="16">
-            <div onClick="{{ r.onClick }}" style-hover="background:#F6F2E7" style="height:34px;display:flex;align-items:center;justify-content:flex-end;background:{{ r.cellBg }};font-size:13px;font-weight:{{ r.vfw }};color:{{ r.vcol }};font-variant-numeric:tabular-nums;padding-right:6px;border-radius:0 6px 6px 0;cursor:pointer">{{ r.val }}</div>
-          </sc-for>
-        </div>
+      <div style="margin-top:14px">
+        <sc-for list="{{ wfRows }}" as="r" hint-placeholder-count="16">
+          <div>
+            <div onClick="{{ r.onClick }}" style-hover="background:#F6F2E7" style="display:grid;grid-template-columns:230px 1fr 76px 128px;align-items:stretch;height:34px;background:{{ r.cellBg }};border-radius:6px;cursor:pointer">
+              <div style="display:flex;align-items:center;font-size:{{ r.lfs }}px;font-weight:{{ r.lfw }};color:{{ r.lcol }};padding-left:{{ r.lpl }}px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">{{ r.label }}<span style="margin-left:7px;font-size:9.5px;color:#C9A45C">{{ r.chev }}</span></div>
+              <div style="position:relative;margin:0 6px">
+                <sc-if value="{{ r.connInOn }}" hint-placeholder-val="{{ false }}"><div style="position:absolute;left:{{ r.connInX }};top:0;height:50%;border-left:1px dashed #CEC6B3"></div></sc-if>
+                <sc-if value="{{ r.connOutOn }}" hint-placeholder-val="{{ false }}"><div style="position:absolute;left:{{ r.connOutX }};top:50%;height:50%;border-left:1px dashed #CEC6B3"></div></sc-if>
+                <div style="position:absolute;left:{{ r.barX }};width:{{ r.barW }};top:50%;transform:translateY(-50%);height:{{ r.barH }}px;border-radius:2px;background:{{ r.barC }}"></div>
+              </div>
+              <div style="display:flex;flex-direction:column;align-items:center;justify-content:center">
+                <div title="{{ r.spkTip }}" style="position:relative">
+                  <svg viewBox="0 0 64 16" style="width:64px;height:16px;display:block;overflow:visible">
+                    <polyline points="{{ r.spkPath }}" fill="none" stroke="{{ r.spkCol }}" stroke-width="1.4" stroke-linejoin="round" stroke-linecap="round"></polyline>
+                    <sc-for list="{{ r.spkPts }}" as="sk" hint-placeholder-count="5">
+                      <circle cx="{{ sk.cx }}" cy="{{ sk.cy }}" r="{{ sk.r }}" fill="{{ sk.fill }}"></circle>
+                      <circle onClick="{{ sk.onClick }}" cx="{{ sk.cx }}" cy="{{ sk.cy }}" r="6" fill="transparent" style="cursor:pointer"></circle>
+                    </sc-for>
+                  </svg>
+                </div>
+                <div style="margin-top:1px;font-size:8px;font-weight:600;color:{{ r.deltaCol }};font-variant-numeric:tabular-nums;white-space:nowrap">{{ r.delta }}</div>
+              </div>
+              <div style="display:flex;align-items:center;justify-content:flex-end;font-size:13px;font-weight:{{ r.vfw }};color:{{ r.vcol }};font-variant-numeric:tabular-nums;padding-right:6px">{{ r.val }}</div>
+            </div>
+            <sc-if value="{{ r.exOn }}" hint-placeholder-val="{{ false }}">
+              <div onClick="{{ stopProp }}" style="margin:4px 0 10px 18px;background:#FCFBF8;border:1px solid #EDEAE0;border-radius:12px;padding:12px 16px">
+                <div style="display:flex;justify-content:space-between;align-items:center;gap:12px;flex-wrap:wrap">
+                  <div>
+                    <span style="font-family:'Source Serif 4',Georgia,serif;font-size:15px;font-weight:600;color:#16233A">{{ wfEx.title }}</span>
+                    <span style="margin-left:10px;font-size:11.5px;color:#8A93A6">{{ wfEx.sub }}</span>
+                  </div>
+                  <div style="display:flex;gap:10px;align-items:center">
+                    <input value="{{ wfEx.q }}" onChange="{{ wfEx.onQ }}" placeholder="Search doors…" style="width:220px;box-sizing:border-box;padding:8px 12px;border-radius:8px;border:1px solid #D8D4C8;font-family:'Libre Franklin',system-ui,sans-serif;font-size:12.5px;color:#16233A;background:#FFFFFF">
+                    <div onClick="{{ wfEx.onClose }}" style-hover="background:#16233A;color:#FFFFFF;border-color:#16233A" style="padding:7px 13px;border-radius:8px;border:1px solid #D8D4C8;background:#FFFFFF;color:#16233A;font-size:11.5px;font-weight:700;cursor:pointer;white-space:nowrap">✕ Close</div>
+                  </div>
+                </div>
+                <div style="margin-top:10px;max-height:340px;overflow-y:auto;padding-right:6px;display:grid;grid-template-columns:1fr 1fr;gap:0 40px;align-items:start">
+                  <sc-for list="{{ wfEx.rows }}" as="wd" hint-placeholder-count="8">
+                    <div onClick="{{ wd.onClick }}" style-hover="background:#F3F0E6" style="padding:7px 6px;border-top:1px solid #F0EEE7;grid-column:{{ wd.gcol }};margin-left:{{ wd.ind }}px;background:{{ wd.rowBg }};border-radius:6px;cursor:{{ wd.cur }}">
+                      <div style="display:flex;align-items:center;font-size:12.5px;color:#2A3550;gap:7px">
+                        <span style="flex:1;min-width:0;font-weight:{{ wd.nameFw }};color:{{ wd.nameCol }};white-space:nowrap;overflow:hidden;text-overflow:ellipsis">{{ wd.name }}</span>
+                        <sc-if value="{{ wd.hasLinks }}" hint-placeholder-val="{{ false }}">
+                          <span style="display:flex;gap:4px;flex:none">
+                            <sc-for list="{{ wd.links }}" as="wl" hint-placeholder-count="3">
+                              <a href="{{ wl.href }}" onClick="{{ stopProp }}" style-hover="background:#F6ECD9" style="font-size:8px;font-weight:800;letter-spacing:0.04em;color:#96742F;text-decoration:none;border:1px solid #E2D9C4;border-radius:99px;padding:2px 7px">{{ wl.lab }}</a>
+                            </sc-for>
+                          </span>
+                        </sc-if>
+                        <sc-if value="{{ wd.txOn }}" hint-placeholder-val="{{ false }}">
+                          <span onClick="{{ wd.onTx }}" style-hover="background:#F6ECD9" style="font-size:8px;font-weight:800;letter-spacing:0.04em;color:#96742F;cursor:pointer;border:1.5px solid #C9A45C;border-radius:99px;padding:2px 7px;flex:none;background:#FBF6EA">{{ wd.txLab }}</span>
+                        </sc-if>
+                        <span style="font-weight:700;font-variant-numeric:tabular-nums;color:{{ wd.vcol }};flex:none">{{ wd.val }}</span>
+                      </div>
+                      <sc-if value="{{ wd.sub2On }}" hint-placeholder-val="{{ false }}">
+                        <div style="margin-top:2px;font-size:9.5px;color:#9AA3B5;font-variant-numeric:tabular-nums;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">{{ wd.sub2 }}</div>
+                      </sc-if>
+                      <sc-if value="{{ wd.barOn }}" hint-placeholder-val="{{ true }}">
+                        <div style="margin-top:4px;height:5px;background:#F0EDE3;border-radius:3px"><div style="width:{{ wd.w }};height:5px;background:{{ wd.bg }};border-radius:3px"></div></div>
+                      </sc-if>
+                    </div>
+                  </sc-for>
+                  <sc-if value="{{ wfEx.empty }}" hint-placeholder-val="{{ false }}"><div style="padding:12px;font-size:12px;color:#8A93A6">No doors match</div></sc-if>
+                </div>
+              </div>
+            </sc-if>
+          </div>
+        </sc-for>
       </div>
       </sc-if>
 
@@ -344,58 +396,60 @@ input:focus{outline:2px solid #C9A45C;outline-offset:1px}
             <span style="text-align:right;padding-right:6px">CHANGE</span>
           </div>
           <sc-for list="{{ wfCmpRows }}" as="wc" hint-placeholder-count="16">
-            <div onClick="{{ wc.onClick }}" style-hover="background:#F6F2E7" style="height:34px;display:grid;grid-template-columns:230px 1fr 128px 128px 128px;align-items:center;background:{{ wc.cellBg }};border-radius:6px;cursor:pointer">
-              <span style="font-size:{{ wc.lfs }}px;font-weight:{{ wc.lfw }};color:{{ wc.lcol }};padding-left:{{ wc.lpl }}px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">{{ wc.label }}<span style="margin-left:7px;font-size:9.5px;color:#C9A45C">{{ wc.chev }}</span></span>
-              <span></span>
-              <span style="text-align:right;font-variant-numeric:tabular-nums;font-size:13px;font-weight:{{ wc.vfw }};color:{{ wc.acol }}">{{ wc.aVal }}</span>
-              <span style="text-align:right;font-variant-numeric:tabular-nums;font-size:13px;font-weight:{{ wc.vfw }};color:{{ wc.acol }}">{{ wc.bVal }}</span>
-              <span style="text-align:right;font-variant-numeric:tabular-nums;font-size:13px;font-weight:700;color:{{ wc.dCol }};padding-right:6px">{{ wc.dVal }}</span>
+            <div>
+              <div onClick="{{ wc.onClick }}" style-hover="background:#F6F2E7" style="height:34px;display:grid;grid-template-columns:230px 1fr 128px 128px 128px;align-items:center;background:{{ wc.cellBg }};border-radius:6px;cursor:pointer">
+                <span style="font-size:{{ wc.lfs }}px;font-weight:{{ wc.lfw }};color:{{ wc.lcol }};padding-left:{{ wc.lpl }}px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">{{ wc.label }}<span style="margin-left:7px;font-size:9.5px;color:#C9A45C">{{ wc.chev }}</span></span>
+                <span></span>
+                <span style="text-align:right;font-variant-numeric:tabular-nums;font-size:13px;font-weight:{{ wc.vfw }};color:{{ wc.acol }}">{{ wc.aVal }}</span>
+                <span style="text-align:right;font-variant-numeric:tabular-nums;font-size:13px;font-weight:{{ wc.vfw }};color:{{ wc.acol }}">{{ wc.bVal }}</span>
+                <span style="text-align:right;font-variant-numeric:tabular-nums;font-size:13px;font-weight:700;color:{{ wc.dCol }};padding-right:6px">{{ wc.dVal }}</span>
+              </div>
+              <sc-if value="{{ wc.exOn }}" hint-placeholder-val="{{ false }}">
+                <div onClick="{{ stopProp }}" style="margin:4px 0 10px 18px;background:#FCFBF8;border:1px solid #EDEAE0;border-radius:12px;padding:12px 16px">
+                  <div style="display:flex;justify-content:space-between;align-items:center;gap:12px;flex-wrap:wrap">
+                    <div>
+                      <span style="font-family:'Source Serif 4',Georgia,serif;font-size:15px;font-weight:600;color:#16233A">{{ wfEx.title }}</span>
+                      <span style="margin-left:10px;font-size:11.5px;color:#8A93A6">{{ wfEx.sub }}</span>
+                    </div>
+                    <div style="display:flex;gap:10px;align-items:center">
+                      <input value="{{ wfEx.q }}" onChange="{{ wfEx.onQ }}" placeholder="Search doors…" style="width:220px;box-sizing:border-box;padding:8px 12px;border-radius:8px;border:1px solid #D8D4C8;font-family:'Libre Franklin',system-ui,sans-serif;font-size:12.5px;color:#16233A;background:#FFFFFF">
+                      <div onClick="{{ wfEx.onClose }}" style-hover="background:#16233A;color:#FFFFFF;border-color:#16233A" style="padding:7px 13px;border-radius:8px;border:1px solid #D8D4C8;background:#FFFFFF;color:#16233A;font-size:11.5px;font-weight:700;cursor:pointer;white-space:nowrap">✕ Close</div>
+                    </div>
+                  </div>
+                  <div style="margin-top:10px;max-height:340px;overflow-y:auto;padding-right:6px;display:grid;grid-template-columns:1fr 1fr;gap:0 40px;align-items:start">
+                    <sc-for list="{{ wfEx.rows }}" as="we" hint-placeholder-count="8">
+                      <div onClick="{{ we.onClick }}" style-hover="background:#F3F0E6" style="padding:7px 6px;border-top:1px solid #F0EEE7;grid-column:{{ we.gcol }};margin-left:{{ we.ind }}px;background:{{ we.rowBg }};border-radius:6px;cursor:{{ we.cur }}">
+                        <div style="display:flex;align-items:center;font-size:12.5px;color:#2A3550;gap:7px">
+                          <span style="flex:1;min-width:0;font-weight:{{ we.nameFw }};color:{{ we.nameCol }};white-space:nowrap;overflow:hidden;text-overflow:ellipsis">{{ we.name }}</span>
+                          <sc-if value="{{ we.hasLinks }}" hint-placeholder-val="{{ false }}">
+                            <span style="display:flex;gap:4px;flex:none">
+                              <sc-for list="{{ we.links }}" as="wm" hint-placeholder-count="3">
+                                <a href="{{ wm.href }}" onClick="{{ stopProp }}" style-hover="background:#F6ECD9" style="font-size:8px;font-weight:800;letter-spacing:0.04em;color:#96742F;text-decoration:none;border:1px solid #E2D9C4;border-radius:99px;padding:2px 7px">{{ wm.lab }}</a>
+                              </sc-for>
+                            </span>
+                          </sc-if>
+                          <sc-if value="{{ we.txOn }}" hint-placeholder-val="{{ false }}">
+                            <span onClick="{{ we.onTx }}" style-hover="background:#F6ECD9" style="font-size:8px;font-weight:800;letter-spacing:0.04em;color:#96742F;cursor:pointer;border:1.5px solid #C9A45C;border-radius:99px;padding:2px 7px;flex:none;background:#FBF6EA">{{ we.txLab }}</span>
+                          </sc-if>
+                          <span style="font-weight:700;font-variant-numeric:tabular-nums;color:{{ we.vcol }};flex:none">{{ we.val }}</span>
+                        </div>
+                        <sc-if value="{{ we.sub2On }}" hint-placeholder-val="{{ false }}">
+                          <div style="margin-top:2px;font-size:9.5px;color:#9AA3B5;font-variant-numeric:tabular-nums;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">{{ we.sub2 }}</div>
+                        </sc-if>
+                        <sc-if value="{{ we.barOn }}" hint-placeholder-val="{{ true }}">
+                          <div style="margin-top:4px;height:5px;background:#F0EDE3;border-radius:3px"><div style="width:{{ we.w }};height:5px;background:{{ we.bg }};border-radius:3px"></div></div>
+                        </sc-if>
+                      </div>
+                    </sc-for>
+                    <sc-if value="{{ wfEx.empty }}" hint-placeholder-val="{{ false }}"><div style="padding:12px;font-size:12px;color:#8A93A6">No doors match</div></sc-if>
+                  </div>
+                </div>
+              </sc-if>
             </div>
           </sc-for>
           <sc-if value="{{ wfBudOn }}" hint-placeholder-val="{{ false }}">
             <div style="margin-top:10px;padding:9px 14px;background:#FBF6EA;border:1px solid #E2D9C4;border-radius:9px;font-size:11px;color:#96742F;font-weight:600">{{ wfBudTxt }}</div>
           </sc-if>
-        </div>
-      </sc-if>
-      <sc-if value="{{ wfHasPanel }}" hint-placeholder-val="{{ false }}">
-        <div data-wf-panel="1" style="margin-top:14px;background:#FAF9F5;border:1px solid #EDEAE0;border-radius:12px;padding:16px 20px">
-          <div style="display:flex;justify-content:space-between;align-items:center;gap:12px;flex-wrap:wrap">
-            <div>
-              <span style="font-family:'Source Serif 4',Georgia,serif;font-size:15px;font-weight:600;color:#16233A">{{ wfPanel.title }}</span>
-              <span style="margin-left:10px;font-size:11.5px;color:#8A93A6">{{ wfPanel.sub }}</span>
-            </div>
-            <div style="display:flex;gap:10px;align-items:center">
-              <input value="{{ wfPanel.q }}" onChange="{{ wfPanel.onQ }}" placeholder="Search doors…" style="width:220px;box-sizing:border-box;padding:8px 12px;border-radius:8px;border:1px solid #D8D4C8;font-family:'Libre Franklin',system-ui,sans-serif;font-size:12.5px;color:#16233A;background:#FFFFFF">
-              <div onClick="{{ wfPanel.onClose }}" style-hover="background:#16233A;color:#FFFFFF;border-color:#16233A" style="padding:7px 13px;border-radius:8px;border:1px solid #D8D4C8;background:#FFFFFF;color:#16233A;font-size:11.5px;font-weight:700;cursor:pointer;white-space:nowrap">✕ Close</div>
-            </div>
-          </div>
-          <div style="margin-top:10px;max-height:340px;overflow-y:auto;padding-right:6px;display:grid;grid-template-columns:1fr 1fr;gap:0 40px;align-items:start">
-            <sc-for list="{{ wfPanel.rows }}" as="wd" hint-placeholder-count="8">
-              <div onClick="{{ wd.onClick }}" style-hover="background:#F3F0E6" style="padding:7px 6px;border-top:1px solid #F0EEE7;grid-column:{{ wd.gcol }};margin-left:{{ wd.ind }}px;background:{{ wd.rowBg }};border-radius:6px;cursor:{{ wd.cur }}">
-                <div style="display:flex;align-items:center;font-size:12.5px;color:#2A3550;gap:7px">
-                  <span style="flex:1;min-width:0;font-weight:{{ wd.nameFw }};color:{{ wd.nameCol }};white-space:nowrap;overflow:hidden;text-overflow:ellipsis">{{ wd.name }}</span>
-                  <sc-if value="{{ wd.hasLinks }}" hint-placeholder-val="{{ false }}">
-                    <span style="display:flex;gap:4px;flex:none">
-                      <sc-for list="{{ wd.links }}" as="wl" hint-placeholder-count="3">
-                        <a href="{{ wl.href }}" onClick="{{ stopProp }}" style-hover="background:#F6ECD9" style="font-size:8px;font-weight:800;letter-spacing:0.04em;color:#96742F;text-decoration:none;border:1px solid #E2D9C4;border-radius:99px;padding:2px 7px">{{ wl.lab }}</a>
-                      </sc-for>
-                    </span>
-                  </sc-if>
-                  <sc-if value="{{ wd.txOn }}" hint-placeholder-val="{{ false }}">
-                    <span onClick="{{ wd.onTx }}" style-hover="background:#F6ECD9" style="font-size:8px;font-weight:800;letter-spacing:0.04em;color:#96742F;cursor:pointer;border:1.5px solid #C9A45C;border-radius:99px;padding:2px 7px;flex:none;background:#FBF6EA">{{ wd.txLab }}</span>
-                  </sc-if>
-                  <span style="font-weight:700;font-variant-numeric:tabular-nums;color:{{ wd.vcol }};flex:none">{{ wd.val }}</span>
-                </div>
-                <sc-if value="{{ wd.sub2On }}" hint-placeholder-val="{{ false }}">
-                  <div style="margin-top:2px;font-size:9.5px;color:#9AA3B5;font-variant-numeric:tabular-nums;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">{{ wd.sub2 }}</div>
-                </sc-if>
-                <sc-if value="{{ wd.barOn }}" hint-placeholder-val="{{ true }}">
-                  <div style="margin-top:4px;height:5px;background:#F0EDE3;border-radius:3px"><div style="width:{{ wd.w }};height:5px;background:{{ wd.bg }};border-radius:3px"></div></div>
-                </sc-if>
-              </div>
-            </sc-for>
-            <sc-if value="{{ wfPanel.empty }}" hint-placeholder-val="{{ false }}"><div style="padding:12px;font-size:12px;color:#8A93A6">No doors match</div></sc-if>
-          </div>
         </div>
       </sc-if>
     </div>
@@ -910,15 +964,6 @@ class Component extends DCLogic {
     document.removeEventListener('click', this._doc);
   }
 
-  scrollToWfPanel() {
-    requestAnimationFrame(() => {
-      const el = document.querySelector('[data-wf-panel]');
-      if (!el) return;
-      const y = el.getBoundingClientRect().top + (window.pageYOffset || document.documentElement.scrollTop || 0) - 90;
-      window.scrollTo({ top: Math.max(0, y), behavior: 'smooth' });
-    });
-  }
-
   renderVals() {
     const S = this.state;
     const NAVY = '#16233A', MUT = '#5E6B82', RED = '#B04A33', GREEN = '#3E8E63', GOLD = '#C9A45C', BRICK = '#C0763F', INK = '#2A3550', GOLDD = '#96742F';
@@ -952,8 +997,8 @@ class Component extends DCLogic {
       wvBLab: '', wvBHint: '', wvBOpen: false, onWvBToggle: () => {}, wbo: [], wvBBd: '#C9A45C',
       wvSpotQ: '', onWvSpotQ: () => {}, wvSpotOpen: false, wvSpotOpts: [], wvSpotNone: false, wvSpotChipOn: false, wvSpotChip: '', onWvSpotClear: () => {}, wvSpotBd: '#D8D4C8',
       wfCmpALab: '', wfCmpBLab: '', wfCmpRows: [], wfBudOn: false, wfBudTxt: '',
-      wfHasPanel: false, wfPanel: { title: '', sub: '', q: '', onQ: () => {}, onClose: () => {}, rows: [], empty: false },
-      wfRows: [], wfBars: [], wfConn: [], wfBg: [], wfSvgH: 0,
+      wfEx: { title: '', sub: '', q: '', onQ: () => {}, onClose: () => {}, rows: [], empty: false },
+      wfRows: [],
     };
 
     // ---- period selection (multi-month) ----
@@ -1312,22 +1357,26 @@ class Component extends DCLogic {
 
     // ---- waterfall (connected cascade, drillable) — scoped by its own VIEW row ----
     const wRent = per(M.rent);
-    // wv* = the waterfall's private view state (ported from the Cash Flow hero):
-    // months multi-select (empty = full span), compare FROM/TO month-sets, exclusive BUDGET slot.
-    const wvClean = v => [...new Set((Array.isArray(v) ? v : []).filter(i => Number.isInteger(i) && i >= 0 && i < N))].sort((x, y) => x - y);
+    // wv* = the waterfall's private view state (Cash Flow hero idiom), scoped INSIDE the page
+    // window: WIN = selM, the page MONTH filter, so the month filter is reactive here too.
+    // months multi-select (empty = whole window), compare FROM/TO month-sets, exclusive BUDGET slot.
+    const WIN = selM.length ? selM : [N - 1];
+    const winSet = new Set(WIN);
+    const wvClean = v => [...new Set((Array.isArray(v) ? v : []).filter(i => Number.isInteger(i) && winSet.has(i)))].sort((x, y) => x - y);
     const wvSel = wvClean(S.wvSel);
-    const wvIdx = wvSel.length ? wvSel : ALL_IDX;
-    const wvCmp = !!S.wvCmp && N >= 2;
+    const wvIdx = wvSel.length ? wvSel : WIN;
+    const wvCmp = !!S.wvCmp && WIN.length >= 2;
     const wvBud = !!S.wvBud;
     const wvARaw = wvClean(S.wvASel);
-    const wvA = wvARaw.length ? wvARaw : [Math.max(0, N - 2)];
+    const wvA = wvARaw.length ? wvARaw : [WIN.length >= 2 ? WIN[WIN.length - 2] : WIN[0]];
     const wvBRaw = wvClean(S.wvBSel);
-    const wvB = wvBud ? [] : (wvBRaw.length ? wvBRaw : [N - 1]);
+    const wvB = wvBud ? [] : (wvBRaw.length ? wvBRaw : [WIN[WIN.length - 1]]);
     const wvS = (ser, set) => set.reduce((s, i) => s + ser[i], 0);
     const wvV = ser => wvS(ser, wvIdx);
     const wvLabSet = set => set.length === 0 ? '—' : set.length <= 2 ? set.map(i => MNY[i]).join(' + ') : set.length + ' months (' + MNY[set[0]] + '…' + MNY[set[set.length - 1]] + ')';
-    const wvSpan = N === 1 ? MNY[0] : MNY[0] + '–' + MNY[N - 1];
-    const wvLab = wvCmp ? (wvLabSet(wvA) + ' → ' + (wvBud ? 'Budget (pending)' : wvLabSet(wvB))) : (wvSel.length ? wvLabSet(wvSel) : 'Full span · ' + wvSpan);
+    const winContig = WIN[WIN.length - 1] - WIN[0] === WIN.length - 1;
+    const winLab = WIN.length === 1 ? MNY[WIN[0]] : (winContig ? MNY[WIN[0]] + '–' + MNY[WIN[WIN.length - 1]] : wvLabSet(WIN));
+    const wvLab = wvCmp ? (wvLabSet(wvA) + ' → ' + (wvBud ? 'Budget (pending)' : wvLabSet(wvB))) : (wvSel.length ? wvLabSet(wvSel) : 'All page months · ' + winLab);
     const wvScopeLine = wvLab;
     const sgnF = dv => (dv >= 0 ? '+' : '−') + fN(Math.abs(dv)).replace('(', '').replace(')', '');
     const wvNeg = ser => ser.map(x => -x);
@@ -1356,38 +1405,55 @@ class Component extends DCLogic {
     addF('Debt service (interest)', wvNeg(M.int), '#8A5A3C', [[G.int, -1]], 'int');
     addT('Kept in the business', netM, wrun >= 0 ? GREEN : RED, [...P_INC, ...P_OPEX, [G.int, -1]], 'net');
 
-    const wfRowH = 34, wfSvgH = wfSteps.length * wfRowH;
     const wfMax = Math.max(...wfSteps.flatMap(s => [Math.abs(s.start), Math.abs(s.after)]), 1);
     const wfX0 = 2, wfX1 = 98;
     const xf = v => wfX0 + (Math.max(0, v) / wfMax) * (wfX1 - wfX0);
-    // Connected cascade: every bar hangs off the running total — income steps adjust scheduled
-    // rent up/down into total income (at the right), then expenses cascade down to what was kept.
+    // Connected cascade, one self-contained row per line (Cash Flow hero idiom): HTML bar hanging
+    // off the running total, dashed in/out connectors, a 64×16 sparkline over the window months —
+    // and the doors card opens IN PLACE right under the clicked row (r.exOn), no jump-down panel.
     const wfRowClick = (i, s) => () => {
       const willOpen = this.state.wfSel !== i;
       const extra = willOpen && s.cat ? { tcat: s.cat, trendShowAll: false, othersOpen: false } : {};
       this.setState({ wfSel: willOpen ? i : null, wfQ: '', wfAll: false, wfTxOpen: null, wfTxAll: false, ...extra });
-      if (willOpen) setTimeout(() => this.scrollToWfPanel(), 80);
     };
-    const wfBg = [], wfConn = [], wfBars = [], wfRows = [];
-    wfSteps.forEach((s, i) => {
-      const cy = i * wfRowH + wfRowH / 2;
+    const oneWv = wvSel.length === 1 ? wvSel[0] : null;
+    const wfRows = wfSteps.map((s, i) => {
       const isTotal = s.type === 'total';
       const isNoi = s.label === 'Net operating income';
       const isKept = s.label === 'Kept in the business';
       const bandBg = isNoi ? '#FBF4E4' : (isKept ? '#EAF3EC' : '#F5F2E9');
-      if (isTotal) {
-        wfBg.push({ y: (i * wfRowH + 3).toFixed(1), h: wfRowH - 6, fill: bandBg });
-        const w = Math.max(0.8, xf(s.after) - wfX0);
-        wfBars.push({ x: wfX0, y: (cy - 9).toFixed(1), w: w.toFixed(2), h: 18, fill: s.color });
-      } else {
-        const a = Math.min(s.start, s.after), b = Math.max(s.start, s.after);
-        const x = xf(a), w = Math.max(0.8, xf(b) - x);
-        wfBars.push({ x: x.toFixed(2), y: (cy - 7).toFixed(1), w: w.toFixed(2), h: 14, fill: s.color });
-      }
-      if (i < wfSteps.length - 1) wfConn.push({ x: xf(s.after).toFixed(2), y1: cy.toFixed(1), y2: (cy + wfRowH).toFixed(1) });
+      let bx, bw;
+      if (isTotal) { bx = wfX0; bw = Math.max(0.8, xf(s.after) - wfX0); }
+      else { const a = Math.min(s.start, s.after), b = Math.max(s.start, s.after); bx = xf(a); bw = Math.max(0.8, xf(b) - bx); }
+      // sparkline: this line's signed monthly series across the page-window months
+      const nW = WIN.length;
+      const vsW = WIN.map(ix => s.ser[ix]);
+      const loW = Math.min(...vsW), hiW = Math.max(...vsW), spanW = hiW - loW;
+      const spts = WIN.map((ix, j) => ({
+        x: nW === 1 ? 32 : 4 + j * (56 / (nW - 1)),
+        y: spanW < 0.005 ? 8 : 13 - (s.ser[ix] - loW) / spanW * 10,
+        ix,
+      }));
+      const spkPath = nW === 1 ? '' : spts.map(pt => pt.x.toFixed(1) + ',' + pt.y.toFixed(1)).join(' ');
+      const spkPts = spts.map(pt => ({
+        cx: pt.x.toFixed(1), cy: pt.y.toFixed(1),
+        r: wvSel.includes(pt.ix) ? '2.6' : '1.3',
+        fill: wvSel.includes(pt.ix) ? '#C9A45C' : '#CBD2DD',
+        onClick: (e) => { if (e && e.stopPropagation) e.stopPropagation(); this.setState({ wvSel: [pt.ix], wvCmp: false }); },
+      }));
+      const spkTip = WIN.map(ix => MNY[ix] + ' ' + fK(s.ser[ix])).join(' · ') + ' — click a point to view that month alone';
+      let delta = '', deltaCol = '#9AA3B5';
+      if (oneWv !== null) {
+        const jW = WIN.indexOf(oneWv);
+        if (jW > 0) {
+          const dd = s.ser[oneWv] - s.ser[WIN[jW - 1]];
+          delta = (dd >= 0 ? '▲ ' : '▼ ') + fK(Math.abs(dd)) + ' vs ' + MNY[WIN[jW - 1]];
+          if (Math.abs(dd) >= 0.005) deltaCol = dd > 0 ? '#2F7351' : '#A03E28';
+        } else delta = 'first month';
+      } else if (wvSel.length > 1) delta = wvSel.length + ' months summed';
       const selHere = S.wfSel === i;
       const valTxt = isTotal ? fN(s.after) : (s.v >= 0 ? '+' : '−') + fN(Math.abs(s.v)).replace('(', '').replace(')', '');
-      wfRows.push({
+      return {
         label: s.label, val: valTxt,
         chev: selHere ? '▾' : '▸',
         onClick: wfRowClick(i, s),
@@ -1396,7 +1462,14 @@ class Component extends DCLogic {
         lcol: isTotal ? NAVY : INK, lpl: isTotal ? 6 : 18,
         vfw: isTotal ? 700 : 500,
         vcol: isTotal ? ((isKept && s.after < 0) ? RED : NAVY) : (s.v >= 0 ? INK : BRICK),
-      });
+        connInOn: i > 0, connInX: (i > 0 ? xf(wfSteps[i - 1].after) : 0).toFixed(2) + '%',
+        connOutOn: i < wfSteps.length - 1, connOutX: xf(s.after).toFixed(2) + '%',
+        barX: bx.toFixed(2) + '%', barW: bw.toFixed(2) + '%',
+        barH: isTotal ? 18 : 14, barC: s.color,
+        spkPath, spkPts, spkTip, spkCol: isTotal ? '#5E6B82' : '#C5CDD9',
+        delta, deltaCol,
+        exOn: selHere,
+      };
     });
 
     // ---- waterfall compare mode: same lines, FROM / TO (or BUDGET slot) / CHANGE ----
@@ -1417,6 +1490,7 @@ class Component extends DCLogic {
       return {
         label: s.label, chev: selHere ? '▾' : '▸',
         onClick: wfRowClick(i, s),
+        exOn: selHere,
         cellBg: selHere ? '#F6ECD9' : (isTotal ? bandBg : 'transparent'),
         lfs: isTotal ? 14.5 : 13, lfw: isTotal ? 700 : 500, lcol: isTotal ? NAVY : INK, lpl: isTotal ? 6 : 18,
         vfw: isTotal ? 700 : 500,
@@ -1436,19 +1510,19 @@ class Component extends DCLogic {
     const wvOptRow = (label, on, onClick, extra) => Object.assign({ label, check: on ? '✓' : '', fw: on ? 700 : 500, bg: on ? '#F6F2E7' : 'transparent', col: '#2A3550', onClick }, extra || {});
     const wvTogIn = (key, i, extraPatch) => (e) => { if (e && e.stopPropagation) e.stopPropagation(); const cur = new Set(wvClean(S[key])); cur.has(i) ? cur.delete(i) : cur.add(i); this.setState({ [key]: [...cur], ...(extraPatch || {}) }); };
     const wvOpts = [
-      wvOptRow('All months — full span', wvSel.length === 0, (e) => { if (e && e.stopPropagation) e.stopPropagation(); this.setState({ wvSel: [], wvCmp: false }); }, { col: GOLDD, fw: 700 }),
-      ...ALL_IDX.map(i => wvOptRow(MNY[i], wvSel.includes(i), wvTogIn('wvSel', i, { wvCmp: false }))),
+      wvOptRow('All page months — ' + winLab, wvSel.length === 0, (e) => { if (e && e.stopPropagation) e.stopPropagation(); this.setState({ wvSel: [], wvCmp: false }); }, { col: GOLDD, fw: 700 }),
+      ...WIN.map(i => wvOptRow(MNY[i], wvSel.includes(i), wvTogIn('wvSel', i, { wvCmp: false }))),
     ];
-    const wvMLab = wvSel.length ? wvLabSet(wvSel) : 'Full span · ' + wvSpan;
-    const wvMHint = 'pick any set of months — the waterfall recomputes over exactly those months';
+    const wvMLab = wvSel.length ? wvLabSet(wvSel) : 'All page months · ' + winLab;
+    const wvMHint = 'pick months inside the page window (' + winLab + ') — the MONTH filter up top moves the window for the whole page';
     const onWvMToggle = wvTog('view'), wvMOpen = wvDd === 'view';
     const wvMBd = wvSel.length ? GOLD : '#D8D4C8', wvMBg = wvSel.length ? '#FBF6EA' : '#FFFFFF';
     const onWvCmpToggle = (e) => { if (e && e.stopPropagation) e.stopPropagation(); this.setState({ wvCmp: !S.wvCmp, wvDd: null }); };
     const wvCmpBd = wvCmp ? GOLD : '#D8D4C8', wvCmpBg = wvCmp ? '#FBF6EA' : '#FFFFFF';
-    const wao = ALL_IDX.map(i => wvOptRow(MNY[i], wvA.includes(i), wvTogIn('wvASel', i)));
+    const wao = WIN.map(i => wvOptRow(MNY[i], wvA.includes(i), wvTogIn('wvASel', i)));
     const wvALab = wvLabSet(wvA), onWvAToggle = wvTog('from'), wvAOpen = wvDd === 'from';
     const wbo = [
-      ...ALL_IDX.map(i => wvOptRow(MNY[i] + (wvBud ? ' — picking exits budget' : ''), !wvBud && wvB.includes(i), (e) => { if (e && e.stopPropagation) e.stopPropagation(); const cur = new Set(wvBud ? [] : wvClean(S.wvBSel)); cur.has(i) ? cur.delete(i) : cur.add(i); this.setState({ wvBSel: [...cur], wvBud: false }); }, wvBud ? { col: '#8A93A6', fw: 500 } : {})),
+      ...WIN.map(i => wvOptRow(MNY[i] + (wvBud ? ' — picking exits budget' : ''), !wvBud && wvB.includes(i), (e) => { if (e && e.stopPropagation) e.stopPropagation(); const cur = new Set(wvBud ? [] : wvClean(S.wvBSel)); cur.has(i) ? cur.delete(i) : cur.add(i); this.setState({ wvBSel: [...cur], wvBud: false }); }, wvBud ? { col: '#8A93A6', fw: 500 } : {})),
       wvOptRow('BUDGET · PENDING — locks out month picks', wvBud, (e) => { if (e && e.stopPropagation) e.stopPropagation(); this.setState({ wvBud: true, wvBSel: [] }); }, { col: GOLDD, fw: 800 }),
     ];
     const wvBLab = wvBud ? 'Budget · pending' : wvLabSet(wvB);
@@ -1470,11 +1544,10 @@ class Component extends DCLogic {
     const onWvSpotQ = e => this.setState({ wvSpotQ: e && e.target ? e.target.value : '' });
     const wvSpotBd = wvSpotChipOn ? GOLD : '#D8D4C8';
 
-    // ---- waterfall drill panel: top-5 + Show-all + search · door rows link out + inline TXN register ----
-    let wfPanel = { title: '', sub: '', q: '', onQ: () => {}, onClose: () => {}, rows: [], empty: false };
-    let wfHasPanel = false;
+    // ---- waterfall in-place doors card (opens under the clicked row): top-5 + Show-all + search ·
+    // ---- door rows link out + inline TXN register · one card, shared by walk and compare rows ----
+    let wfEx = { title: '', sub: '', q: '', onQ: () => {}, onClose: () => {}, rows: [], empty: false };
     if (S.wfSel != null && wfSteps[S.wfSel]) {
-      wfHasPanel = true;
       const st = wfSteps[S.wfSel];
       const acctSign = new Map();
       for (const [keys, sign] of st.parts) for (const k of keys) acctSign.set(k, sign);
@@ -1551,7 +1624,7 @@ class Component extends DCLogic {
         if (!wvCmp && txOpenHere) rows.push(...regRows(p));
       }
       if (!S.wfAll && !q && arrAll.length > CAPD) rows.push({ ...noRow, gcol: '1 / -1', name: 'Show all ' + arrAll.length + ' ▾ — or type to search', nameFw: 800, nameCol: GOLDD, cur: 'pointer', onClick: e => { if (e && e.stopPropagation) e.stopPropagation(); this.setState({ wfAll: true }); } });
-      wfPanel = {
+      wfEx = {
         title: st.label + ' — by door',
         sub: shownD.length + ' of ' + arrAll.length + ' doors · ' + wvLab + ' · sorted by ' + (cmpHere ? '|change|' : 'size') + (wvCmp ? '' : ' · click a door to focus the whole page on it'),
         q: S.wfQ,
@@ -2383,7 +2456,7 @@ class Component extends DCLogic {
       niMarginW: Math.max(0, Math.min(100, niMargin * 100)) + '%',
       niPath, niArea, niPts, niZeroY,
       incBig: fK(cInc), netBig: fK(cNet), netBigCol: cNet < 0 ? '#E8A896' : '#6FBF8F',
-      sparks, wfSvgH, wfBg, wfConn, wfBars, wfRows, wfPanel, wfHasPanel,
+      sparks, wfRows, wfEx,
       wvScopeLine, wvMLab, wvMHint, wvMOpen, onWvMToggle, wvOpts, wvMBd, wvMBg,
       onWvCmpToggle, wvCmpBd, wvCmpBg, wfCmpOn, wfWalkOn,
       wvALab, wvAOpen, onWvAToggle, wao,

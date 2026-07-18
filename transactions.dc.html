@@ -31,6 +31,7 @@ input:focus{outline:2px solid #C9A45C;outline-offset:1px}
       <a href="./PL%20Story%20-%20Main.dc.html" style-hover="color:#C9A45C" style="text-decoration:none;font-size:12px;font-weight:600;color:#8A96AD;white-space:nowrap">P&amp;L</a>
       <a href="./investments.dc.html" style-hover="color:#C9A45C" style="text-decoration:none;font-size:12px;font-weight:600;color:#8A96AD;white-space:nowrap">Investments &amp; Balance Sheet</a>
       <a href="./cashflow.dc.html" style-hover="color:#C9A45C" style="text-decoration:none;font-size:12px;font-weight:600;color:#8A96AD;white-space:nowrap">Cash Flow</a>
+      <a href="./collections.dc.html" style-hover="color:#C9A45C" style="text-decoration:none;font-size:12px;font-weight:600;color:#8A96AD;white-space:nowrap">Collections</a>
       <a href="./loans.dc.html" style-hover="color:#C9A45C" style="text-decoration:none;font-size:12px;font-weight:600;color:#8A96AD;white-space:nowrap">Loans</a>
       <a href="./transactions.dc.html" style="text-decoration:none;font-size:12px;font-weight:700;color:#E9EDF5;border-bottom:2px solid #C9A45C;padding-bottom:2px;white-space:nowrap">Transactions</a>
       <a href="./property-index.dc.html" style-hover="color:#C9A45C" style="text-decoration:none;font-size:12px;font-weight:600;color:#8A96AD;white-space:nowrap">Property Index</a>
@@ -114,6 +115,9 @@ input:focus{outline:2px solid #C9A45C;outline-offset:1px}
         <span style="flex:1.6">{{ memoHead }}</span>
         <span style="width:110px;flex:none;text-align:right">AMOUNT</span>
       </div>
+      <sc-if value="{{ vNoteOn }}" hint-placeholder-val="{{ false }}">
+        <div onClick="{{ onVNote }}" style="margin-top:8px;padding:9px 14px;background:#FBF6EA;border:1px solid #EAD9C0;border-radius:10px;font-size:11px;color:#96742F;font-weight:600;cursor:{{ vNoteCur }}">{{ vNoteTxt }}</div>
+      </sc-if>
       <div>
         <sc-for list="{{ rows }}" as="r" hint-placeholder-count="20">
           <div style="border-top:1px solid #F4F2EA">
@@ -179,9 +183,21 @@ input:focus{outline:2px solid #C9A45C;outline-offset:1px}
 class Component extends DCLogic {
   state = {
     tx: null, loadError: null,
+    cfd: null, cfErr: false,
     fm: [], fe: [], fp: [], fg: [], fa: [],
     q: '', sort: 'new', shown: 60,
     ddOpen: null, fq: '',
+  };
+
+  // Virtual ledgers — registers that are NOT GL transactions but the actual grain behind the
+  // Cash Flow statement lines (Buildium tenant ledger · Cashflow.xlsx monthly file). They only
+  // appear when explicitly selected, so the default view stays the gated GL register.
+  static VIRT = {
+    'Tenant Charges':   { grp: 'tenantled', src: 'BUILDIUM · TENANT LEDGER' },
+    'Tenant Receipts':  { grp: 'tenantled', src: 'BUILDIUM · TENANT LEDGER' },
+    'Tenant Refunds':   { grp: 'tenantled', src: 'CASHFLOW.XLSX · OUTSIDE AR' },
+    'Principal Repaid': { grp: 'cashfile',  src: 'CASHFLOW.XLSX · MONTHLY' },
+    'Escrow T&I':       { grp: 'cashfile',  src: 'CASHFLOW.XLSX · MONTHLY' },
   };
 
   loadData() {
@@ -190,9 +206,46 @@ class Component extends DCLogic {
       .then(r => { if (!r.ok) throw new Error('HTTP ' + r.status + ' fetching ./tx-data.json'); return r.json(); })
       .then(tx => {
         if (!tx || tx.schema !== 'tx.v1' || !Array.isArray(tx.tx) || !tx.meta) throw new Error('tx-data.json is not a valid tx.v1 file');
-        this.setState({ tx }, () => this.applyQuery());
+        this.setState({ tx }, () => { this.applyQuery(); this.maybeLoadCf(); });
       })
       .catch(e => this.setState({ tx: null, loadError: (e && e.message ? e.message : String(e)) }));
+  }
+
+  needCf() {
+    const V = Component.VIRT, S = this.state;
+    return S.fa.some(a => V[a]) || S.fg.some(g => g === 'tenantled' || g === 'cashfile');
+  }
+
+  maybeLoadCf() {
+    if (!this.needCf() || this.state.cfd || this._cfLoading) return;
+    this._cfLoading = true;
+    fetch('./cf-data.json')
+      .then(r => { if (!r.ok) throw new Error('HTTP ' + r.status); return r.json(); })
+      .then(cfd => { this._cfLoading = false; this.setState({ cfd, cfErr: false }); })
+      .catch(() => { this._cfLoading = false; this.setState({ cfErr: true }); });
+  }
+
+  buildVtx(cfd) {
+    if (this._vtx && this._vtxFrom === cfd) return this._vtx;
+    const MO = cfd.meta.months, out = [];
+    const push = (door, acct, i, amt, memo) => { if (Math.abs(amt) > 0.005) out.push([door, acct, MO[i] + '-01', Math.round(amt * 100) / 100, memo]); };
+    for (const d in cfd.doors) {
+      const dd = cfd.doors[d];
+      for (const t of dd.tenants) for (let i = 0; i < MO.length; i++) {
+        push(d, 'Tenant Charges', i, t.chg[i], t.tenant);
+        push(d, 'Tenant Receipts', i, t.coll[i], t.tenant);
+      }
+      for (let i = 0; i < MO.length; i++) push(d, 'Principal Repaid', i, (dd.filePrin || [])[i] || 0, 'monthly payment — Cashflow.xlsx');
+    }
+    for (const x of (cfd.collections.sdRefunds || [])) {
+      if (!x.cash) continue;
+      const i = MO.indexOf(x.m); if (i < 0) continue;
+      push(x.prop, 'Tenant Refunds', i, x.amt, 'SD refund — cash out, outside tenant AR');
+    }
+    const TIW = (cfd.recon && cfd.recon.escrow && cfd.recon.escrow.tiRows) || {};
+    for (const k in TIW) for (let i = 0; i < MO.length; i++) push(k, 'Escrow T&I', i, (TIW[k] || [])[i] || 0, cfd.doors[k] ? 'monthly T&I — Cashflow.xlsx' : 'company-level file row');
+    this._vtx = out; this._vtxFrom = cfd;
+    return out;
   }
 
   applyQuery() {
@@ -207,7 +260,7 @@ class Component extends DCLogic {
       if (qq.get('grp')) patch.fg = li('grp');
       if (qq.get('acct')) patch.fa = li('acct');
       if (qq.get('q')) patch.q = qq.get('q');
-      if (Object.keys(patch).length) this.setState(patch);
+      if (Object.keys(patch).length) this.setState(patch, () => this.maybeLoadCf());
     } catch (e) {}
   }
 
@@ -226,7 +279,7 @@ class Component extends DCLogic {
     } catch (e) {}
   }
 
-  setF(patch) { this.setState(Object.assign({ shown: 60 }, patch), () => this.syncUrl()); }
+  setF(patch) { this.setState(Object.assign({ shown: 60 }, patch), () => { this.syncUrl(); this.maybeLoadCf(); }); }
 
   componentDidMount() {
     this.loadData();
@@ -246,6 +299,7 @@ class Component extends DCLogic {
       filters: [], hasActive: false, onReset: () => {}, asOfLine: '', q: '', onQ: () => {},
       kpis: [], sortChips: [], memoHead: 'MEMO / VENDOR', rows: [], emptyOn: false, emptyTxt: '',
       moreOn: false, moreLab: '', onMore: () => {}, sumLab: '', sumVal: '', foot: '',
+      vNoteOn: false, vNoteTxt: '', vNoteCur: 'default', onVNote: () => {},
     };
 
     const TX = S.tx, META = TX.meta, MO = META.months;
@@ -255,22 +309,32 @@ class Component extends DCLogic {
     const mmyy = m => MMM[+m.slice(5, 7) - 1] + '-' + m.slice(2, 4);
     const esc = s => encodeURIComponent(s);
     const BK = META.bucket || {};
+    const VIRT = Component.VIRT;
     const GRPS = [['income', 'Income'], ['opex', 'Operating expenses'], ['capex', 'CapEx'], ['statutory', 'Statutory (accrual)'], ['interest', 'Interest'], ['claims', 'Insurance claims']];
-    const grpLab = Object.fromEntries(GRPS);
+    const VGRPS = [['tenantled', 'Tenant ledger (Buildium)'], ['cashfile', 'Cash file (monthly)']];
+    const grpLab = Object.fromEntries([...GRPS, ...VGRPS]);
     const doorEnt = META.doorEntity || {};
+
+    // ── the candidate set: GL always · virtual registers only when explicitly selected ──
+    const vNames = Object.keys(VIRT);
+    const vWanted = t => S.fa.includes(t[1]) || S.fg.includes(VIRT[t[1]].grp);
+    const vActive = this.needCf();
+    const vRows = vActive && S.cfd ? this.buildVtx(S.cfd).filter(vWanted) : [];
+    const vLoading = vActive && !S.cfd && !S.cfErr;
 
     // ── filter the register ──
     const qv = (S.q || '').trim().toLowerCase();
     const inSel = (sel, v) => !sel.length || sel.includes(v);
     const all = TX.tx;
+    const grpOf = a => VIRT[a] ? VIRT[a].grp : (BK[a] || 'other');
     const filt = [];
-    for (const t of all) {
+    for (const t of [...all, ...vRows]) {
       const door = t[0], acct = t[1], date = t[2], amt = t[3];
       const m = date.slice(0, 7);
       if (!inSel(S.fm, m)) continue;
       if (!inSel(S.fe, doorEnt[door] || '')) continue;
       if (!inSel(S.fp, door)) continue;
-      if (!inSel(S.fg, BK[acct] || 'other')) continue;
+      if (!inSel(S.fg, grpOf(acct))) continue;
       if (!inSel(S.fa, acct)) continue;
       if (qv) {
         const memo = (t.length > 4 ? (t[4] || '') + ' ' + (t[5] || '') : '');
@@ -279,6 +343,7 @@ class Component extends DCLogic {
       filt.push(t);
     }
     const sums = filt.reduce((s, t) => s + t[3], 0);
+    const nVirtIn = filt.reduce((s, t) => s + (VIRT[t[1]] ? 1 : 0), 0);
 
     // ── filter bar ──
     const openDd = (id) => (e) => { e.stopPropagation(); this.setState({ ddOpen: S.ddOpen === id ? null : id, fq: '' }); };
@@ -294,8 +359,8 @@ class Component extends DCLogic {
       { id: 'MONTH', key: 'fm', label: 'MONTH', all: 'months', w: '190px', search: false, list: MO, labOf: mmyy, val: S.fm.length ? S.fm.map(mmyy).join(', ') : 'All months' },
       { id: 'ENTITY', key: 'fe', label: 'ENTITY', all: 'entities', w: '220px', search: false, list: META.entities || [], val: S.fe.length ? (S.fe.length > 2 ? S.fe.length + ' selected' : S.fe.join(', ')) : 'All entities' },
       { id: 'PROPERTY', key: 'fp', label: 'PROPERTY', all: 'properties', w: '300px', search: true, list: doors, nOf: v => doorEnt[v] || '', val: S.fp.length ? (S.fp.length > 1 ? S.fp.length + ' selected' : S.fp[0]) : 'All properties' },
-      { id: 'GROUP', key: 'fg', label: 'GROUP', all: 'groups', w: '230px', search: false, list: GRPS.map(g => g[0]), labOf: v => grpLab[v] || v, val: S.fg.length ? S.fg.map(v => grpLab[v] || v).join(', ') : 'All groups' },
-      { id: 'LEDGER', key: 'fa', label: 'LEDGER', all: 'ledgers', w: '280px', search: true, list: accts, nOf: v => grpLab[BK[v]] || '', val: S.fa.length ? (S.fa.length > 1 ? S.fa.length + ' selected' : S.fa[0]) : 'All ledgers' },
+      { id: 'GROUP', key: 'fg', label: 'GROUP', all: 'groups', w: '230px', search: false, list: [...GRPS, ...VGRPS].map(g => g[0]), labOf: v => grpLab[v] || v, val: S.fg.length ? S.fg.map(v => grpLab[v] || v).join(', ') : 'All groups' },
+      { id: 'LEDGER', key: 'fa', label: 'LEDGER', all: 'ledgers', w: '280px', search: true, list: [...accts, ...vNames], nOf: v => VIRT[v] ? (VIRT[v].grp === 'tenantled' ? 'Buildium' : 'Cash file') : (grpLab[BK[v]] || ''), val: S.fa.length ? (S.fa.length > 1 ? S.fa.length + ' selected' : S.fa[0]) : 'All ledgers' },
     ];
     const filters = filtDef.map(f => {
       const open = S.ddOpen === f.id;
@@ -310,7 +375,7 @@ class Component extends DCLogic {
     });
     const hasActive = !!(S.fm.length || S.fe.length || S.fp.length || S.fg.length || S.fa.length || S.q);
     const onReset = () => this.setF({ fm: [], fe: [], fp: [], fg: [], fa: [], q: '' });
-    const scopeLine = filt.length.toLocaleString('en-US') + ' of ' + all.length.toLocaleString('en-US') + ' GL transactions · ' + mmyy(MO[0]) + ' – ' + mmyy(MO[MO.length - 1]) + ' · every register ties its statement cell to the cent';
+    const scopeLine = filt.length.toLocaleString('en-US') + ' of ' + all.length.toLocaleString('en-US') + ' GL transactions' + (nVirtIn ? ' + ' + nVirtIn.toLocaleString('en-US') + ' source rows' : '') + ' · ' + mmyy(MO[0]) + ' – ' + mmyy(MO[MO.length - 1]) + ' · every GL register ties its statement cell to the cent';
     const asOfLine = 'tx.v1 · built from PL.xlsx with publish gates · ' + (META.hasMemo ? 'memo live' : 'memo/vendor pending your GL re-upload');
 
     // ── KPIs ──
@@ -340,26 +405,36 @@ class Component extends DCLogic {
     const rows = shown.map(t => {
       const [door, acct, date, amt] = t;
       const memo = t.length > 4 ? [t[4], t[5]].filter(Boolean).join(' · ') : '';
+      const vd = VIRT[acct] || null;
       const bucket = BK[acct] || 'other';
       const isExp = bucket === 'opex' || bucket === 'capex' || bucket === 'interest' || bucket === 'statutory';
+      const vOut = vd && (acct === 'Principal Repaid' || acct === 'Escrow T&I');
       return {
-        date, prop: door, entity: doorEnt[door] || '', acct, bucket: expBucket[bucket] || bucket.toUpperCase(),
+        date, prop: door, entity: doorEnt[door] || '', acct, bucket: vd ? vd.src : (expBucket[bucket] || bucket.toUpperCase()),
         memo: memo || '—', memoCol: memo ? INK : '#C9CBD4',
-        amt: f2(amt), amtCol: amt < 0 ? GREEND : (isExp ? BRICK : NAVY),
+        amt: f2(amt), amtCol: vd ? (amt < 0 || vOut ? BRICK : NAVY) : (amt < 0 ? GREEND : (isExp ? BRICK : NAVY)),
         onFocus: () => this.setF({ fp: S.fp.length === 1 && S.fp[0] === door ? [] : [door] }),
         plHref: './PL%20Story%20-%20Main.dc.html?door=' + esc(door),
         bsHref: './investments.dc.html?door=' + esc(door),
         loanHref: './loans.dc.html?door=' + esc(door),
       };
     });
-    const emptyOn = filt.length === 0;
+    const emptyOn = filt.length === 0 && !vLoading;
     const emptyTxt = 'No transactions match this scope — clear a filter or the search.';
     const moreOn = sorted.length > showN;
     const moreLab = 'Show ' + Math.min(120, sorted.length - showN) + ' more ▾ (' + showN + ' of ' + sorted.length.toLocaleString('en-US') + ' shown)';
     const onMore = () => this.setState({ shown: showN + 120 });
-    const sumLab = 'FULL SELECTION — ' + filt.length.toLocaleString('en-US') + ' transactions across ' + new Set(filt.map(t => t[0])).size + ' properties (sum covers ALL matches, not just the rows shown)';
+    const sumLab = 'FULL SELECTION — ' + filt.length.toLocaleString('en-US') + ' rows across ' + new Set(filt.map(t => t[0])).size + ' properties (sum covers ALL matches, not just the rows shown)' + (nVirtIn ? ' — mixes GL and source-grain rows; read each row’s source tag' : '');
     const sumVal = f2(sums);
-    const foot = 'GL register at transaction grain from PL.xlsx — accrual basis, amounts with their booked sign (negative shown in parentheses). Publish gate: for every property × ledger × month, these rows sum to the published statement cell to the cent — the register can never disagree with the dashboards. Income rows are the accrual story; cash collections live on the Cash Flow page at receipt grain. Click a property to focus it; pills deep-link to P&L / Balance Sheet / Loans. Memo & vendor columns light up automatically when the re-uploaded GL lands.';
+    const foot = 'GL register at transaction grain from PL.xlsx — accrual basis, amounts with their booked sign (negative shown in parentheses). Publish gate: for every property × ledger × month, these rows sum to the published statement cell to the cent — the register can never disagree with the dashboards. Income rows are the accrual story; cash collections live on the Cash Flow page at receipt grain. Click a property to focus it; pills deep-link to P&L / Balance Sheet / Loans. Memo & vendor columns light up automatically when the re-uploaded GL lands.'
+      + (vActive ? ' SOURCE REGISTERS in view: Tenant Charges / Receipts / Refunds are the Buildium tenant ledger (tenant named in the memo column) and Principal Repaid / Escrow T&I are your Cashflow.xlsx monthly actuals — real money at its native grain, not GL postings; monthly rows are dated to the 1st because the sources are monthly.' : '');
+
+    // ── virtual-register loading note ──
+    const vNoteOn = vLoading || (vActive && S.cfErr);
+    const vNoteTxt = S.cfErr ? 'Couldn’t load the Buildium / cash-file rows (cf-data.json) — click to retry. GL rows below are unaffected.'
+      : 'Loading the Buildium / cash-file source rows… GL rows below are already complete.';
+    const vNoteCur = S.cfErr ? 'pointer' : 'default';
+    const onVNote = S.cfErr ? (() => { this.setState({ cfErr: false }, () => this.maybeLoadCf()); }) : (() => {});
 
     return {
       ready: true, loading: false, loadError: false, retryLoad: () => this.loadData(), stopProp,
@@ -367,6 +442,7 @@ class Component extends DCLogic {
       q: S.q, onQ: e => this.setF({ q: e && e.target ? e.target.value : '' }),
       kpis, sortChips, memoHead: META.hasMemo || META.hasVendor ? 'MEMO / VENDOR' : 'MEMO / VENDOR (PENDING)',
       rows, emptyOn, emptyTxt, moreOn, moreLab, onMore, sumLab, sumVal, foot,
+      vNoteOn, vNoteTxt, vNoteCur, onVNote,
     };
   }
 }

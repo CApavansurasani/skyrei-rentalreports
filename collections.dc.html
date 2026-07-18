@@ -1,0 +1,1053 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet data-dc-atomics="">
+<title>SKY REI · Collections</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Libre+Franklin:wght@400;500;600;700&amp;family=Source+Serif+4:opsz,wght@8..60,400;8..60,600;8..60,700&amp;display=swap" rel="stylesheet">
+<style>
+body{margin:0;background:#EFEDE7;font-family:"Libre Franklin",system-ui,sans-serif;color:#16233A}
+a{color:#1F3A6E}a:hover{color:#C9A45C}
+input:focus{outline:2px solid #C9A45C;outline-offset:1px}
+.scr::-webkit-scrollbar{width:8px;height:8px}
+.scr::-webkit-scrollbar-thumb{background:#D8D4C8;border-radius:4px}
+</style>
+</helmet>
+
+<div data-screen-label="Collections" style="min-height:100vh;background:#EFEDE7;padding-bottom:64px">
+
+    <!-- ══ Section navigation ══ -->
+  <div style="background:#0A1226;border-bottom:1px solid rgba(201,164,92,0.25)">
+    <div style="max-width:1320px;margin:0 auto;padding:10px 40px;display:flex;align-items:center;gap:22px;flex-wrap:wrap">
+      <a href="./index.html" style="text-decoration:none;font-family:'Source Serif 4',Georgia,serif;font-size:13px;font-weight:700;letter-spacing:0.06em;color:#C9A45C">SKY&nbsp;REI</a>
+      <span style="width:1px;height:14px;background:rgba(233,237,245,0.2)"></span>
+      <a href="./executive-summary.dc.html" style-hover="color:#C9A45C" style="text-decoration:none;font-size:12px;font-weight:600;color:#8A96AD;white-space:nowrap">Executive Summary</a>
+      <a href="./PL%20Story%20-%20Main.dc.html" style-hover="color:#C9A45C" style="text-decoration:none;font-size:12px;font-weight:600;color:#8A96AD;white-space:nowrap">P&amp;L</a>
+      <a href="./investments.dc.html" style-hover="color:#C9A45C" style="text-decoration:none;font-size:12px;font-weight:600;color:#8A96AD;white-space:nowrap">Investments &amp; Balance Sheet</a>
+      <a href="./cashflow.dc.html" style-hover="color:#C9A45C" style="text-decoration:none;font-size:12px;font-weight:600;color:#8A96AD;white-space:nowrap">Cash Flow</a>
+      <a href="./collections.dc.html" style="text-decoration:none;font-size:12px;font-weight:700;color:#E9EDF5;border-bottom:2px solid #C9A45C;padding-bottom:2px;white-space:nowrap">Collections</a>
+      <a href="./loans.dc.html" style-hover="color:#C9A45C" style="text-decoration:none;font-size:12px;font-weight:600;color:#8A96AD;white-space:nowrap">Loans</a>
+      <a href="./transactions.dc.html" style-hover="color:#C9A45C" style="text-decoration:none;font-size:12px;font-weight:600;color:#8A96AD;white-space:nowrap">Transactions</a>
+      <a href="./property-index.dc.html" style-hover="color:#C9A45C" style="text-decoration:none;font-size:12px;font-weight:600;color:#8A96AD;white-space:nowrap">Property Index</a>
+      <span style="margin-left:auto;font-size:10px;letter-spacing:0.28em;font-weight:700;color:#5E6B82">PORTFOLIO&nbsp;INTELLIGENCE</span>
+    </div>
+  </div>
+
+  <!-- ══ Header ══ -->
+  <div style="background:#0E1830;padding:26px 40px 24px;overflow:hidden">
+    <div style="max-width:1320px;margin:0 auto">
+      <div style="font-family:'Source Serif 4',Georgia,serif;font-size:15px;font-weight:700;letter-spacing:0.06em;color:#C9A45C">SKY&nbsp;REI</div>
+      <div style="margin-top:6px;font-family:'Source Serif 4',Georgia,serif;font-size:32px;font-weight:600;color:#E9EDF5;line-height:1.1">Collections</div>
+      <div style="margin-top:7px;font-size:12.5px;color:#8A96AD">{{ scopeLine }}</div>
+    </div>
+  </div>
+
+  <div style="max-width:1320px;margin:0 auto;padding:0 40px">
+
+    <sc-if value="{{ ready }}" hint-placeholder-val="{{ false }}">
+
+        <!-- ══ Filter bar ══ -->
+    <div style="margin-top:18px;background:#FFFFFF;border:1px solid #E5E3DC;border-radius:16px;padding:12px 16px;display:flex;align-items:center;gap:8px;flex-wrap:wrap;position:relative;z-index:50" onClick="{{ stopProp }}">
+      <span style="font-size:10px;letter-spacing:0.1em;font-weight:700;color:#96742F;margin-right:2px">SCOPE</span>
+      <sc-for list="{{ filters }}" as="fb" hint-placeholder-count="4">
+        <div style="position:relative">
+          <div onClick="{{ fb.onToggle }}" style-hover="border-color:#C9A45C" style="display:flex;align-items:center;gap:7px;padding:8px 13px;border-radius:10px;border:1.5px solid {{ fb.bd }};background:{{ fb.bg }};font-size:12px;font-weight:600;color:#16233A;cursor:pointer;white-space:nowrap">
+            <span style="font-size:9.5px;letter-spacing:0.07em;font-weight:700;color:#5E6B82">{{ fb.label }}</span>
+            <span style="max-width:150px;overflow:hidden;text-overflow:ellipsis">{{ fb.value }}</span>
+            <span style="font-size:8.5px;color:#5E6B82">▾</span>
+          </div>
+          <sc-if value="{{ fb.open }}" hint-placeholder-val="{{ false }}">
+            <div style="position:absolute;top:42px;left:0;width:{{ fb.w }};background:#FFFFFF;border:1px solid #D8D4C8;border-radius:12px;box-shadow:0 14px 36px rgba(14,24,48,0.20);z-index:80;padding:6px;max-height:340px;display:flex;flex-direction:column">
+              <sc-if value="{{ fb.hasSearch }}" hint-placeholder-val="{{ false }}">
+                <input value="{{ fb.q }}" onInput="{{ fb.onQ }}" placeholder="Type to search…" style="margin:2px 2px 6px;padding:7px 10px;border-radius:8px;border:1px solid #D8D4C8;font-size:12px;font-family:inherit;color:#16233A">
+              </sc-if>
+              <div onClick="{{ fb.onClear }}" style-hover="background:#F6F4EC" style="padding:7px 10px;border-radius:7px;font-size:12px;font-weight:700;color:#96742F;cursor:pointer;display:flex;justify-content:space-between"><span>All {{ fb.allLabel }}</span><span>{{ fb.allCheck }}</span></div>
+              <sc-if value="{{ fb.selAllShow }}" hint-placeholder-val="{{ false }}">
+                <div onClick="{{ fb.onSelAll }}" style-hover="background:#EFF3FA" style="padding:7px 10px;border-radius:7px;font-size:12px;font-weight:700;color:#3D64A8;cursor:pointer;display:flex;justify-content:space-between;border:1px dashed #C7D3EA"><span>{{ fb.selAllLabel }}</span><span>⇩</span></div>
+              </sc-if>
+              <div class="scr" style="overflow-y:auto;flex:1">
+                <sc-for list="{{ fb.opts }}" as="op" hint-placeholder-count="6">
+                  <div onClick="{{ op.onClick }}" style-hover="background:#F6F4EC" style="padding:7px 10px;border-radius:7px;font-size:12.5px;font-weight:{{ op.fw }};color:#2A3550;cursor:pointer;background:{{ op.bg }};display:flex;justify-content:space-between;align-items:center;gap:10px">
+                    <span style="white-space:nowrap;overflow:hidden;text-overflow:ellipsis">{{ op.label }}</span>
+                    <span style="display:flex;gap:8px;align-items:center"><span style="font-size:10.5px;color:#8A93A6">{{ op.n }}</span><span style="color:#96742F;font-weight:700;width:12px">{{ op.check }}</span></span>
+                  </div>
+                </sc-for>
+              </div>
+            </div>
+          </sc-if>
+        </div>
+      </sc-for>
+      <sc-if value="{{ hasActive }}" hint-placeholder-val="{{ false }}">
+        <div onClick="{{ onReset }}" style-hover="background:#16233A;color:#FFFFFF" style="margin-left:2px;padding:8px 13px;border-radius:10px;background:#F3E2DB;color:#A03E28;font-size:11.5px;font-weight:700;cursor:pointer;white-space:nowrap">Reset ✕</div>
+      </sc-if>
+      <span style="margin-left:auto;font-size:11px;color:#8A93A6;white-space:nowrap">{{ asOfLine }}</span>
+    </div>
+
+        <!-- ══ KPI row ══ -->
+    <div style="margin-top:16px;display:grid;grid-template-columns:repeat(6,1fr);gap:12px">
+      <sc-for list="{{ kpis }}" as="k" hint-placeholder-count="6">
+        <div title="{{ k.tip }}" style="background:{{ k.bg }};border:1px solid {{ k.bd }};border-radius:14px;padding:14px 16px">
+          <div style="font-size:9.5px;letter-spacing:0.07em;font-weight:700;color:#5E6B82;text-transform:uppercase;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">{{ k.label }}</div>
+          <div style="margin-top:5px;font-family:'Source Serif 4',Georgia,serif;font-size:21px;font-weight:600;color:{{ k.col }};font-variant-numeric:tabular-nums;white-space:nowrap">{{ k.val }}</div>
+          <div style="margin-top:3px;font-size:10px;color:{{ k.dcol }};font-weight:600;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">{{ k.sub }}</div>
+        </div>
+      </sc-for>
+    </div>
+
+    <!-- ══ Collection rate — trend + why-not-100% ══ -->
+    <div style="margin-top:16px;background:#FFFFFF;border:1px solid #E5E3DC;border-radius:16px;padding:22px 26px">
+      <div style="display:flex;justify-content:space-between;align-items:baseline;flex-wrap:wrap;gap:8px">
+        <div style="font-family:'Source Serif 4',Georgia,serif;font-size:18px;font-weight:600;color:#16233A">Collection rate — and who is holding it back</div>
+        <div style="font-size:11.5px;color:#8A93A6">{{ rwSub }}</div>
+      </div>
+      <div style="margin-top:14px;display:flex;align-items:flex-end;gap:26px;flex-wrap:wrap">
+        <div>
+          <div style="font-size:10px;letter-spacing:0.1em;font-weight:700;color:#96742F">{{ rwHeadLab }}</div>
+          <div style="margin-top:4px;font-family:'Source Serif 4',Georgia,serif;font-size:34px;font-weight:600;color:{{ rwHeadCol }}">{{ rwHead }}</div>
+          <div style="margin-top:2px;font-size:11px;color:#8A93A6">{{ rwHeadCap }}</div>
+        </div>
+        <div style="display:flex;gap:22px;flex-wrap:wrap">
+          <sc-for list="{{ rwTiles }}" as="rt" hint-placeholder-count="4">
+            <div>
+              <div style="font-size:9px;letter-spacing:0.07em;font-weight:800;color:#8A93A6">{{ rt.k }}</div>
+              <div style="margin-top:3px;font-family:'Source Serif 4',Georgia,serif;font-size:19px;font-weight:600;color:{{ rt.col }};font-variant-numeric:tabular-nums">{{ rt.v }}</div>
+              <div style="font-size:10px;color:#9AA3B5">{{ rt.sub }}</div>
+            </div>
+          </sc-for>
+        </div>
+      </div>
+
+      <div style="margin-top:16px;display:grid;grid-template-columns:minmax(340px,3fr) minmax(300px,2fr);gap:20px;align-items:start">
+        <!-- LEFT: trend bars → month story bar → aging -->
+        <div>
+          <div style="display:flex;gap:16px;flex-wrap:wrap">
+            <span style="font-size:10.5px;color:#5E6B82;display:flex;align-items:center;gap:5px;font-weight:600"><span style="width:9px;height:9px;border-radius:3px;background:#8FA8CE"></span>Due for the month <span style="color:#9AA3B5;font-weight:500">(invoices + opening due)</span></span>
+            <span style="font-size:10.5px;color:#5E6B82;display:flex;align-items:center;gap:5px;font-weight:600"><span style="width:9px;height:9px;border-radius:3px;background:#C9A45C"></span>Actually collected <span style="color:#9AA3B5;font-weight:500">(collections + adv in − adv out)</span></span>
+          </div>
+          <div style="margin-top:12px;display:flex;align-items:flex-end;gap:6px;height:190px">
+            <sc-for list="{{ crBars }}" as="cb" hint-placeholder-count="5">
+              <div onClick="{{ cb.onClick }}" style-hover="background:#FBFAF6" title="{{ cb.tip }}" style="flex:1;height:190px;display:flex;flex-direction:column;justify-content:flex-end;cursor:pointer;border-radius:10px;border:1.5px solid {{ cb.bd }};background:{{ cb.bg }};padding:6px 6px 4px">
+                <div style="text-align:center;font-size:10px;font-weight:800;color:#96742F;font-variant-numeric:tabular-nums;white-space:nowrap">{{ cb.rate }}</div>
+                <div style="flex:1;display:flex;align-items:flex-end;justify-content:center;gap:4px;margin-top:3px">
+                  <div style="width:34%;display:flex;flex-direction:column;justify-content:flex-end">
+                    <div title="{{ cb.dueTip }}" style="height:{{ cb.dueH }};background:#8FA8CE;border-radius:4px 4px 0 0"></div>
+                  </div>
+                  <div style="width:34%;display:flex;flex-direction:column;justify-content:flex-end">
+                    <div title="{{ cb.actTip }}" style="height:{{ cb.actH }};background:#C9A45C;border-radius:4px 4px 0 0"></div>
+                  </div>
+                </div>
+                <div style="margin-top:4px;text-align:center;font-size:10px;font-weight:{{ cb.mfw }};color:{{ cb.mcol }};white-space:nowrap">{{ cb.m }}</div>
+              </div>
+            </sc-for>
+          </div>
+          <div style="margin-top:6px;font-size:10px;color:#9AA3B5">{{ crBarsFoot }}</div>
+
+          <!-- the month's story: due = collected + still due -->
+          <div style="margin-top:14px;background:#FBFAF6;border:1px solid #EDEBE2;border-radius:12px;padding:14px 16px">
+            <div style="display:flex;justify-content:space-between;align-items:baseline;gap:8px;flex-wrap:wrap">
+              <span style="font-size:9.5px;letter-spacing:0.09em;font-weight:800;color:#96742F">{{ sbLab }}</span>
+              <span style="font-size:11px;font-weight:700;color:#16233A;font-variant-numeric:tabular-nums">{{ sbDueLab }}</span>
+            </div>
+            <div style="margin-top:10px;display:flex;height:30px;border-radius:8px;overflow:hidden;border:1px solid #EDEBE2">
+              <div title="{{ sbCollTip }}" style="width:{{ sbCollW }};background:#C9A45C;min-width:2px"></div>
+              <div onClick="{{ sbClickWho }}" title="{{ sbDueTip }}" style-hover="opacity:0.82" style="width:{{ sbDueRestW }};background:#B04A33;min-width:2px;cursor:pointer"></div>
+            </div>
+            <div style="margin-top:7px;display:flex;justify-content:space-between;gap:10px;flex-wrap:wrap">
+              <span style="font-size:11px;color:#96742F;font-weight:700">■ Collected {{ sbCollLab }}</span>
+              <span onClick="{{ sbClickWho }}" style-hover="color:#16233A" style="font-size:11px;color:#A03E28;font-weight:700;cursor:pointer">■ Still due {{ sbDueRestLab }} — see who ▸</span>
+            </div>
+            <div style="margin-top:10px;display:flex;gap:20px;flex-wrap:wrap">
+              <sc-for list="{{ sbFacts }}" as="sf" hint-placeholder-count="4">
+                <div>
+                  <div style="font-size:8.5px;letter-spacing:0.06em;font-weight:800;color:#8A93A6">{{ sf.k }}</div>
+                  <div style="margin-top:2px;font-size:14px;font-weight:700;color:{{ sf.col }};font-variant-numeric:tabular-nums">{{ sf.v }}</div>
+                </div>
+              </sc-for>
+            </div>
+            <div style="margin-top:8px;font-size:10px;color:#9AA3B5;line-height:1.55">{{ sbFoot }}</div>
+          </div>
+
+          <!-- how old is the still-due money -->
+          <div style="margin-top:12px">
+            <div style="font-size:9.5px;letter-spacing:0.09em;font-weight:800;color:#96742F">{{ agLab }}</div>
+            <div style="margin-top:8px;display:grid;grid-template-columns:repeat(5,1fr);gap:8px">
+              <sc-for list="{{ agTiles }}" as="ag" hint-placeholder-count="5">
+                <div onClick="{{ ag.onClick }}" style-hover="border-color:#C9A45C" style="border:1.5px solid {{ ag.bd }};background:{{ ag.bg }};border-radius:10px;padding:9px 11px;cursor:pointer">
+                  <div style="font-size:8.5px;letter-spacing:0.04em;font-weight:800;color:{{ ag.kc }};white-space:nowrap;overflow:hidden;text-overflow:ellipsis">{{ ag.k }}</div>
+                  <div style="margin-top:3px;font-size:14px;font-weight:800;color:{{ ag.col }};font-variant-numeric:tabular-nums;white-space:nowrap">{{ ag.v }}</div>
+                  <div style="font-size:9.5px;color:#8A93A6;white-space:nowrap">{{ ag.n }}</div>
+                  <div style="margin-top:4px;height:3px;border-radius:2px;background:#F4F2EA"><div style="height:3px;border-radius:2px;background:{{ ag.barC }};width:{{ ag.shareW }}"></div></div>
+                </div>
+              </sc-for>
+            </div>
+            <div style="margin-top:5px;font-size:10px;color:#9AA3B5">{{ agNote }}</div>
+          </div>
+        </div>
+
+        <!-- RIGHT: the properties holding the rate back -->
+        <div style="border-left:1px solid #F0EEE7;padding-left:20px">
+          <div style="display:flex;justify-content:space-between;align-items:baseline;gap:8px;flex-wrap:wrap">
+            <div style="font-size:10px;letter-spacing:0.09em;font-weight:800;color:#B04A33">{{ crRightLab }}</div>
+            <div style="font-size:10px;color:#9AA3B5">{{ crRightCap }}</div>
+          </div>
+          <div style="margin-top:8px;display:flex;gap:6px;align-items:center;flex-wrap:wrap">
+            <sc-for list="{{ crByChips }}" as="cbc" hint-placeholder-count="2">
+              <div onClick="{{ cbc.onClick }}" style-hover="border-color:#C9A45C" style="padding:6px 11px;border-radius:8px;border:1.5px solid {{ cbc.bd }};background:{{ cbc.bg }};font-size:10px;font-weight:800;color:#2A3550;cursor:pointer;white-space:nowrap">{{ cbc.label }}</div>
+            </sc-for>
+            <span style="margin-left:auto;font-size:9px;color:#9AA3B5;display:flex;gap:6px;align-items:center;flex-wrap:wrap">
+              <span style="width:10px;height:8px;border-radius:2px;background:#3E8E63;display:inline-block"></span>paid up
+              <span style="width:10px;height:8px;border-radius:2px;background:#D9A441;display:inline-block"></span>part
+              <span style="width:10px;height:8px;border-radius:2px;background:#B04A33;display:inline-block"></span>nothing
+              <span style="width:10px;height:8px;border-radius:2px;background:#6B4A3C;display:inline-block"></span>written off
+            </span>
+          </div>
+          <input onInput="{{ onCrq }}" value="{{ crqVal }}" placeholder="Search property or tenant…" style="margin-top:8px;width:100%;box-sizing:border-box;padding:7px 12px;font-size:11.5px;font-family:'Libre Franklin',sans-serif;border:1px solid #D8D4C8;border-radius:9px;outline:none;background:#FDFCFA"/>
+          <sc-if value="{{ crEmpty }}" hint-placeholder-val="{{ false }}">
+            <div style="margin-top:12px;padding:16px;text-align:center;font-size:11.5px;color:#8A93A6;background:#F8F7F2;border-radius:10px">{{ crEmptyTxt }}</div>
+          </sc-if>
+          <sc-for list="{{ crRows }}" as="cr" hint-placeholder-count="8">
+            <div onClick="{{ cr.onClick }}" style-hover="background:#FBFAF6" style="margin-top:6px;border:1px solid {{ cr.bd }};border-radius:10px;padding:8px 10px;cursor:pointer;background:{{ cr.bg }}">
+              <div style="display:flex;justify-content:space-between;align-items:baseline;gap:8px">
+                <span style="min-width:0">
+                  <span style="font-size:12px;font-weight:700;color:#16233A">{{ cr.prop }}</span>
+                  <span style="font-size:10.5px;color:#8A93A6"> · {{ cr.tenant }}</span>
+                </span>
+                <span style="font-size:12.5px;font-weight:800;color:#B04A33;font-variant-numeric:tabular-nums;white-space:nowrap">{{ cr.bal }}</span>
+              </div>
+              <div style="margin-top:4px;height:4px;border-radius:2px;background:#F4F2EA">
+                <div style="height:4px;border-radius:2px;width:{{ cr.shareW }};background:#B04A33;opacity:0.75"></div>
+              </div>
+              <div style="margin-top:6px;display:flex;justify-content:space-between;align-items:center;gap:8px;flex-wrap:wrap">
+                <span style="display:flex;gap:3px;align-items:center">
+                  <sc-for list="{{ cr.strip }}" as="pc" hint-placeholder-count="5">
+                    <span title="{{ pc.tip }}" style="width:17px;height:12px;border-radius:3px;background:{{ pc.bg }};border:1px solid {{ pc.bd }};display:inline-block"></span>
+                  </sc-for>
+                  <span style="margin-left:4px;font-size:8.5px;font-weight:800;letter-spacing:0.03em;color:#8A93A6;white-space:nowrap">{{ cr.sinceLab }}</span>
+                </span>
+                <span style="font-size:9.5px;color:#9AA3B5;font-variant-numeric:tabular-nums;white-space:nowrap">{{ cr.shareLab }}</span>
+              </div>
+              <div style="margin-top:5px;display:flex;gap:5px;flex-wrap:wrap">
+                <span style="font-size:8.5px;font-weight:800;letter-spacing:0.05em;padding:2px 8px;border-radius:99px;background:{{ cr.mbBg }};color:{{ cr.mbCol }}">{{ cr.mb }}</span>
+                <sc-for list="{{ cr.badges }}" as="crb" hint-placeholder-count="3">
+                  <span style="font-size:8.5px;font-weight:800;letter-spacing:0.05em;padding:2px 8px;border-radius:99px;background:{{ crb.bg }};color:{{ crb.col }}">{{ crb.t }}</span>
+                </sc-for>
+              </div>
+              <sc-if value="{{ cr.open }}" hint-placeholder-val="{{ false }}">
+                <div style="margin-top:8px;padding:9px 11px;background:#FBFAF6;border:1px solid #EDEBE2;border-radius:9px" onClick="{{ stopProp }}">
+                  <div style="display:flex;padding:2px 0 4px;font-size:8px;letter-spacing:0.06em;font-weight:800;color:#8A93A6;border-bottom:1px solid #EDEBE2">
+                    <span style="flex:0.9">MONTH</span><span style="flex:1;text-align:right">OPENING</span><span style="flex:1;text-align:right">CHARGES</span><span style="flex:1;text-align:right">COLLECTED</span><span style="flex:1;text-align:right">CLOSING</span>
+                  </div>
+                  <sc-for list="{{ cr.mini }}" as="cm" hint-placeholder-count="5">
+                    <div style="display:flex;padding:3.5px 0;font-size:10.5px;color:#2A3550;font-variant-numeric:tabular-nums;border-bottom:1px solid #F4F2EA">
+                      <span style="flex:0.9;font-weight:700">{{ cm.m }}</span><span style="flex:1;text-align:right">{{ cm.open }}</span><span style="flex:1;text-align:right;color:#3D64A8">{{ cm.chg }}</span><span style="flex:1;text-align:right;color:#96742F">{{ cm.coll }}</span><span style="flex:1;text-align:right;font-weight:700;color:{{ cm.closeCol }}">{{ cm.close }}</span>
+                    </div>
+                  </sc-for>
+                  <div style="margin-top:7px">
+                    <sc-for list="{{ cr.facts }}" as="cf" hint-placeholder-count="7">
+                      <div style="display:flex;justify-content:space-between;gap:10px;padding:2px 0;font-size:10.5px">
+                        <span style="color:#5E6B82">{{ cf.k }}</span>
+                        <span style="font-weight:700;color:{{ cf.col }};font-variant-numeric:tabular-nums;text-align:right">{{ cf.v }}</span>
+                      </div>
+                    </sc-for>
+                  </div>
+                  <div style="margin-top:7px;display:flex;gap:8px;flex-wrap:wrap">
+                    <a href="{{ cr.plHref }}" style="font-size:9.5px;font-weight:800;letter-spacing:0.05em;color:#96742F;text-decoration:none;border:1px solid #E2D9C4;border-radius:99px;padding:3px 10px">P&L →</a>
+                    <a href="{{ cr.invHref }}" style="font-size:9.5px;font-weight:800;letter-spacing:0.05em;color:#96742F;text-decoration:none;border:1px solid #E2D9C4;border-radius:99px;padding:3px 10px">INVESTMENTS →</a>
+                    <a href="{{ cr.loanHref }}" style="font-size:9.5px;font-weight:800;letter-spacing:0.05em;color:#96742F;text-decoration:none;border:1px solid #E2D9C4;border-radius:99px;padding:3px 10px">LOANS →</a>
+                    <a href="{{ cr.txHref }}" style="font-size:9.5px;font-weight:800;letter-spacing:0.05em;color:#96742F;text-decoration:none;border:1px solid #E2D9C4;border-radius:99px;padding:3px 10px">TXN →</a>
+                    <span onClick="{{ cr.onFocus }}" style-hover="background:#F6ECD9" style="font-size:9.5px;font-weight:800;letter-spacing:0.05em;color:#96742F;cursor:pointer;border:1px solid #E2D9C4;border-radius:99px;padding:3px 10px">{{ cr.focusLab }}</span>
+                  </div>
+                </div>
+              </sc-if>
+            </div>
+          </sc-for>
+          <sc-if value="{{ crMoreShow }}" hint-placeholder-val="{{ false }}">
+            <div onClick="{{ onCrMore }}" style-hover="background:#F6ECD9" style="margin-top:8px;text-align:center;padding:7px;border:1px solid #D8D4C8;border-radius:9px;font-size:11px;font-weight:700;color:#96742F;cursor:pointer">{{ crMoreLab }}</div>
+          </sc-if>
+        </div>
+      </div>
+      <div style="margin-top:12px;padding-top:10px;border-top:1px solid #F0EEE7;font-size:10.5px;color:#9AA3B5;line-height:1.65">{{ rwFoot }}</div>
+    </div>
+
+    <!-- ══ Tenant ledger ══ -->
+    <div style="margin-top:16px;background:#FFFFFF;border:1px solid #E5E3DC;border-radius:16px;padding:22px 26px">
+      <div style="display:flex;justify-content:space-between;align-items:baseline;flex-wrap:wrap;gap:8px">
+        <div style="font-family:'Source Serif 4',Georgia,serif;font-size:18px;font-weight:600;color:#16233A">Tenant balances — the rent ledger</div>
+        <div style="font-size:11.5px;color:#8A93A6">{{ ldSub }}</div>
+      </div>
+      <div style="margin-top:12px;padding:12px 16px;background:#FBFAF6;border:1px solid #EDEBE2;border-radius:12px;display:flex;align-items:center;gap:10px;flex-wrap:wrap;font-variant-numeric:tabular-nums">
+        <span style="font-size:10px;letter-spacing:0.08em;font-weight:800;color:#96742F">LEDGER IDENTITY</span>
+        <span style="font-size:12.5px;font-weight:700;color:#2A3550">{{ idOpen }}</span><span style="font-size:11px;color:#8A93A6">opening</span>
+        <span style="font-size:12px;color:#8A93A6">+</span>
+        <span style="font-size:12.5px;font-weight:700;color:#3D64A8">{{ idChg }}</span><span style="font-size:11px;color:#8A93A6">charges</span>
+        <span style="font-size:12px;color:#8A93A6">−</span>
+        <span style="font-size:12.5px;font-weight:700;color:#96742F">{{ idColl }}</span><span style="font-size:11px;color:#8A93A6">collected</span>
+        <span style="font-size:12px;color:#8A93A6">−</span>
+        <span style="font-size:12.5px;font-weight:700;color:#A03E28">{{ idCl }}</span><span style="font-size:11px;color:#8A93A6">written off</span>
+        <span style="font-size:12px;color:#8A93A6">=</span>
+        <span style="font-size:12.5px;font-weight:700;color:{{ idCloseCol }}">{{ idClose }}</span><span style="font-size:11px;color:#8A93A6">closing · {{ idNote }}</span>
+      </div>
+      <div style="margin-top:12px;display:flex;align-items:center;gap:8px;flex-wrap:wrap">
+        <input value="{{ lq }}" onInput="{{ onLq }}" placeholder="Search tenant or property…" style="flex:1;min-width:220px;padding:9px 13px;border-radius:10px;border:1.5px solid #D8D4C8;font-size:12.5px;font-family:inherit;color:#16233A">
+        <sc-for list="{{ lBucketChips }}" as="bc" hint-placeholder-count="4">
+          <div onClick="{{ bc.onClick }}" style-hover="border-color:#C9A45C" style="padding:7px 12px;border-radius:9px;border:1.5px solid {{ bc.bd }};background:{{ bc.bg }};font-size:11px;font-weight:700;color:{{ bc.col }};cursor:pointer;white-space:nowrap">{{ bc.label }} <span style="font-weight:600;opacity:0.7">{{ bc.n }}</span></div>
+        </sc-for>
+        <span style="width:1px;height:18px;background:#E5E3DC"></span>
+        <sc-for list="{{ lSortChips }}" as="sc" hint-placeholder-count="3">
+          <div onClick="{{ sc.onClick }}" style-hover="border-color:#C9A45C" style="padding:7px 12px;border-radius:9px;border:1.5px solid {{ sc.bd }};background:{{ sc.bg }};font-size:11px;font-weight:700;color:#2A3550;cursor:pointer;white-space:nowrap">{{ sc.label }}</div>
+        </sc-for>
+      </div>
+      <div style="margin-top:10px;display:flex;padding:0 14px;font-size:9px;letter-spacing:0.07em;font-weight:800;color:#8A93A6">
+        <span style="flex:2.6">TENANT · PROPERTY</span>
+        <span style="flex:1;text-align:right">OPENING</span>
+        <span style="flex:1;text-align:right">CHARGES</span>
+        <span style="flex:1;text-align:right">COLLECTED</span>
+        <span style="flex:1.2;text-align:right">CLOSING</span>
+        <span style="flex:1;text-align:right">MOVE</span>
+      </div>
+      <div>
+        <sc-for list="{{ lRows }}" as="r" hint-placeholder-count="8">
+          <div style="border-top:1px solid #F0EEE7">
+            <div onClick="{{ r.onClick }}" style-hover="background:#FBFAF6" style="display:flex;align-items:center;padding:10px 14px;cursor:pointer;background:{{ r.rowBg }}">
+              <span style="flex:2.6;min-width:0;display:flex;align-items:center;gap:8px">
+                <span style="min-width:0">
+                  <span style="display:block;font-size:12.5px;font-weight:700;color:#16233A;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">{{ r.tenant }}</span>
+                  <span style="display:block;font-size:10.5px;color:#8A93A6;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">{{ r.prop }} · {{ r.entity }}</span>
+                </span>
+                <sc-for list="{{ r.badges }}" as="bd" hint-placeholder-count="1">
+                  <span style="padding:2px 7px;border-radius:99px;font-size:8.5px;font-weight:800;letter-spacing:0.04em;background:{{ bd.bg }};color:{{ bd.col }};white-space:nowrap">{{ bd.t }}</span>
+                </sc-for>
+              </span>
+              <span style="flex:1;text-align:right;font-size:12px;color:#5E6B82;font-variant-numeric:tabular-nums">{{ r.open }}</span>
+              <span style="flex:1;text-align:right;font-size:12px;color:#3D64A8;font-variant-numeric:tabular-nums">{{ r.chg }}</span>
+              <span style="flex:1;text-align:right;font-size:12px;color:#96742F;font-variant-numeric:tabular-nums">{{ r.coll }}</span>
+              <span style="flex:1.2;text-align:right;font-size:13px;font-weight:800;color:{{ r.closeCol }};font-variant-numeric:tabular-nums">{{ r.close }}</span>
+              <span style="flex:1;text-align:right;font-size:11px;font-weight:700;color:{{ r.moveCol }};font-variant-numeric:tabular-nums">{{ r.moveLab }}</span>
+            </div>
+            <sc-if value="{{ r.exp }}" hint-placeholder-val="{{ false }}">
+              <div style="padding:4px 14px 16px;background:#FBFAF6">
+                <div style="display:flex;gap:20px;flex-wrap:wrap;align-items:flex-start">
+                  <div style="flex:2;min-width:300px">
+                    <div style="display:flex;padding:6px 10px;font-size:8.5px;letter-spacing:0.06em;font-weight:800;color:#8A93A6;border-bottom:1px solid #EDEBE2">
+                      <span style="flex:1">MONTH</span><span style="flex:1;text-align:right">OPENING</span><span style="flex:1;text-align:right">CHARGES</span><span style="flex:1;text-align:right">COLLECTED</span><span style="flex:1;text-align:right">CLOSING</span><span style="flex:0.7;text-align:right">IN&nbsp;UNIT</span>
+                    </div>
+                    <sc-for list="{{ r.mini }}" as="mn" hint-placeholder-count="5">
+                      <div style="display:flex;padding:5px 10px;font-size:11px;color:#2A3550;font-variant-numeric:tabular-nums;border-bottom:1px solid #F4F2EA">
+                        <span style="flex:1;font-weight:700">{{ mn.m }}</span><span style="flex:1;text-align:right">{{ mn.open }}</span><span style="flex:1;text-align:right;color:#3D64A8">{{ mn.chg }}</span><span style="flex:1;text-align:right;color:#96742F">{{ mn.coll }}</span><span style="flex:1;text-align:right;font-weight:700;color:{{ mn.closeCol }}">{{ mn.close }}</span><span style="flex:0.7;text-align:right">{{ mn.occ }}</span>
+                      </div>
+                    </sc-for>
+                  </div>
+                  <div style="flex:1;min-width:230px">
+                    <div style="font-size:9px;letter-spacing:0.07em;font-weight:800;color:#8A93A6">LEASE</div>
+                    <div style="margin-top:4px;font-size:11.5px;color:#2A3550;line-height:1.65">{{ r.leaseLine }}</div>
+                    <div style="margin-top:8px;font-size:9px;letter-spacing:0.07em;font-weight:800;color:#8A93A6">NOTES</div>
+                    <div style="margin-top:4px;font-size:11px;color:#5E6B82;line-height:1.65">{{ r.flagsLine }}</div>
+                    <div style="margin-top:10px;display:flex;gap:12px;flex-wrap:wrap">
+                      <a href="{{ r.plHref }}" style="font-size:11px;font-weight:700;color:#96742F;text-decoration:none">P&amp;L →</a>
+                      <a href="{{ r.loanHref }}" style="font-size:11px;font-weight:700;color:#96742F;text-decoration:none">Loans →</a>
+                      <a href="{{ r.txHref }}" style="font-size:11px;font-weight:700;color:#96742F;text-decoration:none">Txn →</a>
+                      <div onClick="{{ r.onFocus }}" style-hover="color:#16233A" style="font-size:11px;font-weight:700;color:#3D64A8;cursor:pointer">{{ r.focusLab }}</div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </sc-if>
+          </div>
+        </sc-for>
+      </div>
+      <sc-if value="{{ lEmpty }}" hint-placeholder-val="{{ false }}">
+        <div style="padding:26px;text-align:center;font-size:12px;color:#8A93A6">{{ lEmptyTxt }}</div>
+      </sc-if>
+      <sc-if value="{{ lMoreShow }}" hint-placeholder-val="{{ false }}">
+        <div style="display:flex;justify-content:center;margin-top:10px">
+          <div onClick="{{ onLMore }}" style-hover="background:#16233A;color:#FFFFFF;border-color:#16233A" style="padding:8px 16px;border-radius:9px;border:1px solid #D8D4C8;background:#FFFFFF;font-size:11.5px;font-weight:700;color:#2A3550;cursor:pointer">{{ lMoreLab }}</div>
+        </div>
+      </sc-if>
+      <div style="margin-top:12px;padding-top:10px;border-top:1px solid #F0EEE7;font-size:10.5px;color:#9AA3B5;line-height:1.65">{{ lFoot }}</div>
+    </div>
+
+    <!-- ══ Collections watchlist ══ -->
+    <div style="margin-top:16px;background:#FFFFFF;border:1px solid #E5E3DC;border-radius:16px;padding:22px 26px">
+      <div style="display:flex;justify-content:space-between;align-items:baseline;flex-wrap:wrap;gap:8px">
+        <div style="font-family:'Source Serif 4',Georgia,serif;font-size:18px;font-weight:600;color:#16233A">Collections watchlist — tenants off the plan</div>
+        <div style="font-size:11.5px;color:#8A93A6">{{ wSub }}</div>
+      </div>
+      <div style="margin-top:12px;display:grid;grid-template-columns:repeat(4,1fr);gap:12px">
+        <sc-for list="{{ wTiles }}" as="wt" hint-placeholder-count="4">
+          <div style="background:#FBFAF6;border:1px solid #EDEBE2;border-radius:12px;padding:12px 15px">
+            <div style="font-size:9px;letter-spacing:0.07em;font-weight:800;color:#8A93A6;text-transform:uppercase;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">{{ wt.k }}</div>
+            <div style="margin-top:4px;font-family:'Source Serif 4',Georgia,serif;font-size:19px;font-weight:600;color:{{ wt.col }};font-variant-numeric:tabular-nums">{{ wt.v }}</div>
+            <div style="margin-top:2px;font-size:10px;color:#9AA3B5;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">{{ wt.sub }}</div>
+          </div>
+        </sc-for>
+      </div>
+      <div style="margin-top:12px;display:flex;align-items:center;gap:8px;flex-wrap:wrap">
+        <sc-for list="{{ wChips }}" as="wcp" hint-placeholder-count="7">
+          <div onClick="{{ wcp.onClick }}" style-hover="border-color:#C9A45C" style="padding:7px 12px;border-radius:9px;border:1.5px solid {{ wcp.bd }};background:{{ wcp.bg }};font-size:11px;font-weight:700;color:{{ wcp.col }};cursor:pointer;white-space:nowrap">{{ wcp.label }} <span style="font-weight:600;opacity:0.75">{{ wcp.n }}</span></div>
+        </sc-for>
+        <input value="{{ wq }}" onInput="{{ onWq }}" placeholder="Search…" style="margin-left:auto;min-width:170px;padding:8px 12px;border-radius:9px;border:1.5px solid #D8D4C8;font-size:12px;font-family:inherit;color:#16233A">
+      </div>
+      <div style="margin-top:10px;display:flex;padding:0 14px;font-size:9px;letter-spacing:0.07em;font-weight:800;color:#8A93A6">
+        <span style="flex:3">TENANT · PROPERTY · WHY FLAGGED</span>
+        <span style="flex:1;text-align:right">{{ wValHead }}</span>
+      </div>
+      <div>
+        <sc-for list="{{ wRows }}" as="wr" hint-placeholder-count="7">
+          <div style="border-top:1px solid #F0EEE7">
+            <div onClick="{{ wr.onClick }}" style-hover="background:#FBFAF6" style="display:flex;align-items:center;padding:10px 14px;cursor:pointer;background:{{ wr.rowBg }}">
+              <span style="flex:3;min-width:0">
+                <span style="display:flex;align-items:center;gap:8px;min-width:0">
+                  <span style="font-size:12.5px;font-weight:700;color:#16233A;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">{{ wr.tenant }}</span>
+                  <span style="font-size:10.5px;color:#8A93A6;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">{{ wr.prop }} · {{ wr.entity }}</span>
+                </span>
+                <span style="margin-top:4px;display:flex;gap:5px;flex-wrap:wrap">
+                  <sc-for list="{{ wr.pills }}" as="pl" hint-placeholder-count="3">
+                    <span style="padding:2px 8px;border-radius:99px;font-size:8.5px;font-weight:800;letter-spacing:0.03em;background:{{ pl.bg }};color:{{ pl.col }};white-space:nowrap">{{ pl.t }}</span>
+                  </sc-for>
+                </span>
+              </span>
+              <span style="flex:1;text-align:right;font-size:13px;font-weight:800;color:{{ wr.valCol }};font-variant-numeric:tabular-nums">{{ wr.val }}</span>
+            </div>
+            <sc-if value="{{ wr.exp }}" hint-placeholder-val="{{ false }}">
+              <div style="padding:4px 14px 16px;background:#FBFAF6">
+                <div style="display:flex;gap:20px;flex-wrap:wrap;align-items:flex-start">
+                  <div style="flex:2;min-width:300px">
+                    <div style="display:flex;padding:6px 10px;font-size:8.5px;letter-spacing:0.06em;font-weight:800;color:#8A93A6;border-bottom:1px solid #EDEBE2">
+                      <span style="flex:1">MONTH</span><span style="flex:1;text-align:right">OPENING</span><span style="flex:1;text-align:right">CHARGES</span><span style="flex:1;text-align:right">COLLECTED</span><span style="flex:1;text-align:right">CLOSING</span><span style="flex:0.7;text-align:right">IN&nbsp;UNIT</span>
+                    </div>
+                    <sc-for list="{{ wr.mini }}" as="mn" hint-placeholder-count="5">
+                      <div style="display:flex;padding:5px 10px;font-size:11px;color:#2A3550;font-variant-numeric:tabular-nums;border-bottom:1px solid #F4F2EA">
+                        <span style="flex:1;font-weight:700">{{ mn.m }}</span><span style="flex:1;text-align:right">{{ mn.open }}</span><span style="flex:1;text-align:right;color:#3D64A8">{{ mn.chg }}</span><span style="flex:1;text-align:right;color:#96742F">{{ mn.coll }}</span><span style="flex:1;text-align:right;font-weight:700;color:{{ mn.closeCol }}">{{ mn.close }}</span><span style="flex:0.7;text-align:right">{{ mn.occ }}</span>
+                      </div>
+                    </sc-for>
+                  </div>
+                  <div style="flex:1;min-width:230px">
+                    <div style="font-size:9px;letter-spacing:0.07em;font-weight:800;color:#8A93A6">LEASE</div>
+                    <div style="margin-top:4px;font-size:11.5px;color:#2A3550;line-height:1.65">{{ wr.leaseLine }}</div>
+                    <div style="margin-top:8px;font-size:9px;letter-spacing:0.07em;font-weight:800;color:#8A93A6">NOTES</div>
+                    <div style="margin-top:4px;font-size:11px;color:#5E6B82;line-height:1.65">{{ wr.flagsLine }}</div>
+                    <div style="margin-top:10px;display:flex;gap:12px;flex-wrap:wrap">
+                      <a href="{{ wr.plHref }}" style="font-size:11px;font-weight:700;color:#96742F;text-decoration:none">P&amp;L →</a>
+                      <a href="{{ wr.loanHref }}" style="font-size:11px;font-weight:700;color:#96742F;text-decoration:none">Loans →</a>
+                      <a href="{{ wr.txHref }}" style="font-size:11px;font-weight:700;color:#96742F;text-decoration:none">Txn →</a>
+                      <div onClick="{{ wr.onFocus }}" style-hover="color:#16233A" style="font-size:11px;font-weight:700;color:#3D64A8;cursor:pointer">{{ wr.focusLab }}</div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </sc-if>
+          </div>
+        </sc-for>
+      </div>
+      <sc-if value="{{ wEmpty }}" hint-placeholder-val="{{ false }}">
+        <div style="padding:26px;text-align:center;font-size:12px;color:#8A93A6">{{ wEmptyTxt }}</div>
+      </sc-if>
+      <sc-if value="{{ wMoreShow }}" hint-placeholder-val="{{ false }}">
+        <div style="display:flex;justify-content:center;margin-top:10px">
+          <div onClick="{{ onWMore }}" style-hover="background:#16233A;color:#FFFFFF;border-color:#16233A" style="padding:8px 16px;border-radius:9px;border:1px solid #D8D4C8;background:#FFFFFF;font-size:11.5px;font-weight:700;color:#2A3550;cursor:pointer">{{ wMoreLab }}</div>
+        </div>
+      </sc-if>
+      <div style="margin-top:12px;padding-top:10px;border-top:1px solid #F0EEE7;font-size:10.5px;color:#9AA3B5;line-height:1.65">{{ wFoot }}</div>
+    </div>
+
+    </sc-if>
+
+    <sc-if value="{{ loading }}" hint-placeholder-val="{{ true }}">
+      <div style="margin-top:18px;background:#FFFFFF;border:1px solid #E5E3DC;border-radius:16px;padding:48px;text-align:center;font-size:13px;color:#8A93A6">Loading the tenant ledgers…</div>
+    </sc-if>
+
+    <sc-if value="{{ loadError }}" hint-placeholder-val="{{ false }}">
+      <div style="margin-top:18px;background:#FFFFFF;border:1px solid #E5C9BE;border-radius:16px;padding:40px;text-align:center">
+        <div style="font-family:'Source Serif 4',Georgia,serif;font-size:18px;font-weight:600;color:#A03E28">Couldn&#8217;t load the data</div>
+        <div style="margin-top:8px;font-size:12.5px;color:#5E6B82;line-height:1.6;max-width:560px;margin-left:auto;margin-right:auto">{{ loadError }}</div>
+        <div style="margin-top:16px;display:flex;justify-content:center">
+          <div onClick="{{ retryLoad }}" style-hover="background:#16233A;color:#FFFFFF;border-color:#16233A" style="display:inline-flex;padding:9px 18px;border-radius:9px;border:1px solid #D8D4C8;background:#FFFFFF;color:#16233A;font-size:12.5px;font-weight:700;cursor:pointer">Retry</div>
+        </div>
+      </div>
+    </sc-if>
+
+  </div>
+</div>
+</x-dc>
+
+<script type="text/x-dc" data-dc-script>
+class Component extends DCLogic {
+  state = {
+    cf: null, loadError: null,
+    fm: [], fe: [], fp: [], ft: [],
+    ddOpen: null, fq: '',
+    crM: null, crq: '', crExp: null, crAll: false, agSel: null, crBy: 'tenant',
+    lq: '', lSort: 'bal', lBucket: null, lExp: null, lAll: false,
+    wSel: [], wq: '', wExp: null, wAll: false,
+  };
+
+  loadData() {
+    this.setState({ loadError: null });
+    fetch('./cf-data.json')
+      .then(r => { if (!r.ok) throw new Error('HTTP ' + r.status + ' fetching ./cf-data.json'); return r.json(); })
+      .then(cf => {
+        if (!cf || cf.schema !== 'cf.v2' || !cf.doors || !cf.collections || !Array.isArray(cf.meta.months)) throw new Error('cf-data.json is not a valid cf.v2 file');
+        this.setState({ cf }, () => this.applyQuery());
+      })
+      .catch(e => this.setState({ cf: null, loadError: (e && e.message ? e.message : String(e)) }));
+  }
+
+  applyQuery() {
+    try {
+      if (typeof location === 'undefined' || !location.search || !this.state.cf) return;
+      const q = new URLSearchParams(location.search);
+      const li = (k) => (q.get(k) || '').split(',').map(s => s.trim()).filter(Boolean);
+      const patch = {};
+      if (q.get('m')) patch.fm = li('m');
+      if (q.get('entity')) patch.fe = li('entity');
+      if (q.get('door')) patch.fp = li('door');
+      if (q.get('tenant')) patch.ft = li('tenant');
+      if (q.get('q')) patch.crq = q.get('q');
+      if (Object.keys(patch).length) this.setState(patch);
+    } catch (e) {}
+  }
+
+  syncUrl() {
+    try {
+      if (typeof history === 'undefined' || typeof location === 'undefined') return;
+      const S = this.state, q = new URLSearchParams();
+      if (S.fm.length) q.set('m', S.fm.join(','));
+      if (S.fe.length) q.set('entity', S.fe.join(','));
+      if (S.fp.length) q.set('door', S.fp.join(','));
+      if (S.ft.length) q.set('tenant', S.ft.join(','));
+      const s = q.toString();
+      history.replaceState(null, '', location.pathname + (s ? '?' + s : ''));
+    } catch (e) {}
+  }
+
+  setF(patch) { this.setState(patch, () => this.syncUrl()); }
+
+  componentDidMount() {
+    this.loadData();
+    this._doc = () => { if (this.state.ddOpen) this.setState({ ddOpen: null }); };
+    document.addEventListener('click', this._doc);
+  }
+  componentWillUnmount() { document.removeEventListener('click', this._doc); }
+
+  renderVals() {
+    const S = this.state;
+    const NAVY = '#16233A', INK = '#2A3550', MUT = '#5E6B82', FAINT = '#8A93A6', RED = '#B04A33', REDD = '#A03E28', GREEN = '#3E8E63', GREEND = '#2A6F4E', GOLD = '#C9A45C', GOLDD = '#96742F', BLUE = '#3D64A8';
+    const stopProp = e => e.stopPropagation();
+    if (!S.cf) return {
+      ready: false, loading: !S.loadError, loadError: S.loadError || false,
+      retryLoad: () => this.loadData(), stopProp,
+      scopeLine: S.loadError ? 'Data failed to load' : 'Loading…',
+      filters: [], hasActive: false, onReset: () => {}, asOfLine: '',
+      kpis: [],
+      crBars: [], crBarsFoot: '', sbLab: '', sbDueLab: '', sbCollW: '0%', sbDueRestW: '0%', sbCollLab: '', sbDueRestLab: '', sbCollTip: '', sbDueTip: '', sbClickWho: () => {}, sbFacts: [], sbFoot: '',
+      agLab: '', agTiles: [], agNote: '', crByChips: [], crRightLab: '', crRightCap: '',
+      crRows: [], crEmpty: false, crEmptyTxt: '', crMoreShow: false, crMoreLab: '', onCrMore: () => {}, onCrq: () => {}, crqVal: '',
+      rwSub: '', rwHeadLab: '', rwHead: '', rwHeadCol: '#16233A', rwHeadCap: '', rwTiles: [], rwFoot: '',
+      ldSub: '', idOpen: '', idChg: '', idColl: '', idCl: '', idClose: '', idCloseCol: '#2A3550', idNote: '',
+      lq: '', onLq: () => {}, lBucketChips: [], lSortChips: [],
+      lRows: [], lEmpty: false, lEmptyTxt: '', lMoreShow: false, onLMore: () => {}, lMoreLab: '', lFoot: '',
+      wSub: '', wTiles: [], wChips: [], wq: '', onWq: () => {}, wValHead: '',
+      wRows: [], wEmpty: false, wEmptyTxt: '', wMoreShow: false, onWMore: () => {}, wMoreLab: '', wFoot: '',
+    };
+
+    const CF = S.cf, MO = CF.meta.months, NM = MO.length, DOORS = CF.doors;
+    const fN = n => { const r = Math.round(n); const s = '$' + Math.abs(r).toLocaleString('en-US'); return r < 0 ? '(' + s + ')' : s; };
+    const f2 = n => { const s = '$' + Math.abs(n).toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 }); return n < -0.004 ? '(' + s + ')' : s; };
+    const fK = n => { const a = Math.abs(n), s = n < 0; let t; if (a >= 1e6) t = '$' + (a / 1e6).toFixed(2) + 'M'; else if (a >= 100000) t = '$' + Math.round(a / 1000) + 'K'; else if (a >= 1000) t = '$' + (a / 1000).toFixed(1) + 'K'; else t = '$' + Math.round(a); return s ? '(' + t + ')' : t; };
+    const MMM = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
+    const mmyy = m => MMM[+m.slice(5, 7) - 1] + '-' + m.slice(2, 4);
+    const sum = a => a.reduce((x, y) => x + y, 0);
+    const esc = s => encodeURIComponent(s);
+
+    // ══ month span (contiguous, accounting-correct — same rule as the Cash Flow page) ══
+    const selM = (S.fm || []).filter(m => MO.includes(m)).sort();
+    let firstI = 0, lastI = NM - 1;
+    if (selM.length) { firstI = MO.indexOf(selM[0]); lastI = MO.indexOf(selM[selM.length - 1]); }
+    const winIdx = []; for (let i = firstI; i <= lastI; i++) winIdx.push(i);
+    const spanLab = firstI === lastI ? mmyy(MO[firstI]) : mmyy(MO[firstI]) + ' – ' + mmyy(MO[lastI]);
+    const spanned = selM.length > 0 && selM.length !== (lastI - firstI + 1);
+
+    // ══ door scope — the TENANT filter lives here, on the collections side ══
+    const doorNames = Object.keys(DOORS);
+    const ftSet = new Set(S.ft);
+    const doorHasTenant = d => DOORS[d].tenants.some(t => ftSet.has(t.tenant));
+    const pass = d => {
+      const dd = DOORS[d];
+      if (S.fe.length && !S.fe.includes(dd.entity)) return false;
+      if (S.fp.length && !S.fp.includes(d)) return false;
+      if (S.ft.length && !doorHasTenant(d)) return false;
+      return true;
+    };
+    const scoped = doorNames.filter(pass);
+    const unfiltered = !S.fe.length && !S.fp.length && !S.ft.length;
+
+    // ══ tenant ledger rows (scope-aware) ══
+    const allRows = [];
+    let hiddenZero = 0;
+    for (const d of scoped) {
+      const dd = DOORS[d];
+      for (const t of dd.tenants) {
+        if (S.ft.length && !ftSet.has(t.tenant)) continue;
+        const openW = firstI === 0 ? t.opening : t.postSweep[firstI - 1];
+        const chgW = sum(winIdx.map(i => t.chg[i]));
+        const collW = sum(winIdx.map(i => t.coll[i]));
+        const closeW = t.close[lastI];
+        const occAny = winIdx.some(i => t.occ[i]);
+        if (!t.openingBlank && Math.abs(openW) < 0.005 && Math.abs(chgW) < 0.005 && Math.abs(collW) < 0.005 && Math.abs(closeW) < 0.005) { hiddenZero++; continue; }
+        const rent = t.lease && t.lease.rent > 0 ? t.lease.rent : Math.max(0, ...winIdx.map(i => t.chg[i]));
+        allRows.push({ d, dd, t, openW, chgW, collW, closeW, move: closeW - openW, occAny, rent });
+      }
+    }
+    const monthsN = winIdx.length;
+
+    // ══ collection-rate engine (owner formula) — scoped from tenant rows ══
+    const CLX = CF.collections;
+    const rowsAll = [];
+    for (const d of scoped) for (const t of DOORS[d].tenants) {
+      if (S.ft.length && !ftSet.has(t.tenant)) continue;
+      rowsAll.push(t);
+    }
+    const openAt = (t, i) => i === 0 ? t.opening : t.postSweep[i - 1];
+    const rateStats = (i) => {
+      let od = 0, oa = 0, cd = 0, ca = 0, inv = 0, col = 0, cl = 0;
+      for (const t of rowsAll) {
+        const o = openAt(t, i);
+        if (o > 0.005) od += o; else if (o < -0.005) oa += -o;
+        const c = t.close[i];
+        if (c > 0.005) cd += c; else if (c < -0.005) ca += -c;
+        inv += t.chg[i]; col += t.coll[i]; cl += t.cl[i];
+      }
+      const due = inv + od, act = col + oa - ca;
+      return { od, oa, cd, ca, inv, col, cl, due, act, rate: due > 0 ? act / due * 100 : null };
+    };
+    const rsM = MO.map((_, i) => rateStats(i));
+    const spanIdx = winIdx;
+    const spanInv = sum(spanIdx.map(i => rsM[i].inv)), spanColl = sum(spanIdx.map(i => rsM[i].col));
+    const spanAct = sum(spanIdx.map(i => rsM[i].act));
+    const spanDue = rsM[firstI].od + spanInv;
+    const spanRate = spanDue > 0 ? spanAct / spanDue * 100 : null;
+    const spanCL = sum(spanIdx.map(i => rsM[i].cl));
+    const tests = {
+      every: { lab: 'Balance every month', f: r => monthsN >= 2 && r.t.close.filter((c, i) => i >= firstI && i <= lastI).every(c => c > 50) },
+      tworent: { lab: '≥ 2 months’ rent', f: r => r.rent > 0 && r.closeW >= 2 * r.rent - 0.005 },
+      grow: { lab: 'Growing balance', f: r => r.move > 50 },
+      never: { lab: 'Owes, paid nothing', f: r => r.collW < 0.005 && r.closeW > 50 },
+      credit: { lab: 'Credit balance', f: r => r.closeW < -50 },
+      pendwo: { lab: 'CL swept · June confirms', f: r => (r.t.flags || []).includes('pending-writeoff') },
+      blank: { lab: 'Blank opening', f: r => r.t.openingBlank },
+    };
+    const testKeys = Object.keys(tests);
+    for (const r of allRows) r.fails = testKeys.filter(k => tests[k].f(r));
+
+    // ══ scope line / as-of ══
+    const nGl = scoped.filter(d => DOORS[d].inGL).length, nFile = scoped.length - nGl;
+    const nTen = allRows.length;
+    const scopeLine = spanLab + ' · ' + nTen + ' tenant ledgers across ' + scoped.length + ' doors · who owes, who pays, and who needs the conversation';
+    const asOfLine = 'Buildium journals at tenant grain · rate = owner formula · write-offs leave the book between months';
+
+    // ══ filter bar ══
+    const openDd = (id) => (e) => { e.stopPropagation(); this.setState({ ddOpen: S.ddOpen === id ? null : id, fq: '' }); };
+    const togList = (key, v) => () => { const cur = new Set(S[key]); cur.has(v) ? cur.delete(v) : cur.add(v); this.setF({ [key]: [...cur] }); };
+    const entities = [...new Set(doorNames.map(d => DOORS[d].entity))].sort();
+    const entN = {}; doorNames.forEach(d => { entN[DOORS[d].entity] = (entN[DOORS[d].entity] || 0) + 1; });
+    const tenantNames = [...new Set(doorNames.flatMap(d => DOORS[d].tenants.filter(t => t.src !== 'system').map(t => t.tenant)))].sort();
+    const tenantDoor = {}; doorNames.forEach(d => DOORS[d].tenants.forEach(t => { if (!tenantDoor[t.tenant]) tenantDoor[t.tenant] = d; }));
+    const q = (S.fq || '').toLowerCase();
+    const mkOpts = (list, key, nOf) => list.map(v => ({
+      label: key === 'fm' ? mmyy(v) : v, n: nOf ? nOf(v) : '', check: S[key].includes(v) ? '✓' : '',
+      fw: S[key].includes(v) ? 700 : 500, bg: S[key].includes(v) ? '#FBF6EA' : 'transparent', onClick: togList(key, v),
+    }));
+    const filtDef = [
+      { id: 'MONTH', key: 'fm', label: 'MONTH', all: 'months', w: '190px', search: false, list: MO, nOf: m => '', val: selM.length ? spanLab : 'All months' },
+      { id: 'ENTITY', key: 'fe', label: 'ENTITY', all: 'entities', w: '230px', search: false, list: entities, nOf: v => entN[v], val: S.fe.length ? (S.fe.length > 2 ? S.fe.length + ' selected' : S.fe.join(', ')) : 'All entities' },
+      { id: 'PROPERTY', key: 'fp', label: 'PROPERTY', all: 'properties', w: '300px', search: true, list: doorNames, nOf: v => DOORS[v].entity, val: S.fp.length ? (S.fp.length > 1 ? S.fp.length + ' selected' : S.fp[0]) : 'All properties' },
+      { id: 'TENANT', key: 'ft', label: 'TENANT', all: 'tenants', w: '300px', search: true, list: tenantNames, nOf: v => tenantDoor[v] || '', val: S.ft.length ? (S.ft.length > 1 ? S.ft.length + ' selected' : S.ft[0]) : 'All tenants' },
+    ];
+    const filters = filtDef.map(f => {
+      const open = S.ddOpen === f.id;
+      const shown = open && f.search && q ? f.list.filter(v => v.toLowerCase().includes(q)) : f.list;
+      return {
+        onToggle: openDd(f.id), bd: S[f.key].length ? GOLD : '#D8D4C8', bg: S[f.key].length ? '#FBF6EA' : '#FFFFFF',
+        label: f.label, value: f.val, open, w: f.w, hasSearch: f.search, q: S.fq,
+        onQ: e => this.setState({ fq: e.target.value }),
+        onClear: () => this.setF({ [f.key]: [] }), allLabel: f.all, allCheck: S[f.key].length ? '' : '✓',
+        selAllShow: !!(f.search && q && shown.length && shown.length <= 400), onSelAll: () => { const cur = new Set(S[f.key]); shown.forEach(v => cur.add(v)); this.setF({ [f.key]: [...cur] }); },
+        selAllLabel: 'Select all ' + shown.length + ' matching',
+        opts: mkOpts(shown.slice(0, 260), f.key, f.nOf),
+      };
+    });
+    const hasActive = !!(S.fm.length || S.fe.length || S.fp.length || S.ft.length);
+    const onReset = () => this.setF({ fm: [], fe: [], fp: [], ft: [] });
+    // ══ collection rate — trend, the month's story, aging, and who is holding it back ══
+    const fR = v => v === null ? '—' : v.toFixed(2) + '%';
+    const crMi = (S.crM !== null && S.crM !== undefined && winIdx.includes(S.crM)) ? S.crM : lastI;
+    const barMax = Math.max(...winIdx.map(i => Math.max(rsM[i].due, rsM[i].act)), 1);
+    const crBars = winIdx.map(i => {
+      const sel = i === crMi;
+      return {
+        m: mmyy(MO[i]), mfw: sel ? 800 : 600, mcol: sel ? NAVY : FAINT,
+        rate: rsM[i].rate === null ? '—' : rsM[i].rate.toFixed(1) + '%',
+        dueH: Math.max(rsM[i].due / barMax * 130, 2).toFixed(0) + 'px',
+        actH: Math.max(rsM[i].act / barMax * 130, 2).toFixed(0) + 'px',
+        bd: sel ? GOLD : '#EDEBE2', bg: sel ? '#FDF9F0' : 'transparent',
+        dueTip: mmyy(MO[i]) + ' due: ' + f2(rsM[i].due), actTip: mmyy(MO[i]) + ' collected: ' + f2(rsM[i].act),
+        tip: mmyy(MO[i]) + ' — due ' + f2(rsM[i].due) + ' · collected ' + f2(rsM[i].act) + ' · rate ' + fR(rsM[i].rate) + ' · uncollected (closing dues) ' + f2(rsM[i].cd),
+        onClick: () => this.setState({ crM: i, crExp: null, crAll: false, agSel: null }),
+      };
+    });
+    const crBarsFoot = 'Click a month to inspect it. The gap between the bars IS the shortfall: due − collected = that month’s closing dues, split by age below and named name-by-name at right.';
+
+    // the month's story bar: due = collected + still due, to the cent
+    const dueV = rsM[crMi].due, actV = rsM[crMi].act, cdV = rsM[crMi].cd;
+    const sbLab = mmyy(MO[crMi]).toUpperCase() + ' — WHERE THE MONTH’S MONEY STANDS';
+    const sbDueLab = 'due for the month ' + fN(dueV);
+    const sbCollW = (dueV > 0 ? Math.max(actV, 0) / dueV * 100 : 0).toFixed(2) + '%';
+    const sbDueRestW = (dueV > 0 ? Math.max(cdV, 0) / dueV * 100 : 0).toFixed(2) + '%';
+    const sbCollLab = fN(actV) + ' · ' + fR(rsM[crMi].rate);
+    const sbDueRestLab = fN(cdV);
+    const sbCollTip = 'Actually collected in ' + mmyy(MO[crMi]) + ': ' + f2(actV) + ' (collections + advances applied − advances taken)';
+    const sbDueTip = 'Still due at ' + mmyy(MO[crMi]) + ' close: ' + f2(cdV) + ' — click to open every name at right';
+    const sbClickWho = () => this.setState({ agSel: null, crq: '', crAll: true, crExp: null });
+    const sbFacts = [
+      { k: 'OPENING DUE ROLLED IN', v: fN(rsM[crMi].od), col: NAVY },
+      { k: 'INVOICED THIS MONTH', v: fN(rsM[crMi].inv), col: BLUE },
+      { k: 'WRITTEN OFF', v: fN(rsM[crMi].cl), col: rsM[crMi].cl > 0.005 ? REDD : MUT },
+      { k: 'ADVANCES HELD AT CLOSE', v: fN(rsM[crMi].ca), col: GREEND },
+    ];
+    const sbFoot = 'Due (' + fK(dueV) + ') − actually collected (' + fK(actV) + ') = still due ' + fK(cdV) + ' — the identity holds to the cent. Your formula: (collections + opening advances − closing advances) ÷ (invoices + opening due).';
+
+    // laggards at the selected month (tenant grain)
+    const crqv = (S.crq || '').toLowerCase();
+    const rentOf = t => (t.lease && t.lease.rent > 0) ? t.lease.rent : Math.max(0, ...t.chg);
+    const lagAll = allRows
+      .filter(r => r.t.close[crMi] > 0.005)
+      .map(r => {
+        const bal = r.t.close[crMi];
+        const prev = crMi === 0 ? r.t.opening : r.t.close[crMi - 1];
+        const rent = rentOf(r.t);
+        const mb = rent > 0 ? bal / rent : null;
+        let since = crMi;
+        while (since > 0 && r.t.close[since - 1] > 0.005) since--;
+        const fromOpening = since === 0 && r.t.opening > 0.005;
+        const owingN = winIdx.filter(i => r.t.close[i] > 0.005).length;
+        return { r, bal, prev, rent, mb, since, fromOpening, owingN };
+      })
+      .sort((x, y) => y.bal - x.bal);
+    const lagSum = sum(lagAll.map(x => x.bal));
+
+    // aging: how old is the still-due money (months behind = balance ÷ lease rent)
+    const bucketOf = x => x.mb === null ? 4 : x.mb >= 3 ? 3 : x.mb >= 2 ? 2 : x.mb >= 1 ? 1 : 0;
+    const agDefs = [
+      { k: 'UNDER 1 MONTH', kc: GOLDD, barC: '#C9A45C' },
+      { k: '1–2 MONTHS', kc: GOLDD, barC: '#C0763F' },
+      { k: '2–3 MONTHS', kc: REDD, barC: '#B04A33' },
+      { k: '3+ MONTHS', kc: REDD, barC: '#A03E28' },
+      { k: 'NO LEASE RENT', kc: MUT, barC: '#8A93A6' },
+    ];
+    const agLab = 'HOW OLD IS THE STILL-DUE MONEY — ' + mmyy(MO[crMi]).toUpperCase();
+    const agTiles = agDefs.map((def, bi) => {
+      const inB = lagAll.filter(x => bucketOf(x) === bi);
+      const amt = sum(inB.map(x => x.bal));
+      const sel = S.agSel === bi;
+      return {
+        k: def.k, kc: def.kc, v: fN(amt), n: inB.length + ' tenant' + (inB.length === 1 ? '' : 's'),
+        col: bi >= 2 && bi <= 3 ? REDD : NAVY, barC: def.barC,
+        shareW: (lagSum > 0 ? amt / lagSum * 100 : 0).toFixed(1) + '%',
+        bd: sel ? GOLD : '#EDEBE2', bg: sel ? '#FBF6EA' : '#FBFAF6',
+        onClick: () => this.setState({ agSel: sel ? null : bi, crAll: false, crExp: null }),
+      };
+    });
+    const agNote = 'months behind = balance ÷ monthly lease rent · click a bucket to filter the names at right' + (S.agSel !== null && S.agSel !== undefined ? ' · showing ' + agDefs[S.agSel].k.toLowerCase() + ' — click again to clear' : '');
+
+    // grouping: by tenant or by property
+    const crBy = S.crBy === 'property' ? 'property' : 'tenant';
+    const crByChips = [
+      { label: 'BY TENANT', on: crBy === 'tenant', onClick: () => this.setState({ crBy: 'tenant', crExp: null, crAll: false }) },
+      { label: 'BY PROPERTY', on: crBy === 'property', onClick: () => this.setState({ crBy: 'property', crExp: null, crAll: false }) },
+    ].map(c => ({ label: c.label, onClick: c.onClick, bd: c.on ? GOLD : '#D8D4C8', bg: c.on ? '#FBF6EA' : '#FFFFFF' }));
+
+    // pattern strip: one cell per window month, tenant grain
+    const stripOf = t => winIdx.map(i => {
+      const c = t.close[i], cl = t.cl[i], hasAct = t.occ[i] || Math.abs(t.chg[i]) > 0.005 || Math.abs(t.coll[i]) > 0.005 || Math.abs(c) > 0.005 || Math.abs(cl) > 0.005;
+      let bg, state;
+      if (!hasAct) { bg = '#F0EEE6'; state = 'not in unit'; }
+      else if (Math.abs(cl) > 0.005) { bg = '#6B4A3C'; state = 'written off ' + f2(cl); }
+      else if (c <= 0.005) { bg = '#3E8E63'; state = 'paid up'; }
+      else if (t.coll[i] > 0.005) { bg = '#D9A441'; state = 'paid part, owes ' + f2(c); }
+      else { bg = '#B04A33'; state = 'paid nothing, owes ' + f2(c); }
+      return { bg, bd: i === crMi ? '#16233A' : 'transparent', tip: mmyy(MO[i]) + ': ' + state + ' · charged ' + f2(t.chg[i]) + ' · collected ' + f2(t.coll[i]) + ' · closing ' + f2(c) };
+    });
+    const stripOfDoor = tenants => winIdx.map(i => {
+      let cd2 = 0, coll2 = 0, cl2 = 0, act2 = false;
+      for (const t of tenants) {
+        if (t.close[i] > 0.005) cd2 += t.close[i];
+        coll2 += t.coll[i]; cl2 += Math.abs(t.cl[i]);
+        if (t.occ[i] || Math.abs(t.chg[i]) > 0.005 || Math.abs(t.coll[i]) > 0.005 || Math.abs(t.close[i]) > 0.005) act2 = true;
+      }
+      let bg, state;
+      if (!act2) { bg = '#F0EEE6'; state = 'no activity'; }
+      else if (cl2 > 0.005) { bg = '#6B4A3C'; state = 'write-off month'; }
+      else if (cd2 <= 0.005) { bg = '#3E8E63'; state = 'all tenants paid up'; }
+      else if (coll2 > 0.005) { bg = '#D9A441'; state = 'part collected, ' + f2(cd2) + ' open'; }
+      else { bg = '#B04A33'; state = 'nothing collected, ' + f2(cd2) + ' open'; }
+      return { bg, bd: i === crMi ? '#16233A' : 'transparent', tip: mmyy(MO[i]) + ': ' + state };
+    });
+    const miniOf = t => winIdx.map(i => {
+      const o = i === 0 ? t.opening : t.postSweep[i - 1];
+      return { m: mmyy(MO[i]), open: f2(o), chg: f2(t.chg[i]), coll: f2(t.coll[i]), close: f2(t.close[i]),
+        closeCol: t.close[i] > 0.005 ? REDD : (t.close[i] < -0.005 ? GREEND : MUT) };
+    });
+    const mbLab = mb => mb === null ? 'no rent on file' : (mb >= 1 ? mb.toFixed(1) + ' months behind' : (mb * 30).toFixed(0) + ' days behind');
+    const badgesOf = x => {
+      const F2 = x.r.t.flags || [];
+      const badges = [];
+      if (F2.includes('pending-writeoff')) badges.push({ t: 'CL · JUNE CONFIRMS', bg: '#FBF0ED', col: REDD });
+      else if (F2.includes('written-off')) badges.push({ t: 'WRITTEN OFF', bg: '#FBF6EA', col: GOLDD });
+      else if (F2.includes('moved-out')) badges.push({ t: 'MOVED OUT', bg: '#F0EEE6', col: MUT });
+      if (x.since === crMi && !x.fromOpening) badges.push({ t: 'NEW THIS MONTH', bg: '#EFF3FA', col: BLUE });
+      else if (x.owingN >= 3) badges.push({ t: 'REPEAT — ' + x.owingN + ' OF ' + winIdx.length + ' MONTHS', bg: '#FBF0ED', col: REDD });
+      if (x.prev > 0.005 && x.bal > x.prev + 0.005) badges.push({ t: 'GROWING', bg: '#FBF0ED', col: REDD });
+      return badges.slice(0, 3);
+    };
+    const sinceOf = x => x.fromOpening ? 'SINCE DEC-25 OPENING' : 'BEHIND SINCE ' + mmyy(MO[x.since]).toUpperCase();
+
+    // the list: filter by aging bucket + search, group per crBy
+    const agSelOn = S.agSel !== null && S.agSel !== undefined;
+    const lagFilt = lagAll.filter(x => !agSelOn || bucketOf(x) === S.agSel);
+    let crRowsSrc;
+    if (crBy === 'property') {
+      const byDoor = new Map();
+      for (const x of lagFilt) { const k2 = x.r.d; (byDoor.get(k2) || byDoor.set(k2, []).get(k2)).push(x); }
+      crRowsSrc = [...byDoor.entries()].map(([d, xs]) => {
+        const bal = sum(xs.map(x => x.bal));
+        const rents = sum(xs.filter(x => x.rent > 0).map(x => x.rent));
+        const prev = sum(xs.map(x => Math.max(x.prev, 0)));
+        return { kind: 'door', d, xs, bal, prev, mb: rents > 0 ? bal / rents : null, tenants: xs.map(x => x.r.t) };
+      }).sort((x, y) => y.bal - x.bal);
+    } else {
+      crRowsSrc = lagFilt.map(x => ({ kind: 'tenant', d: x.r.d, x, bal: x.bal }));
+    }
+    const crMatch = crRowsSrc.filter(g => !crqv || g.d.toLowerCase().includes(crqv) || (g.kind === 'tenant' ? g.x.r.t.tenant.toLowerCase().includes(crqv) : g.xs.some(x => x.r.t.tenant.toLowerCase().includes(crqv))));
+    const CR_CAP = 8;
+    const crShown = (S.crAll || crqv) ? crMatch : crMatch.slice(0, CR_CAP);
+    const crKey = g => g.kind === 'door' ? 'P||' + g.d : g.d + '||' + g.x.r.t.tenant;
+    const crRows = crShown.map(g => {
+      const open = S.crExp === crKey(g);
+      const base = {
+        bd: open ? GOLD : '#EDEBE2', bg: open ? '#FDF9F0' : 'transparent',
+        onClick: () => this.setState({ crExp: open ? null : crKey(g) }),
+        open,
+        shareW: Math.min(g.bal / Math.max(lagSum, 1) * 100, 100).toFixed(1) + '%',
+        shareLab: (g.bal / Math.max(lagSum, 1) * 100).toFixed(1) + '% of the gap',
+        bal: f2(g.bal),
+        plHref: './PL%20Story%20-%20Main.dc.html?door=' + esc(g.d),
+        invHref: './investments.dc.html?door=' + esc(g.d),
+        loanHref: './loans.dc.html?door=' + esc(g.d),
+        txHref: './transactions.dc.html?door=' + esc(g.d),
+        onFocus: (e) => { if (e && e.stopPropagation) e.stopPropagation(); this.setF({ fp: S.fp.length === 1 && S.fp[0] === g.d ? [] : [g.d] }); },
+        focusLab: S.fp.length === 1 && S.fp[0] === g.d ? 'RELEASE FOCUS ✕' : 'FOCUS PAGE ⌖',
+      };
+      if (g.kind === 'tenant') {
+        const x = g.x;
+        return Object.assign(base, {
+          prop: x.r.d, tenant: x.r.t.tenant,
+          mb: mbLab(x.mb), mbBg: x.mb !== null && x.mb >= 2 ? '#FBF0ED' : '#F6ECD9', mbCol: x.mb !== null && x.mb >= 2 ? REDD : GOLDD,
+          badges: badgesOf(x), strip: stripOf(x.r.t), sinceLab: sinceOf(x),
+          mini: miniOf(x.r.t),
+          facts: [
+            { k: 'Closing balance · ' + mmyy(MO[crMi]), v: f2(x.bal), col: REDD },
+            { k: 'Previous closing (' + (crMi === 0 ? 'Dec-25' : mmyy(MO[crMi - 1])) + ')', v: f2(x.prev), col: x.prev > 0.005 ? REDD : (x.prev < -0.005 ? GREEND : MUT) },
+            { k: 'Movement this month', v: (x.bal - x.prev >= 0 ? '+' : '') + f2(x.bal - x.prev), col: x.bal - x.prev > 0.005 ? REDD : GREEND },
+            { k: 'Monthly rent (lease)', v: x.rent > 0 ? f2(x.rent) + '/mo' : '—', col: INK },
+            { k: 'Months behind = balance ÷ rent', v: x.mb === null ? '—' : x.mb.toFixed(2), col: x.mb !== null && x.mb >= 2 ? REDD : GOLDD },
+            { k: 'Behind since', v: x.fromOpening ? 'Dec-25 opening' : mmyy(MO[x.since]), col: INK },
+            { k: 'Months owing in window', v: x.owingN + ' of ' + winIdx.length, col: x.owingN >= 3 ? REDD : INK },
+          ],
+        });
+      }
+      // property group row
+      const names = g.xs.map(x => x.r.t.tenant);
+      return Object.assign(base, {
+        prop: g.d, tenant: g.xs.length + ' tenant' + (g.xs.length === 1 ? '' : 's') + ': ' + (names.slice(0, 2).join(', ')) + (names.length > 2 ? ' +' + (names.length - 2) : ''),
+        mb: mbLab(g.mb), mbBg: g.mb !== null && g.mb >= 2 ? '#FBF0ED' : '#F6ECD9', mbCol: g.mb !== null && g.mb >= 2 ? REDD : GOLDD,
+        badges: (() => { const b2 = []; if (g.bal > g.prev + 0.005 && g.prev > 0.005) b2.push({ t: 'GROWING', bg: '#FBF0ED', col: REDD }); if (g.xs.some(x => (x.r.t.flags || []).includes('pending-writeoff'))) b2.push({ t: 'CL · JUNE CONFIRMS', bg: '#FBF0ED', col: REDD }); return b2; })(),
+        strip: stripOfDoor(g.tenants), sinceLab: 'DOOR TOTAL',
+        mini: (() => { const dd2 = DOORS[g.d]; return winIdx.map(i => { const cds = sum(dd2.tenants.map(t => Math.max(t.close[i], 0))); return { m: mmyy(MO[i]), open: f2(i === 0 ? sum(dd2.tenants.map(t => t.opening)) : sum(dd2.tenants.map(t => t.postSweep[i - 1]))), chg: f2(dd2.chg[i]), coll: f2(dd2.coll[i]), close: f2(cds), closeCol: cds > 0.005 ? REDD : MUT }; }); })(),
+        facts: g.xs.map(x => ({ k: x.r.t.tenant + ' · ' + mbLab(x.mb), v: f2(x.bal), col: REDD })),
+      });
+    });
+    const crEmpty = crMatch.length === 0;
+    const crEmptyTxt = crqv ? 'No open balances match "' + S.crq + '" in ' + mmyy(MO[crMi]) + (agSelOn ? ' (bucket filter on)' : '') + '.'
+      : agSelOn ? 'No open balances in the ' + agDefs[S.agSel].k.toLowerCase() + ' bucket at ' + mmyy(MO[crMi]) + '.'
+      : 'Every tenant stands fully collected at ' + mmyy(MO[crMi]) + ' — the rate gap is zero.';
+    const crMoreShow = !S.crAll && !crqv && crMatch.length > CR_CAP;
+    const crMoreLab = 'Show all ' + crMatch.length + (crBy === 'property' ? ' properties' : ' open balances') + ' ▾';
+    const onCrMore = () => this.setState({ crAll: true });
+    const onCrq = e => this.setState({ crq: e && e.target ? e.target.value : '' });
+    const crqVal = S.crq || '';
+    const crRightLab = 'WHY NOT 100% — ' + mmyy(MO[crMi]).toUpperCase();
+    const crRightCap = (crBy === 'property' ? crRowsSrc.length + ' propert' + (crRowsSrc.length === 1 ? 'y' : 'ies') : lagAll.length + ' open balance' + (lagAll.length === 1 ? '' : 's')) + ' · ' + fN(agSelOn ? sum(lagFilt.map(x => x.bal)) : lagSum) + ' still due';
+    const ytdArr = CLX.monthly.ytdRate || [];
+    const rwHead = spanIdx.length > 1 ? fR(spanRate) : fR(rsM[firstI].rate);
+    const rwHeadLab = spanIdx.length > 1 ? 'SPAN RATE · ' + spanLab + ' (TELESCOPED)' : 'COLLECTION RATE · ' + spanLab;
+    const rwHeadCol = spanRate !== null && spanRate >= 85 ? GREEND : (spanRate !== null && spanRate >= 75 ? NAVY : REDD);
+    const rwHeadCap = 'each due counted once; each collection counted once' + (unfiltered ? '' : ' · filtered scope');
+    const rwTiles = [
+      { k: 'YTD RATE (JAN →)', v: unfiltered && ytdArr.length ? fR(ytdArr[lastI]) : fR((() => { const d0 = rsM[0].od + sum(MO.map((_, i) => i <= lastI ? rsM[i].inv : 0)); const a0 = sum(MO.map((_, i) => i <= lastI ? rsM[i].act : 0)); return d0 > 0 ? a0 / d0 * 100 : null; })()), sub: 'telescoped from January', col: GREEND },
+      { k: 'BEST MONTH', v: (() => { let b = null; for (const i of spanIdx) if (rsM[i].rate !== null && (b === null || rsM[i].rate > rsM[b].rate)) b = i; return b === null ? '—' : mmyy(MO[b]) + ' · ' + rsM[b].rate.toFixed(1) + '%'; })(), sub: 'of the span', col: NAVY },
+      { k: 'COLLECTION LOSS', v: fN(spanCL), sub: (CLX.pendingWriteoffs || []).length + ' lease-rule sweeps await June file', col: REDD },
+      { k: 'REFUNDS PAID OUT (OUTSIDE AR)', v: fN(Math.abs(sum((CLX.sdRefunds || []).filter(x => x.cash && (i => i >= firstI && i <= lastI)(MO.indexOf(x.m))).map(x => x.amt)))), sub: 'deducted from cash kept' + ((CLX.arRefundExceptions || []).length ? ' · ' + CLX.arRefundExceptions.length + ' in-month settlement in ledger' : ''), col: MUT },
+    ];
+    const rwSub = 'your formula, live — click a month · click an aging bucket · group by tenant or property · every row shows its 5-month pattern and drills';
+    const rwFoot = 'Monthly rate = (collections + opening advances − closing advances) ÷ (invoices + opening due) — advances for future months never flatter a month, and months collecting past advances get credit for the dues they cleared. The span rate counts each due once: Σ actual collections ÷ (opening due at span start + Σ invoices). Write-offs stay in the denominator. Openings chain: closing − collection loss = next opening, to the cent. Pattern cells read left→right across the window; the outlined cell is the selected month.';
+
+    // ══ ledger table ══
+    const lqv = (S.lq || '').toLowerCase();
+    const match = r => !lqv || r.t.tenant.toLowerCase().includes(lqv) || r.d.toLowerCase().includes(lqv);
+    const bucketDef = [
+      { id: null, lab: 'All' }, { id: 'owes', lab: 'Owes' }, { id: 'credit', lab: 'Credit' }, { id: 'settled', lab: 'Settled' },
+    ];
+    const inBucket = (r, b) => b === null ? true : b === 'owes' ? r.closeW > 0.005 : b === 'credit' ? r.closeW < -0.005 : Math.abs(r.closeW) <= 0.005;
+    const lFiltered = allRows.filter(r => match(r) && inBucket(r, S.lBucket));
+    const sorters = { bal: (a, b) => b.closeW - a.closeW, move: (a, b) => Math.abs(b.move) - Math.abs(a.move), az: (a, b) => a.t.tenant.localeCompare(b.t.tenant) };
+    lFiltered.sort(sorters[S.lSort] || sorters.bal);
+    const CAP = 12;
+    const lShown = (S.lAll || lqv) ? lFiltered : lFiltered.slice(0, CAP);
+    const rowKey = r => r.d + '||' + r.t.tenant;
+    const mkMini = r => winIdx.map(i => {
+      const o = i === 0 ? r.t.opening : r.t.postSweep[i - 1];
+      const fb = r.t.fileBal ? r.t.fileBal[i] : null;
+      const tie = fb === null ? '·' : (Math.abs(r.t.close[i] - fb) <= 0.005 || Math.abs(r.t.postSweep[i] - fb) <= 0.005 ? '✓' : 'Δ ' + fK(r.t.close[i] - fb));
+      return { m: mmyy(MO[i]), open: f2(o), chg: f2(r.t.chg[i]), coll: f2(r.t.coll[i]), close: f2(r.t.close[i]),
+        closeCol: r.t.close[i] > 0.005 ? REDD : (r.t.close[i] < -0.005 ? GREEND : MUT),
+        occ: (r.t.occ[i] ? '●' : '—') + ' ' + tie };
+    });
+    const leaseLine = r => {
+      if (r.t.lease) { const L = r.t.lease; return L.status + ' · ' + L.start.slice(0, 10) + ' → ' + (L.end.slice(0, 4) === '2060' ? 'at will' : L.end.slice(0, 10)) + ' · rent ' + fN(L.rent) + '/mo'; }
+      if (r.t.src === 'ar') return 'AR-file row — no lease on file for this name';
+      return 'Journal-only row (payer/lease name not in the AR file)';
+    };
+    const flagsLine = r => {
+      const f = []; const F = r.t.flags || [];
+      const clTot = sum(r.t.cl || []);
+      if (Math.abs(clTot) > 0.005) f.push('collection loss written off: ' + f2(clTot));
+      if (F.includes('pending-writeoff')) f.push('moved out, balance NOT yet written off in the AR file');
+      if (r.t.openingBlank) f.push('Dec-25 opening blank in AR file — treated as $0');
+      if (!r.dd.inGL) f.push('door not in the 2026 GL (sold / pre-2026)');
+      const nrec = sum(winIdx.map(i => r.dd.nrec[i]));
+      f.push(nrec + ' receipt' + (nrec === 1 ? '' : 's') + ' on this door in span');
+      const bad = winIdx.some(i => r.t.fileBal && r.t.fileBal[i] !== null && Math.abs(r.t.close[i] - r.t.fileBal[i]) > 0.005 && Math.abs(r.t.postSweep[i] - r.t.fileBal[i]) > 0.005);
+      if (bad) f.push('does NOT tie to your AR file — see the reconciliation card');
+      return f.join(' · ');
+    };
+    const mkBadges = r => {
+      const b = []; const F = r.t.flags || [];
+      if (F.includes('pending-writeoff')) b.push({ t: 'CL · JUNE CONFIRMS', bg: '#FBF0ED', col: REDD });
+      else if (F.includes('written-off')) b.push({ t: 'WRITTEN OFF', bg: '#FBF6EA', col: GOLDD });
+      else if (F.includes('moved-out')) b.push({ t: 'MOVED OUT', bg: '#F0EEE6', col: MUT });
+      if (F.includes('book-only')) b.push({ t: 'NOT IN AR FILE', bg: '#FBF6EA', col: GOLDD });
+      if (r.t.openingBlank) b.push({ t: 'BLANK OPEN', bg: '#FBF6EA', col: GOLDD });
+      return b.slice(0, 2);
+    };
+    const mkRow = (r, expKey, setExp) => ({
+      onClick: () => this.setState({ [expKey]: S[expKey] === rowKey(r) ? null : rowKey(r) }),
+      rowBg: S[expKey] === rowKey(r) ? '#FBFAF6' : 'transparent', exp: S[expKey] === rowKey(r),
+      tenant: r.t.tenant, prop: r.d, entity: r.dd.entity, badges: mkBadges(r),
+      open: f2(r.openW), chg: f2(r.chgW), coll: f2(r.collW), close: f2(r.closeW),
+      closeCol: r.closeW > 0.005 ? REDD : (r.closeW < -0.005 ? GREEND : MUT),
+      moveLab: (r.move > 0.005 ? '▲ ' : r.move < -0.005 ? '▼ ' : '· ') + fK(Math.abs(r.move)),
+      moveCol: r.move > 0.005 ? REDD : (r.move < -0.005 ? GREEND : FAINT),
+      mini: mkMini(r), leaseLine: leaseLine(r), flagsLine: flagsLine(r),
+      plHref: './PL%20Story%20-%20Main.dc.html?door=' + esc(r.d), loanHref: './loans.dc.html?door=' + esc(r.d), txHref: './transactions.dc.html?door=' + esc(r.d),
+      onFocus: () => this.setF({ fp: S.fp.length === 1 && S.fp[0] === r.d ? [] : [r.d] }),
+      focusLab: S.fp.length === 1 && S.fp[0] === r.d ? 'Release focus ✕' : 'Focus property ⌖',
+    });
+    const lRows = lShown.map(r => mkRow(r, 'lExp', true));
+    const lBucketChips = bucketDef.map(b => ({
+      label: b.lab, n: '' + allRows.filter(r => match(r) && inBucket(r, b.id)).length,
+      onClick: () => this.setState({ lBucket: b.id, lAll: false }),
+      bd: S.lBucket === b.id ? GOLD : '#D8D4C8', bg: S.lBucket === b.id ? '#FBF6EA' : '#FFFFFF',
+      col: b.id === 'owes' ? REDD : b.id === 'credit' ? GREEND : INK,
+    }));
+    const sortDef = [{ id: 'bal', lab: 'Worst balance' }, { id: 'move', lab: 'Biggest move' }, { id: 'az', lab: 'A–Z' }];
+    const lSortChips = sortDef.map(sd => ({ label: sd.lab, onClick: () => this.setState({ lSort: sd.id }), bd: S.lSort === sd.id ? GOLD : '#D8D4C8', bg: S.lSort === sd.id ? '#FBF6EA' : '#FFFFFF' }));
+    const idOpen = allRows.reduce((s, r) => s + r.openW, 0), idChgV = allRows.reduce((s, r) => s + r.chgW, 0), idCollV = allRows.reduce((s, r) => s + r.collW, 0), idCloseV = allRows.reduce((s, r) => s + r.closeW, 0);
+    const idClV = allRows.reduce((s, r) => { let c = 0; for (const i of winIdx) if (i < lastI) c += r.t.cl[i]; return s + c; }, 0);
+    const idNote = 'write-offs leave the book between months (your rule) · holds to the cent for every tenant, property, entity and month' + (spanned ? ' · non-adjacent picks widened to ' + spanLab : '');
+    const ldSub = spanLab + ' · opening + charges − collected = closing · ' + allRows.length + ' ledgers' + (hiddenZero ? ' (' + hiddenZero + ' all-zero hidden)' : '');
+    const lFoot = 'Openings are your AR file’s Dec-25 closings, matched by tenant name per property. Charges and collections are the actual Buildium journals — rent, SD, fees and utilities — allocated to the tenant in the unit on each row’s date (Active/Last status per your column; payer names override payment allocation). Balances of former tenants stay frozen on their own line until written off in your AR file; write-offs leave the book between months. In the expanded month view, ✓ means the computed closing ties your AR file to the cent, Δ shows the difference, · means no file balance for that name.';
+
+    // ══ watchlist ══
+    const universe = allRows.filter(r => r.fails.length);
+    const wSelSet = new Set(S.wSel);
+    const wqv = (S.wq || '').toLowerCase();
+    const wMatch = r => !wqv || r.t.tenant.toLowerCase().includes(wqv) || r.d.toLowerCase().includes(wqv);
+    const wView = universe.filter(r => wMatch(r) && (!wSelSet.size || [...wSelSet].every(k => r.fails.includes(k))));
+    const selOne = wSelSet.size === 1 ? [...wSelSet][0] : null;
+    const metric = r => selOne === 'credit' ? r.closeW : selOne === 'grow' ? r.move : r.closeW;
+    wView.sort((a, b) => wSelSet.size ? (selOne === 'credit' ? metric(a) - metric(b) : metric(b) - metric(a)) : (b.fails.length - a.fails.length || b.closeW - a.closeW));
+    const wShown = (S.wAll || wqv) ? wView : wView.slice(0, 10);
+    const wChips = testKeys.map(k => ({
+      label: tests[k].lab, n: '' + universe.filter(r => r.fails.includes(k)).length,
+      onClick: () => { const cur = new Set(S.wSel); cur.has(k) ? cur.delete(k) : cur.add(k); this.setState({ wSel: [...cur], wAll: false }); },
+      bd: wSelSet.has(k) ? GOLD : '#D8D4C8', bg: wSelSet.has(k) ? '#FBF6EA' : '#FFFFFF', col: k === 'credit' ? GREEND : (k === 'blank' || k === 'pendwo') ? GOLDD : REDD,
+    }));
+    const wOwed = wView.reduce((s, r) => s + (r.closeW > 0 ? r.closeW : 0), 0);
+    const wCred = wView.reduce((s, r) => s + (r.closeW < 0 ? r.closeW : 0), 0);
+    const wBig = wView.length ? Math.max(...wView.map(r => r.closeW)) : 0;
+    const wTiles = [
+      { k: wSelSet.size ? 'In view' : 'On the watchlist', v: '' + wView.length, sub: 'of ' + allRows.length + ' ledgers', col: NAVY },
+      { k: 'Owed in view', v: fN(wOwed), sub: 'positive balances', col: REDD },
+      { k: 'Credits in view', v: fN(-wCred), sub: 'prepaid / deposits unapplied', col: GREEND },
+      { k: 'Largest balance', v: fN(wBig), sub: wView.length && wBig > 0 ? wView.find(r => r.closeW === wBig).t.tenant : '—', col: REDD },
+    ];
+    const wRowsList = wShown.map(r => {
+      const base = mkRow(r, 'wExp', true);
+      return Object.assign(base, {
+        pills: r.fails.map(k => ({ t: tests[k].lab.toUpperCase(), bg: k === 'credit' ? '#F2F7F0' : (k === 'blank' || k === 'pendwo') ? '#FBF6EA' : '#FBF0ED', col: k === 'credit' ? GREEND : (k === 'blank' || k === 'pendwo') ? GOLDD : REDD })).slice(0, 4),
+        val: wSelSet.size ? f2(metric(r)) : ('' + r.fails.length + ' ⚑'), valCol: r.closeW > 0.005 ? REDD : (r.closeW < -0.005 ? GREEND : MUT),
+      });
+    });
+    const wValHead = selOne ? tests[selOne].lab.toUpperCase() : (wSelSet.size ? 'CLOSING' : 'FLAGS · WORST FIRST');
+    const wSub = 'the plan: every tenant pays in full, every month · ' + universe.length + ' ledgers trip at least one test';
+    const wFoot = 'Tests run on the selected span: balance every month-end > $50 · closing ≥ 2 months’ lease rent · balance grew > $50 · owes with zero receipts · credit beyond $50 · moved out, CL recognised at window end (June file confirms) · blank Dec-25 opening. Chips combine with AND. Consistent-balance tenants are the eviction/settlement conversation list; balances are gross ledger dues from the Buildium journals.';
+
+    // ══ KPI row ══
+    const owed = allRows.reduce((s, r) => s + (r.closeW > 0 ? r.closeW : 0), 0);
+    const kTile = (label, val, sub, col, tip, bg, bd) => ({ label, val, sub, col: col || NAVY, dcol: FAINT, tip: tip || '', bg: bg || '#FFFFFF', bd: bd || '#E5E3DC' });
+    const kpis = [
+      kTile('Charges raised', fN(spanInv), spanLab + ' · rent, SD, fees, utilities', BLUE, 'Buildium charge journal for the span (refund rows excluded)'),
+      kTile('Cash collected', fN(spanColl), sum(winIdx.map(i => scoped.reduce((s, d) => s + DOORS[d].nrec[i], 0))) + ' receipts', GOLDD, 'Buildium receipts (refunds outside AR; in-month settlements netted in ledger)'),
+      kTile('Collection rate', spanRate !== null ? spanRate.toFixed(2) + '%' : '—', 'actual collection ÷ due for the span', spanRate !== null && spanRate >= 85 ? GREEND : (spanRate !== null && spanRate >= 75 ? NAVY : REDD), 'Owner formula: (collections + opening advances − closing advances) ÷ (invoices + opening due)'),
+      kTile('Owed by tenants', fN(rsM[lastI].cd), 'at ' + mmyy(MO[lastI]) + ' · gross dues', REDD, 'Sum of positive tenant balances at span end (before that month’s write-offs)'),
+      kTile('Advances held', fN(rsM[lastI].ca), 'prepaid for future months', GREEND, 'Sum of negative tenant balances at span end'),
+      kTile('On the watchlist', '' + universe.length, 'ledgers trip at least one test', universe.length ? REDD : GREEND, 'Tenant ledgers failing any of the seven watchlist tests over the selected span', universe.length ? '#FBF0ED' : '#F2F7F0', universe.length ? '#EAD1C8' : '#D6E4D2'),
+    ];
+
+    return {
+      ready: true, loading: false, loadError: false, retryLoad: () => this.loadData(), stopProp,
+      scopeLine, filters, hasActive, onReset, asOfLine,
+      kpis,
+      crBars, crBarsFoot, sbLab, sbDueLab, sbCollW, sbDueRestW, sbCollLab, sbDueRestLab, sbCollTip, sbDueTip, sbClickWho, sbFacts, sbFoot,
+      agLab, agTiles, agNote, crByChips, crRightLab, crRightCap,
+      crRows, crEmpty, crEmptyTxt, crMoreShow, crMoreLab, onCrMore, onCrq, crqVal,
+      rwSub, rwHeadLab, rwHead, rwHeadCol, rwHeadCap, rwTiles, rwFoot,
+      ldSub, idOpen: f2(idOpen), idChg: f2(idChgV), idColl: f2(idCollV), idCl: f2(idClV), idClose: f2(idCloseV), idCloseCol: idCloseV < 0 ? GREEND : REDD, idNote,
+      lq: S.lq, onLq: e => this.setState({ lq: e.target.value, lAll: false }), lBucketChips, lSortChips,
+      lRows, lEmpty: lShown.length === 0, lEmptyTxt: 'No tenant ledgers match — clear the search or chips.',
+      lMoreShow: !S.lAll && !lqv && lFiltered.length > CAP, onLMore: () => this.setState({ lAll: true }), lMoreLab: 'Show all ' + lFiltered.length + ' ledgers ▾', lFoot,
+      wSub, wTiles, wChips, wq: S.wq, onWq: e => this.setState({ wq: e.target.value, wAll: false }), wValHead,
+      wRows: wRowsList, wEmpty: wShown.length === 0, wEmptyTxt: 'Nothing trips the selected tests in this scope.',
+      wMoreShow: !S.wAll && !wqv && wView.length > 10, onWMore: () => this.setState({ wAll: true }), wMoreLab: 'Show all ' + wView.length + ' flagged ▾', wFoot,
+    };
+  }
+}
+</script>
+</body>
+</html>
