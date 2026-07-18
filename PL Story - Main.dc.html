@@ -161,7 +161,7 @@ input:focus{outline:2px solid #C9A45C;outline-offset:1px}
             </div>
             <div style="margin-top:8px;display:flex;flex-direction:column;min-width:0">
               <sc-for list="{{ allocSummary }}" as="s" hint-placeholder-count="5">
-                <div style="display:grid;grid-template-columns:9px 1fr 72px 52px;gap:7px;align-items:center;padding:4.5px 0;border-top:{{ s.bt }}">
+                <div onClick="{{ s.onClick }}" style-hover="background:{{ s.hbg }}" style="display:grid;grid-template-columns:9px 1fr 72px 52px;gap:7px;align-items:center;padding:4.5px 0;border-top:{{ s.bt }};cursor:{{ s.cur }};border-radius:5px">
                   <div style="width:9px;height:9px;border-radius:50%;background:{{ s.bg }}"></div>
                   <div style="font-size:11px;font-weight:{{ s.fw }};color:{{ s.col }};white-space:nowrap;overflow:hidden;text-overflow:ellipsis">{{ s.label }}</div>
                   <div style="text-align:right;font-variant-numeric:tabular-nums;font-size:11px;font-weight:{{ s.fw }};color:{{ s.col }}">{{ s.amt }}</div>
@@ -175,7 +175,7 @@ input:focus{outline:2px solid #C9A45C;outline-offset:1px}
             <div style="font-size:10px;letter-spacing:0.1em;font-weight:700;color:#96742F">EXPENSE BREAKDOWN · % OF SCHEDULED RENT</div>
             <div style="margin-top:4px;display:flex;flex-direction:column">
               <sc-for list="{{ allocRows }}" as="g" hint-placeholder-count="10">
-                <div style="display:grid;grid-template-columns:9px 1fr 68px 44px;gap:6px;align-items:center;padding:4.5px 6px;border-bottom:{{ g.bt }};background:{{ g.rowBg }};border-radius:5px">
+                <div onClick="{{ g.onClick }}" style-hover="background:{{ g.hbg }}" style="display:grid;grid-template-columns:9px 1fr 68px 44px;gap:6px;align-items:center;padding:4.5px 6px;border-bottom:{{ g.bt }};background:{{ g.rowBg }};border-radius:5px;cursor:{{ g.cur }}">
                   <div style="width:{{ g.dot }};height:{{ g.dot }};border-radius:3px;background:{{ g.bg }}"></div>
                   <div style="font-size:11px;font-weight:{{ g.fw }};color:{{ g.lcol }};white-space:nowrap;overflow:hidden;text-overflow:ellipsis">{{ g.label }}</div>
                   <div style="text-align:right;font-variant-numeric:tabular-nums;font-size:11px;font-weight:{{ g.fw }};color:{{ g.acol }}">{{ g.amt }}</div>
@@ -359,7 +359,7 @@ input:focus{outline:2px solid #C9A45C;outline-offset:1px}
                         <span style="flex:1;min-width:0;font-weight:{{ wd.nameFw }};color:{{ wd.nameCol }};white-space:nowrap;overflow:hidden;text-overflow:ellipsis">{{ wd.name }}</span>
                         <sc-if value="{{ wd.hasLinks }}" hint-placeholder-val="{{ false }}">
                           <span style="display:flex;gap:4px;flex:none">
-                            <sc-for list="{{ wd.links }}" as="wl" hint-placeholder-count="3">
+                            <sc-for list="{{ wd.links }}" as="wl" hint-placeholder-count="4">
                               <a href="{{ wl.href }}" onClick="{{ stopProp }}" style-hover="background:#F6ECD9" style="font-size:8px;font-weight:800;letter-spacing:0.04em;color:#96742F;text-decoration:none;border:1px solid #E2D9C4;border-radius:99px;padding:2px 7px">{{ wl.lab }}</a>
                             </sc-for>
                           </span>
@@ -423,7 +423,7 @@ input:focus{outline:2px solid #C9A45C;outline-offset:1px}
                           <span style="flex:1;min-width:0;font-weight:{{ we.nameFw }};color:{{ we.nameCol }};white-space:nowrap;overflow:hidden;text-overflow:ellipsis">{{ we.name }}</span>
                           <sc-if value="{{ we.hasLinks }}" hint-placeholder-val="{{ false }}">
                             <span style="display:flex;gap:4px;flex:none">
-                              <sc-for list="{{ we.links }}" as="wm" hint-placeholder-count="3">
+                              <sc-for list="{{ we.links }}" as="wm" hint-placeholder-count="4">
                                 <a href="{{ wm.href }}" onClick="{{ stopProp }}" style-hover="background:#F6ECD9" style="font-size:8px;font-weight:800;letter-spacing:0.04em;color:#96742F;text-decoration:none;border:1px solid #E2D9C4;border-radius:99px;padding:2px 7px">{{ wm.lab }}</a>
                               </sc-for>
                             </span>
@@ -455,7 +455,7 @@ input:focus{outline:2px solid #C9A45C;outline-offset:1px}
     </div>
 
     <!-- ══ Trend explorer ══ -->
-    <div style="margin-top:16px;background:#FFFFFF;border:1px solid #E5E3DC;border-radius:16px;padding:24px 30px">
+    <div data-trends-root="1" style="margin-top:16px;background:#FFFFFF;border:1px solid #E5E3DC;border-radius:16px;padding:24px 30px">
       <div style="display:flex;justify-content:space-between;align-items:baseline;flex-wrap:wrap;gap:8px">
         <div style="font-family:'Source Serif 4',Georgia,serif;font-size:18px;font-weight:600;color:#16233A">Income, expense &amp; loss trends, month on month</div>
         <div style="font-size:12px;color:#8A93A6">Pick a line, then drill into the doors behind it — sorted so the vital few show first</div>
@@ -511,16 +511,42 @@ input:focus{outline:2px solid #C9A45C;outline-offset:1px}
           <div style="margin-top:3px;font-size:11.5px;color:#96742F;font-weight:600">{{ paretoNote }}</div>
           <div style="margin-top:12px;display:flex;flex-direction:column;gap:9px;max-height:{{ trendListMax }};overflow-y:{{ trendListOv }};padding-right:4px">
             <sc-for list="{{ trendProps }}" as="p" hint-placeholder-count="7">
-              <div style="display:grid;grid-template-columns:20px 1fr;gap:9px;align-items:center">
-                <span style="font-size:11px;font-weight:700;color:#B0A688;font-variant-numeric:tabular-nums;text-align:right">{{ p.rank }}</span>
-                <div>
-                  <div style="display:flex;justify-content:space-between;font-size:12px;color:#2A3550;gap:10px">
-                    <span style="font-weight:500;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;min-width:0;flex:1">{{ p.name }}</span>
-                    <span style="flex:none;font-variant-numeric:tabular-nums;color:#8A93A6;font-weight:600">{{ p.share }}</span>
-                    <span style="font-weight:700;font-variant-numeric:tabular-nums;flex:none;min-width:56px;text-align:right;color:{{ p.vcol }}">{{ p.val }}</span>
+              <div>
+                <div onClick="{{ p.onClick }}" style-hover="background:#F8F6EE" style="display:grid;grid-template-columns:20px 1fr;gap:9px;align-items:center;cursor:pointer;border-radius:6px;background:{{ p.rowBg }}">
+                  <span style="font-size:11px;font-weight:700;color:#B0A688;font-variant-numeric:tabular-nums;text-align:right">{{ p.rank }}</span>
+                  <div>
+                    <div style="display:flex;justify-content:space-between;font-size:12px;color:#2A3550;gap:10px">
+                      <span style="flex:none;width:10px;font-size:9.5px;color:#C9A45C">{{ p.chev }}</span>
+                      <span style="font-weight:500;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;min-width:0;flex:1">{{ p.name }}</span>
+                      <span style="flex:none;font-variant-numeric:tabular-nums;color:#8A93A6;font-weight:600">{{ p.share }}</span>
+                      <span style="font-weight:700;font-variant-numeric:tabular-nums;flex:none;min-width:56px;text-align:right;color:{{ p.vcol }}">{{ p.val }}</span>
+                    </div>
+                    <div style="margin-top:4px;height:6px;background:#F4F2EA;border-radius:3px;overflow:hidden"><div style="width:{{ p.w }};height:6px;background:{{ p.bg }};border-radius:3px"></div></div>
                   </div>
-                  <div style="margin-top:4px;height:6px;background:#F4F2EA;border-radius:3px;overflow:hidden"><div style="width:{{ p.w }};height:6px;background:{{ p.bg }};border-radius:3px"></div></div>
                 </div>
+                <sc-if value="{{ p.exOn }}" hint-placeholder-val="{{ false }}">
+                  <div onClick="{{ stopProp }}" style="margin:6px 0 4px 29px;background:#FCFBF8;border:1px solid #EDEAE0;border-radius:11px;padding:10px 14px">
+                    <div style="display:flex;justify-content:space-between;align-items:center;gap:10px;flex-wrap:wrap">
+                      <span style="font-size:10px;letter-spacing:0.06em;font-weight:800;color:#96742F">{{ trendEx.title }}</span>
+                      <span style="display:flex;gap:4px;flex:none">
+                        <sc-for list="{{ trendEx.links }}" as="tl" hint-placeholder-count="3">
+                          <a href="{{ tl.href }}" onClick="{{ stopProp }}" style-hover="background:#F6ECD9" style="font-size:8px;font-weight:800;letter-spacing:0.04em;color:#96742F;text-decoration:none;border:1px solid #E2D9C4;border-radius:99px;padding:2px 7px">{{ tl.lab }}</a>
+                        </sc-for>
+                      </span>
+                    </div>
+                    <div style="margin-top:5px">
+                      <sc-for list="{{ trendEx.rows }}" as="te" hint-placeholder-count="6">
+                        <div title="{{ te.tip }}" onClick="{{ te.onClick }}" style="display:flex;justify-content:space-between;align-items:baseline;gap:12px;padding:4.5px 4px;border-top:1px solid #F0EEE7;cursor:{{ te.cur }};background:{{ te.rowBg }};border-radius:5px">
+                          <span style="font-size:11px;color:{{ te.lcol }};font-weight:{{ te.lfw }};min-width:0">{{ te.lab }}</span>
+                          <span style="font-size:11px;font-weight:700;font-variant-numeric:tabular-nums;color:{{ te.vcol }};flex:none">{{ te.val }}</span>
+                        </div>
+                      </sc-for>
+                    </div>
+                    <sc-if value="{{ trendEx.noteOn }}" hint-placeholder-val="{{ false }}">
+                      <div style="margin-top:5px;font-size:10px;color:#9AA3B5;line-height:1.5">{{ trendEx.note }}</div>
+                    </sc-if>
+                  </div>
+                </sc-if>
               </div>
             </sc-for>
           </div>
@@ -902,6 +928,7 @@ class Component extends DCLogic {
     wfSel: null, wfQ: '',
     wvSel: [], wvDd: null, wvCmp: false, wvASel: [], wvBSel: [], wvBud: false, wvSpotQ: '',
     wfAll: false, wfTxOpen: null, wfTxAll: false, txd: null, txErr: false,
+    trendExp: null, bsd: null, bsErr: false,
   };
 
   loadData() {
@@ -920,6 +947,26 @@ class Component extends DCLogic {
       .then(r => { if (!r.ok) throw new Error('HTTP ' + r.status); return r.json(); })
       .then(tx => { if (!tx || tx.schema !== 'tx.v1' || !Array.isArray(tx.tx)) throw new Error('bad tx.v1'); this.setState({ txd: tx, _txLoading: false }); })
       .catch(() => this.setState({ txErr: true, _txLoading: false }));
+  }
+
+  loadBs() {
+    if (this.state.bsd || this.state._bsLoading) return;
+    if (typeof fetch === 'undefined') return;
+    this.setState({ _bsLoading: true, bsErr: false });
+    fetch('./bs-data.json')
+      .then(r => { if (!r.ok) throw new Error('HTTP ' + r.status); return r.json(); })
+      .then(bs => { if (!bs || typeof bs !== 'object' || !bs.properties || typeof bs.properties !== 'object') throw new Error('bad bs-data'); this.setState({ bsd: bs, _bsLoading: false }); })
+      .catch(() => this.setState({ bsErr: true, _bsLoading: false }));
+  }
+
+  scrollToTrends() {
+    if (typeof document === 'undefined') return;
+    setTimeout(() => {
+      try {
+        const el = document.querySelector('[data-trends-root]');
+        if (el && el.scrollIntoView) el.scrollIntoView({ behavior: 'smooth' });
+      } catch (e) {}
+    }, 60);
   }
 
   normalizeData(raw) {
@@ -999,6 +1046,7 @@ class Component extends DCLogic {
       wfCmpALab: '', wfCmpBLab: '', wfCmpRows: [], wfBudOn: false, wfBudTxt: '',
       wfEx: { title: '', sub: '', q: '', onQ: () => {}, onClose: () => {}, rows: [], empty: false },
       wfRows: [],
+      trendEx: { title: '', links: [], rows: [], noteOn: false, note: '' },
     };
 
     // ---- period selection (multi-month) ----
@@ -1413,7 +1461,7 @@ class Component extends DCLogic {
     // and the doors card opens IN PLACE right under the clicked row (r.exOn), no jump-down panel.
     const wfRowClick = (i, s) => () => {
       const willOpen = this.state.wfSel !== i;
-      const extra = willOpen && s.cat ? { tcat: s.cat, trendShowAll: false, othersOpen: false } : {};
+      const extra = willOpen && s.cat ? { tcat: s.cat, trendShowAll: false, othersOpen: false, trendExp: null } : {};
       this.setState({ wfSel: willOpen ? i : null, wfQ: '', wfAll: false, wfTxOpen: null, wfTxAll: false, ...extra });
     };
     const oneWv = wvSel.length === 1 ? wvSel[0] : null;
@@ -1614,6 +1662,7 @@ class Component extends DCLogic {
           barOn: true, w: Math.max(2, Math.abs(kv) / mxx * 100).toFixed(1) + '%', bg: kv < 0 ? RED : NAVY,
           hasLinks: true,
           links: [
+            { lab: 'CF', href: './cashflow.dc.html?door=' + esc2(p) },
             { lab: 'BS', href: './investments.dc.html?door=' + esc2(p) },
             { lab: 'LOANS', href: './loans.dc.html?door=' + esc2(p) },
             { lab: 'TXN', href: './transactions.dc.html?door=' + esc2(p) + '&acct=' + acctParam + '&m=' + esc2(linkMonths) },
@@ -1638,17 +1687,19 @@ class Component extends DCLogic {
     // ---- rental income allocation ----
     const rentBase = Math.max(wRent, 1);
     const otherInc = per(M.other) + per(M.sdf) + per(M.ins);
+    // each slice carries the trend-explorer category id it jumps to on click
     const allocDefs = [
-      ['Statutory (tax · ins · HOA)', per(M.statutory), '#8A5A3C'],
-      ['Repairs', per(M.rep), '#7A6A4F'],
-      ['Rent ready', per(M.turn), '#AD9C80'],
-      ['CapEx', per(M.capex), '#4A5C7E'],
-      ['Vacancy loss', -per(M.vac), '#C0763F'],
-      ['Collection loss', per(M.coll), '#B04A33'],
-      ['Property management', per(M.pm), '#C9A45C'],
-      ['Other expenses', per(M.othx), '#D9C08A'],
-      ['Interest cost (debt service)', per(M.int), '#2E3E5E'],
+      ['Statutory (tax · ins · HOA)', per(M.statutory), '#8A5A3C', 'statutory'],
+      ['Repairs', per(M.rep), '#7A6A4F', 'rep'],
+      ['Rent ready', per(M.turn), '#AD9C80', 'turn'],
+      ['CapEx', per(M.capex), '#4A5C7E', 'capex'],
+      ['Vacancy loss', -per(M.vac), '#C0763F', 'vac'],
+      ['Collection loss', per(M.coll), '#B04A33', 'coll'],
+      ['Property management', per(M.pm), '#C9A45C', 'pm'],
+      ['Other expenses', per(M.othx), '#D9C08A', 'othx'],
+      ['Interest cost (debt service)', per(M.int), '#2E3E5E', 'int'],
     ];
+    const allocGo = id => () => { this.setState({ tcat: id, trendShowAll: false, othersOpen: false, trendExp: null }); this.scrollToTrends(); };
     const expTotal = allocDefs.reduce((s, [, v]) => s + v, 0);
     const keptA = wRent + otherInc - expTotal;
     const hasRent = wRent > 0.5;
@@ -1667,26 +1718,27 @@ class Component extends DCLogic {
     const maintAll = per(M.rep) + per(M.turn) + per(M.capex);
     const intAll = per(M.int);
     const otherExpAll = expTotal - statAll - maintAll - intAll;
+    const sumInert = { onClick: undefined, cur: 'default', hbg: 'transparent' };
     const allocSummary = [
-      { label: 'Scheduled rent', amt: fK(wRent), pct: '100.0%', bg: '#16233A', fw: 500, col: INK, bt: 'none' },
-      { label: 'Other income (incl. SD, claims)', amt: '+' + fK(otherInc), pct: '+' + f1(otherInc), bg: '#C9A45C', fw: 500, col: INK, bt: '1px solid #F3F1EA' },
-      { label: 'Total available income', amt: fK(wRent + otherInc), pct: f1(wRent + otherInc), bg: '#8A96AD', fw: 700, col: NAVY, bt: '1px solid #F3F1EA' },
-      { label: 'Statutory (tax · ins · HOA)', amt: sAmt(statAll), pct: sPct(statAll), bg: '#8A5A3C', fw: 500, col: RED, bt: '1px solid #F3F1EA' },
-      { label: 'Repairs + rent ready + CapEx', amt: sAmt(maintAll), pct: sPct(maintAll), bg: '#7A6A4F', fw: 500, col: RED, bt: '1px solid #F3F1EA' },
-      { label: 'Interest expense', amt: sAmt(intAll), pct: sPct(intAll), bg: '#2E3E5E', fw: 500, col: RED, bt: '1px solid #F3F1EA' },
-      { label: 'Other (vacancy · collection · PM)', amt: sAmt(otherExpAll), pct: sPct(otherExpAll), bg: '#D9C08A', fw: 500, col: RED, bt: '1px solid #F3F1EA' },
-      { label: 'Net income', amt: fK(keptA), pct: f1(keptA), bg: '#3E8E63', fw: 700, col: keptA < 0 ? RED : GREEN, bt: '1px solid #E0DDD1' },
+      { label: 'Scheduled rent', amt: fK(wRent), pct: '100.0%', bg: '#16233A', fw: 500, col: INK, bt: 'none', onClick: allocGo('rent'), cur: 'pointer', hbg: '#F6F4EC' },
+      { label: 'Other income (incl. SD, claims)', amt: '+' + fK(otherInc), pct: '+' + f1(otherInc), bg: '#C9A45C', fw: 500, col: INK, bt: '1px solid #F3F1EA', ...sumInert },
+      { label: 'Total available income', amt: fK(wRent + otherInc), pct: f1(wRent + otherInc), bg: '#8A96AD', fw: 700, col: NAVY, bt: '1px solid #F3F1EA', ...sumInert },
+      { label: 'Statutory (tax · ins · HOA)', amt: sAmt(statAll), pct: sPct(statAll), bg: '#8A5A3C', fw: 500, col: RED, bt: '1px solid #F3F1EA', ...sumInert },
+      { label: 'Repairs + rent ready + CapEx', amt: sAmt(maintAll), pct: sPct(maintAll), bg: '#7A6A4F', fw: 500, col: RED, bt: '1px solid #F3F1EA', ...sumInert },
+      { label: 'Interest expense', amt: sAmt(intAll), pct: sPct(intAll), bg: '#2E3E5E', fw: 500, col: RED, bt: '1px solid #F3F1EA', ...sumInert },
+      { label: 'Other (vacancy · collection · PM)', amt: sAmt(otherExpAll), pct: sPct(otherExpAll), bg: '#D9C08A', fw: 500, col: RED, bt: '1px solid #F3F1EA', ...sumInert },
+      { label: 'Net income', amt: fK(keptA), pct: f1(keptA), bg: '#3E8E63', fw: 700, col: keptA < 0 ? RED : GREEN, bt: '1px solid #E0DDD1', onClick: allocGo('net'), cur: 'pointer', hbg: '#F6F4EC' },
     ];
     const combinedMaint = per(M.rep) + per(M.turn) + per(M.capex);
     const allocRows = [];
-    allocDefs.forEach(([label, v, bg], i) => {
-      allocRows.push({ label, bg, amt: fK(v), pct: f1(v), fw: 400, lcol: '#2A3550', acol: '#5E6B82', rowBg: 'transparent', bt: '1px solid #F3F1EA', dot: '9px' });
+    allocDefs.forEach(([label, v, bg, tid], i) => {
+      allocRows.push({ label, bg, amt: fK(v), pct: f1(v), fw: 400, lcol: '#2A3550', acol: '#5E6B82', rowBg: 'transparent', bt: '1px solid #F3F1EA', dot: '9px', onClick: allocGo(tid), cur: 'pointer', hbg: '#F6F4EC' });
       if (i === 3) allocRows.push({
         label: 'Total repairs + rent ready + CapEx', bg: '#5C4A32', amt: fK(combinedMaint), pct: f1(combinedMaint),
-        fw: 700, lcol: '#16233A', acol: '#16233A', rowBg: '#F4F0E6', bt: '1px solid #E4DECB', dot: '9px',
+        fw: 700, lcol: '#16233A', acol: '#16233A', rowBg: '#F4F0E6', bt: '1px solid #E4DECB', dot: '9px', onClick: undefined, cur: 'default', hbg: '#F4F0E6',
       });
     });
-    const allocSub = 'Scheduled rent is the 100% baseline; other income adds on top · ' + periodShort;
+    const allocSub = 'Scheduled rent is the 100% baseline; other income adds on top · ' + periodShort + ' · click any line to open its month-on-month trend below';
     const otherLbl = '+' + f1(otherInc) + ' other income · ' + fK(otherInc);
     const basePctO = hasRent ? Math.max(pR(otherInc), 0) : 0;
     const baseRentW = (100 / (100 + basePctO) * 100) + '%';
@@ -1795,7 +1847,74 @@ class Component extends DCLogic {
       share: Math.round(Math.abs(v) / totalAbs * 100) + '%',
       w: Math.max(2, Math.abs(v) / catPMax * 100) + '%',
       bg: rentDelta ? (v >= 0 ? '#2A6F4E' : RED) : (cat.net ? (v < 0 ? RED : '#2A6F4E') : (v < 0 ? RED : (cat.inc ? NAVY : BRICK))),
+      chev: S.trendExp === p ? '▾' : '▸',
+      exOn: S.trendExp === p,
+      rowBg: S.trendExp === p ? '#F8F4EA' : 'transparent',
+      onClick: () => { const willOpen = this.state.trendExp !== p; if (willOpen) this.loadBs(); this.setState({ trendExp: willOpen ? p : null }); },
     }));
+
+    // ---- trend door expansion card: fixed-cost economics for the door over selM, lazy bs-data facts ----
+    const EXP_CATS = new Set(['rep', 'turn', 'coll', 'vac', 'statutory', 'pm', 'othx', 'capex', 'int']);
+    let trendEx = { title: '', links: [], rows: [], noteOn: false, note: '' };
+    if (S.trendExp != null) {
+      const dEx = S.trendExp;
+      const nMo = selM.length;
+      const fC = n2 => (n2 < 0 ? '−$' : '$') + Math.abs(n2).toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+      const dSum = keys => { let s2 = 0; for (const k of keys) { const pmm = byAcctProp[k]; if (!pmm) continue; const pv = pmm.get(dEx); if (pv) s2 += per(pv); } return s2; };
+      const rentD = dSum(G.rent), statD = dSum(G.statutory), intD = dSum(G.int);
+      const iafc = rentD - statD - intD;
+      const rentMo = rentD / nMo, iafcMo = iafc / nMo;
+      const moTxt = nMo + ' month' + (nMo === 1 ? '' : 's');
+      const teRow = (lab, val, extra) => Object.assign({ lab, val, tip: '', vcol: NAVY, lcol: MUT, lfw: 600, cur: 'default', rowBg: 'transparent', onClick: undefined }, extra || {});
+      const exRows = [
+        teRow('Scheduled rent /mo', fC(rentMo), { tip: fC(rentD) + ' scheduled rent over ' + moTxt + ' (' + periodShort + ') ÷ ' + nMo + ' = ' + fC(rentMo) + '/mo' }),
+        teRow('Income after fixed costs /mo', fC(iafcMo), {
+          vcol: iafcMo < 0 ? RED : '#2A6F4E',
+          tip: 'rent ' + fC(rentD) + ' − statutory (tax · ins · HOA) ' + fC(statD) + ' − interest ' + fC(intD) + ' = ' + fC(iafc) + ' over ' + moTxt + ' ÷ ' + nMo + ' = ' + fC(iafcMo) + '/mo',
+        }),
+      ];
+      let exNoteOn = false, exNote = '';
+      if (EXP_CATS.has(cat.id)) {
+        const amtD = catProp.get(dEx) || 0;
+        const catLow = cat.label.toLowerCase();
+        if (iafcMo > 0.005) {
+          const lm = amtD / iafcMo;
+          exRows.push(teRow('This ' + catLow, lm.toFixed(1) + ' loss months', {
+            vcol: BRICK,
+            tip: fC(amtD) + ' of ' + catLow + ' ÷ ' + fC(iafcMo) + '/mo income after fixed costs = ' + lm.toFixed(1) + ' loss months of ' + catLow,
+          }));
+        } else {
+          exRows.push(teRow('This ' + catLow, '—', { vcol: '#8A93A6', tip: 'no fixed-cost income in this window' }));
+          exNoteOn = true; exNote = 'Loss months unavailable — no fixed-cost income in this window (income after fixed costs ≤ $0/mo).';
+        }
+      }
+      if (!S.bsd) {
+        if (S.bsErr) exRows.push(teRow('Couldn’t load the balance-sheet facts — click to retry', '', { lcol: GOLDD, lfw: 700, cur: 'pointer', rowBg: '#FBF6EA', onClick: e => { if (e && e.stopPropagation) e.stopPropagation(); this.setState({ bsErr: false }); this.loadBs(); } }));
+        else exRows.push(teRow('Loading the balance-sheet facts…', '', { lcol: GOLDD, lfw: 700, rowBg: '#FBF6EA' }));
+      } else {
+        let bp = null;
+        const bprops = S.bsd.properties || {};
+        for (const k2 in bprops) { const o2 = bprops[k2]; if (o2 && o2.door === dEx) { bp = o2; break; } }
+        if (!bp) exRows.push(teRow('Total cost · loan · investment', 'pending in BS file', { vcol: '#8A93A6', tip: 'this door has no row in bs-data.json yet' }));
+        else {
+          const costB = +bp.cost || 0, refiB = +bp.refi || 0;
+          exRows.push(teRow('Total cost', fC(costB)));
+          exRows.push(teRow('Loan (initial refinance)', fC(refiB)));
+          exRows.push(teRow('Investment (cost − refi)', fC(costB - refiB), { lfw: 700, lcol: NAVY, tip: 'total cost ' + fC(costB) + ' − initial refinance ' + fC(refiB) + ' = ' + fC(costB - refiB) }));
+        }
+      }
+      const escT = encodeURIComponent(dEx);
+      trendEx = {
+        title: dEx + ' · ' + periodShort,
+        links: [
+          { lab: 'CF', href: './cashflow.dc.html?door=' + escT },
+          { lab: 'INVESTMENTS', href: './investments.dc.html?door=' + escT },
+          { lab: 'LOANS', href: './loans.dc.html?door=' + escT },
+        ],
+        rows: exRows,
+        noteOn: exNoteOn, note: exNote,
+      };
+    }
     const paretoNote = rentDelta
       ? (catArr.length
           ? catArr.length + ' door' + (catArr.length === 1 ? '' : 's') + ' moved rent · ' + MF[B] + ' vs ' + MF[A] + ' (base) · net ' + (dCat >= 0 ? '+' : '−') + fK(Math.abs(dCat))
@@ -1816,7 +1935,7 @@ class Component extends DCLogic {
     const trendListOv = S.trendShowAll ? 'auto' : 'visible';
     const catChips = CATS.filter(c => !c.extra).map(c => ({
       label: c.label,
-      onClick: () => this.setState({ tcat: c.id, trendShowAll: false, othersOpen: false }),
+      onClick: () => this.setState({ tcat: c.id, trendShowAll: false, othersOpen: false, trendExp: null }),
       bg: c.id === cat.id ? '#16233A' : '#FFFFFF',
       col: c.id === cat.id ? '#FFFFFF' : MUT,
       bd: c.id === cat.id ? '#16233A' : '#D8D4C8',
@@ -1836,7 +1955,7 @@ class Component extends DCLogic {
         check: c.id === cat.id ? '✓' : '',
         fw: c.id === cat.id ? 700 : 500,
         bg: c.id === cat.id ? '#F6F2E7' : 'transparent',
-        onClick: () => this.setState({ tcat: c.id, trendShowAll: false, othersOpen: false }),
+        onClick: () => this.setState({ tcat: c.id, trendShowAll: false, othersOpen: false, trendExp: null }),
       })),
     };
 
@@ -2465,7 +2584,7 @@ class Component extends DCLogic {
       wfCmpALab, wfCmpBLab, wfCmpRows, wfBudOn, wfBudTxt,
       othersChip, topLegend, topEmpty,
       allocSub, baseRentW, baseOtherW, rentAmt, otherLbl, donutBg, keptPctBig, keptCol, allocSummary, allocRows, allocFormula,
-      catChips, trendName: cat.label, trendCur: fK(per(catSeries)), trendNote, trendProps,
+      catChips, trendName: cat.label, trendCur: fK(per(catSeries)), trendNote, trendProps, trendEx,
       chartVB, linePath, areaPath, lineCol, linePts, zeroY, chartLeft: 10, chartRight: 450,
       paretoNote, trendBtn, trendListMax, trendListOv,
       ...bridge,

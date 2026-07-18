@@ -182,16 +182,45 @@ input:focus{outline:2px solid #C9A45C;outline-offset:1px}
 
     <!-- ══ Margin of safety ══ -->
     <div style="margin-top:16px;background:#FFFFFF;border:1px solid #E5E3DC;border-radius:16px;padding:22px 26px" onClick="{{ stopProp }}">
-      <div style="display:flex;justify-content:space-between;align-items:baseline;flex-wrap:wrap;gap:8px">
-        <div style="font-family:'Source Serif 4',Georgia,serif;font-size:18px;font-weight:600;color:#16233A">Margin of safety — equity, value &amp; appreciation</div>
-        <div style="font-size:11.5px;color:#8A93A6">how much cushion sits between the portfolio and its debt · {{ mosAsOf }}</div>
+      <div style="display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:8px;row-gap:10px">
+        <div>
+          <div style="font-family:'Source Serif 4',Georgia,serif;font-size:18px;font-weight:600;color:#16233A">Margin of safety — equity, value &amp; appreciation</div>
+          <div style="margin-top:2px;font-size:11.5px;color:#8A93A6">how much cushion sits between the portfolio and its debt · {{ mosAsOf }}</div>
+        </div>
+        <div style="display:flex;align-items:center;gap:10px;flex-wrap:wrap">
+          <sc-if value="{{ mosCapOn }}" hint-placeholder-val="{{ false }}">
+            <div style="display:flex;align-items:center;gap:6px">
+              <span style="font-size:9.5px;letter-spacing:0.08em;font-weight:700;color:#96742F">CAP&nbsp;RATE</span>
+              <input type="number" min="1" max="20" step="0.1" value="{{ mosCapVal }}" onInput="{{ onMosCap }}" style="width:66px;box-sizing:border-box;padding:7px 9px;border-radius:9px;border:1.5px solid #C9A45C;font-family:inherit;font-size:12.5px;font-weight:700;color:#16233A;background:#FFFFFF">
+              <span style="font-size:12px;font-weight:700;color:#5E6B82">%</span>
+              <span style="font-size:10px;color:#A03E28;font-weight:600;max-width:170px">{{ mosCapNote }}</span>
+            </div>
+          </sc-if>
+          <div style="position:relative">
+            <div onClick="{{ onMosMethToggle }}" style-hover="box-shadow:0 2px 10px rgba(201,164,92,0.35)" style="display:flex;align-items:center;gap:8px;padding:8px 13px;border-radius:10px;border:1.5px solid #C9A45C;background:#FBF6EA;font-size:12px;font-weight:700;color:#16233A;cursor:pointer;white-space:nowrap">
+              <span style="font-size:9.5px;letter-spacing:0.08em;font-weight:700;color:#96742F">VALUATION</span>
+              <span>{{ mosMethLabel }}</span>
+              <span style="font-size:8.5px;color:#5E6B82">▾</span>
+            </div>
+            <sc-if value="{{ mosMethOpen }}" hint-placeholder-val="{{ false }}">
+              <div style="position:absolute;top:42px;right:0;width:320px;background:#FFFFFF;border:1px solid #D8D4C8;border-radius:12px;box-shadow:0 14px 36px rgba(14,24,48,0.20);z-index:80;padding:6px">
+                <sc-for list="{{ mosMethOpts }}" as="mo" hint-placeholder-count="4">
+                  <div onClick="{{ mo.onClick }}" style-hover="background:#F6F4EC" style="padding:8px 10px;border-radius:7px;cursor:pointer;background:{{ mo.bg }};display:flex;justify-content:space-between;align-items:flex-start;gap:10px">
+                    <span style="min-width:0"><span style="display:block;font-size:12.5px;font-weight:{{ mo.fw }};color:#2A3550">{{ mo.label }}</span><span style="display:block;margin-top:1px;font-size:10px;line-height:1.45;color:#8A93A6">{{ mo.sub }}</span></span>
+                    <span style="color:#96742F;font-weight:700;width:12px;flex:none;text-align:right">{{ mo.check }}</span>
+                  </div>
+                </sc-for>
+              </div>
+            </sc-if>
+          </div>
+        </div>
       </div>
 
       <!-- the exit story: cost → value → cash → profit -->
       <div style="margin-top:16px;background:#16233A;border-radius:14px;padding:20px 24px 16px">
         <div style="display:flex;justify-content:space-between;align-items:flex-start;gap:14px;flex-wrap:wrap">
           <div>
-            <span style="font-size:10.5px;letter-spacing:0.1em;font-weight:700;color:#C9A45C">MARGIN OF SAFETY</span>
+            <span style="font-size:10.5px;letter-spacing:0.1em;font-weight:700;color:#C9A45C">MARGIN OF SAFETY</span><span style="margin-left:8px;font-size:10px;letter-spacing:0.08em;font-weight:700;color:#8A96AD">{{ mosMethodCaps }}</span>
             <sc-if value="{{ mosFiltOn }}" hint-placeholder-val="{{ false }}">
               <span onClick="{{ onMosClear }}" style-hover="opacity:0.85" style="margin-left:10px;padding:3px 10px;border-radius:99px;background:#C9A45C;color:#16233A;font-size:9.5px;font-weight:800;letter-spacing:0.05em;cursor:pointer;white-space:nowrap">{{ mosFiltTag }}</span>
             </sc-if>
@@ -239,7 +268,7 @@ input:focus{outline:2px solid #C9A45C;outline-offset:1px}
             <div style="display:flex;justify-content:space-between;align-items:flex-start;gap:26px;flex-wrap:wrap">
               <div style="flex:1;min-width:320px">
                 <div style="font-size:10.5px;letter-spacing:0.1em;font-weight:700;color:#C9A45C">LEVERAGE — BANK MONEY ON YOUR CAPITAL</div>
-                <sc-for list="{{ levRows }}" as="lv" hint-placeholder-count="2">
+                <sc-for list="{{ levRows }}" as="lv" hint-placeholder-count="3">
                   <div style="margin-top:10px">
                     <div style="display:flex;justify-content:space-between;align-items:baseline;gap:10px">
                       <span style="font-size:9px;letter-spacing:0.05em;font-weight:800;color:#C9D2E4;white-space:nowrap">{{ lv.lab }}</span>
@@ -261,6 +290,11 @@ input:focus{outline:2px solid #C9A45C;outline-offset:1px}
                   <div style="font-size:9.5px;letter-spacing:0.09em;font-weight:700;color:#8A96AD">LEVERAGE AT PURCHASE</div>
                   <div style="margin-top:4px;font-family:'Source Serif 4',Georgia,serif;font-size:24px;font-weight:600;color:#F5D9A8">{{ levThen }}</div>
                   <div style="font-size:10px;color:#8A96AD">{{ levThenSub }}</div>
+                </div>
+                <div>
+                  <div style="font-size:9.5px;letter-spacing:0.09em;font-weight:700;color:#8A96AD">DAY-1 SWEAT EQUITY</div>
+                  <div style="margin-top:4px;font-family:'Source Serif 4',Georgia,serif;font-size:24px;font-weight:600;color:#F5D9A8">{{ levDay1 }}</div>
+                  <div style="font-size:10px;color:#8A96AD">{{ levDay1Sub }}</div>
                 </div>
                 <div>
                   <div style="font-size:9.5px;letter-spacing:0.09em;font-weight:700;color:#8A96AD">LEVERAGE TODAY</div>
@@ -677,6 +711,7 @@ class Component extends DCLogic {
     wSel: [], wQ: '', wExp: null, wPick: [],
     entSel: null, entQ: '',
     mosBucket: null, mosQ: '', mosSel: null, mosAll: false,
+    mosMethod: 'arv', mosCap: '8', mosDd: false,
     bsSel: null, bsQ: '',
     gyr: 'ITD', gm: null, gq: '', gsel: null, gMetric: 'doors',
     reconSel: null,
@@ -707,6 +742,9 @@ class Component extends DCLogic {
       if (q.get('entity')) patch.fe = li('entity');
       if (q.get('door')) patch.fp = li('door');
       if (q.get('status')) patch.fs = li('status');
+      const mth = q.get('method');
+      if (mth && ['arv', 'county', 'appraisal', 'noi'].includes(mth)) patch.mosMethod = mth;
+      if (q.get('cap')) patch.mosCap = q.get('cap');
       if (Object.keys(patch).length) this.setState(patch);
     } catch (e) {}
   }
@@ -719,6 +757,8 @@ class Component extends DCLogic {
       if (S.fe.length) q.set('entity', S.fe.join(','));
       if (S.fp.length) q.set('door', S.fp.join(','));
       if (S.fs.length) q.set('status', S.fs.join(','));
+      if (S.mosMethod && S.mosMethod !== 'arv') q.set('method', S.mosMethod);
+      if (S.mosCap != null && String(S.mosCap) !== '8' && String(S.mosCap) !== '') q.set('cap', String(S.mosCap));
       const s = q.toString();
       history.replaceState(null, '', location.pathname + (s ? '?' + s : ''));
     } catch (e) {}
@@ -728,7 +768,7 @@ class Component extends DCLogic {
 
   componentDidMount() {
     this.loadData();
-    this._doc = () => { if (this.state.ddOpen) this.setState({ ddOpen: null }); };
+    this._doc = () => { if (this.state.ddOpen || this.state.mosDd) this.setState({ ddOpen: null, mosDd: false }); };
     document.addEventListener('click', this._doc);
   }
   componentWillUnmount() { document.removeEventListener('click', this._doc); }
@@ -746,8 +786,10 @@ class Component extends DCLogic {
       tieBadge: '', tieBg: '', tieCol: '', tieLine: '', recon: [],
       mosAsOf: '', mosPct: '', mosEq: '', mosVal: '',
       mosCash: '', mosProfit: '', mosProfitPct: '', mosPctCol: '#6FBF8F', mosProfitCol: '#7FC29B', mosFiltTag: '', mosFiltOn: false, onMosClear: () => {},
+      mosMethodCaps: '', mosMethLabel: '', mosMethOpen: false, mosMethOpts: [], onMosMethToggle: () => {},
+      mosCapOn: false, mosCapVal: '', onMosCap: () => {}, mosCapNote: '',
       wfCols: [], wfConn: [], wfFoot: '',
-      levOn: false, levRows: [], levThen: '', levThenSub: '', levNow: '', levNowSub: '', levNowCol: '#F5D9A8', levFoot: '',
+      levOn: false, levRows: [], levThen: '', levThenSub: '', levDay1: '', levDay1Sub: '', levNow: '', levNowSub: '', levNowCol: '#F5D9A8', levFoot: '',
       buckets: [], mosNote: '', mosQ: '', onMosQ: () => {}, ladder: [], mosEmpty: false, mosFoot: '',
       bsRows: [], bsSub: '', bsFormula: '', bsAsOf: '', bsFormulaCol: '#E9EDF5',
       entHeads: [], entRows: [], entSub: '',
@@ -868,7 +910,7 @@ class Component extends DCLogic {
         label, allLabel, w: w || '230px', hasSearch: !!hasSearch, q: S.ddOpen === key ? S.fq : '',
         onQ: e => this.setState({ fq: e.target.value }),
         open: S.ddOpen === key,
-        onToggle: () => this.setState({ ddOpen: S.ddOpen === key ? null : key, fq: '' }),
+        onToggle: () => this.setState({ ddOpen: S.ddOpen === key ? null : key, fq: '', mosDd: false }),
         onClear: () => this.setFilter({ [sk]: [] }),
         allCheck: sel.length ? '' : '✓',
         selAllShow: !!q && shownV.length > 1,
@@ -1117,8 +1159,46 @@ class Component extends DCLogic {
     const tieLine = 'every figure above is cross-checked against Loans.xlsx and the ledger on each publish — click a line for detail';
 
     // ══════════ Section B: margin of safety — the exit story ══════════
-    const valued = scope.filter(p => p.value > 0);
-    const noVal = scope.filter(p => !(p.value > 0));
+    // valuation method (owner spec 2026-07-18): the WHOLE section — headline, waterfall, buckets,
+    // ladder and the leverage TODAY row — speaks the selected method. Everything else on the page
+    // (hero cards, balance sheet, by-entity, growth, watchlist) stays on the published policy value.
+    const SALE_READY = 30000;
+    const MOS_METHODS = [
+      { id: 'arv', label: 'ARV — sale-ready adjusted', caps: 'ARV — SALE-READY ADJUSTED', vcap: 'ARV-first policy · gross',
+        sub: 'policy value (ARV first, county fallback) − $30K per door to make it sale-ready, taken out before the bank is repaid' },
+      { id: 'county', label: 'County assessed — as is', caps: 'COUNTY ASSESSED — AS IS', vcap: 'county assessed — as is',
+        sub: 'county tax-assessed value, sold as it stands — no sale-ready deduction' },
+      { id: 'appraisal', label: 'Bank appraised — as is', caps: 'BANK APPRAISED — AS IS', vcap: 'bank appraised — as is',
+        sub: 'lender appraisal on file, as is — doors without one drop out until you load them' },
+      { id: 'noi', label: 'NOI ÷ cap rate', caps: '', vcap: '',
+        sub: 'income approach: annualized door NOI over the selected ledger window ÷ your cap rate' },
+    ];
+    const mosMethod = MOS_METHODS.some(mm => mm.id === S.mosMethod) ? S.mosMethod : 'arv';
+    const MMETH = MOS_METHODS.find(mm => mm.id === mosMethod);
+    const capRaw = parseFloat(String(S.mosCap == null ? '8' : S.mosCap).replace('%', '').trim());
+    const capPct = Math.min(20, Math.max(1, isFinite(capRaw) ? capRaw : 8));
+    const capStr = (Math.round(capPct * 10) / 10) + '%';
+    const mosMethodCaps = mosMethod === 'noi' ? '· NOI ÷ ' + capStr + ' CAP' : '· ' + MMETH.caps;
+    const mosValCap = mosMethod === 'noi' ? 'NOI ÷ ' + capStr + ' cap' : MMETH.vcap;
+    const noiAnnOf = d => noiBy.has(d) ? ann(noiBy.get(d)) : null; // same door-level GL machinery as the cap-rate card
+    const mosValRaw = p =>
+      mosMethod === 'county' ? (p.county > 0 ? p.county : 0) :
+      mosMethod === 'appraisal' ? (p.appraisal > 0 ? p.appraisal : 0) :
+      mosMethod === 'noi' ? (() => { const nA = noiAnnOf(p.door); return nA !== null && nA > 0 ? nA / (capPct / 100) : 0; })() :
+      (p.value > 0 ? p.value : 0);
+    const mosNetOf = gv => mosMethod === 'arv' ? gv - SALE_READY : gv;
+    const exclPhrase =
+      mosMethod === 'county' ? 'without a county value' :
+      mosMethod === 'appraisal' ? 'without a bank appraisal (owner to update)' :
+      mosMethod === 'noi' ? (nWin ? 'without positive NOI in the window' : 'with no ledger months selected') :
+      'without valuation';
+    const valued = []; let noVal = 0, srFloorN = 0;
+    for (const p of scope) {
+      const gv0 = mosValRaw(p);
+      if (!(gv0 > 0)) { noVal++; continue; }
+      if (!(mosNetOf(gv0) > 0)) { srFloorN++; continue; }
+      valued.push(p);
+    }
     const BUCKETS = [
       { id: 'hi', label: 'LTV ≥ 80%', test: (ltv, dbt) => dbt > 0 && ltv >= 80, col: RED, labCol: RED },
       { id: 'mid', label: 'LTV 65–80%', test: (ltv, dbt) => dbt > 0 && ltv >= 65 && ltv < 80, col: GOLDD, labCol: GOLDD },
@@ -1128,9 +1208,11 @@ class Component extends DCLogic {
     ];
     const ladderAll = valued.map(p => {
       const c = calcBy.get(p.door);
-      const ltv = p.value > 0 ? c.close / p.value * 100 : 0;
+      const gv = mosValRaw(p);         // gross method value
+      const nv = mosNetOf(gv);         // net of the sale-ready allowance under the ARV method
+      const ltv = nv > 0 ? c.close / nv * 100 : 0;
       const cap = (p.cost > 0 ? p.cost - p.refi : 0) + c.owner;
-      return { p, c, ltv, eq: p.value - c.close, appr: p.cost > 0 ? p.value - p.cost : 0, cap };
+      return { p, c, gv, nv, ltv, eq: nv - c.close, appr: p.cost > 0 ? gv - p.cost : 0, cap };
     });
     const buckets = BUCKETS.map(b => {
       const rs = ladderAll.filter(r => b.test(r.ltv, r.c.close));
@@ -1154,21 +1236,23 @@ class Component extends DCLogic {
     const story = ladderF.filter(r => r.p.cost > 0);   // full money story needs cost
     const noCost = ladderF.filter(r => !(r.p.cost > 0));
     const wCost = story.reduce((s, r) => s + r.p.cost, 0);
-    const wVal = story.reduce((s, r) => s + r.p.value, 0);
+    const wVal = story.reduce((s, r) => s + r.gv, 0);          // gross method value
+    const wValNet = story.reduce((s, r) => s + r.nv, 0);       // net of sale-ready (ARV method only; = wVal otherwise)
+    const wSaleReady = wVal - wValNet;                         // $30K × story doors under the ARV method, 0 otherwise
     const wAppr = wVal - wCost;
     const wDebt = story.reduce((s, r) => s + r.c.close, 0);
-    const wCash = wVal - wDebt;
+    const wCash = wValNet - wDebt;
     const wInv = story.reduce((s, r) => s + (r.p.cost - r.p.refi), 0);
     const wRep = story.reduce((s, r) => s + r.c.owner, 0);
     const wCap = wInv + wRep;
     const wProfit = wCash - wCap;
-    const mosPct = wVal > 0 ? fP(wCash, wVal) : '—';
+    const mosPct = wValNet > 0 ? fP(wCash, wValNet) : '—';
     const mosFiltTag = (bSel || mq) ? ((bSel ? bSel.label : '') + (bSel && mq ? ' · ' : '') + (mq ? '“' + S.mosQ.trim() + '”' : '') + '  ✕ clear') : '';
     const onMosClear = () => this.setState({ mosBucket: null, mosQ: '', mosSel: null });
-    // waterfall: cost → +appreciation → value → −debt → cash if sold → −capital → profit
+    // waterfall: cost → +appreciation → value → (− sale-ready under the ARV method) → −debt → cash if sold → −capital → profit
     const wfMax = Math.max(wVal, wCost, Math.max(wCash, 0), 1) * 1.06;
     const wpct = v => Math.max(0, Math.min(v / wfMax * 100, 100));
-    const lvVal = wpct(wVal), lvCost = wpct(wCost), lvCash = wpct(Math.max(wCash, 0)), lvProf = wpct(Math.max(wProfit, 0));
+    const lvVal = wpct(wVal), lvValNet = wpct(wValNet), lvCost = wpct(wCost), lvCash = wpct(Math.max(wCash, 0)), lvProf = wpct(Math.max(wProfit, 0));
     const sgn = v => (v >= 0 ? '+' : '−') + fK(Math.abs(v));
     const mkWf = (label, cap2, val, vc, b, h, bg) => ({
       label, cap: cap2, val, vc, bg,
@@ -1180,41 +1264,65 @@ class Component extends DCLogic {
       wAppr >= 0
         ? mkWf('+ APPRECIATION', 'value built', sgn(wAppr), '#7FC29B', lvCost, lvVal - lvCost, '#57A773')
         : mkWf('− BELOW COST', 'value gap', sgn(wAppr), '#E8A896', lvVal, lvCost - lvVal, '#B04A33'),
-      mkWf('MARKET VALUE', 'ARV-first policy', fK(wVal), '#E9EDF5', 0, lvVal, '#8A96AD'),
-      mkWf('− DEBT TODAY', 'loans engine · ' + mmyy(lastM), sgn(-wDebt), '#E8A896', lvCash, Math.max(lvVal - lvCash, 0), '#C4573C'),
-      mkWf('CASH IF SOLD', 'value − debt', fK(wCash), wCash < 0 ? '#E8A896' : '#F5D9A8', 0, lvCash, '#C9A45C'),
+      mkWf('MARKET VALUE', mosValCap, fK(wVal), '#E9EDF5', 0, lvVal, '#8A96AD'),
+      ...(mosMethod === 'arv' ? [mkWf('− SALE-READY', '$30K × ' + story.length + ' doors', sgn(-wSaleReady), '#E8C79A', lvValNet, Math.max(lvVal - lvValNet, 0), '#A9884F')] : []),
+      mkWf('− DEBT TODAY', 'loans engine · ' + mmyy(lastM), sgn(-wDebt), '#E8A896', lvCash, Math.max(lvValNet - lvCash, 0), '#C4573C'),
+      mkWf('CASH IF SOLD', mosMethod === 'arv' ? 'net value − debt' : 'value − debt', fK(wCash), wCash < 0 ? '#E8A896' : '#F5D9A8', 0, lvCash, '#C9A45C'),
       mkWf('− CAPITAL IN DEAL', 'investment + principal', sgn(-wCap), '#AEB9D6', lvProf, Math.max(lvCash - lvProf, 0), '#7A89B8'),
       mkWf('PROFIT IF SOLD', wCap > 0 ? fP(wProfit, wCap) + ' on capital in deal' : 'vs capital in deal', fK(wProfit), wProfit < 0 ? '#E8A896' : '#7FC29B', 0, lvProf, wProfit < 0 ? '#B04A33' : '#3E8E63'),
     ];
-    const SLOT = 100 / 7;
-    const wfConn = [lvCost, lvVal, lvVal, lvCash, lvCash, lvProf].map((lv, i) => ({
+    const SLOT = 100 / wfCols.length;
+    const wfConnLv = mosMethod === 'arv'
+      ? [lvCost, lvVal, lvVal, lvValNet, lvCash, lvCash, lvProf]
+      : [lvCost, lvVal, lvVal, lvCash, lvCash, lvProf];
+    const wfConn = wfConnLv.map((lv, i) => ({
       l: (i * SLOT + SLOT * 0.62).toFixed(2) + '%', w: (SLOT * 0.76).toFixed(2) + '%',
       t: (100 - lv).toFixed(2) + '%',
     }));
-    const wfFoot = story.length + ' properties in this story (value and cost both known)'
+    const noiFine = mosMethod === 'noi'
+      ? ' · pure-portfolio check: total scope annualized NOI ' + fK(annNoi) + ' ÷ ' + capStr + ' = ' + fK(annNoi / (capPct / 100)) + ' with negative-NOI doors' + (ovAdd ? ' and company overhead' : '') + ' counted — the story above keeps only the doors earning a positive NOI'
+      : '';
+    const wfFoot = 'Valuation: ' + MMETH.label + (mosMethod === 'noi' ? ' at ' + capStr : '') + ' · ' + story.length + ' properties in this story (method value and cost both known)'
       + (noCost.length ? ' · ' + noCost.length + ' with value but no cost yet — their ' + fK(noCost.reduce((s, r) => s + r.eq, 0)) + ' cash-if-sold joins when cost lands' : '')
-      + (noVal.length ? ' · ' + noVal.length + ' without valuation excluded' : '')
-      + ' · selling costs & taxes not modeled';
+      + (noVal ? ' · ' + noVal + ' ' + exclPhrase + ' excluded' : '')
+      + (srFloorN ? ' · ' + srFloorN + ' worth ≤ the $30K sale-ready cost excluded' : '')
+      + noiFine
+      + (mosMethod === 'arv' ? ' · selling costs beyond the sale-ready allowance & taxes not modeled' : ' · selling costs & taxes not modeled');
     // leverage on invested capital — same working set as the waterfall (owner request 2026-07-15)
+    // row 2 (owner spec 2026-07-18): day-1 sweat equity on the bank appraisal — ALWAYS appraisal-based,
+    // whatever the valuation method above says; it is a day-1 fact. Row 3 follows the selected method.
     const wRefi = wCost - wInv;
-    const levScale = Math.max(wCost, wVal, wDebt, 1);
+    // pinned to the filtered scope (entity/month/property/status) — NOT to the method or the
+    // section's bucket/search drill: a day-1 fact never moves with today's valuation lens
+    const apprBase = scope.filter(p => p.cost > 0 && p.appraisal > 0);
+    const apprN = apprBase.length;
+    const apprTot = apprBase.reduce((s, p) => s + p.appraisal, 0);
+    const apprRefi = apprBase.reduce((s, p) => s + p.refi, 0);
+    const day1Eq = apprTot - apprRefi;
+    const levScale = Math.max(wCost, wValNet, apprTot, wDebt, 1);
     const lw = x => Math.max(0, Math.min(x / levScale * 100, 100)).toFixed(2) + '%';
     const levOn = story.length > 0;
     const mult = (a, b2) => b2 > 0 ? (a / b2 >= 100 ? Math.round(a / b2) : (a / b2).toFixed(1)) + '×' : '—';
     const levThen = wInv > 0 ? mult(wRefi, wInv) : '—';
+    const levDay1 = day1Eq > 0 ? mult(apprRefi, day1Eq) : '—';
     const levNow = wCash > 0 ? mult(wDebt, wCash) : '—';
+    const levMethShort = mosMethod === 'noi' ? 'NOI ÷ ' + capStr : MMETH.label;
     const levRows = [
       { lab: 'AT PURCHASE', wOwn: lw(wInv), wDebt: lw(wRefi),
         cap: 'you put in ' + fK(wInv) + ' · banks funded ' + fK(wRefi) + ' of the ' + fK(wCost) + ' cost' + (wCost > 0 ? ' (' + fP(wRefi, wCost) + ')' : ''),
         tOwn: 'Initial investment (cost − refinance): ' + fN(wInv), tDebt: 'Initial refinance: ' + fN(wRefi) },
-      { lab: 'TODAY · ' + mmyy(lastM), wOwn: lw(wCash), wDebt: lw(wDebt),
-        cap: 'debt is down to ' + fK(wDebt) + ' · ' + fK(wCash) + ' of the ' + fK(wVal) + ' value is yours' + (wVal > 0 ? ' (' + fP(wCash, wVal) + ')' : ''),
+      { lab: 'AT PURCHASE · DAY-1 SWEAT EQUITY (BANK APPRAISAL)', wOwn: lw(Math.max(day1Eq, 0)), wDebt: lw(apprRefi),
+        cap: apprN ? 'the appraisals said these ' + apprN + ' doors were worth ' + fK(apprTot) + ' on day 1 — the bank’s ' + fK(apprRefi) + ' rode on ' + fK(day1Eq) + ' of sweat equity you’d already captured at the courthouse steps' : 'no bank appraisals in this scope yet',
+        tOwn: 'Day-1 sweat equity (appraisal − initial refinance): ' + fN(day1Eq), tDebt: 'Initial refinance on the ' + apprN + ' appraised doors: ' + fN(apprRefi) },
+      { lab: 'TODAY · ' + mmyy(lastM) + ' · ' + levMethShort.toUpperCase(), wOwn: lw(wCash), wDebt: lw(wDebt),
+        cap: 'debt is down to ' + fK(wDebt) + ' · ' + fK(wCash) + ' of the ' + fK(wValNet) + ' value is yours' + (wValNet > 0 ? ' (' + fP(wCash, wValNet) + ')' : ''),
         tOwn: 'Your equity (value − debt): ' + fN(wCash), tDebt: 'Debt outstanding: ' + fN(wDebt) },
     ];
     const levThenSub = wInv > 0 ? 'of bank money per $1 you invested' : 'refinance exceeded cost in this scope';
-    const levNowSub = wCash > 0 ? 'of debt per $1 of your equity' : 'debt exceeds value in this scope';
+    const levDay1Sub = day1Eq > 0 ? 'of bank money per $1 of day-1 equity · ' + apprN + ' appraised doors' : (apprN ? 'appraisals did not clear the loans here' : 'no bank appraisals in this scope');
+    const levNowSub = wCash > 0 ? 'of debt per $1 of your equity · ' + levMethShort + ' value' : 'debt exceeds value in this scope';
     const levNowCol = (wCash > 0 && wInv > 0 && wDebt / wCash < wRefi / wInv) ? '#7FC29B' : '#F5D9A8';
-    const levFoot = 'How to read it: leverage = borrowed money per $1 of your own capital. At purchase that is the initial refinance ÷ your initial investment (cost − refinance); today it is debt outstanding ÷ your equity (value − debt). Principal repayments and appreciation both pull it down. The two bars share one scale — today’s longer bar is the value the same invested capital controls now.';
+    const levFoot = 'How to read it: leverage = borrowed money per $1 of your own capital. AT PURCHASE: initial refinance ÷ your initial investment (cost − refinance). DAY-1 SWEAT EQUITY: you buy at the courthouse below appraisal, so on day 1 the bank’s own appraisal already beat its loan — initial refinance ÷ (appraisal − refinance) over the ' + apprN + ' scoped doors that carry an appraisal; this row is a day-1 fact — it never moves with the valuation method or the LTV-tile/search drill, only with the scope filters. TODAY: debt outstanding ÷ your equity under the selected method (' + levMethShort + '). Principal repayments and appreciation both pull it down; all three bars share one scale.';
     // ladder cap (owner 2026-07-15): first 7 by default — search shows all matches, button expands
     const MOSCAP = 7;
     const mosExpanded = !!mq || !!S.mosAll;
@@ -1226,19 +1334,24 @@ class Component extends DCLogic {
     };
     const ladder = ladderShown.map(r => {
       const isExp = S.mosSel === r.p.door;
-      const wD = Math.min(r.ltv, 100), wA = Math.max(0, Math.min(r.appr / r.p.value * 100, 100 - wD));
+      const wD = Math.min(r.ltv, 100), wA = Math.max(0, Math.min(r.nv > 0 ? r.appr / r.nv * 100 : 0, 100 - wD));
       const wC = Math.max(0, 100 - wD - wA);
+      const valFactK =
+        mosMethod === 'county' ? 'Value (county assessed)' :
+        mosMethod === 'appraisal' ? 'Value (bank appraisal)' :
+        mosMethod === 'noi' ? 'Value (NOI ÷ ' + capStr + ')' :
+        'Net value (' + (r.p.valueSource === 'arv' ? 'ARV' : r.p.valueSource) + ' − $30K sale-ready)';
       const facts = isExp ? [
         { k: 'Cost basis', v: r.p.cost > 0 ? fN(r.p.cost) : 'pending', col: INK },
         { k: 'Initial refinance', v: fN(r.p.refi), col: BRICK },
         { k: 'Debt · ' + mmyy(lastM), v: fN(r.c.close), col: RED },
         { k: 'Principal repaid', v: fN(r.c.owner), col: GREEN },
-        { k: 'Value (' + (r.p.valueSource === 'arv' ? 'ARV' : r.p.valueSource) + ')', v: fN(r.p.value), col: NAVY },
+        { k: valFactK, v: fN(r.nv), col: NAVY },
         { k: 'Appreciation', v: r.p.cost > 0 ? fN(r.appr) + ' (' + fP(r.appr, r.p.cost) + ')' : '—', col: r.appr < 0 ? RED : '#2A6F4E' },
         { k: 'Cash if sold', v: fN(r.eq), col: r.eq < 0 ? RED : '#2A6F4E' },
         { k: 'Capital in deal', v: r.p.cost > 0 ? fN(r.cap) : '—', col: NAVY },
         { k: 'Profit if sold', v: r.p.cost > 0 ? fN(r.eq - r.cap) : 'needs cost', col: (r.eq - r.cap) < 0 ? RED : '#2A6F4E' },
-        { k: 'Margin of safety', v: r.p.value > 0 ? fP(r.eq, r.p.value) : '—', col: NAVY },
+        { k: 'Margin of safety', v: r.nv > 0 ? fP(r.eq, r.nv) : '—', col: NAVY },
       ] : [];
       return {
         door: r.p.door, ent: r.p.entity + ' · ' + r.p.status, caret: isExp ? '▾' : '▸',
@@ -1256,8 +1369,17 @@ class Component extends DCLogic {
         onClick: () => this.setState({ mosSel: isExp ? null : r.p.door }),
       };
     });
-    const mosNote = (mosExpanded ? ladderF.length + ' of ' + valued.length + ' valued properties' : 'riskiest ' + ladder.length + ' of ' + ladderF.length + ' — search or expand for the rest') + (bSel ? ' · ' + bSel.label + ' only' : '') + (noVal.length ? ' · ' + noVal.length + ' without valuation excluded' : '');
-    const mosFoot = 'The waterfall and headline retell the story for exactly what you see in the list — the scope filters above, the LTV tiles and the search all drill the whole section together. Each list bar is one property’s value split into debt at ' + mmyy(lastM) + ' (brick), equity at cost (blue) and appreciation (green — pink when value sits below cost). Cash if sold = value − debt; profit if sold = cash − capital in deal (initial investment + principal repaid); selling costs and taxes are not modeled. County-fallback valuations can understate ARV — the underwater cluster is mostly county-valued.';
+    const mosNote = (mosExpanded ? ladderF.length + ' of ' + valued.length + ' valued properties' : 'riskiest ' + ladder.length + ' of ' + ladderF.length + ' — search or expand for the rest')
+      + ' · ' + levMethShort
+      + (bSel ? ' · ' + bSel.label + ' only' : '')
+      + (noVal ? ' · ' + noVal + ' ' + exclPhrase + ' excluded' : '')
+      + (srFloorN ? ' · ' + srFloorN + ' at/below the $30K sale-ready cost excluded' : '');
+    const mosFoot = 'The waterfall and headline retell the story for exactly what you see in the list — the scope filters above, the valuation method, the LTV tiles and the search all drill the whole section together. Valuation method: ' + (
+      mosMethod === 'arv' ? 'published policy value (ARV where present, county fallback) less a $30,000 per-door sale-ready allowance, deducted before the bank is repaid — LTV, equity and profit all run on the net figure. County-fallback valuations can understate ARV — the underwater cluster is mostly county-valued.' :
+      mosMethod === 'county' ? 'county tax-assessed value, as is — typically conservative vs ARV; no sale-ready deduction.' :
+      mosMethod === 'appraisal' ? 'lender appraisals on file, as is — doors without one are excluded above until you load them; no sale-ready deduction.' :
+      'annualized door NOI over the selected ledger window ÷ your ' + capStr + ' cap rate — doors without a positive NOI carry no value here; the fine print under the waterfall shows the whole-portfolio figure with the negatives counted.'
+    ) + ' Each list bar is one property’s value split into debt at ' + mmyy(lastM) + ' (brick), equity at cost (blue) and appreciation (green — pink when value sits below cost). Cash if sold = value − debt; profit if sold = cash − capital in deal (initial investment + principal repaid).';
 
     const scopeLine = nScope + ' properties · balances at ' + mmyy(lastM) + ' · debt from the loans engine, income from the ledger, values from the balance sheet — all cross-checked below';
 
@@ -1869,13 +1991,24 @@ class Component extends DCLogic {
       scopeLine, filters, hasActive, onReset, asOfLine,
       invSub, kpis, invFoot,
       tieBadge, tieBg, tieCol, tieLine, recon,
-      mosAsOf: 'debt at ' + mmyy(lastM) + ' · values as published',
-      mosPct, mosEq: fK(wCash), mosVal: fK(wVal),
+      mosAsOf: 'debt at ' + mmyy(lastM) + ' · value: ' + (mosMethod === 'arv' ? 'as published − $30K/door sale-ready' : mosMethod === 'county' ? 'county assessed' : mosMethod === 'appraisal' ? 'bank appraisal' : 'NOI ÷ ' + capStr),
+      mosPct, mosEq: fK(wCash), mosVal: fK(wValNet),
       mosCash: fK(wCash), mosProfit: fK(wProfit), mosProfitPct: wCap > 0 ? fP(wProfit, wCap) : '—',
       mosPctCol: wCash < 0 ? '#E8A896' : '#6FBF8F', mosProfitCol: wProfit < 0 ? '#E8A896' : '#7FC29B',
       mosFiltTag, mosFiltOn: !!mosFiltTag, onMosClear,
+      mosMethodCaps, mosMethLabel: MMETH.label, mosMethOpen: !!S.mosDd,
+      mosMethOpts: MOS_METHODS.map(mm => ({
+        label: mm.label, sub: mm.sub,
+        check: mm.id === mosMethod ? '✓' : '', fw: mm.id === mosMethod ? 700 : 500,
+        bg: mm.id === mosMethod ? '#FBF6EA' : 'transparent',
+        onClick: (id => e => { if (e && e.stopPropagation) e.stopPropagation(); this.setFilter({ mosMethod: id, mosDd: false }); })(mm.id),
+      })),
+      onMosMethToggle: e => { if (e && e.stopPropagation) e.stopPropagation(); this.setState({ mosDd: !S.mosDd, ddOpen: null }); },
+      mosCapOn: mosMethod === 'noi', mosCapVal: String(S.mosCap == null ? '8' : S.mosCap),
+      onMosCap: e => this.setFilter({ mosCap: e.target.value }),
+      mosCapNote: (isFinite(capRaw) && capRaw === capPct) ? '' : 'using ' + capStr + ' (1–20; default 8)',
       wfCols, wfConn, wfFoot,
-      levOn, levRows, levThen, levThenSub, levNow, levNowSub, levNowCol, levFoot,
+      levOn, levRows, levThen, levThenSub, levDay1, levDay1Sub, levNow, levNowSub, levNowCol, levFoot,
       buckets, mosNote, mosBtn, mosQ: S.mosQ, onMosQ: e => this.setState({ mosQ: e.target.value }),
       ladder, mosEmpty: ladder.length === 0, mosFoot,
       bsRows, bsSub, bsFormula, bsAsOf, bsFormulaCol,
