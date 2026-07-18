@@ -1413,14 +1413,17 @@ class Component extends DCLogic {
     const WIN = selM.length ? selM : [N - 1];
     const winSet = new Set(WIN);
     const wvClean = v => [...new Set((Array.isArray(v) ? v : []).filter(i => Number.isInteger(i) && winSet.has(i)))].sort((x, y) => x - y);
+    // COMPARE is an explicit A-vs-B ask across the WHOLE timeline — the page MONTH filter must
+    // never dead-arm it (owner 2026-07-18: compare was inert with the default single-month window)
+    const wvCmpClean = v => [...new Set((Array.isArray(v) ? v : []).filter(i => Number.isInteger(i) && i >= 0 && i < N))].sort((x, y) => x - y);
     const wvSel = wvClean(S.wvSel);
     const wvIdx = wvSel.length ? wvSel : WIN;
-    const wvCmp = !!S.wvCmp && WIN.length >= 2;
+    const wvCmp = !!S.wvCmp && N >= 2;
     const wvBud = !!S.wvBud;
-    const wvARaw = wvClean(S.wvASel);
-    const wvA = wvARaw.length ? wvARaw : [WIN.length >= 2 ? WIN[WIN.length - 2] : WIN[0]];
-    const wvBRaw = wvClean(S.wvBSel);
-    const wvB = wvBud ? [] : (wvBRaw.length ? wvBRaw : [WIN[WIN.length - 1]]);
+    const wvARaw = wvCmpClean(S.wvASel);
+    const wvA = wvARaw.length ? wvARaw : [Math.max(0, N - 2)];
+    const wvBRaw = wvCmpClean(S.wvBSel);
+    const wvB = wvBud ? [] : (wvBRaw.length ? wvBRaw : [N - 1]);
     const wvS = (ser, set) => set.reduce((s, i) => s + ser[i], 0);
     const wvV = ser => wvS(ser, wvIdx);
     const wvLabSet = set => set.length === 0 ? '—' : set.length <= 2 ? set.map(i => MNY[i]).join(' + ') : set.length + ' months (' + MNY[set[0]] + '…' + MNY[set[set.length - 1]] + ')';
@@ -1558,7 +1561,7 @@ class Component extends DCLogic {
     const wvDd = S.wvDd || null;
     const wvTog = id => (e) => { if (e && e.stopPropagation) e.stopPropagation(); this.setState({ wvDd: wvDd === id ? null : id }); };
     const wvOptRow = (label, on, onClick, extra) => Object.assign({ label, check: on ? '✓' : '', fw: on ? 700 : 500, bg: on ? '#F6F2E7' : 'transparent', col: '#2A3550', onClick }, extra || {});
-    const wvTogIn = (key, i, extraPatch) => (e) => { if (e && e.stopPropagation) e.stopPropagation(); const cur = new Set(wvClean(S[key])); cur.has(i) ? cur.delete(i) : cur.add(i); this.setState({ [key]: [...cur], ...(extraPatch || {}) }); };
+    const wvTogIn = (key, i, extraPatch) => (e) => { if (e && e.stopPropagation) e.stopPropagation(); const cur = new Set((key === 'wvSel' ? wvClean : wvCmpClean)(S[key])); cur.has(i) ? cur.delete(i) : cur.add(i); this.setState({ [key]: [...cur], ...(extraPatch || {}) }); };
     const wvOpts = [
       wvOptRow('All page months — ' + winLab, wvSel.length === 0, (e) => { if (e && e.stopPropagation) e.stopPropagation(); this.setState({ wvSel: [], wvCmp: false }); }, { col: GOLDD, fw: 700 }),
       ...WIN.map(i => wvOptRow(MNY[i], wvSel.includes(i), wvTogIn('wvSel', i, { wvCmp: false }))),
@@ -1569,14 +1572,14 @@ class Component extends DCLogic {
     const wvMBd = wvSel.length ? GOLD : '#D8D4C8', wvMBg = wvSel.length ? '#FBF6EA' : '#FFFFFF';
     const onWvCmpToggle = (e) => { if (e && e.stopPropagation) e.stopPropagation(); this.setState({ wvCmp: !S.wvCmp, wvDd: null }); };
     const wvCmpBd = wvCmp ? GOLD : '#D8D4C8', wvCmpBg = wvCmp ? '#FBF6EA' : '#FFFFFF';
-    const wao = WIN.map(i => wvOptRow(MNY[i], wvA.includes(i), wvTogIn('wvASel', i)));
+    const wao = ALL_IDX.map(i => wvOptRow(MNY[i], wvA.includes(i), wvTogIn('wvASel', i)));
     const wvALab = wvLabSet(wvA), onWvAToggle = wvTog('from'), wvAOpen = wvDd === 'from';
     const wbo = [
-      ...WIN.map(i => wvOptRow(MNY[i] + (wvBud ? ' — picking exits budget' : ''), !wvBud && wvB.includes(i), (e) => { if (e && e.stopPropagation) e.stopPropagation(); const cur = new Set(wvBud ? [] : wvClean(S.wvBSel)); cur.has(i) ? cur.delete(i) : cur.add(i); this.setState({ wvBSel: [...cur], wvBud: false }); }, wvBud ? { col: '#8A93A6', fw: 500 } : {})),
+      ...ALL_IDX.map(i => wvOptRow(MNY[i] + (wvBud ? ' — picking exits budget' : ''), !wvBud && wvB.includes(i), (e) => { if (e && e.stopPropagation) e.stopPropagation(); const cur = new Set(wvBud ? [] : wvCmpClean(S.wvBSel)); cur.has(i) ? cur.delete(i) : cur.add(i); this.setState({ wvBSel: [...cur], wvBud: false }); }, wvBud ? { col: '#8A93A6', fw: 500 } : {})),
       wvOptRow('BUDGET · PENDING — locks out month picks', wvBud, (e) => { if (e && e.stopPropagation) e.stopPropagation(); this.setState({ wvBud: true, wvBSel: [] }); }, { col: GOLDD, fw: 800 }),
     ];
     const wvBLab = wvBud ? 'Budget · pending' : wvLabSet(wvB);
-    const wvBHint = wvBud ? 'budget is exclusive — picking a month switches back to month compare. Standards will scale × the FROM month-count.' : 'pick months — or the BUDGET slot (exclusive of months)';
+    const wvBHint = wvBud ? 'budget is exclusive — picking a month switches back to month compare. Standards will scale × the FROM month-count.' : 'pick any months on the timeline — compare is not limited by the page MONTH filter. Or take the BUDGET slot (exclusive of months)';
     const onWvBToggle = wvTog('to'), wvBOpen = wvDd === 'to';
     const wvBBd = wvBud ? GOLD : '#C9A45C';
     // door spotlight → drives the page's existing DOOR filter (S.doors), so the whole page re-scopes

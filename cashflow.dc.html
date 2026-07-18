@@ -823,15 +823,18 @@ class Component extends DCLogic {
 
     // ── view state: hmSel = selected months (empty = full window) · compare aSet/bSet or BUDGET ──
     const cleanSet = v => [...new Set((Array.isArray(v) ? v : []).filter(i => winIdx.includes(i)))].sort((x, y) => x - y);
+    // COMPARE spans the WHOLE timeline — a single-month page window must never dead-arm it
+    // (owner 2026-07-18, found on the P&L twin of this control)
+    const cmpClean = v => [...new Set((Array.isArray(v) ? v : []).filter(i => Number.isInteger(i) && i >= 0 && i < NM))].sort((x, y) => x - y);
     const hmSel = cleanSet(S.hmSel);
     const idxSel = hmSel.length ? hmSel : winIdx;
     const oneSel = hmSel.length === 1 ? hmSel[0] : null;
-    const cmpOn = !!S.hcmp && winIdx.length >= 2;
+    const cmpOn = !!S.hcmp && NM >= 2;
     const budB = !!S.hbBud;
-    const aSetRaw = cleanSet(S.haSel);
-    const aSet = aSetRaw.length ? aSetRaw : [winIdx.length >= 2 ? winIdx[winIdx.length - 2] : firstI];
-    const bSetRaw = cleanSet(S.hbSel);
-    const bSet = budB ? [] : (bSetRaw.length ? bSetRaw : [lastI]);
+    const aSetRaw = cmpClean(S.haSel);
+    const aSet = aSetRaw.length ? aSetRaw : [Math.max(0, NM - 2)];
+    const bSetRaw = cmpClean(S.hbSel);
+    const bSet = budB ? [] : (bSetRaw.length ? bSetRaw : [NM - 1]);
     const sS = (ms, set) => sum(set.map(i => ms[i]));
     const lv = ms => sS(ms, idxSel);
     const labSet = set => set.length === 0 ? '—' : set.length <= 2 ? set.map(i => mmyy(MO[i])).join(' + ') : set.length + ' months (' + mmyy(MO[set[0]]) + '…' + mmyy(MO[set[set.length - 1]]) + ')';
@@ -855,7 +858,7 @@ class Component extends DCLogic {
     const hDd = S.hDd || null;
     const ddTog = id => (e) => { if (e && e.stopPropagation) e.stopPropagation(); this.setState({ hDd: hDd === id ? null : id }); };
     const optRow = (label, on, onClick, extra) => Object.assign({ label, check: on ? '✓' : '', fw: on ? 700 : 500, bg: on ? '#FBF6EA' : 'transparent', col: '#2A3550', onClick }, extra || {});
-    const togIn = (key, i, extraPatch) => (e) => { if (e && e.stopPropagation) e.stopPropagation(); const cur = new Set(cleanSet(S[key])); cur.has(i) ? cur.delete(i) : cur.add(i); this.setState({ [key]: [...cur], ...(extraPatch || {}) }); };
+    const togIn = (key, i, extraPatch) => (e) => { if (e && e.stopPropagation) e.stopPropagation(); const cur = new Set((key === 'hmSel' ? cleanSet : cmpClean)(S[key])); cur.has(i) ? cur.delete(i) : cur.add(i); this.setState({ [key]: [...cur], ...(extraPatch || {}) }); };
     const hvOpts = [
       optRow('All months — full span', hmSel.length === 0, (e) => { if (e && e.stopPropagation) e.stopPropagation(); this.setState({ hmSel: [], hcmp: false }); }, { col: GOLDD, fw: 700 }),
       ...winIdx.map(i => optRow(mmyy(MO[i]), hmSel.includes(i), togIn('hmSel', i, { hcmp: false }))),
@@ -866,15 +869,15 @@ class Component extends DCLogic {
     const hvBd = hmSel.length ? GOLD : '#D8D4C8', hvBg = hmSel.length ? '#FBF6EA' : '#FFFFFF';
     const onCmpToggle = () => this.setState({ hcmp: !S.hcmp, hDd: null });
     const cmpBd = cmpOn ? GOLD : '#D8D4C8', cmpBg = cmpOn ? '#FBF6EA' : '#FFFFFF';
-    const haOpts = winIdx.map(i => optRow(mmyy(MO[i]), aSet.includes(i) && aSetRaw.length > 0 || (aSetRaw.length === 0 && aSet.includes(i)), togIn('haSel', i)));
+    const haOpts = MO.map((_, i) => optRow(mmyy(MO[i]), aSet.includes(i) && aSetRaw.length > 0 || (aSetRaw.length === 0 && aSet.includes(i)), togIn('haSel', i)));
     const haVal = labSet(aSet), onHaToggle = ddTog('from'), haOpen = hDd === 'from';
     const haBd = '#8FA8CE', haBg = '#EFF3FA';
     const hbOpts = [
-      ...winIdx.map(i => optRow(mmyy(MO[i]) + (budB ? ' — picking exits budget' : ''), !budB && bSet.includes(i), (e) => { if (e && e.stopPropagation) e.stopPropagation(); const cur = new Set(budB ? [] : cleanSet(S.hbSel)); cur.has(i) ? cur.delete(i) : cur.add(i); this.setState({ hbSel: [...cur], hbBud: false }); }, budB ? { col: FAINT, fw: 500 } : {})),
+      ...MO.map((_, i) => optRow(mmyy(MO[i]) + (budB ? ' — picking exits budget' : ''), !budB && bSet.includes(i), (e) => { if (e && e.stopPropagation) e.stopPropagation(); const cur = new Set(budB ? [] : cmpClean(S.hbSel)); cur.has(i) ? cur.delete(i) : cur.add(i); this.setState({ hbSel: [...cur], hbBud: false }); }, budB ? { col: FAINT, fw: 500 } : {})),
       optRow('BUDGET · PENDING — locks out month picks', budB, (e) => { if (e && e.stopPropagation) e.stopPropagation(); this.setState({ hbBud: true, hbSel: [] }); }, { col: GOLDD, fw: 800 }),
     ];
     const hbVal = budB ? 'Budget · pending' : labSet(bSet);
-    const hbHint = budB ? 'budget is exclusive — picking a month switches back to month compare. Standards will scale × the FROM month-count.' : 'pick months — or the BUDGET slot (exclusive of months)';
+    const hbHint = budB ? 'budget is exclusive — picking a month switches back to month compare. Standards will scale × the FROM month-count.' : 'pick any months on the timeline — compare is not limited by the page MONTH filter. Or take the BUDGET slot (exclusive of months)';
     const onHbToggle = ddTog('to'), hbOpen = hDd === 'to';
     const hbBd = budB ? GOLD : '#C9A45C', hbBg = '#FBF6EA';
 
