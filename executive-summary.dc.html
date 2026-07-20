@@ -47,8 +47,7 @@ input:focus{outline:2px solid #C9A45C;outline-offset:1px}
     <div style="max-width:1320px;margin:0 auto">
       <div style="font-family:'Source Serif 4',Georgia,serif;font-size:15px;font-weight:700;letter-spacing:0.06em;color:#C9A45C">SKY&nbsp;REI</div>
       <div style="margin-top:6px;font-family:'Source Serif 4',Georgia,serif;font-size:32px;font-weight:600;color:#E9EDF5;line-height:1.1">Executive Summary</div>
-      <div style="margin-top:10px;font-family:'Source Serif 4',Georgia,serif;font-size:16.5px;font-weight:400;color:#C7D0E2;line-height:1.55;max-width:1050px">{{ storyLine }}</div>
-      <div style="margin-top:8px;font-size:12px;color:#8A96AD">{{ scopeLine }}</div>
+      <div style="margin-top:10px;font-size:12px;color:#8A96AD">{{ scopeLine }}</div>
     </div>
   </div>
 
@@ -532,6 +531,10 @@ input:focus{outline:2px solid #C9A45C;outline-offset:1px}
                   </div>
                 </sc-if>
               </div>
+              <sc-if value="{{ vmCapOn }}" hint-placeholder-val="{{ false }}">
+                <span style="font-size:8.5px;letter-spacing:0.07em;font-weight:800;color:#5E6B82">CAP&nbsp;%</span>
+                <input type="number" min="1" max="20" step="0.1" value="{{ vmCapVal }}" onInput="{{ onVmCap }}" style="width:60px;box-sizing:border-box;padding:6px 8px;border-radius:9px;border:1.5px solid #C9A45C;font-family:inherit;font-size:12px;font-weight:700;color:#16233A;background:#FFFFFF">
+              </sc-if>
             </div>
           </div>
           <div data-tip="{{ barATip }}" style="margin-top:12px">
@@ -550,8 +553,8 @@ input:focus{outline:2px solid #C9A45C;outline-offset:1px}
               </sc-for>
             </div>
           </div>
-          <div style="margin-top:14px;display:grid;grid-template-columns:repeat(4,1fr);gap:10px">
-            <sc-for list="{{ punchChips }}" as="px" hint-placeholder-count="4">
+          <div style="margin-top:14px;display:grid;grid-template-columns:repeat(5,1fr);gap:10px">
+            <sc-for list="{{ punchChips }}" as="px" hint-placeholder-count="5">
               <div data-tip="{{ px.tip }}" style="background:#FFFFFF;border:1px solid #EDEBE2;border-radius:10px;padding:10px 13px">
                 <div style="font-size:8px;letter-spacing:0.06em;font-weight:800;color:#8A93A6;line-height:1.5">{{ px.k }}</div>
                 <div style="margin-top:4px;font-family:'Source Serif 4',Georgia,serif;font-size:18px;font-weight:600;color:{{ px.col }};font-variant-numeric:tabular-nums;white-space:nowrap">{{ px.v }}</div>
@@ -937,7 +940,6 @@ class Component extends DCLogic {
     if (!S.pld || !S.cfd || !S.bsd || !S.ld) return Object.assign({
       ready: false, loading: !S.loadError, loadError: S.loadError || false,
       retryLoad: () => this.loadData(), stopProp,
-      storyLine: S.loadError ? 'Data failed to load.' : 'Reading the four published datasets — the whole story, one page.',
       scopeLine: S.loadError ? 'Data failed to load' : 'Loading…', asOfLine: '',
       filters: [], hasActive: false, onReset: noop, jumpChips: [],
       heroTiles: [],
@@ -1288,7 +1290,6 @@ class Component extends DCLogic {
 
     // ══ header story + scope ══
     const eqMult = tInv > 0 ? equityM / tInv : null;
-    const storyLine = spanLab + entLab + ': tenants were billed ' + fK(chgW) + ' and paid ' + fK(collW) + ' (' + rateTxt + '). After every cost and the banks, ' + fK(keptW) + ' of cash stayed and the books earned ' + fK(niW) + ' net profit' + (margin !== null ? ' (' + margin.toFixed(1) + '% margin)' : '') + '. Behind it: ' + fK(tCap) + ' of our money in the deal (' + fK(tInv) + ' invested + ' + fK(tRepaid) + ' repaid) now stands as ' + fK(equityM) + ' of net equity — ' + (eqMult !== null && eqMult > 0 ? eqMult.toFixed(1) + '× the cash we put in' : 'valuation pending') + (niRoi !== null ? ', earning ' + niRoi.toFixed(1) + '% ROI' : '') + '.';
     const scopeLine = owned.length + ' doors owned at ' + mmyy(lastM) + ' · ' + ENTITIES.filter(entOn).length + ' of ' + ENTITIES.length + ' entities' + (noProp ? '' : ' · ' + fpAct.length + ' of ' + ALLDOORS.length + ' properties') + ' in view · net equity valued: ' + vShort + ' · every figure ties its source page to the cent';
     const asOfLine = 'P&L ' + (PLD.meta && PLD.meta.published ? String(PLD.meta.published).slice(0, 10) : '—') + ' · CF ' + (CFD.meta.published ? String(CFD.meta.published).slice(0, 10) : '—') + ' · BS ' + (BSD.meta && BSD.meta.published ? String(BSD.meta.published).slice(0, 10) : '—') + ' · Loans ' + (LD.meta && LD.meta.published ? String(LD.meta.published).slice(0, 10) : '—');
 
@@ -1613,12 +1614,29 @@ class Component extends DCLogic {
       { w: Math.max(1.5, debtValued / valueM * 100).toFixed(1) + '%', col: BRICK, lab: 'STILL THE BANKS’ ' + fK(debtValued), tip: 'debt outstanding on the valued doors: ' + fN(debtValued) },
       { w: Math.max(1.5, Math.max(equityM, 0) / valueM * 100).toFixed(1) + '%', col: GREEN2, lab: equityM > 0 ? 'OURS — NET EQUITY ' + fK(equityM) : '', tip: 'net equity under ' + vShort + ': ' + fN(equityM) },
     ] : [{ w: '100%', col: '#EDEBE2', lab: 'no valued doors in scope', tip: '' }];
-    const policyRatio = tCost > 0.005 ? (owned.reduce((s, p) => s + (p.value || 0), 0) / tCost) : null;
-    const unlev = policyRatio !== null && tInv > 0 ? tInv * policyRatio : null;
+    // the no-banks mirror, method-driven: grow our cash at the SAME rate the priced houses grew
+    // (method value ÷ cost, over the doors the method prices that also carry a cost)
+    const ratioSet = valuedSet.filter(p => p.cost > 0);
+    const ratioCost = ratioSet.reduce((s2, p) => s2 + p.cost, 0);
+    const ratioVal = ratioSet.reduce((s2, p) => s2 + vNetOf(vValRaw(p)), 0);
+    const growthR = ratioCost > 0.005 ? ratioVal / ratioCost : null;
+    const unlev = growthR !== null && tInv > 0 ? tInv * growthR : null;
+    // ...and what that smaller no-banks portfolio would EARN, from live ratios (nothing hardcoded):
+    // yield on cost = yearly scheduled rent ÷ what the real portfolio cost →  mirror's yearly rent
+    // then the REAL portfolio's income-% and cash-% of gross rent applied to that rent (no interest,
+    // no principal — there are no banks in the mirror)
+    const yieldOnCost = tCost > 0.005 && nWin ? ann(grossRentW) / tCost : null;
+    const mirrorRentA = yieldOnCost !== null && tInv > 0 ? tInv * yieldOnCost : null;
+    const noiPctGR = grossRentW > 0.005 ? noiBookW / grossRentW : null;
+    const cashPctGR = grossRentW > 0.005 ? netOpW / grossRentW : null;
+    const mirrorNIA = mirrorRentA !== null && noiPctGR !== null ? mirrorRentA * noiPctGR : null;
+    const mirrorCashA = mirrorRentA !== null && cashPctGR !== null ? mirrorRentA * cashPctGR : null;
+    const actNIA = nWin ? ann(niW) : null, actCashA = nWin ? ann(keptW) : null;
     const punchChips = [
       { k: 'EQUITY BUILT PER $1 OF OUR CASH', v: eqMult !== null && eqMult > 0 ? '$' + eqMult.toFixed(2) : '—', sub: fK(equityM) + ' of net equity on ' + fK(tInv) + ' invested', col: GREEN2, tip: 'Our share today ÷ cash we first put in: every $1 from our pocket now stands as this much ownership — after the $30K-per-house sale-ready cost and with the banks fully counted. This growth only happened because the banks funded the rest.' },
       { k: 'THE TENANTS PAY THE LOAN, NOT US', v: fN(tRepaid), sub: 'principal the business has repaid — it became this equity', col: NAVY, tip: 'All of this principal was paid out of rent collections — not fresh money from us. In simple words: the tenants are buying the buildings back from the banks, for us.' },
-      { k: 'SAME CASH, NO BANKS — A MIRROR', v: unlev !== null ? '≈ ' + fK(unlev) : '—', sub: unlev !== null ? 'what ' + fK(tInv) + ' alone would be worth at the same appreciation — vs ' + fK(equityM) + ' with the banks' : 'needs cost + valuation in scope', col: MUT, tip: 'A what-if for comparison, not a promise: if our ' + fK(tInv) + ' had bought property with NO bank loans, at the same market growth, it would be worth roughly this today. The gap between this and our actual share is what the borrowed money added.' },
+      { k: 'SAME CASH, NO BANKS — WORTH TODAY', v: unlev !== null ? '≈ ' + fK(unlev) : '—', sub: unlev !== null ? 'what ' + fK(tInv) + ' alone would be worth under ' + vShort + ' — vs ' + fK(equityM) + ' with the banks' : 'needs cost + valuation in scope', col: MUT, tip: 'A what-if for comparison, not a promise. The sum: our cash ' + fN(tInv) + ' × the growth the priced houses actually made under this method (worth ' + fK(ratioVal) + ' ÷ cost ' + fK(ratioCost) + ' = ' + (growthR !== null ? growthR.toFixed(2) + '×' : '—') + ') = ' + (unlev !== null ? fK(unlev) : '—') + '. Change the valuation method above and this number follows. The gap to our actual ' + fK(equityM) + ' is what the borrowed money added.' },
+      { k: 'SAME CASH, NO BANKS — WHAT IT WOULD EARN', v: mirrorNIA !== null && mirrorCashA !== null ? '≈ ' + fK(mirrorNIA) + ' · ' + fK(mirrorCashA) : '—', sub: mirrorNIA !== null ? 'profit · cash a year — vs ≈ ' + (actNIA !== null ? fK(actNIA) : '—') + ' · ' + (actCashA !== null ? fK(actCashA) : '—') + ' a year with the banks' : 'needs rent + cost in scope', col: MUT, tip: 'Built from live numbers, step by step. (1) The real portfolio earns yearly rent of ' + (yieldOnCost !== null ? (yieldOnCost * 100).toFixed(1) + '%' : '—') + ' on what it cost (' + fK(ann(grossRentW)) + ' rent a year ÷ ' + fK(tCost) + ' cost). (2) A no-banks portfolio bought with our ' + fK(tInv) + ' would earn rent at that same rate: ≈ ' + (mirrorRentA !== null ? fK(mirrorRentA) : '—') + ' a year. (3) Apply the real portfolio’s own results per rent dollar — profit before interest is ' + (noiPctGR !== null ? (noiPctGR * 100).toFixed(1) + '%' : '—') + ' of rent, operating cash is ' + (cashPctGR !== null ? (cashPctGR * 100).toFixed(1) + '%' : '—') + ' of rent — and with no banks there is no interest or loan payment to subtract. Result: ≈ ' + (mirrorNIA !== null ? fK(mirrorNIA) : '—') + ' profit and ≈ ' + (mirrorCashA !== null ? fK(mirrorCashA) : '—') + ' cash a year, against ≈ ' + (actNIA !== null ? fK(actNIA) : '—') + ' and ≈ ' + (actCashA !== null ? fK(actCashA) : '—') + ' the real, bank-funded portfolio makes.' },
       { k: 'AND IT STILL PAYS', v: fK(keptW) + ' · ' + fK(niW), sub: 'net cash flow · net profit this window, after every bank dollar', col: GREEND, tip: 'While the ownership grew, the same period still paid out this much cash and profit AFTER every bank payment. The loans are not draining the owners — rent covers them ' + (netOpW > 0.005 && dsCashW > 0.005 ? (netOpW / dsCashW).toFixed(2) + '× over' : '—') + '.' },
     ];
     const invRail = [
@@ -1638,7 +1656,7 @@ class Component extends DCLogic {
       { k: 'LEVERAGE AT PURCHASE', v: levPurch === null ? '—' : levPurch.toFixed(1) + '×', vcol: NAVY, sub: 'bank money ÷ our money at the start (' + fK(tRefi) + ' ÷ ' + fK(tInv) + ')', tip: 'At the start, for every $1 of our cash the banks put in $' + (levPurch === null ? '—' : levPurch.toFixed(2)) + '. High on purpose — the refinance playbook pulls our cash back out to buy the next house, while rent pays for the borrowed part.' },
       { k: 'LEVERAGE TODAY', v: levToday === null ? '—' : levToday.toFixed(1) + '×', vcol: levToday !== null && levPurch !== null && levToday < levPurch ? GREEND : NAVY, sub: levToday !== null && levPurch !== null && levToday < levPurch ? 'deleveraged — equity now outweighs the debt' : 'debt ÷ net equity at ' + mmyy(lastM), tip: 'What the banks are owed today ÷ what is ours today. It has fallen a long way from the starting number — meaning the buildings are steadily moving from the banks’ column into ours, paid for by the tenants.' },
     ];
-    const a5Foot = 'Returns annualize the selected window (' + spanLab + ') — a short window amplifies seasonal costs. Net equity follows the Act IV valuation method (' + vShort + '); the “same cash, no banks” chip is a disclosed hypothetical at the policy-value appreciation ratio. Cash-on-cash follows the Investments card’s recipe (engine escrow + scheduled principal, no CapEx), so it ties that page, not Act III’s file-based net cash flow — both definitions are disclosed where they appear. Principal repaid counts only money we paid: sale-settled releases and the refinance-funded payoff on 410 Virginia Dr are excluded.';
+    const a5Foot = 'Returns annualize the selected window (' + spanLab + ') — a short window amplifies seasonal costs. Net equity follows the Act IV valuation method (' + vShort + '); the “same cash, no banks” chips are disclosed what-ifs: worth = our cash × the selected method’s value-÷-cost growth on the priced doors; earnings = our cash × the real portfolio’s rent yield on cost, with its actual profit-% and cash-% of rent applied and no loan costs. Cash-on-cash follows the Investments card’s recipe (engine escrow + scheduled principal, no CapEx), so it ties that page, not Act III’s file-based net cash flow — both definitions are disclosed where they appear. Principal repaid counts only money we paid: sale-settled releases and the refinance-funded payoff on 410 Virginia Dr are excluded.';
 
     // ══ entity scorecard ══
     const rowsE = ENTITIES.map(e => {
@@ -1830,7 +1848,7 @@ class Component extends DCLogic {
 
     return Object.assign({
       ready: true, loading: false, loadError: false, retryLoad: () => this.loadData(), stopProp,
-      storyLine, scopeLine, asOfLine,
+      scopeLine, asOfLine,
       filters, hasActive, onReset, jumpChips,
       heroTiles,
       a1Links, a1Line, a1Rail, cvTitle, cvRows, cvFoot, agTot, agTiles, agFoot,
