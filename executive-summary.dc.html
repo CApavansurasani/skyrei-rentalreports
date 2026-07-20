@@ -224,11 +224,11 @@ input:focus{outline:2px solid #C9A45C;outline-offset:1px}
               <span style="width:58px;flex:none;text-align:right">% GROSS RENT</span>
               <span style="width:46px;flex:none"></span>
             </div>
-            <sc-for list="{{ bucketRows }}" as="bu" hint-placeholder-count="6">
+            <sc-for list="{{ bucketRows }}" as="bu" hint-placeholder-count="8">
               <div>
                 <div onClick="{{ bu.onExp }}" data-tip="{{ bu.tip }}" style-hover="background:#F6F4EC" style="display:flex;align-items:center;gap:8px;padding:5.5px 0;border-top:1px solid #F0EDE3;cursor:pointer;border-radius:6px">
                   <span style="width:14px;flex:none;font-size:10px;font-weight:700;color:{{ bu.chevCol }};text-align:center">{{ bu.chev }}</span>
-                  <span style="flex:1.2;min-width:0;font-size:11px;font-weight:700;color:#2A3550;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">{{ bu.name }}</span>
+                  <span style="flex:1.2;min-width:0;display:flex;align-items:center;gap:6px"><span style="min-width:0;font-size:11px;font-weight:700;color:#2A3550;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">{{ bu.name }}</span><sc-if value="{{ bu.isLoss }}" hint-placeholder-val="{{ false }}"><span style="flex:none;font-size:6.5px;font-weight:800;letter-spacing:0.06em;color:#96742F;background:#F9F1DC;border:1px solid #E5D8B4;border-radius:99px;padding:1.5px 6px">RENT LOST</span></sc-if></span>
                   <span style="flex:1;height:7px;background:#F0EDE3;border-radius:4px;overflow:hidden;position:relative"><span style="position:absolute;left:0;top:0;bottom:0;width:{{ bu.w }};background:{{ bu.barCol }};border-radius:4px"></span></span>
                   <span style="width:72px;flex:none;text-align:right;font-size:11px;font-weight:700;color:#16233A;font-variant-numeric:tabular-nums">{{ bu.v }}</span>
                   <span style="width:58px;flex:none;text-align:right;font-size:10px;font-weight:800;color:#96742F;font-variant-numeric:tabular-nums">{{ bu.pct }}</span>
@@ -805,7 +805,6 @@ input:focus{outline:2px solid #C9A45C;outline-offset:1px}
   </div>
 </div>
 </x-dc>
-
 <script type="text/x-dc" data-dc-script>
 class Component extends DCLogic {
   state = {
@@ -989,13 +988,14 @@ class Component extends DCLogic {
     const A_RENT = ['Rental Income', 'Increase/(Decrease) in Rent'];
     const A_INC = ['Rental Income', 'Increase/(Decrease) in Rent', 'Vacancy Loss', 'Other Income', 'SD - Forfeit Income', 'Insurance Claim'];
     const A_CL = 'Collection Loss';
+    const A_VAC = 'Vacancy Loss';
     const A_OPEX = ['Property Tax', 'Insurance', 'HOA Fee', 'Property Management Expense', 'Utilities', "Renter's Insurance", 'Other Misc Cost', 'Repairs - Payroll', 'Repairs - Materials', 'Repairs - Contractors', 'Rent Ready - Payroll', 'Rent Ready - Materials', 'Rent Ready - Contractors', 'Capex - HVAC', 'Capex - Appliances'];
     const A_INT = 'Interest Cost';
     const OVERD = new Set((PLD.meta && PLD.meta.overheadDoors) || []);
     const glz = () => MO.map(() => 0);
-    const incM = glz(), opexM = glz(), intGlM = glz(), niM = glz(), rentM = glz();
+    const incM = glz(), opexM = glz(), intGlM = glz(), niM = glz(), rentM = glz(), vacM = glz(), clM = glz();
     const niByEntW = {}; for (const e of ENTITIES) niByEntW[e] = 0;
-    const mixW = {}; let clW = 0;
+    const mixW = {}; let clW = 0, vacW = 0;
     // door-grain NOI/interest maps for the investments-page returns + NOI÷cap valuation
     const noiBy = new Map(), intBy = new Map();
     let noiOver = 0, intOver = 0;
@@ -1011,8 +1011,11 @@ class Component extends DCLogic {
           else if (A_OPEX.includes(acct)) { opexM[i] += v; niM[i] -= v; }
           else if (acct === A_INT) { intGlM[i] += v; niM[i] -= v; }
           if (A_RENT.includes(acct)) rentM[i] += v;
+          if (acct === A_VAC) vacM[i] += v;
+          if (acct === A_CL) clM[i] += v;
         }
         if (acct === A_CL) clW += winTot;
+        if (acct === A_VAC) vacW += winTot;
         if (A_OPEX.includes(acct) || acct === A_INT) mixW[acct] = (mixW[acct] || 0) + winTot;
       }
       // per-entity NI over the window (scorecard; fp-scoped)
@@ -1419,34 +1422,52 @@ class Component extends DCLogic {
       oth: 'Property management fees, utilities, renter’s insurance and small other costs.',
     };
     const bucketsAll = BUCKET_DEFS.map(b => ({ ...b, tot: b.accts.reduce((s, a) => s + (mixW[a] || 0), 0) })).sort((a, b) => b.tot - a.tot);
-    const bMax = Math.max(...bucketsAll.map(b => Math.abs(b.tot)), 1);
     const grOK = grossRentW > 0.005;
-    const bucketTitle = 'THE COST STACK — % OF GROSS RENT (' + (grOK ? fN(grossRentW) : '—') + ' SCHEDULED, ' + spanLab.toUpperCase() + ')';
-    const bucketRows = bucketsAll.map(b => {
+    // rent lost before any bill — the books' own Vacancy Loss / Collection Loss lines, scoped exactly like the buckets
+    const vacLossW = -vacW, clLossW = clW, lostW = vacLossW + clLossW;
+    const wmOf = arr => { let bi = -1, bv = 0; for (const i of winIdx) { const x = Math.abs(arr[i] || 0); if (x > bv + 0.005) { bv = x; bi = i; } } return bi; };
+    const vacWM = wmOf(vacM), clWM = wmOf(clM);
+    const lossPct = x => grOK ? (x / grossRentW * 100).toFixed(1) + '%' : '—';
+    const LOSS_ROWS = [
+      { id: 'vac', name: 'Vacancy Loss', isLoss: true, tot: vacLossW, col: '#D9A83C',
+        tip: 'Rent lost to empty doors — the books’ own Vacancy Loss line. When a house sits empty, the rent it should have earned is recorded here and taken straight off the income line. This window: ' + fN(vacLossW) + ' lost' + (grOK ? ' = ' + lossPct(vacLossW) + ' of the ' + fN(grossRentW) + ' scheduled' : '') + '.' + (vacWM >= 0 && nWin > 1 ? ' Biggest month: ' + mmyy(MO[vacWM]) + ' at ' + fN(Math.abs(vacM[vacWM])) + '.' : '') + ' This is rent that never arrived, not money spent — so it sits OUTSIDE the six cost buckets and their total. Click ▸ for the line inside.',
+        lines: [{ name: 'Vacancy Loss — the ledger line, in the income build', v: fK(vacLossW), pct: lossPct(vacLossW), href: plS('waterfall'), lab: 'P&L →' }] },
+      { id: 'closs', name: 'Collection Loss', isLoss: true, tot: clLossW, col: '#C4862E',
+        tip: 'Rent billed but no longer counted on — the books’ Collection Loss line, taken off the income line in the month it is booked. This window: ' + fN(clLossW) + (grOK ? ' = ' + lossPct(clLossW) + ' of scheduled rent' : '') + '.' + (clWM >= 0 && nWin > 1 ? ' Biggest month: ' + mmyy(MO[clWM]) + ' at ' + fN(Math.abs(clM[clWM])) + '.' : '') + ' Not the same as the ' + fN(laggSum) + ' tenants still owe (Act I) — that money is still being chased; this line is the rent given up on. It sits OUTSIDE the six cost buckets. Click ▸ for the line inside.',
+        lines: [
+          { name: 'Collection Loss — the ledger line, in the income build', v: fK(clLossW), pct: lossPct(clLossW), href: plS('waterfall'), lab: 'P&L →' },
+          { name: 'Still owed and being chased — not given up on', v: fK(laggSum), pct: '—', href: collS('watch'), lab: 'CHASE →' },
+        ] },
+    ];
+    const stackAll = [...bucketsAll.map(b => ({ ...b, isLoss: false })), ...LOSS_ROWS].sort((a, b) => b.tot - a.tot);
+    const bMax = Math.max(...stackAll.map(b => Math.abs(b.tot)), 1);
+    const bucketTitle = 'THE COST STACK & LOST RENT — % OF GROSS RENT (' + (grOK ? fN(grossRentW) : '—') + ' SCHEDULED, ' + spanLab.toUpperCase() + ')';
+    const bucketRows = stackAll.map(b => {
       const open = S.xOpen === b.id;
-      const comps = b.accts.map(a => ({ name: a, v: mixW[a] || 0 })).filter(x => Math.abs(x.v) > 0.005).sort((x, y) => y.v - x.v);
+      const isL = !!b.isLoss;
+      const comps = isL ? b.lines : b.accts.map(a => ({ name: a, v: mixW[a] || 0 })).filter(x => Math.abs(x.v) > 0.005).sort((x, y) => y.v - x.v).map(x => ({
+        name: x.name, v: fK(x.v),
+        pct: grOK ? (x.v / grossRentW * 100).toFixed(1) + '%' : '—',
+        href: x.name === 'Interest Cost' ? loansS('register') : plS('trends'),
+        lab: x.name === 'Interest Cost' ? 'LOANS →' : 'P&L →',
+      }));
       return {
-        name: b.name, v: fK(b.tot),
-        tip: (BK_TIPS[b.id] || '') + (grOK ? ' This group = ' + (b.tot / grossRentW * 100).toFixed(1) + '% of the ' + fN(grossRentW) + ' total scheduled rent. Click ▸ to see the lines inside it.' : ''),
+        name: b.name, v: fK(b.tot), isLoss: isL,
+        tip: isL ? b.tip : (BK_TIPS[b.id] || '') + (grOK ? ' This group = ' + (b.tot / grossRentW * 100).toFixed(1) + '% of the ' + fN(grossRentW) + ' total scheduled rent. Click ▸ to see the lines inside it.' : ''),
         pct: grOK ? (b.tot / grossRentW * 100).toFixed(1) + '%' : '—',
         w: Math.max(2, Math.abs(b.tot) / bMax * 100).toFixed(1) + '%', barCol: b.col,
         chev: open ? '▾' : '▸', chevCol: open ? GOLDD : '#B9C2D2',
         onExp: () => this.setState({ xOpen: open ? null : b.id }),
         open,
         href: b.id === 'int' ? loansS('register') : plS('trends'),
-        comps: comps.map(x => ({
-          name: x.name, v: fK(x.v),
-          pct: grOK ? (x.v / grossRentW * 100).toFixed(1) + '%' : '—',
-          href: x.name === 'Interest Cost' ? loansS('register') : plS('trends'),
-          lab: x.name === 'Interest Cost' ? 'LOANS →' : 'P&L →',
-        })),
+        comps,
       };
     });
     const bucketTot = bucketsAll.reduce((s, b) => s + b.tot, 0);
-    const bucketFoot = 'Gross rent = the scheduled-rent line (Rental Income + rent increases) — ' + (grOK ? fN(grossRentW) : '—') + ' this window. The six buckets cover every operating ledger plus GL interest: ' + fK(bucketTot) + ' in total, ' + (grOK ? (bucketTot / grossRentW * 100).toFixed(1) + '% of gross rent' : '—') + '. ▸ opens the ledgers inside a bucket; every line links to its page, scoped to this view.';
+    const bucketFoot = 'Gross rent = the scheduled-rent line (Rental Income + rent increases) — ' + (grOK ? fN(grossRentW) : '—') + ' this window. Six cost buckets cover every operating ledger plus GL interest: ' + fK(bucketTot) + ', ' + (grOK ? (bucketTot / grossRentW * 100).toFixed(1) + '% of gross rent' : '—') + '. The two amber lines are rent LOST, not money spent — doors sitting empty ' + fK(vacLossW) + ' + given up on ' + fK(clLossW) + ' = ' + fK(lostW) + (grOK ? ' (' + (lostW / grossRentW * 100).toFixed(1) + '%)' : '') + '; they cut the income line before any bill is paid, so they sit outside the cost total. ▸ opens the lines inside; every line links to its page, scoped to this view.';
     const topBk = bucketsAll[0];
     const a2Line = incW > 0.005
-      ? 'Of ' + fN(grossRentW) + ' in gross scheduled rent, running the doors took ' + fN(opexBookW) + ' on the books and the banks’ interest ' + fN(intBookW) + ' — the heaviest bucket: ' + topBk.name.toLowerCase() + ' at ' + (grOK ? (topBk.tot / grossRentW * 100).toFixed(1) + '% of gross rent' : '—') + '. In cash, debt service took ' + fN(dsCashW) + ': ' + fN(intCashW) + ' interest + ' + fN(prinCashW) + ' principal.'
+      ? 'Of ' + fN(grossRentW) + ' in gross scheduled rent, running the doors took ' + fN(opexBookW) + ' on the books and the banks’ interest ' + fN(intBookW) + ' — the heaviest bucket: ' + topBk.name.toLowerCase() + ' at ' + (grOK ? (topBk.tot / grossRentW * 100).toFixed(1) + '% of gross rent' : '—') + '. On top, ' + fK(lostW) + ' of rent never arrived — doors sitting empty (' + fK(vacLossW) + ') plus billed rent given up on (' + fK(clLossW) + '). In cash, debt service took ' + fN(dsCashW) + ': ' + fN(intCashW) + ' interest + ' + fN(prinCashW) + ' principal.'
       : 'No GL income in this scope — the cost story needs a window with income.';
     const bankChips = [
       { k: 'INTEREST PAID', v: fN(intCashW), sub: 'books accrued ' + fN(intBookW), href: loansS('recon'), kcol: MUT, vcol: RED, bd: '#EDEBE2', tip: 'Interest actually paid this period — the price of using the banks’ money. The Loans page checks this against each loan’s schedule and flags any gap over $25.' },
@@ -1862,5 +1883,4 @@ class Component extends DCLogic {
   }
 }
 </script>
-</body>
-</html>
+</body></html>
