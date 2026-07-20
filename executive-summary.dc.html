@@ -81,10 +81,14 @@ input:focus{outline:2px solid #C9A45C;outline-offset:1px}
       <sc-if value="{{ hasActive }}" hint-placeholder-val="{{ false }}">
         <div onClick="{{ onReset }}" style-hover="background:#16233A;color:#FFFFFF" style="padding:8px 13px;border-radius:10px;background:#F3E2DB;color:#A03E28;font-size:11.5px;font-weight:700;cursor:pointer;white-space:nowrap">Reset ✕</div>
       </sc-if>
+      <span style="flex:none;margin-left:6px;font-size:9px;letter-spacing:0.08em;font-weight:800;color:#8A93A6">JUMP&nbsp;TO</span>
+      <sc-for list="{{ jumpChips }}" as="jc" hint-placeholder-count="6">
+        <div onClick="{{ jc.onClick }}" style-hover="border-color:#C9A45C;background:#FBF6EA" style="padding:6px 11px;border-radius:99px;border:1px solid #E2DFD6;background:#FFFFFF;font-size:10.5px;font-weight:700;color:#5E6B82;cursor:pointer;white-space:nowrap">{{ jc.lab }}</div>
+      </sc-for>
       <span style="margin-left:auto;font-size:11px;color:#8A93A6;white-space:nowrap">{{ asOfLine }}</span>
     </div>
 
-    <!-- ══ Hero tiles — the six numbers an executive asks for first ══ -->
+    <!-- ══ The story at a glance — six numbers ══ -->
     <div style="margin-top:16px;display:grid;grid-template-columns:repeat(6,1fr);gap:12px">
       <sc-for list="{{ heroTiles }}" as="ht" hint-placeholder-count="6">
         <a href="{{ ht.href }}" title="{{ ht.tip }}" style="text-decoration:none;background:{{ ht.bg }};border:1px solid {{ ht.bd }};border-radius:14px;padding:14px 16px;display:block" style-hover="border-color:#C9A45C">
@@ -96,42 +100,405 @@ input:focus{outline:2px solid #C9A45C;outline-offset:1px}
       </sc-for>
     </div>
 
-    <!-- ══ The money pipeline — cash rail and books rail ══ -->
-    <div style="margin-top:16px;background:#FFFFFF;border:1px solid #E5E3DC;border-radius:16px;padding:22px 26px">
-      <div style="display:flex;justify-content:space-between;align-items:baseline;flex-wrap:wrap;gap:8px">
-        <div style="font-family:'Source Serif 4',Georgia,serif;font-size:18px;font-weight:600;color:#16233A">How the money moved — {{ periodLab }}</div>
-        <div style="font-size:11.5px;color:#8A93A6">cash answers “where is it?” · books answer “did we earn it?” — both are true</div>
+    <!-- ══════════════════ THE STORY — five acts, one continuous walk ══════════════════ -->
+
+    <!-- ── ACT I · WHAT CAME IN ── -->
+    <div data-act="in" style="margin-top:22px;background:#FFFFFF;border:1px solid #E5E3DC;border-radius:16px;overflow:hidden">
+      <div style="background:#16233A;padding:13px 26px;display:flex;align-items:center;gap:14px;flex-wrap:wrap;border-bottom:3px solid #C9A45C">
+        <span style="font-family:'Source Serif 4',Georgia,serif;font-size:12px;font-weight:700;letter-spacing:0.14em;color:#C9A45C">ACT&nbsp;I</span>
+        <span style="font-family:'Source Serif 4',Georgia,serif;font-size:17px;font-weight:600;color:#E9EDF5">What came in</span>
+        <span style="margin-left:auto;display:flex;gap:6px;flex-wrap:wrap">
+          <sc-for list="{{ a1Links }}" as="l1" hint-placeholder-count="2">
+            <a href="{{ l1.href }}" style-hover="background:rgba(201,164,92,0.25)" style="font-size:8.5px;font-weight:800;letter-spacing:0.05em;color:#C9A45C;text-decoration:none;border:1px solid rgba(201,164,92,0.45);border-radius:99px;padding:3px 10px">{{ l1.lab }}</a>
+          </sc-for>
+        </span>
       </div>
-      <div style="margin-top:14px;display:flex;align-items:center;gap:6px;flex-wrap:wrap">
-        <span style="flex:none;width:86px;font-size:9px;letter-spacing:0.1em;font-weight:800;color:#96742F">CASH<br>Buildium + files</span>
-        <sc-for list="{{ pipeCash }}" as="pc" hint-placeholder-count="6">
-          <a href="{{ pc.href }}" title="{{ pc.tip }}" style="text-decoration:none;flex:1;min-width:118px;background:{{ pc.bg }};border:1px solid {{ pc.bd }};border-radius:11px;padding:10px 12px;display:block" style-hover="border-color:#C9A45C">
-            <div style="font-size:8.5px;letter-spacing:0.06em;font-weight:800;color:{{ pc.kcol }};white-space:nowrap;overflow:hidden;text-overflow:ellipsis">{{ pc.k }}</div>
-            <div style="margin-top:3px;font-size:15px;font-weight:700;color:{{ pc.vcol }};font-variant-numeric:tabular-nums;white-space:nowrap">{{ pc.v }}</div>
-            <div style="margin-top:2px;font-size:9px;color:#9AA3B5;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">{{ pc.sub }}</div>
-          </a>
-          <sc-if value="{{ pc.arrowOn }}" hint-placeholder-val="{{ true }}"><span style="flex:none;color:#C9A45C;font-size:13px;font-weight:700">→</span></sc-if>
-        </sc-for>
+      <div style="padding:18px 26px 22px">
+        <div style="font-family:'Source Serif 4',Georgia,serif;font-size:15.5px;color:#2A3550;line-height:1.6;max-width:1100px">{{ a1Line }}</div>
+        <div style="margin-top:16px;display:flex;align-items:stretch;gap:6px;flex-wrap:wrap">
+          <sc-for list="{{ a1Rail }}" as="r1" hint-placeholder-count="4">
+            <a href="{{ r1.href }}" title="{{ r1.tip }}" style="text-decoration:none;flex:1;min-width:150px;background:{{ r1.bg }};border:1px solid {{ r1.bd }};border-radius:11px;padding:11px 13px;display:block" style-hover="border-color:#C9A45C">
+              <div style="font-size:8.5px;letter-spacing:0.06em;font-weight:800;color:{{ r1.kcol }};white-space:nowrap;overflow:hidden;text-overflow:ellipsis">{{ r1.k }}</div>
+              <div style="margin-top:3px;font-size:17px;font-weight:700;color:{{ r1.vcol }};font-variant-numeric:tabular-nums;white-space:nowrap">{{ r1.v }}</div>
+              <div style="margin-top:2px;font-size:9.5px;color:#9AA3B5;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">{{ r1.sub }}</div>
+            </a>
+            <sc-if value="{{ r1.arrowOn }}" hint-placeholder-val="{{ true }}"><span style="flex:none;align-self:center;color:#C9A45C;font-size:14px;font-weight:700">→</span></sc-if>
+          </sc-for>
+        </div>
+        <div style="margin-top:16px;display:grid;grid-template-columns:1.15fr 1fr;gap:16px">
+          <div style="background:#FBFAF6;border:1px solid #EDEBE2;border-radius:12px;padding:14px 16px">
+            <div style="display:flex;justify-content:space-between;align-items:baseline;gap:8px">
+              <span style="font-size:10px;letter-spacing:0.07em;font-weight:800;color:#5E6B82">{{ c1Title }}</span>
+              <span style="font-size:10px;font-weight:700;color:{{ c1DeltaCol }};font-variant-numeric:tabular-nums">{{ c1Delta }}</span>
+            </div>
+            <div style="margin-top:8px;position:relative">
+              <svg viewBox="0 0 320 84" preserveAspectRatio="none" style="width:100%;height:84px;display:block;overflow:visible">
+                <line x1="0" y1="{{ c1ZeroY }}" x2="320" y2="{{ c1ZeroY }}" stroke="#E5E0D2" stroke-width="1" stroke-dasharray="3 3"></line>
+                <sc-if value="{{ c1Line2On }}" hint-placeholder-val="{{ true }}">
+                  <polyline points="{{ c1Path2 }}" fill="none" stroke="#8FA8C9" stroke-width="1.6" stroke-linejoin="round" stroke-linecap="round"></polyline>
+                </sc-if>
+                <polyline points="{{ c1Path }}" fill="none" stroke="{{ c1Col }}" stroke-width="2" stroke-linejoin="round" stroke-linecap="round"></polyline>
+                <sc-for list="{{ c1Pts }}" as="p1" hint-placeholder-count="5">
+                  <circle cx="{{ p1.cx }}" cy="{{ p1.cy }}" r="{{ p1.r }}" fill="{{ p1.fill }}" stroke="{{ p1.stroke }}" stroke-width="1.4"></circle>
+                  <circle onClick="{{ p1.onClick }}" cx="{{ p1.cx }}" cy="{{ p1.cy }}" r="9" fill="transparent" style="cursor:pointer"></circle>
+                </sc-for>
+              </svg>
+              <sc-for list="{{ c1Labs }}" as="b1" hint-placeholder-count="5">
+                <span style="position:absolute;left:{{ b1.leftPct }};top:{{ b1.topPct }};transform:translate(-50%,-130%);font-size:8.5px;font-weight:700;color:{{ b1.col }};font-variant-numeric:tabular-nums;white-space:nowrap;pointer-events:none">{{ b1.v }}</span>
+              </sc-for>
+            </div>
+            <div style="margin-top:4px;display:flex;justify-content:space-between">
+              <sc-for list="{{ c1Months }}" as="m1" hint-placeholder-count="5">
+                <span onClick="{{ m1.onClick }}" style-hover="color:#96742F" style="font-size:9px;font-weight:{{ m1.fw }};color:{{ m1.col }};cursor:pointer">{{ m1.m }}</span>
+              </sc-for>
+            </div>
+            <div style="margin-top:6px;font-size:9.5px;color:#9AA3B5;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">{{ c1Sub }}</div>
+          </div>
+          <div style="background:#FBFAF6;border:1px solid #EDEBE2;border-radius:12px;padding:14px 16px">
+            <div style="display:flex;justify-content:space-between;align-items:baseline;gap:8px;flex-wrap:wrap">
+              <span style="font-size:10px;letter-spacing:0.07em;font-weight:800;color:#5E6B82">WHAT&#8217;S STILL OUT — AGE OF THE {{ agTot }} OWED</span>
+              <span style="font-size:9.5px;color:#8A93A6">from the date each charge was billed</span>
+            </div>
+            <div style="margin-top:10px;display:grid;grid-template-columns:repeat(4,1fr);gap:8px">
+              <sc-for list="{{ agTiles }}" as="ag" hint-placeholder-count="4">
+                <a href="{{ ag.href }}" title="{{ ag.tip }}" style="text-decoration:none;background:#FFFFFF;border:1px solid {{ ag.bd }};border-radius:10px;padding:9px 11px;display:block" style-hover="border-color:#C9A45C">
+                  <div style="font-size:8.5px;letter-spacing:0.05em;font-weight:800;color:{{ ag.kcol }};white-space:nowrap">{{ ag.k }}</div>
+                  <div style="margin-top:3px;font-size:13.5px;font-weight:700;color:{{ ag.vcol }};font-variant-numeric:tabular-nums;white-space:nowrap">{{ ag.v }}</div>
+                  <div style="margin-top:4px;height:5px;background:#F0EDE3;border-radius:3px;overflow:hidden;position:relative"><span style="position:absolute;left:0;top:0;bottom:0;width:{{ ag.w }};background:{{ ag.barCol }};border-radius:3px"></span></div>
+                  <div style="margin-top:3px;font-size:8.5px;color:#9AA3B5;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">{{ ag.sub }}</div>
+                </a>
+              </sc-for>
+            </div>
+            <div style="margin-top:10px;padding-top:8px;border-top:1px solid #EDEAE0;font-size:9.5px;color:#9AA3B5;line-height:1.55">{{ agFoot }}</div>
+          </div>
+        </div>
       </div>
-      <div style="margin-top:10px;display:flex;align-items:center;gap:6px;flex-wrap:wrap">
-        <span style="flex:none;width:86px;font-size:9px;letter-spacing:0.1em;font-weight:800;color:#5E6B82">BOOKS<br>GL accrual</span>
-        <sc-for list="{{ pipeAccr }}" as="pa" hint-placeholder-count="5">
-          <a href="{{ pa.href }}" title="{{ pa.tip }}" style="text-decoration:none;flex:1;min-width:118px;background:{{ pa.bg }};border:1px solid {{ pa.bd }};border-radius:11px;padding:10px 12px;display:block" style-hover="border-color:#C9A45C">
-            <div style="font-size:8.5px;letter-spacing:0.06em;font-weight:800;color:{{ pa.kcol }};white-space:nowrap;overflow:hidden;text-overflow:ellipsis">{{ pa.k }}</div>
-            <div style="margin-top:3px;font-size:15px;font-weight:700;color:{{ pa.vcol }};font-variant-numeric:tabular-nums;white-space:nowrap">{{ pa.v }}</div>
-            <div style="margin-top:2px;font-size:9px;color:#9AA3B5;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">{{ pa.sub }}</div>
-          </a>
-          <sc-if value="{{ pa.arrowOn }}" hint-placeholder-val="{{ true }}"><span style="flex:none;color:#8A96AD;font-size:13px;font-weight:700">→</span></sc-if>
-        </sc-for>
-      </div>
-      <div style="margin-top:12px;padding-top:10px;border-top:1px solid #F0EEE7;font-size:10.5px;color:#9AA3B5;line-height:1.6">{{ pipeFoot }}</div>
     </div>
 
-    <!-- ══ Entity scorecard ══ -->
-    <div style="margin-top:16px;background:#FFFFFF;border:1px solid #E5E3DC;border-radius:16px;padding:22px 26px">
+    <!-- ── ACT II · WHAT IT COST ── -->
+    <div data-act="cost" style="margin-top:14px;background:#FFFFFF;border:1px solid #E5E3DC;border-radius:16px;overflow:hidden">
+      <div style="background:#16233A;padding:13px 26px;display:flex;align-items:center;gap:14px;flex-wrap:wrap;border-bottom:3px solid #C9A45C">
+        <span style="font-family:'Source Serif 4',Georgia,serif;font-size:12px;font-weight:700;letter-spacing:0.14em;color:#C9A45C">ACT&nbsp;II</span>
+        <span style="font-family:'Source Serif 4',Georgia,serif;font-size:17px;font-weight:600;color:#E9EDF5">What it cost to run</span>
+        <span style="margin-left:auto;display:flex;gap:6px;flex-wrap:wrap">
+          <sc-for list="{{ a2Links }}" as="l2" hint-placeholder-count="3">
+            <a href="{{ l2.href }}" style-hover="background:rgba(201,164,92,0.25)" style="font-size:8.5px;font-weight:800;letter-spacing:0.05em;color:#C9A45C;text-decoration:none;border:1px solid rgba(201,164,92,0.45);border-radius:99px;padding:3px 10px">{{ l2.lab }}</a>
+          </sc-for>
+        </span>
+      </div>
+      <div style="padding:18px 26px 22px">
+        <div style="font-family:'Source Serif 4',Georgia,serif;font-size:15.5px;color:#2A3550;line-height:1.6;max-width:1100px">{{ a2Line }}</div>
+        <div style="margin-top:16px">
+          <div style="display:flex;justify-content:space-between;align-items:baseline;flex-wrap:wrap;gap:8px">
+            <span style="font-size:10px;letter-spacing:0.07em;font-weight:800;color:#5E6B82">WHERE EACH RENT DOLLAR WENT — GL BOOKS, {{ a2Span }}</span>
+            <span style="font-size:9.5px;color:#8A93A6">click a band to open its detail</span>
+          </div>
+          <div style="margin-top:8px;display:flex;height:44px;border-radius:10px;overflow:hidden;border:1px solid #E5E3DC">
+            <sc-for list="{{ dollarBands }}" as="db" hint-placeholder-count="3">
+              <a href="{{ db.href }}" title="{{ db.tip }}" style="text-decoration:none;width:{{ db.w }};background:{{ db.bg }};display:flex;flex-direction:column;justify-content:center;padding:0 12px;min-width:0" style-hover="filter:brightness(1.08)">
+                <span style="font-size:8.5px;letter-spacing:0.05em;font-weight:800;color:{{ db.kcol }};white-space:nowrap;overflow:hidden;text-overflow:ellipsis">{{ db.k }}</span>
+                <span style="font-size:12.5px;font-weight:700;color:{{ db.vcol }};font-variant-numeric:tabular-nums;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">{{ db.v }}</span>
+              </a>
+            </sc-for>
+          </div>
+          <div style="margin-top:6px;font-size:9.5px;color:#9AA3B5">{{ dollarFoot }}</div>
+        </div>
+        <div style="margin-top:16px;display:grid;grid-template-columns:1.15fr 1fr;gap:16px">
+          <div style="background:#FBFAF6;border:1px solid #EDEBE2;border-radius:12px;padding:14px 16px">
+            <div style="display:flex;justify-content:space-between;align-items:center;gap:8px;flex-wrap:wrap">
+              <span style="font-size:10px;letter-spacing:0.07em;font-weight:800;color:#5E6B82">THE OPERATING BILL — {{ opexTot }} ACROSS {{ opexN }} LEDGERS</span>
+              <span onClick="{{ onXAll }}" style-hover="border-color:#C9A45C" style="font-size:9.5px;font-weight:800;color:#96742F;border:1px solid #E2D9C4;border-radius:99px;padding:3px 10px;cursor:pointer">{{ xAllLab }}</span>
+            </div>
+            <sc-for list="{{ opexRows }}" as="xr" hint-placeholder-count="6">
+              <div style="display:flex;align-items:center;gap:10px;padding:5px 0;border-top:1px solid #F0EDE3">
+                <span style="flex:1.2;min-width:0;font-size:11px;font-weight:600;color:#2A3550;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">{{ xr.name }}</span>
+                <span style="flex:1;height:7px;background:#F0EDE3;border-radius:4px;overflow:hidden;position:relative"><span style="position:absolute;left:0;top:0;bottom:0;width:{{ xr.w }};background:{{ xr.barCol }};border-radius:4px"></span></span>
+                <span style="width:76px;flex:none;text-align:right;font-size:11px;font-weight:700;color:#16233A;font-variant-numeric:tabular-nums">{{ xr.v }}</span>
+                <span style="width:44px;flex:none;text-align:right;font-size:9.5px;color:#8A93A6;font-variant-numeric:tabular-nums">{{ xr.pct }}</span>
+                <a href="{{ xr.href }}" style-hover="background:#F6ECD9" style="flex:none;font-size:7.5px;font-weight:800;color:#96742F;text-decoration:none;border:1px solid #E2D9C4;border-radius:99px;padding:1px 7px">P&amp;L →</a>
+              </div>
+            </sc-for>
+            <div style="margin-top:8px;padding-top:7px;border-top:1px solid #EDEAE0;font-size:9.5px;color:#9AA3B5;line-height:1.5">{{ opexFoot }}</div>
+          </div>
+          <div style="display:flex;flex-direction:column;gap:12px">
+            <div style="background:#FBFAF6;border:1px solid #EDEBE2;border-radius:12px;padding:14px 16px">
+              <div style="font-size:10px;letter-spacing:0.07em;font-weight:800;color:#5E6B82">THE BANKS&#8217; SHARE — CASH THAT LEFT FOR DEBT</div>
+              <div style="margin-top:10px;display:flex;gap:10px;flex-wrap:wrap">
+                <sc-for list="{{ bankChips }}" as="bk" hint-placeholder-count="3">
+                  <a href="{{ bk.href }}" title="{{ bk.tip }}" style="text-decoration:none;flex:1;min-width:120px;background:#FFFFFF;border:1px solid {{ bk.bd }};border-radius:10px;padding:9px 12px;display:block" style-hover="border-color:#C9A45C">
+                    <div style="font-size:8.5px;letter-spacing:0.05em;font-weight:800;color:{{ bk.kcol }};white-space:nowrap;overflow:hidden;text-overflow:ellipsis">{{ bk.k }}</div>
+                    <div style="margin-top:3px;font-size:14.5px;font-weight:700;color:{{ bk.vcol }};font-variant-numeric:tabular-nums;white-space:nowrap">{{ bk.v }}</div>
+                    <div style="margin-top:2px;font-size:8.5px;color:#9AA3B5;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">{{ bk.sub }}</div>
+                  </a>
+                </sc-for>
+              </div>
+              <div style="margin-top:9px;font-size:9.5px;color:#9AA3B5;line-height:1.5">{{ bankFoot }}</div>
+            </div>
+            <div style="background:#FBFAF6;border:1px solid #EDEBE2;border-radius:12px;padding:14px 16px">
+              <div style="font-size:10px;letter-spacing:0.07em;font-weight:800;color:#5E6B82">CASH COSTS vs BOOK COSTS</div>
+              <sc-for list="{{ costCompare }}" as="cc" hint-placeholder-count="3">
+                <div style="display:flex;align-items:center;gap:8px;padding:5px 0;border-top:1px solid #F0EDE3;font-size:10.5px">
+                  <span style="flex:1;min-width:0;color:#5E6B82;font-weight:600;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">{{ cc.k }}</span>
+                  <span style="width:82px;flex:none;text-align:right;font-weight:700;color:#16233A;font-variant-numeric:tabular-nums">{{ cc.cash }}</span>
+                  <span style="width:82px;flex:none;text-align:right;font-weight:600;color:#5E6B82;font-variant-numeric:tabular-nums">{{ cc.book }}</span>
+                </div>
+              </sc-for>
+              <div style="display:flex;gap:8px;padding:4px 0 0;font-size:8px;letter-spacing:0.05em;font-weight:800;color:#9AA3B5"><span style="flex:1"></span><span style="width:82px;flex:none;text-align:right">CASH</span><span style="width:82px;flex:none;text-align:right">BOOKS</span></div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ── ACT III · WHAT STAYED ── -->
+    <div data-act="kept" style="margin-top:14px;background:#FFFFFF;border:1px solid #E5E3DC;border-radius:16px;overflow:hidden">
+      <div style="background:#16233A;padding:13px 26px;display:flex;align-items:center;gap:14px;flex-wrap:wrap;border-bottom:3px solid #C9A45C">
+        <span style="font-family:'Source Serif 4',Georgia,serif;font-size:12px;font-weight:700;letter-spacing:0.14em;color:#C9A45C">ACT&nbsp;III</span>
+        <span style="font-family:'Source Serif 4',Georgia,serif;font-size:17px;font-weight:600;color:#E9EDF5">What stayed — the two verdicts</span>
+        <span style="margin-left:auto;display:flex;gap:6px;flex-wrap:wrap">
+          <sc-for list="{{ a3Links }}" as="l3" hint-placeholder-count="2">
+            <a href="{{ l3.href }}" style-hover="background:rgba(201,164,92,0.25)" style="font-size:8.5px;font-weight:800;letter-spacing:0.05em;color:#C9A45C;text-decoration:none;border:1px solid rgba(201,164,92,0.45);border-radius:99px;padding:3px 10px">{{ l3.lab }}</a>
+          </sc-for>
+        </span>
+      </div>
+      <div style="padding:18px 26px 22px">
+        <div style="font-family:'Source Serif 4',Georgia,serif;font-size:15.5px;color:#2A3550;line-height:1.6;max-width:1100px">{{ a3Line }}</div>
+        <div style="margin-top:16px;display:flex;align-items:center;gap:6px;flex-wrap:wrap">
+          <span style="flex:none;width:86px;font-size:9px;letter-spacing:0.1em;font-weight:800;color:#96742F">CASH<br>Buildium + files</span>
+          <sc-for list="{{ pipeCash }}" as="pc" hint-placeholder-count="6">
+            <a href="{{ pc.href }}" title="{{ pc.tip }}" style="text-decoration:none;flex:1;min-width:118px;background:{{ pc.bg }};border:1px solid {{ pc.bd }};border-radius:11px;padding:10px 12px;display:block" style-hover="border-color:#C9A45C">
+              <div style="font-size:8.5px;letter-spacing:0.06em;font-weight:800;color:{{ pc.kcol }};white-space:nowrap;overflow:hidden;text-overflow:ellipsis">{{ pc.k }}</div>
+              <div style="margin-top:3px;font-size:15px;font-weight:700;color:{{ pc.vcol }};font-variant-numeric:tabular-nums;white-space:nowrap">{{ pc.v }}</div>
+              <div style="margin-top:2px;font-size:9px;color:#9AA3B5;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">{{ pc.sub }}</div>
+            </a>
+            <sc-if value="{{ pc.arrowOn }}" hint-placeholder-val="{{ true }}"><span style="flex:none;color:#C9A45C;font-size:13px;font-weight:700">→</span></sc-if>
+          </sc-for>
+        </div>
+        <div style="margin-top:10px;display:flex;align-items:center;gap:6px;flex-wrap:wrap">
+          <span style="flex:none;width:86px;font-size:9px;letter-spacing:0.1em;font-weight:800;color:#5E6B82">BOOKS<br>GL accrual</span>
+          <sc-for list="{{ pipeAccr }}" as="pa" hint-placeholder-count="5">
+            <a href="{{ pa.href }}" title="{{ pa.tip }}" style="text-decoration:none;flex:1;min-width:118px;background:{{ pa.bg }};border:1px solid {{ pa.bd }};border-radius:11px;padding:10px 12px;display:block" style-hover="border-color:#C9A45C">
+              <div style="font-size:8.5px;letter-spacing:0.06em;font-weight:800;color:{{ pa.kcol }};white-space:nowrap;overflow:hidden;text-overflow:ellipsis">{{ pa.k }}</div>
+              <div style="margin-top:3px;font-size:15px;font-weight:700;color:{{ pa.vcol }};font-variant-numeric:tabular-nums;white-space:nowrap">{{ pa.v }}</div>
+              <div style="margin-top:2px;font-size:9px;color:#9AA3B5;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">{{ pa.sub }}</div>
+            </a>
+            <sc-if value="{{ pa.arrowOn }}" hint-placeholder-val="{{ true }}"><span style="flex:none;color:#8A96AD;font-size:13px;font-weight:700">→</span></sc-if>
+          </sc-for>
+        </div>
+        <div style="margin-top:14px;background:#F4F6FA;border:1px solid #D9E0EC;border-radius:12px;padding:12px 16px">
+          <div style="font-size:10px;letter-spacing:0.07em;font-weight:800;color:#3D64A8">WHY THE TWO VERDICTS DIFFER — THE BRIDGE</div>
+          <div style="margin-top:8px;display:flex;align-items:center;gap:6px;flex-wrap:wrap">
+            <sc-for list="{{ bridge }}" as="bc" hint-placeholder-count="4">
+              <div title="{{ bc.tip }}" style="flex:1;min-width:130px;background:#FFFFFF;border:1px solid #D9E0EC;border-radius:10px;padding:8px 12px">
+                <div style="font-size:8.5px;letter-spacing:0.05em;font-weight:800;color:#5E6B82;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">{{ bc.k }}</div>
+                <div style="margin-top:2px;font-size:13.5px;font-weight:700;color:{{ bc.vcol }};font-variant-numeric:tabular-nums;white-space:nowrap">{{ bc.v }}</div>
+              </div>
+              <sc-if value="{{ bc.arrowOn }}" hint-placeholder-val="{{ true }}"><span style="flex:none;color:#8A96AD;font-size:12px;font-weight:700">{{ bc.op }}</span></sc-if>
+            </sc-for>
+          </div>
+          <div style="margin-top:8px;font-size:9.5px;color:#8A93A6;line-height:1.55">{{ bridgeFoot }}</div>
+        </div>
+        <div style="margin-top:16px;display:grid;grid-template-columns:1fr 1fr;gap:16px">
+          <div style="background:#FBFAF6;border:1px solid #EDEBE2;border-radius:12px;padding:14px 16px">
+            <div style="display:flex;justify-content:space-between;align-items:baseline;gap:8px">
+              <span style="font-size:10px;letter-spacing:0.07em;font-weight:800;color:#5E6B82">{{ c3Title }}</span>
+              <span style="font-size:10px;font-weight:700;color:{{ c3DeltaCol }};font-variant-numeric:tabular-nums">{{ c3Delta }}</span>
+            </div>
+            <div style="margin-top:8px;position:relative">
+              <svg viewBox="0 0 320 84" preserveAspectRatio="none" style="width:100%;height:84px;display:block;overflow:visible">
+                <line x1="0" y1="{{ c3ZeroY }}" x2="320" y2="{{ c3ZeroY }}" stroke="#E5E0D2" stroke-width="1" stroke-dasharray="3 3"></line>
+                <polyline points="{{ c3Path }}" fill="none" stroke="{{ c3Col }}" stroke-width="2" stroke-linejoin="round" stroke-linecap="round"></polyline>
+                <sc-for list="{{ c3Pts }}" as="p3" hint-placeholder-count="5">
+                  <circle cx="{{ p3.cx }}" cy="{{ p3.cy }}" r="{{ p3.r }}" fill="{{ p3.fill }}" stroke="{{ p3.stroke }}" stroke-width="1.4"></circle>
+                  <circle onClick="{{ p3.onClick }}" cx="{{ p3.cx }}" cy="{{ p3.cy }}" r="9" fill="transparent" style="cursor:pointer"></circle>
+                </sc-for>
+              </svg>
+              <sc-for list="{{ c3Labs }}" as="b3" hint-placeholder-count="5">
+                <span style="position:absolute;left:{{ b3.leftPct }};top:{{ b3.topPct }};transform:translate(-50%,-130%);font-size:8.5px;font-weight:700;color:{{ b3.col }};font-variant-numeric:tabular-nums;white-space:nowrap;pointer-events:none">{{ b3.v }}</span>
+              </sc-for>
+            </div>
+            <div style="margin-top:4px;display:flex;justify-content:space-between">
+              <sc-for list="{{ c3Months }}" as="m3" hint-placeholder-count="5">
+                <span onClick="{{ m3.onClick }}" style-hover="color:#96742F" style="font-size:9px;font-weight:{{ m3.fw }};color:{{ m3.col }};cursor:pointer">{{ m3.m }}</span>
+              </sc-for>
+            </div>
+            <div style="margin-top:6px;font-size:9.5px;color:#9AA3B5;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">{{ c3Sub }}</div>
+          </div>
+          <div style="background:#FBFAF6;border:1px solid #EDEBE2;border-radius:12px;padding:14px 16px">
+            <div style="display:flex;justify-content:space-between;align-items:baseline;gap:8px">
+              <span style="font-size:10px;letter-spacing:0.07em;font-weight:800;color:#5E6B82">{{ c2Title }}</span>
+              <span style="font-size:10px;font-weight:700;color:{{ c2DeltaCol }};font-variant-numeric:tabular-nums">{{ c2Delta }}</span>
+            </div>
+            <div style="margin-top:8px;position:relative">
+              <svg viewBox="0 0 320 84" preserveAspectRatio="none" style="width:100%;height:84px;display:block;overflow:visible">
+                <line x1="0" y1="{{ c2ZeroY }}" x2="320" y2="{{ c2ZeroY }}" stroke="#E5E0D2" stroke-width="1" stroke-dasharray="3 3"></line>
+                <polyline points="{{ c2Path }}" fill="none" stroke="{{ c2Col }}" stroke-width="2" stroke-linejoin="round" stroke-linecap="round"></polyline>
+                <sc-for list="{{ c2Pts }}" as="p2" hint-placeholder-count="5">
+                  <circle cx="{{ p2.cx }}" cy="{{ p2.cy }}" r="{{ p2.r }}" fill="{{ p2.fill }}" stroke="{{ p2.stroke }}" stroke-width="1.4"></circle>
+                  <circle onClick="{{ p2.onClick }}" cx="{{ p2.cx }}" cy="{{ p2.cy }}" r="9" fill="transparent" style="cursor:pointer"></circle>
+                </sc-for>
+              </svg>
+              <sc-for list="{{ c2Labs }}" as="b2" hint-placeholder-count="5">
+                <span style="position:absolute;left:{{ b2.leftPct }};top:{{ b2.topPct }};transform:translate(-50%,-130%);font-size:8.5px;font-weight:700;color:{{ b2.col }};font-variant-numeric:tabular-nums;white-space:nowrap;pointer-events:none">{{ b2.v }}</span>
+              </sc-for>
+            </div>
+            <div style="margin-top:4px;display:flex;justify-content:space-between">
+              <sc-for list="{{ c2Months }}" as="m2" hint-placeholder-count="5">
+                <span onClick="{{ m2.onClick }}" style-hover="color:#96742F" style="font-size:9px;font-weight:{{ m2.fw }};color:{{ m2.col }};cursor:pointer">{{ m2.m }}</span>
+              </sc-for>
+            </div>
+            <div style="margin-top:6px;font-size:9.5px;color:#9AA3B5;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">{{ c2Sub }}</div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ── ACT IV · WHERE WE STAND ── -->
+    <div data-act="stand" style="margin-top:14px;background:#FFFFFF;border:1px solid #E5E3DC;border-radius:16px;overflow:hidden">
+      <div style="background:#16233A;padding:13px 26px;display:flex;align-items:center;gap:14px;flex-wrap:wrap;border-bottom:3px solid #C9A45C">
+        <span style="font-family:'Source Serif 4',Georgia,serif;font-size:12px;font-weight:700;letter-spacing:0.14em;color:#C9A45C">ACT&nbsp;IV</span>
+        <span style="font-family:'Source Serif 4',Georgia,serif;font-size:17px;font-weight:600;color:#E9EDF5">Where that leaves us — the position</span>
+        <span style="margin-left:auto;display:flex;gap:6px;flex-wrap:wrap">
+          <sc-for list="{{ a4Links }}" as="l4" hint-placeholder-count="2">
+            <a href="{{ l4.href }}" style-hover="background:rgba(201,164,92,0.25)" style="font-size:8.5px;font-weight:800;letter-spacing:0.05em;color:#C9A45C;text-decoration:none;border:1px solid rgba(201,164,92,0.45);border-radius:99px;padding:3px 10px">{{ l4.lab }}</a>
+          </sc-for>
+        </span>
+      </div>
+      <div style="padding:18px 26px 22px">
+        <div style="font-family:'Source Serif 4',Georgia,serif;font-size:15.5px;color:#2A3550;line-height:1.6;max-width:1100px">{{ a4Line }}</div>
+        <div style="margin-top:16px;display:flex;align-items:stretch;gap:6px;flex-wrap:wrap">
+          <sc-for list="{{ posRail }}" as="r4" hint-placeholder-count="3">
+            <a href="{{ r4.href }}" title="{{ r4.tip }}" style="text-decoration:none;flex:1;min-width:150px;background:{{ r4.bg }};border:1px solid {{ r4.bd }};border-radius:11px;padding:11px 13px;display:block" style-hover="border-color:#C9A45C">
+              <div style="font-size:8.5px;letter-spacing:0.06em;font-weight:800;color:{{ r4.kcol }};white-space:nowrap;overflow:hidden;text-overflow:ellipsis">{{ r4.k }}</div>
+              <div style="margin-top:3px;font-size:17px;font-weight:700;color:{{ r4.vcol }};font-variant-numeric:tabular-nums;white-space:nowrap">{{ r4.v }}</div>
+              <div style="margin-top:2px;font-size:9.5px;color:#9AA3B5;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">{{ r4.sub }}</div>
+            </a>
+            <sc-if value="{{ r4.arrowOn }}" hint-placeholder-val="{{ true }}"><span style="flex:none;align-self:center;color:#C9A45C;font-size:14px;font-weight:700">{{ r4.op }}</span></sc-if>
+          </sc-for>
+        </div>
+        <div style="margin-top:16px;display:grid;grid-template-columns:1.15fr 1fr;gap:16px">
+          <div style="background:#FBFAF6;border:1px solid #EDEBE2;border-radius:12px;padding:14px 16px">
+            <div style="font-size:10px;letter-spacing:0.07em;font-weight:800;color:#5E6B82">WHAT MOVED THE DEBT — {{ a4Span }}</div>
+            <div style="margin-top:10px;display:flex;align-items:center;gap:5px;flex-wrap:wrap">
+              <sc-for list="{{ debtWalk }}" as="dw" hint-placeholder-count="7">
+                <a href="{{ dw.href }}" title="{{ dw.tip }}" style="text-decoration:none;flex:1;min-width:96px;background:{{ dw.bg }};border:1px solid {{ dw.bd }};border-radius:9px;padding:7px 9px;display:block" style-hover="border-color:#C9A45C">
+                  <div style="font-size:7.5px;letter-spacing:0.05em;font-weight:800;color:{{ dw.kcol }};white-space:nowrap;overflow:hidden;text-overflow:ellipsis">{{ dw.k }}</div>
+                  <div style="margin-top:2px;font-size:12px;font-weight:700;color:{{ dw.vcol }};font-variant-numeric:tabular-nums;white-space:nowrap">{{ dw.v }}</div>
+                </a>
+                <sc-if value="{{ dw.arrowOn }}" hint-placeholder-val="{{ true }}"><span style="flex:none;color:#B9C2D2;font-size:11px;font-weight:700">→</span></sc-if>
+              </sc-for>
+            </div>
+            <div style="margin-top:9px;font-size:9.5px;color:#9AA3B5;line-height:1.55">{{ debtWalkFoot }}</div>
+            <div style="margin-top:12px;position:relative">
+              <div style="display:flex;justify-content:space-between;align-items:baseline;gap:8px">
+                <span style="font-size:10px;letter-spacing:0.07em;font-weight:800;color:#5E6B82">{{ c4Title }}</span>
+                <span style="font-size:10px;font-weight:700;color:{{ c4DeltaCol }};font-variant-numeric:tabular-nums">{{ c4Delta }}</span>
+              </div>
+              <div style="margin-top:8px;position:relative">
+                <svg viewBox="0 0 320 84" preserveAspectRatio="none" style="width:100%;height:84px;display:block;overflow:visible">
+                  <line x1="0" y1="{{ c4ZeroY }}" x2="320" y2="{{ c4ZeroY }}" stroke="#E5E0D2" stroke-width="1" stroke-dasharray="3 3"></line>
+                  <polyline points="{{ c4Path }}" fill="none" stroke="{{ c4Col }}" stroke-width="2" stroke-linejoin="round" stroke-linecap="round"></polyline>
+                  <sc-for list="{{ c4Pts }}" as="p4" hint-placeholder-count="5">
+                    <circle cx="{{ p4.cx }}" cy="{{ p4.cy }}" r="{{ p4.r }}" fill="{{ p4.fill }}" stroke="{{ p4.stroke }}" stroke-width="1.4"></circle>
+                    <circle onClick="{{ p4.onClick }}" cx="{{ p4.cx }}" cy="{{ p4.cy }}" r="9" fill="transparent" style="cursor:pointer"></circle>
+                  </sc-for>
+                </svg>
+                <sc-for list="{{ c4Labs }}" as="b4" hint-placeholder-count="5">
+                  <span style="position:absolute;left:{{ b4.leftPct }};top:{{ b4.topPct }};transform:translate(-50%,-130%);font-size:8.5px;font-weight:700;color:{{ b4.col }};font-variant-numeric:tabular-nums;white-space:nowrap;pointer-events:none">{{ b4.v }}</span>
+                </sc-for>
+              </div>
+              <div style="margin-top:4px;display:flex;justify-content:space-between">
+                <sc-for list="{{ c4Months }}" as="m4" hint-placeholder-count="5">
+                  <span onClick="{{ m4.onClick }}" style-hover="color:#96742F" style="font-size:9px;font-weight:{{ m4.fw }};color:{{ m4.col }};cursor:pointer">{{ m4.m }}</span>
+                </sc-for>
+              </div>
+              <div style="margin-top:6px;font-size:9.5px;color:#9AA3B5;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">{{ c4Sub }}</div>
+            </div>
+          </div>
+          <div style="display:flex;flex-direction:column;gap:12px">
+            <div style="background:#FBFAF6;border:1px solid #EDEBE2;border-radius:12px;padding:14px 16px">
+              <div style="display:flex;justify-content:space-between;align-items:baseline;gap:8px;flex-wrap:wrap">
+                <span style="font-size:10px;letter-spacing:0.07em;font-weight:800;color:#5E6B82">MATURITY RADAR — {{ mrScope }}</span>
+                <span style="font-size:9.5px;color:#8A93A6">{{ mrSum }}</span>
+              </div>
+              <sc-for list="{{ matRows }}" as="mr" hint-placeholder-count="5">
+                <a href="{{ mr.href }}" style="text-decoration:none;display:flex;align-items:center;gap:9px;padding:6px 0;border-top:1px solid #F0EDE3" style-hover="background:#FBFAF3">
+                  <span style="flex:none;width:8px;height:8px;border-radius:99px;background:{{ mr.dot }}"></span>
+                  <span style="flex:none;width:74px;font-size:10.5px;font-weight:800;color:{{ mr.mcol }};font-variant-numeric:tabular-nums;white-space:nowrap">{{ mr.mat }}</span>
+                  <span style="flex:1;min-width:0;font-size:11px;font-weight:600;color:#2A3550;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">{{ mr.name }}</span>
+                  <span style="flex:none;font-size:8.5px;font-weight:700;color:#8A93A6">{{ mr.type }}</span>
+                  <span style="width:84px;flex:none;text-align:right;font-size:11.5px;font-weight:700;color:#16233A;font-variant-numeric:tabular-nums">{{ mr.v }}</span>
+                </a>
+              </sc-for>
+              <div style="margin-top:8px;padding-top:7px;border-top:1px solid #EDEAE0;font-size:9.5px;color:#9AA3B5;line-height:1.5">{{ mrFoot }}</div>
+            </div>
+            <div style="background:#FBFAF6;border:1px solid #EDEBE2;border-radius:12px;padding:14px 16px">
+              <div style="font-size:10px;letter-spacing:0.07em;font-weight:800;color:#5E6B82">EVERY DOLLAR THE BANKS EVER HANDED US — WHERE IT SITS</div>
+              <sc-for list="{{ drawnRows }}" as="dr" hint-placeholder-count="5">
+                <div title="{{ dr.tip }}" style="display:flex;align-items:center;gap:10px;padding:5px 0;border-top:1px solid #F0EDE3">
+                  <span style="flex:1.15;min-width:0;font-size:10.5px;font-weight:{{ dr.fw }};color:{{ dr.kcol }};white-space:nowrap;overflow:hidden;text-overflow:ellipsis">{{ dr.k }}</span>
+                  <span style="flex:1;height:7px;background:#F0EDE3;border-radius:4px;overflow:hidden;position:relative"><span style="position:absolute;left:0;top:0;bottom:0;width:{{ dr.w }};background:{{ dr.barCol }};border-radius:4px"></span></span>
+                  <span style="width:96px;flex:none;text-align:right;font-size:11px;font-weight:700;color:{{ dr.vcol }};font-variant-numeric:tabular-nums">{{ dr.v }}</span>
+                </div>
+              </sc-for>
+              <div style="margin-top:8px;padding-top:7px;border-top:1px solid #EDEAE0;font-size:9.5px;color:#9AA3B5;line-height:1.5">{{ drawnFoot }}</div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ── ACT V · WHAT IT'S EARNING ── -->
+    <div data-act="earn" style="margin-top:14px;background:#FFFFFF;border:1px solid #E5E3DC;border-radius:16px;overflow:hidden">
+      <div style="background:#16233A;padding:13px 26px;display:flex;align-items:center;gap:14px;flex-wrap:wrap;border-bottom:3px solid #C9A45C">
+        <span style="font-family:'Source Serif 4',Georgia,serif;font-size:12px;font-weight:700;letter-spacing:0.14em;color:#C9A45C">ACT&nbsp;V</span>
+        <span style="font-family:'Source Serif 4',Georgia,serif;font-size:17px;font-weight:600;color:#E9EDF5">What our money is earning</span>
+        <span style="margin-left:auto;display:flex;gap:6px;flex-wrap:wrap">
+          <sc-for list="{{ a5Links }}" as="l5" hint-placeholder-count="2">
+            <a href="{{ l5.href }}" style-hover="background:rgba(201,164,92,0.25)" style="font-size:8.5px;font-weight:800;letter-spacing:0.05em;color:#C9A45C;text-decoration:none;border:1px solid rgba(201,164,92,0.45);border-radius:99px;padding:3px 10px">{{ l5.lab }}</a>
+          </sc-for>
+        </span>
+      </div>
+      <div style="padding:18px 26px 22px">
+        <div style="font-family:'Source Serif 4',Georgia,serif;font-size:15.5px;color:#2A3550;line-height:1.6;max-width:1100px">{{ a5Line }}</div>
+        <div style="margin-top:16px;display:flex;align-items:stretch;gap:6px;flex-wrap:wrap">
+          <sc-for list="{{ invRail }}" as="r5" hint-placeholder-count="5">
+            <a href="{{ r5.href }}" title="{{ r5.tip }}" style="text-decoration:none;flex:1;min-width:132px;background:{{ r5.bg }};border:1px solid {{ r5.bd }};border-radius:11px;padding:11px 13px;display:block" style-hover="border-color:#C9A45C">
+              <div style="font-size:8.5px;letter-spacing:0.06em;font-weight:800;color:{{ r5.kcol }};white-space:nowrap;overflow:hidden;text-overflow:ellipsis">{{ r5.k }}</div>
+              <div style="margin-top:3px;font-size:16px;font-weight:700;color:{{ r5.vcol }};font-variant-numeric:tabular-nums;white-space:nowrap">{{ r5.v }}</div>
+              <div style="margin-top:2px;font-size:9.5px;color:#9AA3B5;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">{{ r5.sub }}</div>
+            </a>
+            <sc-if value="{{ r5.arrowOn }}" hint-placeholder-val="{{ true }}"><span style="flex:none;align-self:center;color:#C9A45C;font-size:14px;font-weight:700">{{ r5.op }}</span></sc-if>
+          </sc-for>
+        </div>
+        <div style="margin-top:16px;display:grid;grid-template-columns:repeat(3,1fr);gap:12px">
+          <sc-for list="{{ retTiles }}" as="rt" hint-placeholder-count="3">
+            <a href="{{ rt.href }}" title="{{ rt.tip }}" style="text-decoration:none;background:#FBFAF6;border:1px solid #EDEBE2;border-radius:12px;padding:14px 16px;display:block" style-hover="border-color:#C9A45C">
+              <div style="font-size:9.5px;letter-spacing:0.07em;font-weight:800;color:#5E6B82;text-transform:uppercase">{{ rt.k }}</div>
+              <div style="margin-top:5px;font-family:'Source Serif 4',Georgia,serif;font-size:24px;font-weight:600;color:{{ rt.vcol }};font-variant-numeric:tabular-nums">{{ rt.v }}</div>
+              <div style="margin-top:4px;font-size:10px;color:#8A93A6;line-height:1.5">{{ rt.sub }}</div>
+              <div style="margin-top:7px;font-size:8.5px;font-weight:800;letter-spacing:0.06em;color:#96742F">{{ rt.linkLab }}</div>
+            </a>
+          </sc-for>
+        </div>
+        <div style="margin-top:14px;display:flex;gap:12px;flex-wrap:wrap">
+          <sc-for list="{{ levChips }}" as="lv" hint-placeholder-count="2">
+            <div title="{{ lv.tip }}" style="flex:1;min-width:220px;background:#FBFAF6;border:1px solid #EDEBE2;border-radius:12px;padding:11px 15px;display:flex;align-items:center;gap:12px">
+              <span style="flex:none;font-size:8.5px;letter-spacing:0.06em;font-weight:800;color:#5E6B82;max-width:130px">{{ lv.k }}</span>
+              <span style="font-family:'Source Serif 4',Georgia,serif;font-size:20px;font-weight:600;color:{{ lv.vcol }};font-variant-numeric:tabular-nums;white-space:nowrap">{{ lv.v }}</span>
+              <span style="flex:1;min-width:0;font-size:9.5px;color:#9AA3B5;line-height:1.45">{{ lv.sub }}</span>
+            </div>
+          </sc-for>
+        </div>
+        <div style="margin-top:12px;padding-top:10px;border-top:1px solid #F0EEE7;font-size:10.5px;color:#9AA3B5;line-height:1.65">{{ a5Foot }}</div>
+      </div>
+    </div>
+
+    <!-- ══ The same story, entity by entity ══ -->
+    <div data-act="entity" style="margin-top:22px;background:#FFFFFF;border:1px solid #E5E3DC;border-radius:16px;padding:22px 26px">
       <div style="display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:10px">
         <div>
-          <div style="font-family:'Source Serif 4',Georgia,serif;font-size:18px;font-weight:600;color:#16233A">Performance by entity</div>
+          <div style="font-family:'Source Serif 4',Georgia,serif;font-size:18px;font-weight:600;color:#16233A">The same story, entity by entity</div>
           <div style="margin-top:3px;font-size:11.5px;color:#8A93A6">{{ esSub }}</div>
         </div>
         <div style="display:flex;gap:8px;align-items:center;flex-wrap:wrap">
@@ -223,60 +590,51 @@ input:focus{outline:2px solid #C9A45C;outline-offset:1px}
       <div style="margin-top:12px;padding-top:10px;border-top:1px solid #F0EEE7;font-size:10.5px;color:#9AA3B5;line-height:1.65">{{ esFoot }}</div>
     </div>
 
-    <!-- ══ Trends — the four lines an executive watches ══ -->
-    <div style="margin-top:16px;background:#FFFFFF;border:1px solid #E5E3DC;border-radius:16px;padding:22px 26px">
+    <!-- ══ The next chapter — findings & recommendations ══ -->
+    <div data-act="next" style="margin-top:14px;background:#FFFFFF;border:1px solid #E5E3DC;border-radius:16px;padding:22px 26px">
       <div style="display:flex;justify-content:space-between;align-items:baseline;flex-wrap:wrap;gap:8px">
-        <div style="font-family:'Source Serif 4',Georgia,serif;font-size:18px;font-weight:600;color:#16233A">Direction of travel — month on month</div>
-        <div style="font-size:11.5px;color:#8A93A6">click any point to focus the whole page on that month</div>
+        <div style="font-family:'Source Serif 4',Georgia,serif;font-size:18px;font-weight:600;color:#16233A">The next chapter — findings &amp; what to do about them</div>
+        <div style="font-size:11.5px;color:#8A93A6">every card recomputes live from the published data · ▸ opens the evidence</div>
       </div>
-      <div style="margin-top:14px;display:grid;grid-template-columns:repeat(2,1fr);gap:16px">
-        <sc-for list="{{ trCharts }}" as="tc" hint-placeholder-count="4">
-          <div style="background:#FBFAF6;border:1px solid #EDEBE2;border-radius:12px;padding:14px 16px">
-            <div style="display:flex;justify-content:space-between;align-items:baseline;gap:8px">
-              <span style="font-size:10px;letter-spacing:0.07em;font-weight:800;color:#5E6B82">{{ tc.title }}</span>
-              <span style="font-size:10px;font-weight:700;color:{{ tc.deltaCol }};font-variant-numeric:tabular-nums">{{ tc.delta }}</span>
-            </div>
-            <div style="margin-top:8px;position:relative">
-              <svg viewBox="0 0 320 84" preserveAspectRatio="none" style="width:100%;height:84px;display:block;overflow:visible">
-                <line x1="0" y1="{{ tc.zeroY }}" x2="320" y2="{{ tc.zeroY }}" stroke="#E5E0D2" stroke-width="1" stroke-dasharray="3 3"></line>
-                <sc-if value="{{ tc.line2On }}" hint-placeholder-val="{{ false }}">
-                  <polyline points="{{ tc.path2 }}" fill="none" stroke="#8FA8C9" stroke-width="1.6" stroke-linejoin="round" stroke-linecap="round"></polyline>
-                </sc-if>
-                <polyline points="{{ tc.path }}" fill="none" stroke="{{ tc.col }}" stroke-width="2" stroke-linejoin="round" stroke-linecap="round"></polyline>
-                <sc-for list="{{ tc.pts }}" as="tp" hint-placeholder-count="5">
-                  <circle cx="{{ tp.cx }}" cy="{{ tp.cy }}" r="{{ tp.r }}" fill="{{ tp.fill }}" stroke="{{ tp.stroke }}" stroke-width="1.4"></circle>
-                  <circle onClick="{{ tp.onClick }}" cx="{{ tp.cx }}" cy="{{ tp.cy }}" r="9" fill="transparent" style="cursor:pointer"></circle>
-                </sc-for>
-              </svg>
-              <sc-for list="{{ tc.labs }}" as="tl2" hint-placeholder-count="5">
-                <span style="position:absolute;left:{{ tl2.leftPct }};top:{{ tl2.topPct }};transform:translate(-50%,-130%);font-size:8.5px;font-weight:700;color:{{ tl2.col }};font-variant-numeric:tabular-nums;white-space:nowrap;pointer-events:none">{{ tl2.v }}</span>
-              </sc-for>
-            </div>
-            <div style="margin-top:4px;display:flex;justify-content:space-between">
-              <sc-for list="{{ tc.months }}" as="tm" hint-placeholder-count="5">
-                <span onClick="{{ tm.onClick }}" style-hover="color:#96742F" style="font-size:9px;font-weight:{{ tm.fw }};color:{{ tm.col }};cursor:pointer">{{ tm.m }}</span>
-              </sc-for>
-            </div>
-            <div style="margin-top:6px;font-size:9.5px;color:#9AA3B5;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">{{ tc.sub }}</div>
-          </div>
+      <div style="margin-top:12px;display:flex;gap:10px;flex-wrap:wrap">
+        <sc-for list="{{ planChips }}" as="gp" hint-placeholder-count="3">
+          <a href="{{ gp.href }}" title="{{ gp.tip }}" style="text-decoration:none;flex:1;min-width:240px;background:{{ gp.bg }};border:1px solid {{ gp.bd }};border-radius:12px;padding:11px 15px;display:flex;align-items:center;gap:11px" style-hover="border-color:#C9A45C">
+          <span style="flex:none;width:9px;height:9px;border-radius:99px;background:{{ gp.dot }}"></span>
+          <span style="min-width:0">
+            <span style="display:block;font-size:8.5px;letter-spacing:0.06em;font-weight:800;color:#5E6B82">{{ gp.k }}</span>
+            <span style="display:block;margin-top:2px;font-size:11.5px;font-weight:700;color:#16233A;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">{{ gp.v }}</span>
+          </span>
+          </a>
         </sc-for>
       </div>
-    </div>
-
-    <!-- ══ What needs attention ══ -->
-    <div style="margin-top:16px;background:#FFFFFF;border:1px solid #E5E3DC;border-radius:16px;padding:22px 26px">
-      <div style="display:flex;justify-content:space-between;align-items:baseline;flex-wrap:wrap;gap:8px">
-        <div style="font-family:'Source Serif 4',Georgia,serif;font-size:18px;font-weight:600;color:#16233A">What needs attention</div>
-        <div style="font-size:11.5px;color:#8A93A6">every card recomputes live from the published data — green means clear</div>
-      </div>
-      <div style="margin-top:14px;display:grid;grid-template-columns:repeat(4,1fr);gap:12px">
-        <sc-for list="{{ watchCards }}" as="wc" hint-placeholder-count="4">
-          <a href="{{ wc.href }}" style="text-decoration:none;background:{{ wc.bg }};border:1px solid {{ wc.bd }};border-radius:12px;padding:14px 16px;display:block" style-hover="border-color:#C9A45C">
-            <div style="font-size:9px;letter-spacing:0.07em;font-weight:800;color:{{ wc.kcol }};text-transform:uppercase">{{ wc.title }}</div>
-            <div style="margin-top:5px;font-family:'Source Serif 4',Georgia,serif;font-size:20px;font-weight:600;color:{{ wc.col }};font-variant-numeric:tabular-nums;white-space:nowrap">{{ wc.big }}</div>
-            <div style="margin-top:4px;font-size:10px;color:#5E6B82;line-height:1.5">{{ wc.sub }}</div>
-            <div style="margin-top:7px;font-size:8.5px;font-weight:800;letter-spacing:0.06em;color:#96742F">{{ wc.linkLab }}</div>
-          </a>
+      <div style="margin-top:14px;display:grid;grid-template-columns:1fr 1fr;gap:12px">
+        <sc-for list="{{ findCards }}" as="fc" hint-placeholder-count="6">
+          <div style="background:{{ fc.bg }};border:1px solid {{ fc.bd }};border-radius:12px;padding:14px 16px">
+            <div style="display:flex;align-items:center;gap:9px">
+              <span style="flex:none;width:9px;height:9px;border-radius:99px;background:{{ fc.dot }}"></span>
+              <span style="font-size:9px;letter-spacing:0.07em;font-weight:800;color:{{ fc.kcol }};text-transform:uppercase">{{ fc.title }}</span>
+              <span onClick="{{ fc.onExp }}" style-hover="color:#96742F" style="margin-left:auto;font-size:10px;font-weight:700;color:{{ fc.chevCol }};cursor:pointer">{{ fc.chev }}</span>
+            </div>
+            <div style="margin-top:7px;font-family:'Source Serif 4',Georgia,serif;font-size:19px;font-weight:600;color:{{ fc.col }};font-variant-numeric:tabular-nums;white-space:nowrap">{{ fc.big }}</div>
+            <div style="margin-top:4px;font-size:10.5px;color:#3A465C;line-height:1.55">{{ fc.finding }}</div>
+            <div style="margin-top:8px;padding:8px 11px;background:rgba(255,255,255,0.72);border:1px solid {{ fc.bd }};border-radius:9px;display:flex;gap:8px;align-items:baseline">
+              <span style="flex:none;font-size:8px;letter-spacing:0.08em;font-weight:800;color:{{ fc.kcol }}">DO&nbsp;NEXT</span>
+              <span style="font-size:10.5px;font-weight:600;color:#16233A;line-height:1.5">{{ fc.rec }}</span>
+            </div>
+            <sc-if value="{{ fc.exp }}" hint-placeholder-val="{{ false }}">
+              <div style="margin-top:9px;background:rgba(255,255,255,0.72);border:1px solid {{ fc.bd }};border-radius:9px;padding:9px 12px">
+                <sc-for list="{{ fc.evid }}" as="fv" hint-placeholder-count="5">
+                  <div style="display:flex;align-items:center;gap:8px;padding:3.5px 0;border-top:1px solid rgba(0,0,0,0.045);font-size:10.5px">
+                    <span style="flex:1;min-width:0;color:#2A3550;font-weight:600;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">{{ fv.k }}</span>
+                    <a href="{{ fv.href }}" style-hover="background:#F6ECD9" style="flex:none;font-size:7.5px;font-weight:800;color:#96742F;text-decoration:none;border:1px solid #E2D9C4;border-radius:99px;padding:1px 7px">{{ fv.lab }}</a>
+                    <span style="width:92px;flex:none;text-align:right;font-weight:700;color:{{ fv.vcol }};font-variant-numeric:tabular-nums">{{ fv.v }}</span>
+                  </div>
+                </sc-for>
+                <div style="margin-top:6px;font-size:9px;color:#9AA3B5">{{ fc.evFoot }}</div>
+              </div>
+            </sc-if>
+            <a href="{{ fc.href }}" style="display:inline-block;margin-top:8px;font-size:8.5px;font-weight:800;letter-spacing:0.06em;color:#96742F;text-decoration:none">{{ fc.linkLab }}</a>
+          </div>
         </sc-for>
       </div>
       <div style="margin-top:12px;padding:11px 14px;background:#FBF6EA;border:1px solid #EAD9C0;border-radius:10px">
@@ -285,13 +643,30 @@ input:focus{outline:2px solid #C9A45C;outline-offset:1px}
           <span style="display:inline-block;margin:3px 4px 0 0;padding:3px 10px;border-radius:99px;background:#FFFFFF;border:1px solid #E2D9C4;font-size:10px;font-weight:600;color:#5E6B82">{{ wp.t }}</span>
         </sc-for>
       </div>
-      <div style="margin-top:12px;padding-top:10px;border-top:1px solid #F0EEE7;font-size:10.5px;color:#9AA3B5;line-height:1.65">{{ watchFoot }}</div>
+    </div>
+
+    <!-- ══ Checks & balances ══ -->
+    <div style="margin-top:14px;background:#0E1830;border-radius:16px;padding:18px 26px">
+      <div style="display:flex;justify-content:space-between;align-items:baseline;flex-wrap:wrap;gap:8px">
+        <span style="font-family:'Source Serif 4',Georgia,serif;font-size:15px;font-weight:600;color:#E9EDF5">Checks &amp; balances — the ties this page proves, live</span>
+        <span style="font-size:10.5px;color:#8A96AD">recomputed on every render · a red row means the data needs attention, not the reader</span>
+      </div>
+      <div style="margin-top:10px">
+        <sc-for list="{{ tieRows }}" as="cb" hint-placeholder-count="4">
+          <div style="display:flex;align-items:baseline;gap:10px;padding:6px 0;border-top:1px solid rgba(233,237,245,0.08)">
+            <span style="flex:none;width:14px;font-size:11px;font-weight:800;color:{{ cb.mcol }}">{{ cb.mark }}</span>
+            <span style="flex:none;min-width:190px;font-size:10px;letter-spacing:0.05em;font-weight:800;color:#8A96AD">{{ cb.k }}</span>
+            <span style="flex:1;min-width:0;font-size:11px;color:#C7D0E2;font-variant-numeric:tabular-nums;line-height:1.5">{{ cb.eq }}</span>
+          </div>
+        </sc-for>
+      </div>
+      <div style="margin-top:10px;padding-top:8px;border-top:1px solid rgba(233,237,245,0.08);font-size:9.5px;color:#5E6B82;line-height:1.6">{{ tieFoot }}</div>
     </div>
 
     </sc-if>
 
     <sc-if value="{{ loading }}" hint-placeholder-val="{{ true }}">
-      <div style="margin-top:18px;background:#FFFFFF;border:1px solid #E5E3DC;border-radius:16px;padding:48px;text-align:center;font-size:13px;color:#8A93A6">Assembling the executive summary from all four published datasets…</div>
+      <div style="margin-top:18px;background:#FFFFFF;border:1px solid #E5E3DC;border-radius:16px;padding:48px;text-align:center;font-size:13px;color:#8A93A6">Assembling the story from all four published datasets…</div>
     </sc-if>
 
     <sc-if value="{{ loadError }}" hint-placeholder-val="{{ false }}">
@@ -315,6 +690,7 @@ class Component extends DCLogic {
     fm: [], fe: [],
     ddOpen: null, fq: '',
     esSort: 'kept', entOpen: null,
+    xAll: false, fOpen: null,
   };
 
   loadData() {
@@ -353,6 +729,14 @@ class Component extends DCLogic {
 
   setF(patch) { this.setState(patch, () => this.syncUrl()); }
 
+  jumpTo(id) {
+    try {
+      if (typeof document === 'undefined') return;
+      const el = document.querySelector('[data-act="' + id + '"]');
+      if (el && el.scrollIntoView) el.scrollIntoView({ behavior: 'smooth', block: 'start' });
+    } catch (e) {}
+  }
+
   componentDidMount() {
     this.loadData();
     this._doc = () => { if (this.state.ddOpen) this.setState({ ddOpen: null }); };
@@ -364,32 +748,41 @@ class Component extends DCLogic {
     const S = this.state;
     const NAVY = '#16233A', INK = '#2A3550', MUT = '#5E6B82', FAINT = '#8A93A6', RED = '#B04A33', REDD = '#A03E28', GREEND = '#2A6F4E', GREEN2 = '#2E7D54', GOLD = '#C9A45C', GOLDD = '#96742F', BLUE = '#3D64A8';
     const stopProp = e => e.stopPropagation();
-    if (!S.pld || !S.cfd || !S.bsd || !S.ld) return {
+    const noop = () => {};
+    const CH0 = p => { const o = {}; o[p + 'Title'] = ''; o[p + 'Delta'] = ''; o[p + 'DeltaCol'] = FAINT; o[p + 'ZeroY'] = '70'; o[p + 'Line2On'] = false; o[p + 'Path'] = ''; o[p + 'Path2'] = ''; o[p + 'Pts'] = []; o[p + 'Labs'] = []; o[p + 'Months'] = []; o[p + 'Sub'] = ''; o[p + 'Col'] = NAVY; return o; };
+    if (!S.pld || !S.cfd || !S.bsd || !S.ld) return Object.assign({
       ready: false, loading: !S.loadError, loadError: S.loadError || false,
       retryLoad: () => this.loadData(), stopProp,
       storyLine: S.loadError ? 'Data failed to load.' : 'Reading the four published datasets — the whole story, one page.',
-      scopeLine: S.loadError ? 'Data failed to load' : 'Loading…', asOfLine: '', periodLab: '',
-      filters: [], hasActive: false, onReset: () => {},
-      heroTiles: [], pipeCash: [], pipeAccr: [], pipeFoot: '',
+      scopeLine: S.loadError ? 'Data failed to load' : 'Loading…', asOfLine: '',
+      filters: [], hasActive: false, onReset: noop, jumpChips: [],
+      heroTiles: [],
+      a1Links: [], a1Line: '', a1Rail: [], agTot: '', agTiles: [], agFoot: '',
+      a2Links: [], a2Line: '', a2Span: '', dollarBands: [], dollarFoot: '', opexTot: '', opexN: '', onXAll: noop, xAllLab: '', opexRows: [], opexFoot: '', bankChips: [], bankFoot: '', costCompare: [],
+      a3Links: [], a3Line: '', pipeCash: [], pipeAccr: [], bridge: [], bridgeFoot: '',
+      a4Links: [], a4Line: '', a4Span: '', posRail: [], debtWalk: [], debtWalkFoot: '', mrScope: '', mrSum: '', matRows: [], mrFoot: '', drawnRows: [], drawnFoot: '',
+      a5Links: [], a5Line: '', invRail: [], retTiles: [], levChips: [], a5Foot: '',
       esSub: '', esSortChips: [], entRows: [], esFoot: '',
-      trCharts: [], watchCards: [], pendChips: [], watchFoot: '',
-    };
+      planChips: [], findCards: [], pendChips: [], tieRows: [], tieFoot: '',
+    }, CH0('c1'), CH0('c2'), CH0('c3'), CH0('c4'));
 
     const PLD = S.pld, CFD = S.cfd, BSD = S.bsd, LD = S.ld;
     const MO = CFD.meta.months, NM = MO.length, DOORS = CFD.doors, OH = CFD.overhead, RC = CFD.recon, CLX = CFD.collections;
     const fN = n => { const r = Math.round(n); const s = '$' + Math.abs(r).toLocaleString('en-US'); return r < 0 ? '(' + s + ')' : s; };
+    const fC = n => { const s = n < 0; const a = Math.abs(n).toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 }); return s ? '($' + a + ')' : '$' + a; };
     const fK = n => { const a = Math.abs(n), s = n < 0; let t; if (a >= 1e6) t = '$' + (a / 1e6).toFixed(2) + 'M'; else if (a >= 100000) t = '$' + Math.round(a / 1000) + 'K'; else if (a >= 1000) t = '$' + (a / 1000).toFixed(1) + 'K'; else t = '$' + Math.round(a); return s ? '(' + t + ')' : t; };
     const MMM = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
     const mmyy = m => MMM[+m.slice(5, 7) - 1] + '-' + m.slice(2, 4);
     const sum = a => a.reduce((x, y) => x + y, 0);
     const esc = s => encodeURIComponent(s);
+    const addM2 = (ym, n) => { const y = +ym.slice(0, 4), m0 = +ym.slice(5, 7) - 1 + n; return (y + Math.floor(m0 / 12)) + '-' + String((m0 % 12 + 12) % 12 + 1).padStart(2, '0'); };
 
     // ══ window (contiguous, same rule as Cash Flow) + entity scope ══
     const selM = (S.fm || []).filter(m => MO.includes(m)).sort();
     let firstI = 0, lastI = NM - 1;
     if (selM.length) { firstI = MO.indexOf(selM[0]); lastI = MO.indexOf(selM[selM.length - 1]); }
     const winIdx = []; for (let i = firstI; i <= lastI; i++) winIdx.push(i);
-    const lastM = MO[lastI];
+    const lastM = MO[lastI], firstM = MO[firstI];
     const spanLab = firstI === lastI ? mmyy(MO[firstI]) : mmyy(MO[firstI]) + ' – ' + mmyy(MO[lastI]);
     const nWin = winIdx.length;
 
@@ -397,6 +790,7 @@ class Component extends DCLogic {
     const feAct = (S.fe || []).filter(e => ENTITIES.includes(e));
     const entOn = e => !feAct.length || feAct.includes(e);
     const allEnts = feAct.length === 0;
+    const entLab = allEnts ? '' : ' · ' + feAct.join(' + ');
 
     // ══ P&L — GL accrual per entity (the 23 known accounts, P&L-page grouping) ══
     const A_INC = ['Rental Income', 'Increase/(Decrease) in Rent', 'Vacancy Loss', 'Other Income', 'SD - Forfeit Income', 'Insurance Claim'];
@@ -404,15 +798,17 @@ class Component extends DCLogic {
     const A_OPEX = ['Property Tax', 'Insurance', 'HOA Fee', 'Property Management Expense', 'Utilities', "Renter's Insurance", 'Other Misc Cost', 'Repairs - Payroll', 'Repairs - Materials', 'Repairs - Contractors', 'Rent Ready - Payroll', 'Rent Ready - Materials', 'Rent Ready - Contractors', 'Capex - HVAC', 'Capex - Appliances'];
     const A_INT = 'Interest Cost';
     const glz = () => MO.map(() => 0);
-    const glEnt = {};   // entity → {inc, opex, int, ni: monthly arrays}
+    const glEnt = {};
     for (const e of ENTITIES) glEnt[e] = { inc: glz(), opex: glz(), int: glz(), ni: glz() };
+    const opexMixW = {}; let clW = 0;
     for (const [ent, door, acct, valsR] of PLD.rows) {
       const g = glEnt[ent]; if (!g) continue;
+      const inScopeE = entOn(ent);
       for (let i = 0; i < NM; i++) {
         const v = valsR[i] || 0;
         if (A_INC.includes(acct)) { g.inc[i] += v; g.ni[i] += v; }
-        else if (acct === A_CL) { g.inc[i] -= v; g.ni[i] -= v; }
-        else if (A_OPEX.includes(acct)) { g.opex[i] += v; g.ni[i] -= v; }
+        else if (acct === A_CL) { g.inc[i] -= v; g.ni[i] -= v; if (inScopeE && winIdx.includes(i)) clW += v; }
+        else if (A_OPEX.includes(acct)) { g.opex[i] += v; g.ni[i] -= v; if (inScopeE && winIdx.includes(i)) opexMixW[acct] = (opexMixW[acct] || 0) + v; }
         else if (acct === A_INT) { g.int[i] += v; g.ni[i] -= v; }
       }
     }
@@ -420,6 +816,10 @@ class Component extends DCLogic {
     const entsIn = ENTITIES.filter(entOn);
     const incM = glSum('inc', entsIn), opexM = glSum('opex', entsIn), intGlM = glSum('int', entsIn), niM = glSum('ni', entsIn);
     const w = arr => sum(winIdx.map(i => arr[i]));
+    const incW = w(incM), opexBookW = w(opexM), intBookW = w(intGlM), niW = w(niM), noiBookW = incW - opexBookW;
+    const margin = incW > 0.005 ? niW / incW * 100 : null;
+    const opexPct = incW > 0.005 ? opexBookW / incW * 100 : null;
+    const intPct = incW > 0.005 ? intBookW / incW * 100 : null;
 
     // ══ Cash Flow — Buildium + files, per door (the Cash Flow page's exact component rules) ══
     const doorNames = Object.keys(DOORS);
@@ -429,22 +829,20 @@ class Component extends DCLogic {
     const tiOtherKeys = Object.keys(TIW).filter(k => !DOORS[k]);
     const dW = (d, key) => sum(winIdx.map(i => (DOORS[d][key] || [])[i] || 0));
     const dEsc = d => sum(winIdx.map(i => ((TIW[d] || [])[i] || 0)));
-    const dHoa = d => sum(winIdx.map(i => ((DOORS[d].statByAcct || {})['HOA Fee'] || [])[i] || 0));
+    const dHoa = d => sum(winIdx.map(i => (((DOORS[d].statByAcct || {})['HOA Fee'] || [])[i] || 0)));
     const dRef = d => sum((CLX.sdRefunds || []).filter(x => x.cash && x.prop === d && winIdx.includes(MO.indexOf(x.m))).map(x => Math.abs(x.amt)));
     const dKept = d => dW(d, 'coll') + dW(d, 'claims') - dRef(d) - dW(d, 'opex') - dW(d, 'capex') - dEsc(d) - dHoa(d) - dW(d, 'int') - dW(d, 'filePrin');
     const chgW = sum(cfDoors.map(d => dW(d, 'chg'))) + (allEnts ? sum(winIdx.map(i => OH.chg[i])) : 0);
     const collW = sum(cfDoors.map(d => dW(d, 'coll'))) + (allEnts ? sum(winIdx.map(i => OH.coll[i])) : 0);
     const doorKeptW = sum(cfDoors.map(dKept));
-    // portfolio-grain pieces (only meaningful with all entities in view — same honesty rule as the CF page)
     const ohKept = sum(winIdx.map(i => OH.claims[i] - OH.opex[i] - OH.capex[i] - OH.int[i]));
     const tiOtherW = sum(tiOtherKeys.map(k => sum(winIdx.map(i => ((TIW[k] || [])[i] || 0)))));
     const insDirW = sum(winIdx.map(i => RC.statutoryCash.insurance[i]));
     const ptDirW = sum(winIdx.map(i => RC.statutoryCash.propertyTax[i]));
     const companyKept = allEnts ? (ohKept - tiOtherW - insDirW - ptDirW) : 0;
     const keptW = doorKeptW + companyKept;
-    // owner-formula collection rate, telescoped MONTH BY MONTH exactly like the Cash Flow
-    // page's rateStats (write-offs move the advance chain between months, so the monthly
-    // sum is the formula — a first/last shortcut drifts a few basis points)
+    // owner-formula collection rate, telescoped MONTH BY MONTH (write-offs move the advance
+    // chain between months, so the monthly sum is the formula — a shortcut drifts bps)
     const rateOf = (doors) => {
       let act = 0;
       for (const i of winIdx) {
@@ -468,7 +866,7 @@ class Component extends DCLogic {
       return { due, act, rate: due > 0 ? act / due * 100 : null };
     };
     const rateAll = rateOf(cfDoors);
-    // cash operating costs for the pipeline: opex + capex + statutory-cash + refunds − claims
+    const rateTxt = rateAll.rate === null ? '—' : rateAll.rate.toFixed(2) + '%';
     const opexCashW = sum(cfDoors.map(d => dW(d, 'opex'))) + (allEnts ? sum(winIdx.map(i => OH.opex[i])) : 0);
     const capexCashW = sum(cfDoors.map(d => dW(d, 'capex'))) + (allEnts ? sum(winIdx.map(i => OH.capex[i])) : 0);
     const claimsW = sum(cfDoors.map(d => dW(d, 'claims'))) + (allEnts ? sum(winIdx.map(i => OH.claims[i])) : 0);
@@ -479,25 +877,170 @@ class Component extends DCLogic {
     const intCashW = sum(cfDoors.map(d => dW(d, 'int'))) + (allEnts ? sum(winIdx.map(i => OH.int[i])) : 0);
     const prinCashW = sum(cfDoors.map(d => dW(d, 'filePrin')));
     const netOpW = collW + claimsW - refW - opexCashW - capexCashW - statCashW;
+    const dsCashW = intCashW + prinCashW;
 
-    // ══ Balance sheet + loans — owned scope at window end (investments-page rule) ══
+    // ══ Collections detail — FIFO split, aging from charge dates, laggards ══
+    let laggN = 0, laggSum = 0, advHeld = 0;
+    const laggList = [];
+    for (const d of cfDoors) for (const t of DOORS[d].tenants) {
+      const c = t.close[lastI];
+      if (c > 0.005) { laggN++; laggSum += c; laggList.push({ tenant: t.tenant, prop: d, bal: c }); }
+      else if (c < -0.005) advHeld += -c;
+    }
+    laggList.sort((a, b) => b.bal - a.bal);
+    let fifoCurW = 0, fifoArrW = 0, curDenW = 0;
+    for (const d of cfDoors) for (const t of DOORS[d].tenants) for (const i of winIdx) {
+      fifoCurW += (t.fifoCur || [])[i] || 0; fifoArrW += (t.fifoArr || [])[i] || 0; curDenW += t.chg[i];
+    }
+    const curRateW = curDenW > 0.005 ? fifoCurW / curDenW * 100 : null;
+    let curLastNum = 0, curLastDen = 0;
+    for (const d of cfDoors) for (const t of DOORS[d].tenants) { curLastNum += (t.fifoCur || [])[lastI] || 0; curLastDen += t.chg[lastI]; }
+    const curRateLast = curLastDen > 0.005 ? curLastNum / curLastDen * 100 : null;
+    const CE_TARGET = 95; // the Collections page's default current-billing target
+    // aging from the date of charge, at the window-end month close (engine bucket rule)
+    const endTs = Date.UTC(+lastM.slice(0, 4), +lastM.slice(5, 7), 0);
+    const bkt = dstr => { const days = Math.floor((endTs - Date.parse(dstr)) / 86400000); return days <= 30 ? 0 : days <= 60 ? 1 : days <= 90 ? 2 : 3; };
+    const agingRe = [0, 0, 0, 0], agingCt = [0, 0, 0, 0];
+    for (const d of cfDoors) for (const t of DOORS[d].tenants) {
+      const its = (t.items || [])[lastI] || [];
+      for (const it of its) { const b = bkt(it[0]); agingRe[b] += it[1]; agingCt[b] += 1; }
+    }
+
+    // ══ Balance sheet + investments engine (the Investments page's exact rules) ══
     const BSP = Object.values(BSD.properties);
     const exitMonth = p => (p.exit && /^\d{4}-\d{2}/.test(p.exit)) ? p.exit.slice(0, 7) : null;
     const timeOkAt = (p, m) => { if (p.status !== 'Sold' && p.status !== 'Held for Sale') return true; const em = exitMonth(p); return !!em && m < em; };
     const owned = BSP.filter(p => timeOkAt(p, lastM) && entOn(p.entity));
-    const debtOf = d => { const x = LD.doors[d]; return x && x.monthly[lastM] ? x.monthly[lastM].close : 0; };
+    const LDD = LD.doors;
+    const loansOk = LD.loans.filter(l => l.schedule && l.schedule.length);
+    const noteFirst = {}, noteP0 = {};
+    for (const l of loansOk) { noteFirst[l.id] = l.schedule[0].m; noteP0[l.id] = l.schedule[0].open || l.schedule[0].close; }
+    const noteCloseAt = (l, m) => { let c = null; for (const r of l.schedule) { if (r.m <= m) c = r.close; else break; } return c === null ? 0 : c; };
+    const doorNotes = {};
+    for (const l of loansOk) for (const d in l.origProps) (doorNotes[d] = doorNotes[d] || []).push({ l, slice: l.origProps[d] * noteP0[l.id] });
+    for (const d in doorNotes) {
+      const dd = LDD[d]; if (!dd) continue;
+      const s = doorNotes[d].reduce((a, x) => a + x.slice, 0);
+      if (s > 0 && Math.abs(s - dd.initial) <= 0.05) { const f = dd.initial / s; doorNotes[d].forEach(x => { x.slice *= f; }); }
+    }
+    const relByDoor = {};
+    for (const l of loansOk) for (const r of (l.releases || [])) (relByDoor[r.prop] = relByDoor[r.prop] || []).push({ lid: l.id, m: r.m, base: r.base });
+    const doorKeys = {};
+    for (const d in LDD) doorKeys[d] = Object.keys(LDD[d].monthly).sort();
+    const debtAt = (d, m) => {
+      const dd = LDD[d]; if (!dd) return 0;
+      let c = 0; for (const k of doorKeys[d]) { if (k <= m) c = dd.monthly[k].close; else break; }
+      return c;
+    };
+    const refiFunded = (d, l, mB) => {
+      for (const x of doorNotes[d]) {
+        const l2 = x.l;
+        if (l2.id === l.id || noteFirst[l2.id] >= mB) continue;
+        let prev = null; for (const r of l2.schedule) { if (r.m < mB) prev = r.m; else break; }
+        if (!prev) continue;
+        if (noteCloseAt(l2, mB) <= 0.005 && noteCloseAt(l2, prev) > 0.005) {
+          const sale = (relByDoor[d] || []).some(r => r.lid === l2.id && r.m === mB);
+          if (!sale) return true;
+        }
+      }
+      return false;
+    };
+    const doorCalc = (d, m) => {
+      const ns = doorNotes[d] || [];
+      if (!ns.length) return { owner: 0, init: 0, close: debtAt(d, m), refiF: 0, saleF: 0 };
+      let firstAll = null; for (const x of ns) if (firstAll === null || noteFirst[x.l.id] < firstAll) firstAll = noteFirst[x.l.id];
+      let init = 0, refiF = 0;
+      for (const x of ns) {
+        const f = noteFirst[x.l.id];
+        if (f > m) continue;
+        init += x.slice;
+        if (f !== firstAll && refiFunded(d, x.l, f)) refiF += x.slice;
+      }
+      const close = debtAt(d, m);
+      const saleF = (relByDoor[d] || []).reduce((a, r) => a + (r.m <= m ? r.base : 0), 0);
+      return { owner: init - close - refiF - saleF, init, close, refiF, saleF };
+    };
     const valueW = owned.reduce((s, p) => s + (p.value || 0), 0);
-    const debtW = owned.reduce((s, p) => s + debtOf(p.door), 0);
+    const debtW = owned.reduce((s, p) => s + debtAt(p.door, lastM), 0);
     const equityW = valueW - debtW;
+    const mosPct = valueW > 0 ? equityW / valueW * 100 : null;
     const unvalued = owned.filter(p => !(p.value > 0));
+    const tCost = owned.reduce((s, p) => s + p.cost, 0), tRefi = owned.reduce((s, p) => s + p.refi, 0);
+    const tInv = tCost - tRefi;
+    const tRepaid = owned.reduce((s, p) => s + doorCalc(p.door, lastM).owner, 0);
+    const tCap = tInv + tRepaid;
+    const excludedBS = BSP.filter(p => !timeOkAt(p, lastM) && entOn(p.entity));
+    const excludedDebt = excludedBS.reduce((s, p) => s + debtAt(p.door, lastM), 0);
+    // returns: door-grain GL join over the window (investments-page scope rule)
+    const OVERD = new Set((PLD.meta && PLD.meta.overheadDoors) || []);
+    const noiBy = new Map(), intBy = new Map();
+    let noiOver = 0, intOver = 0;
+    for (const [ent, door, acct, valsR] of PLD.rows) {
+      const tot = sum(winIdx.map(i => valsR[i] || 0));
+      if (acct === A_INT) { if (OVERD.has(door)) intOver += tot; else intBy.set(door, (intBy.get(door) || 0) + tot); continue; }
+      let dl = null;
+      if (A_INC.includes(acct)) dl = tot;
+      else if (acct === A_CL || A_OPEX.includes(acct)) dl = -tot;
+      if (dl === null) continue;
+      if (OVERD.has(door)) noiOver += dl; else noiBy.set(door, (noiBy.get(door) || 0) + dl);
+    }
+    const ovAdd = allEnts;
+    const noiScopeW = owned.reduce((s, p) => s + (noiBy.get(p.door) || 0), 0) + (ovAdd ? noiOver : 0);
+    const intScopeW = owned.reduce((s, p) => s + (intBy.get(p.door) || 0), 0) + (ovAdd ? intOver : 0);
+    const niScopeW = noiScopeW - intScopeW;
+    const ann = v => nWin ? v / nWin * 12 : 0;
+    const capCost = tCost > 0 && nWin ? ann(noiScopeW) / tCost * 100 : null;
+    const niRoi = tCap > 0 && nWin ? ann(niScopeW) / tCap * 100 : null;
+    // cash-on-cash, the Investments card's exact recipe (engine escrow + scheduled principal, no CapEx)
+    const cfRefOut = (d2, ci) => { let s2 = 0; for (const x of (CLX.sdRefunds || [])) if (x.cash && x.prop === d2 && MO[ci] === x.m) s2 += -x.amt; return s2; };
+    const cocKeptDoor = (d2, ci) => {
+      const r = DOORS[d2]; if (!r) return 0;
+      const hoa = r.statByAcct && r.statByAcct['HOA Fee'] ? (r.statByAcct['HOA Fee'][ci] || 0) : 0;
+      return r.coll[ci] + r.claims[ci] - cfRefOut(d2, ci) - r.opex[ci] - (r.escrow[ci] || 0) - hoa - r.int[ci] - (r.prinSched[ci] || 0);
+    };
+    const cocKeptOver = (ci) => (OH.coll[ci] + OH.claims[ci] - OH.opex[ci] - OH.stat[ci] - OH.int[ci]) - RC.statutoryCash.insurance[ci] - RC.statutoryCash.propertyTax[ci];
+    const cocKeptW = owned.reduce((s2, p) => s2 + winIdx.reduce((a, ci) => a + cocKeptDoor(p.door, ci), 0), 0) + (ovAdd ? winIdx.reduce((a, ci) => a + cocKeptOver(ci), 0) : 0);
+    const cocRoi = nWin && tInv > 0 ? ann(cocKeptW) / tInv * 100 : null;
+    const levPurch = tInv > 0 ? tRefi / tInv : null;
+    const levToday = equityW > 0 ? debtW / equityW : null;
 
-    // ══ header story ══
-    const rateTxt = rateAll.rate === null ? '—' : rateAll.rate.toFixed(2) + '%';
-    const storyLine = spanLab + (allEnts ? '' : ' · ' + feAct.join(' + ')) + ': tenants were charged ' + fK(chgW) + ' and paid ' + fK(collW) + ' (' + rateTxt + ' collection) — after every operating cost and the banks, ' + fK(keptW) + ' of cash stayed in the business and the books earned ' + fK(w(niM)) + ' net income. The portfolio stands at ' + fK(valueW) + ' against ' + fK(debtW) + ' of debt: ' + fK(equityW) + ' of equity, ' + (valueW > 0 ? (equityW / valueW * 100).toFixed(1) + '%' : '—') + ' margin of safety.';
-    const scopeLine = owned.length + ' doors owned at ' + mmyy(lastM) + ' · ' + entsIn.length + ' of ' + ENTITIES.length + ' entities in view · every figure recomputes live from the four published datasets';
-    const asOfLine = 'P&L ' + (PLD.meta && PLD.meta.published ? PLD.meta.published.slice(0, 10) : '—') + ' · CF ' + (CFD.meta.published ? String(CFD.meta.published).slice(0, 10) : '—') + ' · BS ' + (BSD.meta && BSD.meta.published ? BSD.meta.published.slice(0, 10) : '—') + ' · Loans ' + (LD.meta && LD.meta.published ? LD.meta.published.slice(0, 10) : '—');
+    // ══ Loans — note grain (notes carry no entity; always portfolio-wide) ══
+    const closeAtL = (l, m) => { let c = null; for (const r of l.schedule) { if (r.m <= m) c = r.close; else break; } return c === null ? 0 : c; };
+    const prevM = addM2(firstM, -1);
+    const loansOutOpen = loansOk.reduce((s, l) => s + closeAtL(l, prevM), 0);
+    const loansOutClose = loansOk.reduce((s, l) => s + closeAtL(l, lastM), 0);
+    let borrowW = 0, schedPrinW = 0, eventsW = 0, prepayW = 0, releaseW = 0;
+    const borrowList = [];
+    for (const l of loansOk) {
+      if (l.schedule[0].m >= firstM && l.schedule[0].m <= lastM) { const o = l.schedule[0].open || l.schedule[0].close; borrowW += o; borrowList.push({ id: l.displayId, lender: l.lender, m: l.schedule[0].m, amt: o }); }
+      for (const r of l.schedule) if (r.m >= firstM && r.m <= lastM) { schedPrinW += r.principal; eventsW += (r.events || 0); }
+      for (const p of (l.prepays || [])) if (p.m >= firstM && p.m <= lastM) prepayW += p.amt;
+      for (const r of (l.releases || [])) if (r.m >= firstM && r.m <= lastM) releaseW += r.paid;
+    }
+    const payoffW = eventsW - prepayW - releaseW;
+    let wtdRate = null; {
+      let n2 = 0, d2 = 0;
+      for (const l of loansOk) { const c = closeAtL(l, lastM); if (c > 0.005) { n2 += c * l.rate; d2 += c; } }
+      if (d2 > 0) wtdRate = n2 / d2 * 100;
+    }
+    const noteName = l => /^\d{1,3}$/.test(String(l.displayId)) ? l.lender + ' #' + l.displayId : l.displayId + ' · ' + l.lender;
+    const activeNotes = loansOk.filter(l => closeAtL(l, lastM) > 0.005);
+    const radar = activeNotes.map(l => ({ l, mat: (l.start && l.term) ? addM2(l.start, l.term) : null, close: closeAtL(l, lastM) })).filter(r => r.mat);
+    const matured = radar.filter(r => r.mat <= lastM).sort((a, b) => b.close - a.close);
+    const horizon12 = addM2(lastM, 12);
+    const upcoming = radar.filter(r => r.mat > lastM && r.mat <= horizon12).sort((a, b) => a.mat < b.mat ? -1 : 1);
+    const maturedSum = matured.reduce((s, r) => s + r.close, 0);
+    const upSum = upcoming.reduce((s, r) => s + r.close, 0);
+    // every bank dollar ever drawn — the identity, all doors
+    let ownAll = 0, saleAll = 0, refiAll = 0, outAll = 0, drawnAll = 0;
+    for (const d in LDD) { const c = doorCalc(d, lastM); ownAll += c.owner; saleAll += c.saleF; refiAll += c.refiF; outAll += c.close; drawnAll += c.init; }
 
-    // ══ filter bar ══
+    // ══ header story + scope ══
+    const storyLine = spanLab + entLab + ': tenants were billed ' + fK(chgW) + ' and paid ' + fK(collW) + ' (' + rateTxt + '). After every cost and the banks, ' + fK(keptW) + ' of cash stayed and the books earned ' + fK(niW) + ' net profit' + (margin !== null ? ' (' + margin.toFixed(1) + '% margin)' : '') + '. The portfolio: ' + fK(valueW) + ' value − ' + fK(debtW) + ' debt = ' + fK(equityW) + ' equity (' + (mosPct !== null ? mosPct.toFixed(1) + '%' : '—') + ' margin of safety), built on ' + fK(tInv) + ' of our own money' + (niRoi !== null ? ' earning ' + niRoi.toFixed(1) + '% ROI' : '') + '.';
+    const scopeLine = owned.length + ' doors owned at ' + mmyy(lastM) + ' · ' + entsIn.length + ' of ' + ENTITIES.length + ' entities in view · every figure recomputes live from the four published datasets and ties its source page to the cent';
+    const asOfLine = 'P&L ' + (PLD.meta && PLD.meta.published ? String(PLD.meta.published).slice(0, 10) : '—') + ' · CF ' + (CFD.meta.published ? String(CFD.meta.published).slice(0, 10) : '—') + ' · BS ' + (BSD.meta && BSD.meta.published ? String(BSD.meta.published).slice(0, 10) : '—') + ' · Loans ' + (LD.meta && LD.meta.published ? String(LD.meta.published).slice(0, 10) : '—');
+
+    // ══ filter bar + jump chips ══
     const openDd = (id) => (e) => { e.stopPropagation(); this.setState({ ddOpen: S.ddOpen === id ? null : id, fq: '' }); };
     const togList = (key, v) => (e) => { if (e && e.stopPropagation) e.stopPropagation(); const cur = new Set(S[key]); cur.has(v) ? cur.delete(v) : cur.add(v); this.setF({ [key]: [...cur], entOpen: null }); };
     const entN = {}; doorNames.forEach(d => { entN[DOORS[d].entity] = (entN[DOORS[d].entity] || 0) + 1; });
@@ -516,43 +1059,234 @@ class Component extends DCLogic {
     }));
     const hasActive = !!(S.fm.length || S.fe.length);
     const onReset = () => this.setF({ fm: [], fe: [], entOpen: null });
+    const jumpChips = [['in', 'I · Came in'], ['cost', 'II · Cost'], ['kept', 'III · Stayed'], ['stand', 'IV · Stand'], ['earn', 'V · Earning'], ['entity', 'Entities'], ['next', 'Do next']].map(([id, lab]) => ({ lab, onClick: () => this.jumpTo(id) }));
 
     // ══ hero tiles ══
     const entQ = feAct.length ? '?entity=' + esc(feAct.join(',')) : '';
     const entAmp = feAct.length ? '&entity=' + esc(feAct.join(',')) : '';
     const mQ = '?m=' + selM.join(',');
+    const cfHref = './cashflow.dc.html' + (selM.length ? mQ + entAmp : entQ);
+    const collHref = './collections.dc.html' + (selM.length ? mQ + entAmp : entQ);
+    const plHref = './PL%20Story%20-%20Main.dc.html' + entQ;
+    const invHref = './investments.dc.html' + entQ;
     const tile = (label, val, sub, col, href, linkLab, tip, bg, bd) => ({ label, val, sub, col, href, linkLab, tip: tip || '', bg: bg || '#FFFFFF', bd: bd || '#E5E3DC' });
     const heroTiles = [
-      tile('Rent charged', fN(chgW), spanLab + ' · rent, SD, fees, utilities', BLUE, './cashflow.dc.html' + (selM.length ? mQ + entAmp : entQ), 'CASH FLOW →', 'Buildium charge journal for the window'),
-      tile('Cash collected', fN(collW), rateTxt + ' of everything due — owner formula', GOLDD, './collections.dc.html' + (selM.length ? mQ + entAmp : entQ), 'COLLECTIONS →', '(collections + opening advances − closing advances) ÷ (invoices + opening due)'),
-      tile('Cash kept', fN(keptW), 'after every cost and the banks', keptW >= 0 ? GREEND : REDD, './cashflow.dc.html' + (selM.length ? mQ + entAmp : entQ), 'CASH FLOW →', 'Collections + claims − refunds − opex incl. CapEx − statutory cash − interest − principal (Cashflow.xlsx actuals)', keptW >= 0 ? '#F2F7F0' : '#FBF0ED', keptW >= 0 ? '#D6E4D2' : '#EAD1C8'),
-      tile('Net income (GL)', fN(w(niM)), 'the books’ verdict for ' + spanLab, w(niM) >= 0 ? NAVY : REDD, './PL%20Story%20-%20Main.dc.html' + entQ, 'P&L →', 'GL accrual: income − operating expenses − interest'),
-      tile('Portfolio equity', fN(equityW), (valueW > 0 ? (equityW / valueW * 100).toFixed(1) + '% margin of safety' : 'no valued doors in scope'), GREEN2, './investments.dc.html' + entQ, 'INVESTMENTS →', 'Policy value (ARV-first) − loans-engine debt at ' + mmyy(lastM)),
-      tile('Doors owned', String(owned.length), 'at ' + mmyy(lastM) + ' · ' + cfDoors.length + ' with tenant ledgers', NAVY, './property-index.dc.html', 'PROPERTY INDEX →', 'Owned = not sold/HFS-exited by the window end (investments-page rule)'),
+      tile('Rent charged', fN(chgW), spanLab + ' · rent, SD, fees, utilities', BLUE, cfHref, 'CASH FLOW →', 'Buildium charge journal for the window'),
+      tile('Cash collected', fN(collW), rateTxt + ' of everything due — owner formula', GOLDD, collHref, 'COLLECTIONS →', '(collections + opening advances − closing advances) ÷ (invoices + opening due)'),
+      tile('Cash kept', fN(keptW), 'after every cost and the banks', keptW >= 0 ? GREEND : REDD, cfHref, 'CASH FLOW →', 'Collections + claims − refunds − opex incl. CapEx − statutory cash − interest − principal (Cashflow.xlsx actuals)', keptW >= 0 ? '#F2F7F0' : '#FBF0ED', keptW >= 0 ? '#D6E4D2' : '#EAD1C8'),
+      tile('Net profit (books)', fN(niW), (margin !== null ? margin.toFixed(1) + '% margin · ' : '') + 'GL, ' + spanLab, niW >= 0 ? NAVY : REDD, plHref, 'P&L →', 'GL accrual: income − operating expenses − interest'),
+      tile('Portfolio equity', fN(equityW), (mosPct !== null ? mosPct.toFixed(1) + '% margin of safety' : 'no valued doors in scope'), GREEN2, invHref, 'INVESTMENTS →', 'Policy value (ARV-first) − loans-engine debt at ' + mmyy(lastM)),
+      tile('Return on the deal', niRoi === null ? '—' : niRoi.toFixed(1) + '%', 'net-income ROI · cash-on-cash ' + (cocRoi === null ? '—' : cocRoi.toFixed(1) + '%'), GOLDD, invHref, 'INVESTMENTS →', 'Annualized (NOI − interest) ÷ capital in deal; CoC = annualized cash kept (engine recipe) ÷ initial investment'),
     ];
 
-    // ══ the money pipeline ══
-    const pc = (k, v, sub, href, kcol, vcol, tip, arrowOn, bg, bd) => ({ k, v, sub, href, kcol: kcol || MUT, vcol: vcol || INK, tip: tip || '', arrowOn: arrowOn !== false, bg: bg || '#FBFAF6', bd: bd || '#EDEBE2' });
-    const cfHref = './cashflow.dc.html' + (selM.length ? mQ + entAmp : entQ);
+    // ══ ACT I — what came in ══
+    const a1Links = [{ lab: 'CASH FLOW →', href: cfHref }, { lab: 'COLLECTIONS →', href: collHref }];
+    const a1Line = 'Tenants were billed ' + fN(chgW) + ' in ' + spanLab + entLab + '. ' + fN(collW) + ' of it actually arrived — ' + rateTxt + ' of everything due, counting advance payments where they belong — and ' + fN(laggSum) + ' is still out with ' + laggN + ' tenant' + (laggN === 1 ? '' : 's') + '. Collections against the window’s own bills ran ' + (curRateW === null ? '—' : curRateW.toFixed(1) + '%') + (curRateLast !== null && nWin > 1 ? ' (' + curRateLast.toFixed(1) + '% in ' + mmyy(lastM) + ')' : '') + ' against the ' + CE_TARGET + '% target.';
+    const pcBox = (k, v, sub, href, kcol, vcol, tip, arrowOn, bg, bd) => ({ k, v, sub, href, kcol: kcol || MUT, vcol: vcol || INK, tip: tip || '', arrowOn: arrowOn !== false, bg: bg || '#FBFAF6', bd: bd || '#EDEBE2', op: '' });
+    const a1Rail = [
+      pcBox('BILLED', fN(chgW), 'rent · SD · fees · utilities', cfHref, MUT, NAVY, 'Buildium tenant charges' + (allEnts ? ' incl. company items' : ' — doors of ' + feAct.join(', '))),
+      pcBox('COLLECTED', fN(collW), rateTxt + ' — the owner formula', collHref, GOLDD, GOLDD, '(collections + opening advances − closing advances) ÷ (invoices + opening due), telescoped over the window'),
+      pcBox('PAID FOR THE WINDOW’S OWN BILLS', fN(fifoCurW), (curRateW === null ? '—' : curRateW.toFixed(1) + '%') + ' of billing · target ' + CE_TARGET + '%', collHref, MUT, curRateW !== null && curRateW >= CE_TARGET ? GREEND : curRateW !== null && curRateW >= 85 ? GOLDD : REDD, 'FIFO split: receipts cure the oldest charge first; this is the slice that paid the window’s own charges. Old dues cured on top: ' + fN(fifoArrW)),
+      pcBox('STILL OUT', fN(laggSum), laggN + ' tenants · advances held ' + fN(advHeld), collHref, MUT, laggSum > 0.005 ? REDD : GREEND, 'Every positive tenant balance at ' + mmyy(lastM) + ' — name by name on the Collections page', false, laggSum > 0.005 ? '#FBF0ED' : '#F2F7F0', laggSum > 0.005 ? '#EAD1C8' : '#D6E4D2'),
+    ];
+    const agColors = ['#3D64A8', '#96742F', '#C0763F', '#A03E28'];
+    const agLabs = ['0–30 DAYS', '31–60 DAYS', '61–90 DAYS', '90+ DAYS'];
+    const agMax = Math.max(...agingRe, 1);
+    const agTiles = agingRe.map((v, i) => ({
+      k: agLabs[i], v: fN(v), kcol: agColors[i], vcol: v > 0.005 ? (i >= 3 ? REDD : NAVY) : FAINT,
+      w: Math.max(2, v / agMax * 100).toFixed(1) + '%', barCol: agColors[i],
+      sub: agingCt[i] + ' open charge' + (agingCt[i] === 1 ? '' : 's'),
+      bd: i >= 3 && v > 0.005 ? '#EAD1C8' : '#EDEBE2',
+      href: collHref, tip: 'Aged from the date each charge was billed — drill the tenants behind it on the Collections page',
+    }));
+    const agTot = fN(laggSum);
+    const agFoot = 'Buckets age each open charge from its billing date (pre-window openings age from Dec-25 — a disclosed floor). The four buckets sum to the ' + fN(sum(agingRe)) + ' still owed, to the cent. Advances held: ' + fN(advHeld) + ' — tenants paid ahead; they are never on the chase list.';
+
+    // ══ ACT II — what it cost ══
+    const a2Links = [{ lab: 'P&L →', href: plHref }, { lab: 'CASH FLOW →', href: cfHref }, { lab: 'LOANS →', href: './loans.dc.html' }];
+    const mixRank = Object.entries(opexMixW).filter(([, v]) => Math.abs(v) > 0.005).sort((a, b) => b[1] - a[1]);
+    const topNames = mixRank.slice(0, 3).map(([k]) => k.toLowerCase());
+    const a2Line = incW > 0.005
+      ? 'Running the doors took ' + fN(opexBookW) + ' on the books — ' + Math.round(opexPct) + '¢ of every rent dollar, led by ' + (topNames.length ? topNames.join(', ') : '—') + ' — leaving ' + fN(noiBookW) + ' of NOI (' + (incW > 0 ? Math.round(noiBookW / incW * 100) : 0) + '¢). The banks then took ' + fN(dsCashW) + ' in cash: ' + fN(intCashW) + ' of interest and ' + fN(prinCashW) + ' of principal.'
+      : 'No GL income in this scope — the cost story needs a window with income.';
+    const bandsOK = incW > 0.005;
+    const profCents = bandsOK ? Math.max(0, 100 - opexPct - intPct) : 0;
+    const dollarBands = bandsOK ? [
+      { k: 'OPERATING EXPENSES', v: Math.round(opexPct) + '¢ · ' + fK(opexBookW), w: Math.max(opexPct, 4).toFixed(1) + '%', bg: '#B04A33', kcol: 'rgba(255,255,255,0.75)', vcol: '#FFFFFF', href: plHref, tip: fN(opexBookW) + ' — statutory, PM, repairs, turns, CapEx (GL)' },
+      { k: 'INTEREST', v: Math.round(intPct) + '¢ · ' + fK(intBookW), w: Math.max(intPct, 4).toFixed(1) + '%', bg: '#7A4A38', kcol: 'rgba(255,255,255,0.75)', vcol: '#FFFFFF', href: './loans.dc.html', tip: fN(intBookW) + ' of GL interest cost' },
+      { k: niW >= 0 ? 'NET PROFIT' : 'NET LOSS', v: Math.round(Math.abs(margin)) + '¢ · ' + fK(niW), w: Math.max(Math.abs(margin), 4).toFixed(1) + '%', bg: niW >= 0 ? '#2E7D54' : '#A03E28', kcol: 'rgba(255,255,255,0.8)', vcol: '#FFFFFF', href: plHref, tip: fN(niW) + ' kept on the books — ' + (margin !== null ? margin.toFixed(1) + '%' : '—') + ' net margin' },
+    ] : [{ k: 'NO INCOME IN SCOPE', v: '—', w: '100%', bg: '#EDEBE2', kcol: MUT, vcol: MUT, href: plHref, tip: '' }];
+    const dollarFoot = bandsOK ? 'GL books, income net of collection loss (' + fN(clW) + ' this window). Bands are proportional; exact splits: expenses ' + (opexPct !== null ? opexPct.toFixed(1) : '—') + '% · interest ' + (intPct !== null ? intPct.toFixed(1) : '—') + '% · margin ' + (margin !== null ? margin.toFixed(1) : '—') + '%.' : 'This scope has no GL income in the window.';
+    const opexTotal = mixRank.reduce((s, [, v]) => s + v, 0);
+    const mixMax = Math.max(...mixRank.map(([, v]) => Math.abs(v)), 1);
+    const shownMix = S.xAll ? mixRank : mixRank.slice(0, 6);
+    const opexRows = shownMix.map(([k, v]) => ({
+      name: k, v: fK(v), pct: opexTotal > 0.005 ? (v / opexTotal * 100).toFixed(1) + '%' : '—',
+      w: Math.max(2, Math.abs(v) / mixMax * 100).toFixed(1) + '%', barCol: v >= 0 ? '#B04A33' : '#2E7D54',
+      href: plHref,
+    }));
+    const onXAll = () => this.setState({ xAll: !S.xAll });
+    const xAllLab = S.xAll ? 'Top 6 only' : 'Show all ' + mixRank.length;
+    const opexTot = fK(opexBookW), opexN = String(mixRank.length);
+    const opexFoot = 'GL operating ledgers over ' + spanLab + entLab + ', ranked. Credits show green. The P&L page walks every ledger down to door and transaction grain.';
+    const bankChips = [
+      { k: 'INTEREST PAID', v: fN(intCashW), sub: 'books accrued ' + fN(intBookW), href: './loans.dc.html', kcol: MUT, vcol: RED, bd: '#EDEBE2', tip: 'Cash interest (GL cash-basis by door); the Loans page reconciles engine vs GL note by note' },
+      { k: 'PRINCIPAL PAID', v: fN(prinCashW), sub: 'cash out — but equity in (Act IV)', href: './loans.dc.html', kcol: MUT, vcol: NAVY, bd: '#EDEBE2', tip: 'Cashflow.xlsx scheduled principal actuals; not an expense on the books' },
+      { k: 'DEBT SERVICE', v: fN(dsCashW), sub: netOpW > 0.005 && dsCashW > 0.005 ? 'covered ' + (netOpW / dsCashW).toFixed(2) + '× by operating cash' : '—', href: cfHref, kcol: MUT, vcol: REDD, bd: '#EAD1C8', tip: 'Interest + principal, cash. Coverage = net operating cash ÷ debt service for the window' },
+    ];
+    const bankFoot = 'Principal is the wedge between the two verdicts in Act III: the bank account shrinks, the balance sheet debt shrinks with it — money moved, not spent.';
+    const costCompare = [
+      { k: 'Operating (opex + CapEx + statutory + refunds − claims)', cash: fN(opexCashW + capexCashW + statCashW + refW - claimsW), book: fN(opexBookW) },
+      { k: 'Interest', cash: fN(intCashW), book: fN(intBookW) },
+      { k: 'Principal', cash: fN(prinCashW), book: 'not an expense' },
+    ];
+
+    // ══ ACT III — what stayed ══
+    const a3Links = [{ lab: 'CASH FLOW →', href: cfHref }, { lab: 'P&L →', href: plHref }];
+    const a3Line = (keptW >= 0
+      ? 'After every operating cost and the banks, ' + fN(keptW) + ' of cash stayed in the business'
+      : 'After every operating cost and the banks, the business consumed ' + fN(Math.abs(keptW)) + ' of cash')
+      + ' in ' + spanLab + entLab + '. The books call the same period ' + fN(niW) + ' of net profit' + (margin !== null ? ' — a ' + margin.toFixed(1) + '% margin' : '') + '. Both are true; they answer different questions, and the bridge shows exactly where they part.';
     const pipeCash = [
-      pc('CHARGED', fK(chgW), 'what tenants owed', cfHref, MUT, NAVY),
-      pc('COLLECTED', fK(collW), rateTxt + ' collection rate', './collections.dc.html' + (selM.length ? mQ + entAmp : entQ), GOLDD, NAVY, 'owner formula, telescoped over the window'),
-      pc('− OPERATING COSTS', fK(-(opexCashW + capexCashW + statCashW + refW - claimsW)), 'opex · CapEx · statutory · refunds, net of claims', cfHref, MUT, RED),
-      pc('NET OPERATING CASH', fK(netOpW), 'before the banks', cfHref, MUT, netOpW >= 0 ? GREEND : REDD),
-      pc('− DEBT SERVICE', fK(-(intCashW + prinCashW)), fK(intCashW) + ' interest · ' + fK(prinCashW) + ' principal', './loans.dc.html', MUT, RED),
-      pc('CASH KEPT', fK(keptW), 'stayed in the business', cfHref, GREEND, keptW >= 0 ? GREEND : REDD, '', false, keptW >= 0 ? '#F2F7F0' : '#FBF0ED', keptW >= 0 ? '#D6E4D2' : '#EAD1C8'),
+      pcBox('CHARGED', fK(chgW), 'what tenants owed', cfHref, MUT, NAVY),
+      pcBox('COLLECTED', fK(collW), rateTxt + ' collection rate', collHref, GOLDD, NAVY, 'owner formula, telescoped over the window'),
+      pcBox('− OPERATING COSTS', fK(-(opexCashW + capexCashW + statCashW + refW - claimsW)), 'opex · CapEx · statutory · refunds, net of claims', cfHref, MUT, RED),
+      pcBox('NET OPERATING CASH', fK(netOpW), 'before the banks', cfHref, MUT, netOpW >= 0 ? GREEND : REDD),
+      pcBox('− DEBT SERVICE', fK(-dsCashW), fK(intCashW) + ' interest · ' + fK(prinCashW) + ' principal', './loans.dc.html', MUT, RED),
+      pcBox('CASH KEPT', fK(keptW), 'stayed in the business', cfHref, GREEND, keptW >= 0 ? GREEND : REDD, '', false, keptW >= 0 ? '#F2F7F0' : '#FBF0ED', keptW >= 0 ? '#D6E4D2' : '#EAD1C8'),
     ];
-    const plHref = './PL%20Story%20-%20Main.dc.html' + entQ;
-    const noiW = w(incM) - w(opexM);
     const pipeAccr = [
-      pc('TOTAL INCOME', fK(w(incM)), 'GL accrual, net of collection loss', plHref, MUT, NAVY),
-      pc('− OPERATING EXPENSES', fK(-w(opexM)), 'statutory · PM · repairs · turns · CapEx', plHref, MUT, RED),
-      pc('NOI', fK(noiW), 'the property engine', plHref, MUT, noiW >= 0 ? GREEND : REDD),
-      pc('− INTEREST', fK(-w(intGlM)), 'debt service on the books', './loans.dc.html', MUT, RED),
-      pc('NET INCOME', fK(w(niM)), 'kept in the business (books)', plHref, NAVY, w(niM) >= 0 ? NAVY : REDD, '', false, '#F4F6FA', '#D9E0EC'),
-      pc('+ PRINCIPAL PAID', fK(prinCashW), 'became equity, not expense (Cashflow.xlsx)', './loans.dc.html', MUT, GREEN2, 'principal is cash out of the bank account but equity into the balance sheet — the main wedge between cash kept and net income', false),
+      pcBox('TOTAL INCOME', fK(incW), 'GL accrual, net of collection loss', plHref, MUT, NAVY),
+      pcBox('− OPERATING EXPENSES', fK(-opexBookW), 'statutory · PM · repairs · turns · CapEx', plHref, MUT, RED),
+      pcBox('NOI', fK(noiBookW), 'the property engine' + (incW > 0.005 ? ' · ' + (noiBookW / incW * 100).toFixed(1) + '% of income' : ''), plHref, MUT, noiBookW >= 0 ? GREEND : REDD),
+      pcBox('− INTEREST', fK(-intBookW), 'debt service on the books', './loans.dc.html', MUT, RED),
+      pcBox('NET PROFIT', fK(niW), (margin !== null ? margin.toFixed(1) + '% margin' : 'books verdict'), plHref, NAVY, niW >= 0 ? NAVY : REDD, '', false, '#F4F6FA', '#D9E0EC'),
+      pcBox('+ PRINCIPAL PAID', fK(prinCashW), 'became equity, not expense (Cashflow.xlsx)', './loans.dc.html', MUT, GREEN2, 'principal is cash out of the bank account but equity into the balance sheet — the main wedge between cash kept and net profit', false),
     ];
-    const pipeFoot = 'The cash rail is the Cash Flow page’s statement (Buildium receipts, Cashflow.xlsx escrow & principal); the books rail is the P&L (GL accrual). They differ by design — statutory accrual vs cash timing, principal (cash out, not an expense), and collection timing. ' + (allEnts ? 'Company overhead and portfolio-grain items are included.' : 'Entity view is door-grain: company overhead and portfolio-grain statutory cash stay in the all-entities view.') + ' Click any box to open the page that proves it.';
+    const wedge = keptW - niW + prinCashW;
+    const bridge = [
+      { k: 'NET PROFIT (BOOKS)', v: fN(niW), vcol: niW >= 0 ? NAVY : REDD, op: '−', arrowOn: true, tip: 'GL accrual verdict' },
+      { k: 'PRINCIPAL PAID (CASH)', v: fN(prinCashW), vcol: RED, op: '+', arrowOn: true, tip: 'cash left the account but is not an expense — it became equity' },
+      { k: 'TIMING & BASIS DIFFERENCES', v: fN(wedge), vcol: wedge >= 0 ? GREEND : REDD, op: '=', arrowOn: true, tip: 'derived: collections vs billing timing, statutory accrual vs escrow cash, non-cash collection loss, claims and refunds' },
+      { k: 'CASH KEPT', v: fN(keptW), vcol: keptW >= 0 ? GREEND : REDD, op: '', arrowOn: false, tip: 'the Cash Flow page’s bottom line' },
+    ];
+    const bridgeFoot = 'Net profit − principal + timing/basis differences = cash kept, to the cent (' + fC(niW) + ' − ' + fC(prinCashW) + ' + ' + fC(wedge) + ' = ' + fC(keptW) + '). The middle term is derived and disclosed: cash collections vs billed income, statutory accrual vs escrow cash actually paid, non-cash collection loss, insurance claims and refunds.';
+
+    // ══ trends (shared chart maker) ══
+    const keptM = MO.map((_, i) => sum(cfDoors.map(d => (DOORS[d].coll[i] || 0) + (DOORS[d].claims[i] || 0) - (DOORS[d].opex[i] || 0) - (DOORS[d].capex[i] || 0) - ((TIW[d] || [])[i] || 0) - (((DOORS[d].statByAcct || {})['HOA Fee'] || [])[i] || 0) - (DOORS[d].int[i] || 0) - (DOORS[d].filePrin[i] || 0))) - sum((CLX.sdRefunds || []).filter(x => x.cash && MO.indexOf(x.m) === i && cfDoorSet.has(x.prop)).map(x => Math.abs(x.amt))) + (allEnts ? (OH.claims[i] - OH.opex[i] - OH.capex[i] - OH.int[i]) - sum(tiOtherKeys.map(k => ((TIW[k] || [])[i] || 0))) - RC.statutoryCash.insurance[i] - RC.statutoryCash.propertyTax[i] : 0));
+    const chgMs = MO.map((_, i) => sum(cfDoors.map(d => DOORS[d].chg[i])) + (allEnts ? OH.chg[i] : 0));
+    const collMs = MO.map((_, i) => sum(cfDoors.map(d => DOORS[d].coll[i])) + (allEnts ? OH.coll[i] : 0));
+    const debtMs = MO.map(m => BSP.filter(p => timeOkAt(p, m) && entOn(p.entity)).reduce((s, p) => s + debtAt(p.door, m), 0));
+    const mkChart = (title, series, col, sub, opts) => {
+      const o = opts || {};
+      const s2 = o.series2 || null;
+      const all = s2 ? [...series, ...s2] : series;
+      let lo, hi;
+      if (o.zoom && Math.min(...all) > 0) {
+        // always-positive series: zoom to the data range so month-on-month movement reads
+        // (safe — every point is labeled; the growth-chart idiom)
+        const mn = Math.min(...all), mx = Math.max(...all), pad = (mx - mn) * 0.15 || mx * 0.02 || 1;
+        lo = mn - pad; hi = mx + pad;
+      } else { lo = Math.min(...all, 0); hi = Math.max(...all, 0); }
+      const range = (hi - lo) || 1;
+      const X = i => NM === 1 ? 160 : 12 + i * (296 / (NM - 1));
+      const Y = v => 10 + (hi - v) / range * 60;
+      const path = series.map((v, i) => X(i).toFixed(1) + ',' + Y(v).toFixed(1)).join(' ');
+      const path2 = s2 ? s2.map((v, i) => X(i).toFixed(1) + ',' + Y(v).toFixed(1)).join(' ') : '';
+      const selSet = new Set(winIdx);
+      const winSel = selM.length > 0;
+      const pts = series.map((v, i) => ({
+        cx: X(i).toFixed(1), cy: Y(v).toFixed(1),
+        r: winSel && selSet.has(i) ? 4 : 2.6,
+        fill: winSel && selSet.has(i) ? GOLD : '#FFFFFF', stroke: col,
+        onClick: (e2) => { if (e2 && e2.stopPropagation) e2.stopPropagation(); this.setF({ fm: [MO[i]], entOpen: null }); },
+      }));
+      const labs = series.map((v, i) => ({ leftPct: (X(i) / 320 * 100).toFixed(2) + '%', topPct: (Y(v) / 84 * 100).toFixed(2) + '%', v: fK(v), col: winSel && selSet.has(i) ? GOLDD : FAINT }));
+      const months = MO.map((m, i) => ({ m: mmyy(m).slice(0, 3), fw: winSel && selSet.has(i) ? 800 : 500, col: winSel && selSet.has(i) ? NAVY : FAINT, onClick: () => this.setF({ fm: [m], entOpen: null }) }));
+      const dd = series[NM - 1] - series[NM - 2];
+      const zy = (0 >= lo && 0 <= hi) ? Y(0) : 74; // clamp the dashed baseline to the floor when zero is out of range
+      return {
+        title, col, sub,
+        path, path2, line2On: !!s2, zeroY: zy.toFixed(1),
+        pts, labs, months,
+        delta: NM > 1 ? (dd >= 0 ? '▲ ' : '▼ ') + fK(Math.abs(dd)) + ' ' + mmyy(MO[NM - 1]) : '',
+        deltaCol: NM > 1 ? ((o.downGood ? dd <= 0 : dd >= 0) ? GREEND : REDD) : FAINT,
+      };
+    };
+    const flatCh = (p, ch) => { const o = {}; o[p + 'Title'] = ch.title; o[p + 'Delta'] = ch.delta; o[p + 'DeltaCol'] = ch.deltaCol; o[p + 'ZeroY'] = ch.zeroY; o[p + 'Line2On'] = ch.line2On; o[p + 'Path'] = ch.path; o[p + 'Path2'] = ch.path2; o[p + 'Pts'] = ch.pts; o[p + 'Labs'] = ch.labs; o[p + 'Months'] = ch.months; o[p + 'Sub'] = ch.sub; o[p + 'Col'] = ch.col; return o; };
+    const ch1 = mkChart('CHARGED vs COLLECTED — MONTH BY MONTH', collMs, GOLDD, 'gold = collected · blue = charged — the gap is the month’s uncollected rent. Click a point to focus the story.', { series2: chgMs, zoom: true });
+    const ch2 = mkChart('NET PROFIT · BOOKS', niM, '#16233A', 'the GL verdict per month — May carries the owner’s collection-loss corrections');
+    const ch3 = mkChart('CASH KEPT · BANK', keptM, '#2E7D54', 'after every cost and the banks — the number that compounds');
+    const ch4 = mkChart('DEBT OUTSTANDING · OWNED SCOPE', debtMs, '#B04A33', 'door-grain, owned scope at each month — new borrowings step it up, payoffs pull it down', { downGood: true, zoom: true });
+
+    // ══ ACT IV — where we stand ══
+    const a4Links = [{ lab: 'INVESTMENTS →', href: invHref }, { lab: 'LOANS →', href: './loans.dc.html' }];
+    const debtDelta = loansOutClose - loansOutOpen;
+    const a4Line = 'At ' + mmyy(lastM) + ' the portfolio stands at ' + fN(valueW) + ' across ' + owned.length + ' doors, carrying ' + fN(debtW) + ' of debt' + (allEnts && excludedDebt > 0.005 ? ' (+' + fN(excludedDebt) + ' on held-for-sale doors = ' + fN(debtW + excludedDebt) + ' at the banks)' : '') + ' — ' + fN(equityW) + ' of equity, a ' + (mosPct !== null ? mosPct.toFixed(1) + '%' : '—') + ' margin of safety. ' + (allEnts ? 'The banks’ book moved ' + fK(loansOutOpen) + ' → ' + fK(loansOutClose) + ' this window: ' + fK(borrowW) + ' newly borrowed against ' + fK(schedPrinW + eventsW) + ' paid down.' : 'Debt walk and note radar below stay portfolio-wide — notes carry no entity.');
+    const posRail = [
+      pcBox('MARKET VALUE', fN(valueW), owned.length + ' owned doors · policy: ARV first' + (unvalued.length ? ' · ' + unvalued.length + ' unvalued' : ''), invHref, MUT, NAVY, 'ARV where present, county fallback (per-door source recorded)', true),
+      pcBox('DEBT TODAY', fN(debtW), 'loans engine at ' + mmyy(lastM) + (allEnts && excludedDebt > 0.005 ? ' · +' + fK(excludedDebt) + ' HFS' : ''), './loans.dc.html', MUT, RED, 'Outstanding on owned-scope doors; held-for-sale doors keep their own lines on the Balance Sheet', true),
+      pcBox('EQUITY', fN(equityW), (mosPct !== null ? mosPct.toFixed(1) + '% margin of safety' : '—'), invHref, GREEND, GREEND, 'Value − debt. The Investments page prices the same cushion under four valuation methods', false, '#F2F7F0', '#D6E4D2'),
+    ];
+    posRail[0].op = '−'; posRail[1].op = '=';
+    const dwBox = (k, v, kcol, vcol, tip, href) => ({ k, v, kcol: kcol || MUT, vcol: vcol || INK, tip: tip || '', href: href || './loans.dc.html', bg: '#FFFFFF', bd: '#EDEBE2', arrowOn: true });
+    const debtWalk = [
+      dwBox('OPEN · ' + mmyy(prevM), fK(loansOutOpen), MUT, NAVY, 'every note’s engine balance the month before the window'),
+      dwBox('+ BORROWED', fK(borrowW), GOLDD, borrowW > 0.005 ? REDD : FAINT, borrowList.length ? borrowList.map(b => b.id + ' (' + b.lender + ') ' + fK(b.amt) + ' in ' + mmyy(b.m)).join(' · ') : 'no new notes in the window'),
+      dwBox('− SCHEDULED', fK(schedPrinW), MUT, GREEND, 'regular amortization across every note'),
+      dwBox('− PREPAID', fK(prepayW), MUT, GREEND, 'extra principal payments'),
+      dwBox('− RELEASED', fK(releaseW), MUT, GREEND, 'sale releases — settled from closings'),
+      dwBox('− PAID OFF', fK(payoffW), MUT, GREEND, 'notes settled in full (incl. refinance payoffs)'),
+      dwBox('CLOSE · ' + mmyy(lastM), fK(loansOutClose), MUT, NAVY, 'all notes, portfolio-wide — ties the Loans page to the cent'),
+    ];
+    debtWalk[6].arrowOn = false; debtWalk[6].bg = '#F4F6FA'; debtWalk[6].bd = '#D9E0EC';
+    const debtWalkFoot = 'All notes, portfolio-wide (' + fC(loansOutOpen) + ' + ' + fC(borrowW) + ' − ' + fC(schedPrinW) + ' − ' + fC(prepayW) + ' − ' + fC(releaseW) + ' − ' + fC(payoffW) + ' = ' + fC(loansOutClose) + ', to the cent).' + (borrowList.length ? ' New notes: ' + borrowList.map(b => b.id + ' ' + fK(b.amt)).join(' · ') + '.' : '');
+    const mrScope = 'ALL 47 NOTES · PORTFOLIO-WIDE' + (allEnts ? '' : ' (entity filter does not narrow notes)');
+    const mrSum = matured.length + ' matured (' + fK(maturedSum) + ') · ' + upcoming.length + ' due within 12 months (' + fK(upSum) + ')';
+    const matRows = [
+      ...matured.map(r => ({
+        dot: '#A03E28', mcol: REDD, mat: 'MAT ' + mmyy(r.mat), name: noteName(r.l), type: r.l.type === 'Hard Money' ? 'HARD $' : r.l.type.toUpperCase(),
+        v: fN(r.close), href: './loans.dc.html?loan=' + esc(r.l.id),
+      })),
+      ...upcoming.slice(0, 6 - Math.min(matured.length, 3)).map(r => ({
+        dot: r.mat <= addM2(lastM, 3) ? '#C9A45C' : '#B9C2D2', mcol: r.mat <= addM2(lastM, 3) ? GOLDD : MUT, mat: mmyy(r.mat), name: noteName(r.l), type: r.l.type === 'Hard Money' ? 'HARD $' : r.l.type.toUpperCase(),
+        v: fN(r.close), href: './loans.dc.html?loan=' + esc(r.l.id),
+      })),
+    ];
+    const upShown = Math.max(0, matRows.length - matured.length);
+    const mrFoot = (upcoming.length > upShown ? '+' + (upcoming.length - upShown) + ' more notes mature within 12 months of ' + mmyy(lastM) + ' — ' + fK(upSum) + ' in total. ' : '') + 'Maturity = origination + term (the sheet’s first-payment rule). A matured note carrying balance needs a payoff or extension row.';
+    const drawnMax = Math.max(drawnAll, 1);
+    const drow = (k, v, barCol, vcol, tip, fw, kcol) => ({ k, v: fN(v), w: Math.max(1.5, v / drawnMax * 100).toFixed(1) + '%', barCol, vcol: vcol || INK, tip: tip || '', fw: fw || 600, kcol: kcol || INK });
+    const drawnRows = [
+      drow('Repaid by us, month by month', ownAll, '#2E7D54', GREEND, 'scheduled + extra principal + release excess — the owner-paid engine'),
+      drow('Settled by property sales', saleAll, '#8FA8C9', INK, 'release bases settled from sale closings'),
+      drow('Paid off by refinance money', refiAll, '#C0763F', INK, 'old notes settled by new notes on the same door (410 Virginia Dr pattern)'),
+      drow('Still outstanding', outAll, '#B04A33', REDD, 'every note’s engine balance at ' + mmyy(lastM)),
+    ];
+    const drawnFoot = 'The banks have handed over ' + fN(drawnAll) + ' across every note ever originated. Identity, portfolio-wide, to the cent: ' + fC(ownAll) + ' + ' + fC(saleAll) + ' + ' + fC(refiAll) + ' + ' + fC(outAll) + ' = ' + fC(drawnAll) + '.';
+    const a4Span = spanLab;
+
+    // ══ ACT V — what it's earning ══
+    const a5Links = [{ lab: 'INVESTMENTS →', href: invHref }, { lab: 'P&L →', href: plHref }];
+    const a5Line = 'Everything above runs on ' + fN(tInv) + ' of our own money — ' + fN(tCost) + ' of property bought, minus ' + fN(tRefi) + ' the banks handed back at refinance. The business has since repaid ' + fN(tRepaid) + ' of principal, so ' + fN(tCap) + ' sits in the deal today — earning ' + (niRoi !== null ? niRoi.toFixed(1) + '%' : '—') + ' on the books and ' + (cocRoi !== null ? cocRoi.toFixed(1) + '%' : '—') + ' in cash, annualized from this window.';
+    const invRail = [
+      pcBox('PROPERTY COST', fN(tCost), owned.length + ' doors · at cost basis', invHref, MUT, NAVY, 'Balance-sheet cost basis of the owned scope'),
+      pcBox('PULLED BACK AT REFINANCE', fN(tRefi), 'the banks funded it back', './loans.dc.html', MUT, RED, 'Initial refinance per the BS sheet — the foreclosure playbook: buy, fix, refinance out'),
+      pcBox('OUR MONEY IN', fN(tInv), 'cost − refinance', invHref, GOLDD, GOLDD, 'Initial investment — what actually stayed in from our pocket'),
+      pcBox('REPAID SINCE', fN(tRepaid), 'principal the business paid back', './loans.dc.html', MUT, GREEND, 'Owner-paid principal engine: scheduled + extra + release excess; sale-settled and refi-funded payoffs excluded'),
+      pcBox('IN THE DEAL TODAY', fN(tCap), 'the ROI denominator', invHref, MUT, NAVY, 'Initial investment + principal repaid — capital in deal', false, '#F4F6FA', '#D9E0EC'),
+    ];
+    invRail[0].op = '−'; invRail[1].op = '='; invRail[2].op = '+'; invRail[3].op = '=';
+    const retTiles = [
+      { k: 'NOI cap rate on cost', v: capCost === null ? '—' : capCost.toFixed(2) + '%', vcol: '#C0763F', sub: 'annualized NOI ÷ property cost — the engine before the banks', href: invHref, tip: 'NOI ' + fN(noiScopeW) + ' over ' + nWin + ' month' + (nWin === 1 ? '' : 's') + ', ×12 ÷ ' + fN(tCost), linkLab: 'INVESTMENTS →' },
+      { k: 'Net income ROI', v: niRoi === null ? '—' : niRoi.toFixed(2) + '%', vcol: niRoi !== null && niRoi < 0 ? REDD : '#3E8E63', sub: 'annualized (NOI − interest) ÷ capital in deal (' + fK(tCap) + ')', href: invHref, tip: 'Net income ' + fN(niScopeW) + ' annualized ÷ ' + fN(tCap), linkLab: 'INVESTMENTS →' },
+      { k: 'Cash-on-cash', v: cocRoi === null ? '—' : cocRoi.toFixed(2) + '%', vcol: GOLDD, sub: 'annualized cash kept (engine recipe) ÷ our ' + fK(tInv) + ' in', href: invHref, tip: 'The Investments card’s recipe: collections + claims − refunds − opex − engine escrow − HOA − interest − scheduled principal = ' + fN(cocKeptW) + ' for the window', linkLab: 'INVESTMENTS →' },
+    ];
+    const levChips = [
+      { k: 'LEVERAGE AT PURCHASE', v: levPurch === null ? '—' : levPurch.toFixed(1) + '×', vcol: NAVY, sub: 'bank money ÷ our money at the start (' + fK(tRefi) + ' ÷ ' + fK(tInv) + ')', tip: 'initial refinance ÷ initial investment' },
+      { k: 'LEVERAGE TODAY', v: levToday === null ? '—' : levToday.toFixed(1) + '×', vcol: levToday !== null && levPurch !== null && levToday < levPurch ? GREEND : NAVY, sub: levToday !== null && levPurch !== null && levToday < levPurch ? 'deleveraged — equity now outweighs the debt' : 'debt ÷ equity at ' + mmyy(lastM), tip: 'debt outstanding ÷ equity (value − debt)' },
+    ];
+    const a5Foot = 'Returns annualize the selected window (' + spanLab + ') — a short window amplifies seasonal costs. Cash-on-cash follows the Investments card’s recipe (engine escrow + scheduled principal, no CapEx), so it ties that page, not Act III’s file-based cash kept — both definitions are disclosed where they appear. Principal repaid counts only money we paid: sale-settled releases and the refinance-funded payoff on 410 Virginia Dr are excluded.';
 
     // ══ entity scorecard ══
     const rowsE = ENTITIES.map(e => {
@@ -564,7 +1298,7 @@ class Component extends DCLogic {
       const eNi = sum(winIdx.map(i => glEnt[e].ni[i]));
       const eRate = rateOf(eDoors);
       const eVal = eOwned.reduce((s, p) => s + (p.value || 0), 0);
-      const eDebt = eOwned.reduce((s, p) => s + debtOf(p.door), 0);
+      const eDebt = eOwned.reduce((s, p) => s + debtAt(p.door, lastM), 0);
       return { e, eDoors, eOwned, eChg, eColl, eKept, eNi, eRate, eVal, eDebt, eEq: eVal - eDebt };
     });
     const sortDefs = { kept: r => r.eKept, ni: r => r.eNi, rate: r => (r.eRate.rate === null ? -1 : r.eRate.rate), equity: r => r.eEq, doors: r => r.eOwned.length };
@@ -574,11 +1308,9 @@ class Component extends DCLogic {
       label: lab, onClick: () => this.setState({ esSort: id }),
       bd: esSort === id ? GOLD : '#D8D4C8', bg: esSort === id ? '#FBF6EA' : '#FFFFFF',
     }));
-    const maxVal = Math.max(...rowsE.map(r => r.eVal), 1);
     const entRows = rowsSorted.map(r => {
       const focused = feAct.length === 1 && feAct[0] === r.e;
       const isOpen = S.entOpen === r.e;
-      const eq = './PL%20Story%20-%20Main.dc.html?entity=' + esc(r.e);
       const keptBars = winIdx.map(i => { const v = sum(r.eDoors.map(d => (DOORS[d].coll[i] || 0) + (DOORS[d].claims[i] || 0) - (DOORS[d].opex[i] || 0) - (DOORS[d].capex[i] || 0) - ((TIW[d] || [])[i] || 0) - (((DOORS[d].statByAcct || {})['HOA Fee'] || [])[i] || 0) - (DOORS[d].int[i] || 0) - (DOORS[d].filePrin[i] || 0))) - sum((CLX.sdRefunds || []).filter(x => x.cash && MO.indexOf(x.m) === i && r.eDoors.includes(x.prop)).map(x => Math.abs(x.amt))); return { m: MO[i], v }; });
       const kMax = Math.max(...keptBars.map(b => Math.abs(b.v)), 1);
       const dRank = r.eDoors.map(d => ({ d, v: dKept(d) })).sort((a, b) => a.v - b.v);
@@ -627,90 +1359,111 @@ class Component extends DCLogic {
     });
     if (allEnts && Math.abs(companyKept) > 0.005) entRows.push({
       name: 'Company overhead & portfolio-grain', sub: 'claims · opex · CapEx · interest · company escrow · direct PT/Ins', nameFw: 600, nameCol: FAINT, bg: 'transparent',
-      chev: '', chevCol: 'transparent', onExp: () => {}, onClick: () => {},
+      chev: '', chevCol: 'transparent', onExp: noop, onClick: noop,
       doors: '—', coll: '—', rate: '', rateCol: FAINT, ni: '—', niCol: FAINT,
       kept: fK(companyKept), keptCol: companyKept >= 0 ? GREEND : REDD, debt: '—', eqW: '0%', eqLab: 'not door-attributable', val: '—',
       exp: false, exTitle: '', exLinks: [], exFacts: [], exBars: [], exDoorsLab: '', exDoors: [], exFoot: '',
     });
-    const esSub = 'every column recomputes for ' + spanLab + ' · click a row to focus the whole page on that entity · ▸ opens the entity’s detail card';
+    const esSub = 'every column recomputes for ' + spanLab + ' · click a row to focus the whole story on that entity · ▸ opens the entity’s detail card';
     const esFoot = 'DOORS = owned at ' + mmyy(lastM) + ' (sold / HFS-exited excluded — the investments-page rule); money columns cover every ledgered door of the entity, so a door sold mid-window still shows its collections. CASH KEPT is door-grain (company overhead sits in the portfolio row' + (allEnts ? '' : ' — visible in the all-entities view') + '); columns therefore sum exactly to the Cash Flow page’s bottom line' + (allEnts ? ' of ' + fN(keptW) : ' when all entities are in view') + '. EQUITY = policy value − loans-engine debt.';
 
-    // ══ trends ══
-    const keptM = MO.map((_, i) => sum(cfDoors.map(d => (DOORS[d].coll[i] || 0) + (DOORS[d].claims[i] || 0) - (DOORS[d].opex[i] || 0) - (DOORS[d].capex[i] || 0) - ((TIW[d] || [])[i] || 0) - (((DOORS[d].statByAcct || {})['HOA Fee'] || [])[i] || 0) - (DOORS[d].int[i] || 0) - (DOORS[d].filePrin[i] || 0))) - sum((CLX.sdRefunds || []).filter(x => x.cash && MO.indexOf(x.m) === i && cfDoorSet.has(x.prop)).map(x => Math.abs(x.amt))) + (allEnts ? (OH.claims[i] - OH.opex[i] - OH.capex[i] - OH.int[i]) - sum(tiOtherKeys.map(k => ((TIW[k] || [])[i] || 0))) - RC.statutoryCash.insurance[i] - RC.statutoryCash.propertyTax[i] : 0));
-    const chgMs = MO.map((_, i) => sum(cfDoors.map(d => DOORS[d].chg[i])) + (allEnts ? OH.chg[i] : 0));
-    const collMs = MO.map((_, i) => sum(cfDoors.map(d => DOORS[d].coll[i])) + (allEnts ? OH.coll[i] : 0));
-    const debtMs = MO.map(m => BSP.filter(p => timeOkAt(p, m) && entOn(p.entity)).reduce((s, p) => { const x = LD.doors[p.door]; return s + (x && x.monthly[m] ? x.monthly[m].close : 0); }, 0));
-    const mkChart = (title, series, col, sub, opts) => {
-      const o = opts || {};
-      const s2 = o.series2 || null;
-      const all = s2 ? [...series, ...s2] : series;
-      const lo = Math.min(...all, 0), hi = Math.max(...all, 0);
-      const range = (hi - lo) || 1;
-      const X = i => NM === 1 ? 160 : 12 + i * (296 / (NM - 1));
-      const Y = v => 10 + (hi - v) / range * 60;
-      const path = series.map((v, i) => X(i).toFixed(1) + ',' + Y(v).toFixed(1)).join(' ');
-      const path2 = s2 ? s2.map((v, i) => X(i).toFixed(1) + ',' + Y(v).toFixed(1)).join(' ') : '';
-      const selSet = new Set(winIdx);
-      const winSel = selM.length > 0;
-      const pts = series.map((v, i) => ({
-        cx: X(i).toFixed(1), cy: Y(v).toFixed(1),
-        r: winSel && selSet.has(i) ? 4 : 2.6,
-        fill: winSel && selSet.has(i) ? GOLD : '#FFFFFF', stroke: col,
-        onClick: (e2) => { if (e2 && e2.stopPropagation) e2.stopPropagation(); this.setF({ fm: [MO[i]], entOpen: null }); },
-      }));
-      const labs = series.map((v, i) => ({ leftPct: (X(i) / 320 * 100).toFixed(2) + '%', topPct: (Y(v) / 84 * 100).toFixed(2) + '%', v: fK(v), col: winSel && selSet.has(i) ? GOLDD : FAINT }));
-      const months = MO.map((m, i) => ({ m: mmyy(m).slice(0, 3), fw: winSel && selSet.has(i) ? 800 : 500, col: winSel && selSet.has(i) ? NAVY : FAINT, onClick: () => this.setF({ fm: [m], entOpen: null }) }));
-      const dd = series[NM - 1] - series[NM - 2];
-      return {
-        title, col, sub,
-        path, path2, line2On: !!s2, zeroY: Y(0).toFixed(1),
-        pts, labs, months,
-        delta: NM > 1 ? (dd >= 0 ? '▲ ' : '▼ ') + fK(Math.abs(dd)) + ' ' + mmyy(MO[NM - 1]) : '',
-        deltaCol: NM > 1 ? ((o.downGood ? dd <= 0 : dd >= 0) ? GREEND : REDD) : FAINT,
-      };
+    // ══ the next chapter — objectives, findings & recommendations ══
+    const neverRefi = owned.filter(p => p.cost > 0 && !(p.refi > 0));
+    const neverRefiCost = neverRefi.reduce((s, p) => s + p.cost, 0);
+    const dRankAll = cfDoors.map(d => ({ d, v: dKept(d) })).sort((a, b) => a.v - b.v);
+    const bleed = dRankAll.filter(x => x.v < -0.005);
+    const bleedSum = bleed.reduce((s, x) => s + x.v, 0);
+    const planChips = [
+      { k: 'THE PLAN · REFINANCE PULLS THE CAPITAL BACK OUT', v: neverRefi.length ? neverRefi.length + ' doors never refinanced · ' + fK(neverRefiCost) + ' cost all ours' : 'every costed door has been refinanced', dot: neverRefi.length ? GOLD : GREEN2, bg: '#FBFAF6', bd: '#EDEBE2', href: invHref, tip: 'The game plan: buy, fix, refinance the capital back out. The Investments watchlist prices each candidate.' },
+      { k: 'THE PLAN · EVERY DOOR CASH-POSITIVE', v: bleed.length ? bleed.length + ' doors consumed ' + fK(Math.abs(bleedSum)) + ' of cash this window' : 'every ledgered door kept cash this window', dot: bleed.length ? GOLD : GREEN2, bg: '#FBFAF6', bd: '#EDEBE2', href: cfHref, tip: 'Actual window cash, door-grain — the Watchlist runs the standard-formula version with fixes priced' },
+      { k: 'THE PLAN · COLLECT WHAT’S BILLED', v: (curRateLast === null ? '—' : curRateLast.toFixed(1) + '%') + ' of ' + mmyy(lastM) + '’s own bills collected · target ' + CE_TARGET + '%', dot: curRateLast !== null && curRateLast >= CE_TARGET ? GREEN2 : curRateLast !== null && curRateLast >= 85 ? GOLD : '#A03E28', bg: '#FBFAF6', bd: '#EDEBE2', href: collHref, tip: 'FIFO current-billing rate — the manager’s scorecard on the Collections page' },
+    ];
+    const sevSty = s => s === 'red' ? { dot: '#A03E28', kcol: REDD, col: REDD, bg: '#FBF0ED', bd: '#EAD1C8' } : s === 'gold' ? { dot: '#C9A45C', kcol: GOLDD, col: '#7A6A2F', bg: '#FBF6EA', bd: '#EAD9C0' } : { dot: '#2E7D54', kcol: GREEND, col: GREEND, bg: '#F2F7F0', bd: '#D6E4D2' };
+    const under = owned.filter(p => p.value > 0 && debtAt(p.door, lastM) > p.value);
+    const underSorted = under.slice().sort((a, b) => (debtAt(b.door, lastM) / b.value) - (debtAt(a.door, lastM) / a.value));
+    const mkFind = (id, sev, title, big, finding, rec, href, linkLab, evid, evFoot) => {
+      const st = sevSty(sev);
+      const isOpen = S.fOpen === id;
+      return Object.assign({}, st, {
+        title, big, finding, rec, href, linkLab,
+        exp: isOpen && evid.length > 0,
+        chev: evid.length ? (isOpen ? '▾ close' : '▸ evidence') : '',
+        chevCol: evid.length ? (isOpen ? GOLDD : '#B9C2D2') : 'transparent',
+        onExp: () => this.setState({ fOpen: isOpen ? null : id }),
+        evid, evFoot: evFoot || '',
+      });
     };
-    const trCharts = [
-      mkChart('CHARGED vs COLLECTED', collMs, GOLDD, 'gold = collected · blue = charged — the gap is the month’s uncollected rent', { series2: chgMs }),
-      mkChart('NET INCOME · GL', niM, '#16233A', 'the books’ monthly verdict — May carries the owner’s collection-loss corrections'),
-      mkChart('CASH KEPT', keptM, '#2E7D54', 'after every cost and the banks — the number that compounds'),
-      mkChart('DEBT OUTSTANDING', debtMs, '#B04A33', 'loans engine, owned scope — principal and payoffs pull it down', { downGood: true }),
-    ];
-
-    // ══ what needs attention ══
-    let laggN = 0, laggSum = 0;
-    for (const d of cfDoors) for (const t of DOORS[d].tenants) { const c = t.close[lastI]; if (c > 0.005) { laggN++; laggSum += c; } }
-    const under = owned.filter(p => p.value > 0 && debtOf(p.door) > p.value);
-    const worstU = under.slice().sort((a, b) => (debtOf(b.door) / b.value) - (debtOf(a.door) / a.value))[0] || null;
-    const addM2 = (ym, n) => { const y = +ym.slice(0, 4), m0 = +ym.slice(5, 7) - 1 + n; return (y + Math.floor(m0 / 12)) + '-' + String(m0 % 12 + 1).padStart(2, '0'); };
-    const maturedLoans = (LD.loans || []).filter(l => l.start && l.term && addM2(l.start, l.term) <= lastM);
-    const matDoors = maturedLoans.flatMap(l => Object.keys(LD.doors).filter(d => (LD.doors[d].loans || []).includes(l.id)));
-    const matOut = matDoors.reduce((s, d) => s + (LD.doors[d].monthly[lastM] ? LD.doors[d].monthly[lastM].close : 0), 0);
-    const wcCard = (title, big, sub, href, linkLab, severity) => ({
-      title, big, sub, href, linkLab,
-      kcol: severity === 'red' ? REDD : severity === 'gold' ? GOLDD : GREEND,
-      col: severity === 'red' ? REDD : severity === 'gold' ? '#7A6A2F' : GREEND,
-      bg: severity === 'red' ? '#FBF0ED' : severity === 'gold' ? '#FBF6EA' : '#F2F7F0',
-      bd: severity === 'red' ? '#EAD1C8' : severity === 'gold' ? '#EAD9C0' : '#D6E4D2',
-    });
-    const watchCards = [
-      wcCard('Still owed by tenants', fN(laggSum), laggN + ' tenant' + (laggN === 1 ? '' : 's') + ' carry a balance at ' + mmyy(lastM) + ' — aging, patterns and every name on the Collections page', './collections.dc.html' + (selM.length ? mQ + entAmp : entQ), 'COLLECTIONS →', laggSum > 0.005 ? 'gold' : 'green'),
-      wcCard('Underwater doors', String(under.length), under.length ? 'debt above value · worst: ' + worstU.door + ' at ' + Math.round(debtOf(worstU.door) / worstU.value * 100) + '% LTV — mostly county-valued, ARVs may lift them' : 'every valued door carries equity', './investments.dc.html' + entQ, 'INVESTMENTS →', under.length ? 'red' : 'green'),
-      wcCard('Notes past maturity', String(maturedLoans.length), maturedLoans.length ? maturedLoans.map(l => l.displayId + ' (' + l.lender + ')').join(' · ') + ' — carrying ' + fN(matOut) + ' · payoff/extension row pending' : 'no matured notes carrying balance', './loans.dc.html', 'LOANS →', maturedLoans.length ? 'red' : 'green'),
-      wcCard('Doors without valuation', String(unvalued.length), unvalued.length ? unvalued.slice(0, 3).map(p => p.door).join(' · ') + (unvalued.length > 3 ? ' +' + (unvalued.length - 3) + ' more' : '') + ' — excluded from value & equity' : 'every owned door is valued', './investments.dc.html' + entQ, 'INVESTMENTS →', unvalued.length ? 'gold' : 'green'),
-    ];
+    const findCards = [];
+    findCards.push(mkFind('mat', matured.length ? 'red' : 'green', 'Notes past maturity', matured.length ? fN(maturedSum) : 'Clear',
+      matured.length ? matured.map(r => noteName(r.l) + ' matured ' + mmyy(r.mat) + ' still carrying ' + fN(r.close)).join(' · ') + '.' : 'No matured note is carrying a balance at ' + mmyy(lastM) + '.',
+      matured.length ? 'Agree payoff or extension with the lender now — every month adds ' + (matured.length === 1 ? 'interest at ' + (matured[0].l.rate * 100).toFixed(2) + '%' : 'hard-money interest') + '. A release row locks the ledger the day it settles.' : 'Nothing to do — the radar below stays on watch.',
+      './loans.dc.html', 'LOANS →',
+      matured.map(r => ({ k: noteName(r.l) + ' · matured ' + mmyy(r.mat), v: fN(r.close), vcol: REDD, href: './loans.dc.html?loan=' + esc(r.l.id), lab: 'LOANS →' })), ''));
+    findCards.push(mkFind('due', upcoming.length ? (upcoming[0] && upcoming[0].mat <= addM2(lastM, 3) ? 'red' : 'gold') : 'green', 'Balloons due within 12 months', upcoming.length ? fN(upSum) : 'Clear',
+      upcoming.length ? upcoming.length + ' notes mature by ' + mmyy(horizon12) + (upcoming[0] ? ' — first: ' + noteName(upcoming[0].l) + ' ' + fN(upcoming[0].close) + ' in ' + mmyy(upcoming[0].mat) : '') + '.' : 'No note matures within 12 months of ' + mmyy(lastM) + '.',
+      upcoming.length ? 'Line up refinance or payoff before each balloon — the Loans page’s refinance-breakeven section prices every candidate at today’s rate.' : 'Nothing due — revisit after the next loans publish.',
+      './loans.dc.html', 'LOANS →',
+      upcoming.slice(0, 8).map(r => ({ k: noteName(r.l) + ' · ' + mmyy(r.mat), v: fN(r.close), vcol: NAVY, href: './loans.dc.html?loan=' + esc(r.l.id), lab: 'LOANS →' })),
+      upcoming.length > 8 ? '+' + (upcoming.length - 8) + ' more within the horizon' : ''));
+    findCards.push(mkFind('owe', laggSum > 0.005 ? 'gold' : 'green', 'Tenants still owe', laggSum > 0.005 ? fN(laggSum) : 'Clear',
+      laggSum > 0.005 ? laggN + ' tenants carry a balance at ' + mmyy(lastM) + '; ' + fN(agingRe[3]) + ' of it is 90+ days old' + (agingRe[3] > 0.005 && laggList.length ? '' : '') + '. Current-billing collection ran ' + (curRateLast === null ? '—' : curRateLast.toFixed(1) + '%') + ' in ' + mmyy(lastM) + ' against the ' + CE_TARGET + '% target.' : 'No tenant carries a balance at ' + mmyy(lastM) + '.',
+      laggSum > 0.005 ? 'Run the Collections focus list — the smallest set of tenants that closes the gap to target; advance payers are never chased.' : 'Keep the focus list empty.',
+      collHref, 'COLLECTIONS →',
+      laggList.slice(0, 6).map(t => ({ k: t.tenant + ' · ' + t.prop, v: fN(t.bal), vcol: REDD, href: './collections.dc.html?tenant=' + esc(t.tenant), lab: 'LEDGER →' })),
+      laggList.length > 6 ? '+' + (laggList.length - 6) + ' more — every name on the Collections page' : ''));
+    findCards.push(mkFind('und', under.length ? 'red' : 'green', 'Underwater doors', String(under.length),
+      under.length ? 'Debt above policy value on ' + under.length + ' doors — worst ' + underSorted[0].door + ' at ' + Math.round(debtAt(underSorted[0].door, lastM) / underSorted[0].value * 100) + '% LTV. Mostly county-valued.' : 'Every valued door carries equity at ' + mmyy(lastM) + '.',
+      under.length ? 'Order ARVs or appraisals for the cluster — a true after-repair value may lift them above water; the ones that stay under belong on the exit list.' : 'Nothing under water.',
+      invHref, 'INVESTMENTS →',
+      underSorted.slice(0, 6).map(p => ({ k: p.door + ' · ' + p.entity + ' · ' + (p.valueSource || 'value'), v: Math.round(debtAt(p.door, lastM) / p.value * 100) + '% LTV', vcol: REDD, href: './investments.dc.html?door=' + esc(p.door), lab: 'INV →' })),
+      under.length > 6 ? '+' + (under.length - 6) + ' more in the cluster' : ''));
+    findCards.push(mkFind('ble', bleed.length ? 'gold' : 'green', 'Doors that consumed cash', bleed.length ? String(bleed.length) : 'Clear',
+      bleed.length ? 'These doors took in less cash than they cost to run and finance this window — ' + fN(Math.abs(bleedSum)) + ' consumed in total.' : 'Every ledgered door kept cash this window.',
+      bleed.length ? 'Open the conversation list: rent, turns, or exit — the Investments watchlist prices each fix and the solve simulator totals what clears.' : 'Keep them all above water.',
+      cfHref, 'CASH FLOW →',
+      bleed.slice(0, 6).map(x => ({ k: x.d + ' · ' + DOORS[x.d].entity, v: fN(x.v), vcol: REDD, href: './cashflow.dc.html?door=' + esc(x.d), lab: 'CF →' })),
+      bleed.length > 6 ? '+' + (bleed.length - 6) + ' more — ranked worst-first' : ''));
+    findCards.push(mkFind('unv', unvalued.length ? 'gold' : 'green', 'Doors without a valuation', unvalued.length ? String(unvalued.length) : 'Clear',
+      unvalued.length ? unvalued.slice(0, 3).map(p => p.door).join(' · ') + (unvalued.length > 3 ? ' +' + (unvalued.length - 3) + ' more' : '') + (unvalued.length === 1 ? ' sits outside equity and margin-of-safety today.' : ' sit outside equity and margin-of-safety today.') : 'Every owned door in scope carries a value.',
+      unvalued.length ? 'Add a value in the Balance Sheet workbook (ARV, county, or appraisal) and republish — equity is understated until then.' : 'Valuation coverage is complete.',
+      invHref, 'INVESTMENTS →',
+      unvalued.slice(0, 6).map(p => ({ k: p.door + ' · ' + p.entity, v: 'no value', vcol: GOLDD, href: './investments.dc.html?door=' + esc(p.door), lab: 'INV →' })), ''));
+    findCards.push(mkFind('good', 'green', 'What’s working', rateAll.rate === null ? '—' : rateTxt,
+      'Collections at ' + rateTxt + ' for the window' + (curRateW !== null ? ' (' + curRateW.toFixed(1) + '% of the window’s own bills)' : '') + ' · ' + fK(keptW) + ' cash kept · equity cushion ' + (mosPct !== null ? mosPct.toFixed(1) + '%' : '—') + (levToday !== null && levPurch !== null && levToday < levPurch ? ' · leverage down from ' + levPurch.toFixed(1) + '× to ' + levToday.toFixed(1) + '×' : '') + '.',
+      'Publish June when the AR lands — it confirms the May write-off sweep and keeps the streak honest.',
+      collHref, 'COLLECTIONS →', [], ''));
+    const sevRank = { red: 0, gold: 1, green: 2 };
+    findCards.sort((a, b) => sevRank[a.dot === '#A03E28' ? 'red' : a.dot === '#C9A45C' ? 'gold' : 'green'] - sevRank[b.dot === '#A03E28' ? 'red' : b.dot === '#C9A45C' ? 'gold' : 'green']);
     const pendChips = ['June AR column (confirms May write-offs)', 'Bank balances (cash tie-out)', 'Contributions & distributions', 'Sale proceeds & purchases (investing band)', 'Budget standards (compare slot)', 'GL memo & vendor columns'].map(t => ({ t }));
-    const watchFoot = 'Cards recompute from the same published data as the pages behind them — the numbers here can never disagree with the detail views. Owed-by-tenants counts every positive tenant balance at the window end (the Collections laggards list, name for name). Underwater compares loans-engine debt to the policy value. Matured notes derive from each note’s start + term against the window end.';
 
-    const periodLab = spanLab + (allEnts ? '' : ' · ' + feAct.join(' + '));
+    // ══ checks & balances — live ties ══
+    const tieRows = [];
+    const tie = (k, lhs, rhs, eq, eps) => tieRows.push({ k, eq, mark: Math.abs(lhs - rhs) <= (eps || 0.02) ? '✓' : 'Δ', mcol: Math.abs(lhs - rhs) <= (eps || 0.02) ? '#67B587' : '#E08A70' });
+    const entKeptSum = rowsE.filter(r => entOn(r.e)).reduce((s, r) => s + r.eKept, 0) + companyKept;
+    tie('ENTITY ROWS Σ CASH KEPT', entKeptSum, keptW, 'Σ entity rows ' + (allEnts ? '+ company row ' : '') + '= ' + fC(entKeptSum) + ' = the Cash Flow bottom line ' + fC(keptW));
+    tie('AGE OF DUES Σ', sum(agingRe), laggSum, fC(agingRe[0]) + ' + ' + fC(agingRe[1]) + ' + ' + fC(agingRe[2]) + ' + ' + fC(agingRe[3]) + ' = ' + fC(sum(agingRe)) + ' = still owed ' + fC(laggSum));
+    tie('CASH RAIL CHAIN', netOpW - dsCashW, keptW, 'net operating ' + fC(netOpW) + ' − debt service ' + fC(dsCashW) + ' = cash kept ' + fC(keptW));
+    tie('BRIDGE CLOSES', niW - prinCashW + wedge, keptW, 'net profit ' + fC(niW) + ' − principal ' + fC(prinCashW) + ' + timing ' + fC(wedge) + ' = ' + fC(keptW));
+    if (allEnts) {
+      tie('BANKS vs BALANCE SHEET', loansOutClose, debtW + excludedDebt, 'all notes ' + fC(loansOutClose) + ' = owned-scope debt ' + fC(debtW) + ' + held-for-sale ' + fC(excludedDebt));
+      tie('EVERY BANK DOLLAR', drawnAll, ownAll + saleAll + refiAll + outAll, 'drawn ' + fC(drawnAll) + ' = repaid by us ' + fC(ownAll) + ' + sale-settled ' + fC(saleAll) + ' + refi-funded ' + fC(refiAll) + ' + outstanding ' + fC(outAll));
+      tie('DEBT WALK CLOSES', loansOutOpen + borrowW - schedPrinW - prepayW - releaseW - payoffW, loansOutClose, fC(loansOutOpen) + ' + ' + fC(borrowW) + ' − ' + fC(schedPrinW + prepayW + releaseW + payoffW) + ' = ' + fC(loansOutClose));
+    }
+    const tieFoot = 'Cross-dataset identities recomputed on every render — the same gates the harness pins to the cent. ' + (allEnts ? 'All seven ties are in view.' : 'Note-grain ties (banks vs balance sheet, drawn identity, debt walk) are portfolio-wide and appear when all entities are in view.');
 
-    return {
+    return Object.assign({
       ready: true, loading: false, loadError: false, retryLoad: () => this.loadData(), stopProp,
-      storyLine, scopeLine, asOfLine, periodLab,
-      filters, hasActive, onReset,
-      heroTiles, pipeCash, pipeAccr, pipeFoot,
+      storyLine, scopeLine, asOfLine,
+      filters, hasActive, onReset, jumpChips,
+      heroTiles,
+      a1Links, a1Line, a1Rail, agTot, agTiles, agFoot,
+      a2Links, a2Line, a2Span: spanLab, dollarBands, dollarFoot, opexTot, opexN, onXAll, xAllLab, opexRows, opexFoot, bankChips, bankFoot, costCompare,
+      a3Links, a3Line, pipeCash, pipeAccr, bridge, bridgeFoot,
+      a4Links, a4Line, a4Span, posRail, debtWalk, debtWalkFoot, mrScope, mrSum, matRows, mrFoot, drawnRows, drawnFoot,
+      a5Links, a5Line, invRail, retTiles, levChips, a5Foot,
       esSub, esSortChips, entRows, esFoot,
-      trCharts, watchCards, pendChips, watchFoot,
-    };
+      planChips, findCards, pendChips, tieRows, tieFoot,
+    }, flatCh('c1', ch1), flatCh('c2', ch2), flatCh('c3', ch3), flatCh('c4', ch4));
   }
 }
 </script>
