@@ -275,6 +275,280 @@ input:focus{outline:2px solid #C9A45C;outline-offset:1px}
       <div style="margin-top:12px;padding-top:10px;border-top:1px solid #F0EEE7;font-size:10.5px;color:#9AA3B5;line-height:1.65">{{ rwFoot }}</div>
     </div>
 
+    <!-- ══ Collection efficiency — the manager's scorecard (owner 2026-07-20) ══ -->
+    <div style="margin-top:16px;background:#FFFFFF;border:1px solid #E5E3DC;border-radius:16px;padding:22px 26px">
+      <div style="display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:10px">
+        <div>
+          <div style="font-family:'Source Serif 4',Georgia,serif;font-size:18px;font-weight:600;color:#16233A">Collection efficiency — the manager&rsquo;s scorecard</div>
+          <div style="margin-top:3px;font-size:11.5px;color:#8A93A6">{{ ceSub }}</div>
+        </div>
+        <div style="display:flex;align-items:center;gap:8px;flex-wrap:wrap">
+          <span style="font-size:9.5px;letter-spacing:0.08em;font-weight:800;color:#96742F">RATE METHOD</span>
+          <sc-for list="{{ ceModeChips }}" as="mc" hint-placeholder-count="2">
+            <div onClick="{{ mc.onClick }}" title="{{ mc.tip }}" style-hover="border-color:#C9A45C" style="padding:7px 13px;border-radius:9px;border:1.5px solid {{ mc.bd }};background:{{ mc.bg }};font-size:10.5px;font-weight:800;color:{{ mc.col }};cursor:pointer;white-space:nowrap">{{ mc.label }}</div>
+          </sc-for>
+          <span style="width:1px;height:18px;background:#E5E3DC"></span>
+          <span style="font-size:9.5px;letter-spacing:0.08em;font-weight:800;color:#2A6F4E">TARGET</span>
+          <input value="{{ ceTgtVal }}" onInput="{{ onCeTgt }}" style="width:52px;padding:7px 8px;border-radius:9px;border:1.5px solid #C9DCC9;background:#F7FAF6;font-size:12px;font-weight:800;color:#2A6F4E;font-family:inherit;text-align:center" title="Set the collection manager's target rate — the focus list recomputes to close the gap">
+          <span style="font-size:11px;font-weight:800;color:#2A6F4E">%</span>
+        </div>
+      </div>
+
+      <sc-if value="{{ ceOff }}" hint-placeholder-val="{{ false }}">
+        <div style="margin-top:14px;padding:18px;text-align:center;background:#FBF6EA;border:1px solid #E2D9C4;border-radius:12px;font-size:12px;color:#96742F;font-weight:600">Collection-efficiency data pending — republish cf-data.json with the FIFO engine (2026-07-20) to light this section up.</div>
+      </sc-if>
+
+      <sc-if value="{{ ceOn }}" hint-placeholder-val="{{ false }}">
+        <!-- KPI strip -->
+        <div style="margin-top:14px;display:grid;grid-template-columns:repeat(5,1fr);gap:10px">
+          <sc-for list="{{ ceKpis }}" as="ck" hint-placeholder-count="5">
+            <div title="{{ ck.tip }}" style="background:{{ ck.bg }};border:1px solid {{ ck.bd }};border-radius:12px;padding:11px 13px">
+              <div style="font-size:9px;letter-spacing:0.06em;font-weight:800;color:#5E6B82;text-transform:uppercase;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">{{ ck.label }}</div>
+              <div style="margin-top:4px;font-family:'Source Serif 4',Georgia,serif;font-size:18px;font-weight:600;color:{{ ck.col }};font-variant-numeric:tabular-nums;white-space:nowrap">{{ ck.val }}</div>
+              <div style="margin-top:2px;font-size:9.5px;color:#8A93A6;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">{{ ck.sub }}</div>
+            </div>
+          </sc-for>
+        </div>
+
+        <!-- the split identity — FIFO re-sums to the owner formula, to the cent -->
+        <div style="margin-top:12px;padding:11px 16px;background:#FBFAF6;border:1px solid #EDEBE2;border-radius:12px;display:flex;align-items:center;gap:9px;flex-wrap:wrap;font-variant-numeric:tabular-nums">
+          <span style="font-size:9.5px;letter-spacing:0.08em;font-weight:800;color:#96742F">{{ ceIdLab }}</span>
+          <span style="font-size:12.5px;font-weight:700;color:#96742F">{{ ceIdCur }}</span><span style="font-size:10.5px;color:#8A93A6">to this month&rsquo;s charges</span>
+          <span style="font-size:12px;color:#8A93A6">+</span>
+          <span style="font-size:12.5px;font-weight:700;color:#3D64A8">{{ ceIdArr }}</span><span style="font-size:10.5px;color:#8A93A6">old dues cured</span>
+          <span style="font-size:12px;color:#8A93A6">−</span>
+          <span style="font-size:12.5px;font-weight:700;color:#2A6F4E">{{ ceIdCrp }}</span><span style="font-size:10.5px;color:#8A93A6">credit-created advances</span>
+          <span style="font-size:12px;color:#8A93A6">=</span>
+          <span style="font-size:12.5px;font-weight:800;color:#16233A">{{ ceIdAct }}</span><span style="font-size:10.5px;color:#8A93A6">actual collection (your formula) — to the cent</span>
+        </div>
+
+        <div style="margin-top:14px;display:grid;grid-template-columns:minmax(380px,3fr) minmax(300px,2fr);gap:20px;align-items:start">
+          <!-- LEFT: the two-method trend, then aging -->
+          <div>
+            <div style="display:flex;gap:14px;flex-wrap:wrap;align-items:center">
+              <sc-for list="{{ ceLegend }}" as="lg" hint-placeholder-count="4">
+                <span title="{{ lg.tip }}" style="font-size:10.5px;color:#5E6B82;display:flex;align-items:center;gap:5px;font-weight:{{ lg.fw }}"><span style="width:14px;height:0;border-top:{{ lg.sw }};display:inline-block"></span>{{ lg.label }} <span style="color:#16233A;font-weight:800">{{ lg.val }}</span></span>
+              </sc-for>
+            </div>
+            <div style="margin-top:10px;position:relative">
+              <svg viewBox="0 0 640 200" preserveAspectRatio="none" style="width:100%;height:200px;display:block;overflow:visible">
+                <sc-for list="{{ ceGrid }}" as="gl" hint-placeholder-count="4">
+                  <line x1="40" y1="{{ gl.y }}" x2="632" y2="{{ gl.y }}" stroke="#EFEDE4" stroke-width="1"></line>
+                </sc-for>
+                <sc-if value="{{ ceTgtOn }}" hint-placeholder-val="{{ false }}">
+                  <line x1="40" y1="{{ ceTgtY }}" x2="632" y2="{{ ceTgtY }}" stroke="#2A6F4E" stroke-width="1.4" stroke-dasharray="6 4" opacity="0.75"></line>
+                </sc-if>
+                <sc-if value="{{ ceArrOn }}" hint-placeholder-val="{{ false }}">
+                  <polyline points="{{ cePathArr }}" fill="none" stroke="#B04A33" stroke-width="1.5" stroke-dasharray="3 4" stroke-linejoin="round" stroke-linecap="round" opacity="0.8"></polyline>
+                </sc-if>
+                <polyline points="{{ cePathDim }}" fill="none" stroke="{{ ceDimCol }}" stroke-width="1.8" stroke-linejoin="round" stroke-linecap="round" opacity="0.5"></polyline>
+                <polyline points="{{ cePathMain }}" fill="none" stroke="{{ ceMainCol }}" stroke-width="2.5" stroke-linejoin="round" stroke-linecap="round"></polyline>
+                <sc-for list="{{ cePts }}" as="cp" hint-placeholder-count="10">
+                  <circle cx="{{ cp.cx }}" cy="{{ cp.cy }}" r="{{ cp.r }}" fill="{{ cp.fill }}" stroke="{{ cp.stroke }}" stroke-width="1.6"></circle>
+                </sc-for>
+                <sc-for list="{{ ceHits }}" as="ch" hint-placeholder-count="5">
+                  <rect onClick="{{ ch.onClick }}" x="{{ ch.x }}" y="0" width="{{ ch.w }}" height="200" fill="transparent" style="cursor:pointer"></rect>
+                </sc-for>
+              </svg>
+              <sc-for list="{{ ceGridLabs }}" as="gv" hint-placeholder-count="4">
+                <span style="position:absolute;left:0;top:{{ gv.topPct }};transform:translateY(-50%);font-size:8.5px;font-weight:700;color:#9AA3B5;font-variant-numeric:tabular-nums;pointer-events:none">{{ gv.v }}</span>
+              </sc-for>
+              <sc-for list="{{ ceLabs }}" as="cl2" hint-placeholder-count="10">
+                <span style="position:absolute;left:{{ cl2.leftPct }};top:{{ cl2.topPct }};transform:translate(-50%,{{ cl2.dy }});font-size:9px;font-weight:800;color:{{ cl2.col }};font-variant-numeric:tabular-nums;white-space:nowrap;pointer-events:none">{{ cl2.v }}</span>
+              </sc-for>
+              <sc-if value="{{ ceTgtOn }}" hint-placeholder-val="{{ false }}">
+                <span style="position:absolute;right:0;top:{{ ceTgtTopPct }};transform:translateY(-115%);font-size:8.5px;font-weight:800;letter-spacing:0.05em;color:#2A6F4E;pointer-events:none">TARGET {{ ceTgtLab }}</span>
+              </sc-if>
+            </div>
+            <div style="margin-top:5px;display:flex;justify-content:space-between;padding:0 6px 0 40px">
+              <sc-for list="{{ ceMonths }}" as="cmn" hint-placeholder-count="5">
+                <span onClick="{{ cmn.onClick }}" style-hover="color:#96742F" style="font-size:10px;font-weight:{{ cmn.fw }};color:{{ cmn.col }};cursor:pointer">{{ cmn.m }}</span>
+              </sc-for>
+            </div>
+            <div style="margin-top:4px;font-size:10px;color:#9AA3B5">{{ ceChartFoot }}</div>
+
+            <!-- receivables by true age of charge -->
+            <div style="margin-top:14px">
+              <div style="display:flex;justify-content:space-between;align-items:baseline;gap:8px;flex-wrap:wrap">
+                <span style="font-size:9.5px;letter-spacing:0.09em;font-weight:800;color:#96742F">{{ ceAgLab }}</span>
+                <span onClick="{{ onCeRoll }}" style-hover="color:#16233A" style="font-size:10px;font-weight:800;color:#3D64A8;cursor:pointer">{{ ceRollTog }}</span>
+              </div>
+              <div style="margin-top:8px;display:grid;grid-template-columns:repeat(5,1fr);gap:8px">
+                <sc-for list="{{ ceAgTiles }}" as="ca" hint-placeholder-count="5">
+                  <div onClick="{{ ca.onClick }}" title="{{ ca.tip }}" style-hover="border-color:#C9A45C" style="border:1.5px solid {{ ca.bd }};background:{{ ca.bg }};border-radius:10px;padding:9px 11px;cursor:pointer">
+                    <div style="font-size:8.5px;letter-spacing:0.04em;font-weight:800;color:{{ ca.kc }};white-space:nowrap">{{ ca.k }}</div>
+                    <div style="margin-top:3px;font-size:14.5px;font-weight:800;color:{{ ca.col }};font-variant-numeric:tabular-nums;white-space:nowrap">{{ ca.v }}</div>
+                    <div style="font-size:9px;color:#8A93A6;white-space:nowrap">{{ ca.n }}</div>
+                    <div style="font-size:9px;font-weight:700;color:{{ ca.dcol }};font-variant-numeric:tabular-nums;white-space:nowrap">{{ ca.delta }}</div>
+                    <div style="margin-top:4px;height:3px;border-radius:2px;background:#F4F2EA"><div style="height:3px;border-radius:2px;background:{{ ca.barC }};width:{{ ca.shareW }}"></div></div>
+                  </div>
+                </sc-for>
+              </div>
+              <div style="margin-top:5px;font-size:10px;color:#9AA3B5">{{ ceAgNote }}</div>
+
+              <sc-if value="{{ ceRollOn }}" hint-placeholder-val="{{ false }}">
+                <div style="margin-top:10px;background:#FBFAF6;border:1px solid #EDEBE2;border-radius:11px;padding:11px 14px">
+                  <div style="font-size:9.5px;letter-spacing:0.08em;font-weight:800;color:#96742F">{{ ceRollLab }}</div>
+                  <div style="margin-top:7px;display:flex;padding:2px 0 4px;font-size:8px;letter-spacing:0.05em;font-weight:800;color:#8A93A6;border-bottom:1px solid #EDEBE2">
+                    <span style="flex:1.3">FROM BUCKET</span><span style="flex:1;text-align:right">WAS OPEN</span><span style="flex:1;text-align:right">COLLECTED</span><span style="flex:1;text-align:right">FORGIVEN</span><span style="flex:1;text-align:right">WRITTEN OFF</span><span style="flex:1;text-align:right">STILL OPEN</span>
+                  </div>
+                  <sc-for list="{{ ceRollRows }}" as="rr" hint-placeholder-count="6">
+                    <div style="display:flex;padding:4px 0;font-size:10.5px;color:#2A3550;font-variant-numeric:tabular-nums;border-bottom:1px solid #F4F2EA">
+                      <span style="flex:1.3;font-weight:800;color:{{ rr.kc }}">{{ rr.k }}</span>
+                      <span style="flex:1;text-align:right">{{ rr.open }}</span>
+                      <span style="flex:1;text-align:right;color:#96742F;font-weight:700">{{ rr.coll }}</span>
+                      <span style="flex:1;text-align:right;color:#2A6F4E">{{ rr.cred }}</span>
+                      <span style="flex:1;text-align:right;color:#6B4A3C">{{ rr.wo }}</span>
+                      <span style="flex:1;text-align:right;font-weight:700;color:{{ rr.stillCol }}">{{ rr.still }}</span>
+                    </div>
+                  </sc-for>
+                  <div style="margin-top:6px;font-size:9.5px;color:#9AA3B5;line-height:1.55">{{ ceRollFoot }}</div>
+                </div>
+              </sc-if>
+
+              <sc-if value="{{ ceDrillOn }}" hint-placeholder-val="{{ false }}">
+                <div style="margin-top:10px;background:#FBFAF6;border:1px solid #EDEBE2;border-radius:11px;padding:11px 14px" onClick="{{ stopProp }}">
+                  <div style="display:flex;justify-content:space-between;align-items:baseline;gap:8px;flex-wrap:wrap">
+                    <span style="font-size:9.5px;letter-spacing:0.08em;font-weight:800;color:#B04A33">{{ ceDrillLab }}</span>
+                    <span style="font-size:10px;color:#8A93A6;font-variant-numeric:tabular-nums">{{ ceDrillSum }}</span>
+                  </div>
+                  <sc-for list="{{ ceDrillRows }}" as="dr" hint-placeholder-count="10">
+                    <div style="margin-top:6px;border:1px solid #EDEBE2;border-radius:9px;padding:7px 10px;background:#FFFFFF">
+                      <div style="display:flex;justify-content:space-between;align-items:baseline;gap:8px">
+                        <span style="min-width:0"><span style="font-size:11.5px;font-weight:700;color:#16233A">{{ dr.tenant }}</span><span style="font-size:10px;color:#8A93A6"> · {{ dr.prop }}</span></span>
+                        <span style="font-size:12px;font-weight:800;color:#B04A33;font-variant-numeric:tabular-nums;white-space:nowrap">{{ dr.amt }}</span>
+                      </div>
+                      <div style="margin-top:4px;display:flex;justify-content:space-between;align-items:center;gap:8px;flex-wrap:wrap">
+                        <span style="font-size:9.5px;color:#5E6B82">{{ dr.chargeLab }} · <b style="color:{{ dr.daysCol }}">{{ dr.daysLab }}</b></span>
+                        <span style="display:flex;gap:5px;align-items:center">
+                          <sc-for list="{{ dr.badges }}" as="db" hint-placeholder-count="2">
+                            <span style="font-size:8px;font-weight:800;letter-spacing:0.04em;padding:2px 7px;border-radius:99px;background:{{ db.bg }};color:{{ db.col }}">{{ db.t }}</span>
+                          </sc-for>
+                          <a href="{{ dr.txHref }}" style="font-size:8.5px;font-weight:800;letter-spacing:0.04em;color:#96742F;text-decoration:none;border:1px solid #E2D9C4;border-radius:99px;padding:2px 8px">TXN →</a>
+                          <span onClick="{{ dr.onChase }}" style-hover="background:#F6ECD9" style="font-size:8.5px;font-weight:800;letter-spacing:0.04em;color:#96742F;cursor:pointer;border:1px solid #E2D9C4;border-radius:99px;padding:2px 8px">LEDGER ▾</span>
+                        </span>
+                      </div>
+                    </div>
+                  </sc-for>
+                  <sc-if value="{{ ceDrillMoreShow }}" hint-placeholder-val="{{ false }}">
+                    <div onClick="{{ onCeDrillMore }}" style-hover="background:#F6ECD9" style="margin-top:7px;text-align:center;padding:6px;border:1px solid #D8D4C8;border-radius:8px;font-size:10.5px;font-weight:700;color:#96742F;cursor:pointer">{{ ceDrillMoreLab }}</div>
+                  </sc-if>
+                </div>
+              </sc-if>
+            </div>
+          </div>
+
+          <!-- RIGHT: target gap + focus list, then the tenant roster -->
+          <div style="border-left:1px solid #F0EEE7;padding-left:20px">
+            <div style="background:{{ ceFocusBg }};border:1.5px solid {{ ceFocusBd }};border-radius:12px;padding:13px 15px">
+              <div style="display:flex;justify-content:space-between;align-items:baseline;gap:8px;flex-wrap:wrap">
+                <span style="font-size:9.5px;letter-spacing:0.08em;font-weight:800;color:{{ ceFocusCol }}">{{ ceFocusLab }}</span>
+                <span style="font-size:10px;color:#8A93A6">{{ ceFocusCap }}</span>
+              </div>
+              <div style="margin-top:6px;font-size:11.5px;color:#2A3550;line-height:1.5">{{ ceFocusLine }}</div>
+              <div style="margin-top:8px;height:7px;border-radius:4px;background:#EFEDE4;overflow:hidden"><div style="height:7px;border-radius:4px;background:{{ ceFocusBarC }};width:{{ ceFocusBarW }}"></div></div>
+              <sc-for list="{{ ceFocusRows }}" as="fr" hint-placeholder-count="7">
+                <div onClick="{{ fr.onClick }}" style-hover="border-color:#C9A45C" style="margin-top:6px;border:1px solid {{ fr.bd }};border-radius:9px;padding:7px 10px;background:{{ fr.bg }};cursor:pointer;opacity:{{ fr.op }}">
+                  <div style="display:flex;justify-content:space-between;align-items:baseline;gap:8px">
+                    <span style="min-width:0;display:flex;align-items:baseline;gap:6px">
+                      <span style="font-size:10px;font-weight:800;color:{{ fr.rkCol }}">{{ fr.rk }}</span>
+                      <span style="min-width:0"><span style="font-size:11.5px;font-weight:700;color:#16233A">{{ fr.tenant }}</span><span style="font-size:9.5px;color:#8A93A6"> · {{ fr.prop }}</span></span>
+                    </span>
+                    <span style="font-size:12px;font-weight:800;color:#16233A;font-variant-numeric:tabular-nums;white-space:nowrap">{{ fr.get }}</span>
+                  </div>
+                  <div style="margin-top:3px;display:flex;justify-content:space-between;align-items:center;gap:6px;flex-wrap:wrap">
+                    <span style="display:flex;gap:4px;flex-wrap:wrap">
+                      <sc-for list="{{ fr.badges }}" as="fb2" hint-placeholder-count="2">
+                        <span style="font-size:8px;font-weight:800;letter-spacing:0.04em;padding:2px 7px;border-radius:99px;background:{{ fb2.bg }};color:{{ fb2.col }}">{{ fb2.t }}</span>
+                      </sc-for>
+                    </span>
+                    <span style="font-size:9px;color:{{ fr.cumCol }};font-weight:700;font-variant-numeric:tabular-nums;white-space:nowrap">{{ fr.cumLab }}</span>
+                  </div>
+                </div>
+              </sc-for>
+              <div style="margin-top:8px;font-size:9.5px;color:#9AA3B5;line-height:1.55">{{ ceFocusFoot }}</div>
+            </div>
+
+            <div style="margin-top:14px">
+              <div style="display:flex;justify-content:space-between;align-items:baseline;gap:8px;flex-wrap:wrap">
+                <span style="font-size:10px;letter-spacing:0.09em;font-weight:800;color:#96742F">{{ ceRosterLab }}</span>
+                <span style="font-size:10px;color:#9AA3B5">{{ ceRosterCap }}</span>
+              </div>
+              <div style="margin-top:7px;display:flex;gap:6px;align-items:center;flex-wrap:wrap">
+                <input onInput="{{ onCeQ }}" value="{{ ceQVal }}" placeholder="Search tenant or property…" style="flex:1;min-width:150px;box-sizing:border-box;padding:7px 11px;font-size:11px;font-family:'Libre Franklin',sans-serif;border:1px solid #D8D4C8;border-radius:9px;outline:none;background:#FDFCFA"/>
+                <sc-for list="{{ ceSortChips }}" as="cs" hint-placeholder-count="4">
+                  <div onClick="{{ cs.onClick }}" style-hover="border-color:#C9A45C" style="padding:5px 9px;border-radius:8px;border:1.5px solid {{ cs.bd }};background:{{ cs.bg }};font-size:9px;font-weight:800;color:#2A3550;cursor:pointer;white-space:nowrap">{{ cs.label }}</div>
+                </sc-for>
+              </div>
+              <sc-if value="{{ ceEmpty }}" hint-placeholder-val="{{ false }}">
+                <div style="margin-top:10px;padding:14px;text-align:center;font-size:11px;color:#8A93A6;background:#F8F7F2;border-radius:10px">{{ ceEmptyTxt }}</div>
+              </sc-if>
+              <sc-for list="{{ ceRows }}" as="ce" hint-placeholder-count="9">
+                <div onClick="{{ ce.onClick }}" style-hover="background:#FBFAF6" style="margin-top:6px;border:1px solid {{ ce.bd }};border-radius:10px;padding:8px 10px;cursor:pointer;background:{{ ce.bg }}">
+                  <div style="display:flex;justify-content:space-between;align-items:baseline;gap:8px">
+                    <span style="min-width:0"><span style="font-size:12px;font-weight:700;color:#16233A">{{ ce.tenant }}</span><span style="font-size:10px;color:#8A93A6"> · {{ ce.prop }}</span></span>
+                    <span style="font-size:12.5px;font-weight:800;color:{{ ce.balCol }};font-variant-numeric:tabular-nums;white-space:nowrap">{{ ce.bal }}</span>
+                  </div>
+                  <div style="margin-top:5px;display:flex;justify-content:space-between;align-items:center;gap:8px">
+                    <span style="flex:1;min-width:0">
+                      <span style="display:block;font-size:8.5px;font-weight:800;letter-spacing:0.04em;color:#8A93A6">THIS MONTH {{ ce.curPctLab }}</span>
+                      <span style="display:block;margin-top:2px;height:5px;border-radius:3px;background:#F4F2EA;overflow:hidden"><span style="display:block;height:5px;border-radius:3px;background:#C9A45C;width:{{ ce.curW }}"></span></span>
+                    </span>
+                    <span style="flex:1;min-width:0">
+                      <span style="display:block;font-size:8.5px;font-weight:800;letter-spacing:0.04em;color:#8A93A6">BALANCE AGE</span>
+                      <span style="display:block;margin-top:2px;height:5px;border-radius:3px;background:#F4F2EA;overflow:hidden;display:flex">
+                        <sc-for list="{{ ce.agSeg }}" as="sg" hint-placeholder-count="4">
+                          <span title="{{ sg.tip }}" style="display:block;height:5px;background:{{ sg.c }};width:{{ sg.w }}"></span>
+                        </sc-for>
+                      </span>
+                    </span>
+                  </div>
+                  <div style="margin-top:5px;display:flex;gap:4px;flex-wrap:wrap;align-items:center">
+                    <sc-for list="{{ ce.badges }}" as="cb2" hint-placeholder-count="3">
+                      <span style="font-size:8px;font-weight:800;letter-spacing:0.04em;padding:2px 7px;border-radius:99px;background:{{ cb2.bg }};color:{{ cb2.col }}">{{ cb2.t }}</span>
+                    </sc-for>
+                    <span style="margin-left:auto;font-size:9px;color:#9AA3B5;font-variant-numeric:tabular-nums;white-space:nowrap">{{ ce.sideLab }}</span>
+                  </div>
+                  <sc-if value="{{ ce.open }}" hint-placeholder-val="{{ false }}">
+                    <div style="margin-top:8px;padding:9px 11px;background:#FBFAF6;border:1px solid #EDEBE2;border-radius:9px" onClick="{{ stopProp }}">
+                      <div style="display:flex;padding:2px 0 4px;font-size:8px;letter-spacing:0.05em;font-weight:800;color:#8A93A6;border-bottom:1px solid #EDEBE2">
+                        <span style="flex:0.8">MONTH</span><span style="flex:1;text-align:right">CHARGED</span><span style="flex:1;text-align:right">TO CURRENT</span><span style="flex:1;text-align:right">OLD CURED</span><span style="flex:1;text-align:right">FROM ADV</span><span style="flex:1;text-align:right">CLOSING</span>
+                      </div>
+                      <sc-for list="{{ ce.mini }}" as="cem" hint-placeholder-count="5">
+                        <div style="display:flex;padding:3.5px 0;font-size:10px;color:#2A3550;font-variant-numeric:tabular-nums;border-bottom:1px solid #F4F2EA">
+                          <span style="flex:0.8;font-weight:700">{{ cem.m }}</span><span style="flex:1;text-align:right;color:#3D64A8">{{ cem.chg }}</span><span style="flex:1;text-align:right;color:#96742F;font-weight:700">{{ cem.cur }}</span><span style="flex:1;text-align:right">{{ cem.arr }}</span><span style="flex:1;text-align:right;color:#2A6F4E">{{ cem.adv }}</span><span style="flex:1;text-align:right;font-weight:700;color:{{ cem.closeCol }}">{{ cem.close }}</span>
+                        </div>
+                      </sc-for>
+                      <sc-if value="{{ ce.hasItems }}" hint-placeholder-val="{{ false }}">
+                        <div style="margin-top:7px;font-size:8.5px;letter-spacing:0.05em;font-weight:800;color:#8A93A6">OPEN CHARGES AT {{ ce.itemsMonth }} — OLDEST FIRST, MONEY CURES THE TOP ROW FIRST</div>
+                        <sc-for list="{{ ce.items }}" as="ci" hint-placeholder-count="4">
+                          <div style="display:flex;justify-content:space-between;gap:8px;padding:3px 0;font-size:10px;font-variant-numeric:tabular-nums;border-bottom:1px solid #F4F2EA">
+                            <span style="color:#5E6B82">{{ ci.d }} <span style="font-size:8px;font-weight:800;padding:1px 6px;border-radius:99px;background:{{ ci.bg }};color:{{ ci.col }}">{{ ci.bkt }}</span></span>
+                            <span style="font-weight:700;color:#B04A33">{{ ci.amt }}</span>
+                          </div>
+                        </sc-for>
+                      </sc-if>
+                      <div style="margin-top:6px;font-size:9.5px;color:#9AA3B5;line-height:1.5">{{ ce.note }}</div>
+                      <div style="margin-top:7px;display:flex;gap:6px;flex-wrap:wrap">
+                        <a href="{{ ce.plHref }}" style="font-size:9px;font-weight:800;letter-spacing:0.04em;color:#96742F;text-decoration:none;border:1px solid #E2D9C4;border-radius:99px;padding:3px 9px">P&L →</a>
+                        <a href="{{ ce.loanHref }}" style="font-size:9px;font-weight:800;letter-spacing:0.04em;color:#96742F;text-decoration:none;border:1px solid #E2D9C4;border-radius:99px;padding:3px 9px">LOANS →</a>
+                        <a href="{{ ce.txHref }}" style="font-size:9px;font-weight:800;letter-spacing:0.04em;color:#96742F;text-decoration:none;border:1px solid #E2D9C4;border-radius:99px;padding:3px 9px">TXN →</a>
+                        <span onClick="{{ ce.onFocus }}" style-hover="background:#F6ECD9" style="font-size:9px;font-weight:800;letter-spacing:0.04em;color:#96742F;cursor:pointer;border:1px solid #E2D9C4;border-radius:99px;padding:3px 9px">{{ ce.focusLab }}</span>
+                      </div>
+                    </div>
+                  </sc-if>
+                </div>
+              </sc-for>
+              <sc-if value="{{ ceMoreShow }}" hint-placeholder-val="{{ false }}">
+                <div onClick="{{ onCeMore }}" style-hover="background:#F6ECD9" style="margin-top:8px;text-align:center;padding:7px;border:1px solid #D8D4C8;border-radius:9px;font-size:11px;font-weight:700;color:#96742F;cursor:pointer">{{ ceMoreLab }}</div>
+              </sc-if>
+            </div>
+          </div>
+        </div>
+        <div style="margin-top:12px;padding-top:10px;border-top:1px solid #F0EEE7;font-size:10.5px;color:#9AA3B5;line-height:1.65">{{ ceFoot }}</div>
+      </sc-if>
+    </div>
+
     <!-- ══ Tenant ledger ══ -->
     <div style="margin-top:16px;background:#FFFFFF;border:1px solid #E5E3DC;border-radius:16px;padding:22px 26px">
       <div style="display:flex;justify-content:space-between;align-items:baseline;flex-wrap:wrap;gap:8px">
@@ -483,6 +757,8 @@ class Component extends DCLogic {
     fm: [], fe: [], fp: [], ft: [],
     ddOpen: null, fq: '',
     crM: null, crq: '', crExp: null, crAll: false, agSel: null, crBy: 'tenant',
+    ceMode: 'fifo', ceM: null, ceTgt: '95', ceBkt: null, ceQ: '', ceSort: 'impact',
+    ceExp: null, ceAll: false, ceRoll: false, ceDrillAll: false,
     lq: '', lSort: 'bal', lBucket: null, lExp: null, lAll: false,
     wSel: [], wq: '', wExp: null, wAll: false,
   };
@@ -509,6 +785,8 @@ class Component extends DCLogic {
       if (q.get('door')) patch.fp = li('door');
       if (q.get('tenant')) patch.ft = li('tenant');
       if (q.get('q')) patch.crq = q.get('q');
+      if (q.get('rate')) patch.ceMode = q.get('rate') === 'blended' ? 'blend' : 'fifo';
+      if (q.get('tgt')) patch.ceTgt = q.get('tgt');
       if (Object.keys(patch).length) this.setState(patch);
     } catch (e) {}
   }
@@ -521,6 +799,8 @@ class Component extends DCLogic {
       if (S.fe.length) q.set('entity', S.fe.join(','));
       if (S.fp.length) q.set('door', S.fp.join(','));
       if (S.ft.length) q.set('tenant', S.ft.join(','));
+      if (S.ceMode === 'blend') q.set('rate', 'blended');
+      if (S.ceTgt && S.ceTgt !== '95') q.set('tgt', S.ceTgt);
       const s = q.toString();
       history.replaceState(null, '', location.pathname + (s ? '?' + s : ''));
     } catch (e) {}
@@ -549,6 +829,16 @@ class Component extends DCLogic {
       agLab: '', agTiles: [], agNote: '', crByChips: [], crRightLab: '', crRightCap: '',
       crRows: [], crEmpty: false, crEmptyTxt: '', crMoreShow: false, crMoreLab: '', onCrMore: () => {}, onCrq: () => {}, crqVal: '',
       rwSub: '', rwHeadLab: '', rwHead: '', rwHeadCol: '#16233A', rwHeadCap: '', rwTiles: [], rwFoot: '',
+      ceSub: '', ceModeChips: [], ceTgtVal: '', onCeTgt: () => {}, ceOn: false, ceOff: false,
+      ceKpis: [], ceIdLab: '', ceIdCur: '', ceIdArr: '', ceIdCrp: '', ceIdAct: '',
+      ceLegend: [], ceGrid: [], ceGridLabs: [], ceTgtOn: false, ceTgtY: '0', ceTgtTopPct: '0%', ceTgtLab: '',
+      ceArrOn: false, cePathArr: '', cePathDim: '', ceDimCol: '#3D64A8', cePathMain: '', ceMainCol: '#C9A45C',
+      cePts: [], ceHits: [], ceLabs: [], ceMonths: [], ceChartFoot: '',
+      ceAgLab: '', onCeRoll: () => {}, ceRollTog: '', ceAgTiles: [], ceAgNote: '',
+      ceRollOn: false, ceRollLab: '', ceRollRows: [], ceRollFoot: '',
+      ceDrillOn: false, ceDrillLab: '', ceDrillSum: '', ceDrillRows: [], ceDrillMoreShow: false, onCeDrillMore: () => {}, ceDrillMoreLab: '',
+      ceFocusBg: '#FDF8F6', ceFocusBd: '#EAD1C8', ceFocusCol: '#A03E28', ceFocusLab: '', ceFocusCap: '', ceFocusLine: '', ceFocusBarC: '#C9A45C', ceFocusBarW: '0%', ceFocusRows: [], ceFocusFoot: '',
+      ceRosterLab: '', ceRosterCap: '', onCeQ: () => {}, ceQVal: '', ceSortChips: [], ceRows: [], ceEmpty: false, ceEmptyTxt: '', ceMoreShow: false, onCeMore: () => {}, ceMoreLab: '', ceFoot: '',
       ldSub: '', idOpen: '', idChg: '', idColl: '', idCl: '', idClose: '', idCloseCol: '#2A3550', idNote: '',
       lq: '', onLq: () => {}, lBucketChips: [], lSortChips: [],
       lRows: [], lEmpty: false, lEmptyTxt: '', lMoreShow: false, onLMore: () => {}, lMoreLab: '', lFoot: '',
@@ -907,6 +1197,350 @@ class Component extends DCLogic {
     const rwSub = 'your formula, live — click a month · click an aging bucket · group by tenant or property · every row shows its 5-month pattern and drills';
     const rwFoot = 'Monthly rate = (collections + opening advances − closing advances) ÷ (invoices + opening due) — advances for future months never flatter a month, and months collecting past advances get credit for the dues they cleared. The span rate counts each due once: Σ actual collections ÷ (opening due at span start + Σ invoices). Write-offs stay in the denominator. Openings chain: closing − collection loss = next opening, to the cent. Pattern cells read left→right across the window; the outlined cell is the selected month.';
 
+    // ══ Collection efficiency — the manager's scorecard (owner 2026-07-20) ══
+    // Per-tenant FIFO split (engine-computed, page re-summed under any scope) + true
+    // charge-date aging + target/focus math. Every figure recomputes from tenant grain.
+    const ceOn = rowsAll.some(t => Array.isArray(t.fifoCur)) && !!(CLX.fifo);
+    const ceOff = !ceOn;
+    const ceMode = S.ceMode === 'blend' ? 'blend' : 'fifo';
+    const ceMi = (S.ceM !== null && S.ceM !== undefined && winIdx.includes(S.ceM)) ? S.ceM : lastI;
+    const AGL = ['0–30 DAYS', '31–60 DAYS', '61–90 DAYS', '90+ DAYS'];
+    const AGC = ['#C9A45C', '#C0763F', '#B04A33', '#A03E28'];
+    const mEnd = i => { const y = +MO[i].slice(0, 4), mo2 = +MO[i].slice(5, 7); return Date.UTC(y, mo2, 0); };
+    const dParse = s => { const p = s.split('-'); return Date.UTC(+p[0], +p[1] - 1, +p[2]); };
+    const dayDiff = (a, b) => Math.round((a - b) / 86400000);
+    const bktOf2 = d => d <= 30 ? 0 : d <= 60 ? 1 : d <= 90 ? 2 : 3;
+    const prettyD = ds => { const p = ds.split('-'); return p[2] + ' ' + MMM[+p[1] - 1] + ' ' + p[0].slice(2); };
+    const fR1 = v => v === null || v === undefined ? '—' : v.toFixed(1) + '%';
+    // scoped FIFO sums per month
+    const feM = MO.map((_, i) => {
+      let cur = 0, arr = 0, advU = 0, advN = 0, crP = 0, crA = 0, crT = 0, nsf = 0;
+      for (const t of rowsAll) {
+        if (!Array.isArray(t.fifoCur)) continue;
+        cur += t.fifoCur[i]; arr += t.fifoArr[i]; advU += t.advUse[i]; advN += t.advNew[i];
+        crP += t.crPool[i]; crA += t.crArr[i]; crT += t.crM[i]; nsf += t.nsfN[i];
+      }
+      const inv = rsM[i].inv, od = rsM[i].od;
+      return { cur, arr, advU, advN, crP, crA, crT, nsf,
+        curRate: inv > 0 ? cur / inv * 100 : null, arrRate: od > 0 ? arr / od * 100 : null };
+    });
+    // scoped aging items at a month-end (true age from charge date)
+    const agedItems = (i) => {
+      const out = [], E = mEnd(i);
+      for (const r of allRows) {
+        const t = r.t; if (!Array.isArray(t.items) || !t.items[i]) continue;
+        for (const it of t.items[i]) {
+          const days = dayDiff(E, dParse(it[0]));
+          out.push({ r, ds: it[0], days, bkt: bktOf2(days), rem: it[1] });
+        }
+      }
+      return out;
+    };
+    const agNow = agedItems(ceMi);
+    const agSums = [0, 0, 0, 0], agNs = [0, 0, 0, 0];
+    for (const x of agNow) { agSums[x.bkt] += x.rem; agNs[x.bkt]++; }
+    const agTot = agSums[0] + agSums[1] + agSums[2] + agSums[3];
+    const agPrevSums = [0, 0, 0, 0];
+    if (ceMi >= 1) for (const x of agedItems(ceMi - 1)) agPrevSums[x.bkt] += x.rem;
+    const fe = feM[ceMi];
+    // target + gap (mode decides the denominator the manager is scored on)
+    const tgtN = (() => { const p = parseFloat(S.ceTgt); return isFinite(p) && p > 0 && p <= 100 ? p : 95; })();
+    const inv_i = rsM[ceMi].inv, due_i = rsM[ceMi].due, act_i = rsM[ceMi].act;
+    const haveV = ceMode === 'fifo' ? fe.cur : act_i;
+    const needV = ceMode === 'fifo' ? tgtN / 100 * inv_i : tgtN / 100 * due_i;
+    const gapV = Math.max(0, needV - haveV);
+    const haveRate = ceMode === 'fifo' ? fe.curRate : rsM[ceMi].rate;
+    // per-tenant collectibles at the selected month (advance payers have no open items → never chased)
+    const rosterKey = r => r.d + '||' + r.t.tenant;
+    const collectibles = [];
+    for (const r of allRows) {
+      const t = r.t; if (!Array.isArray(t.items) || !t.items[ceMi]) continue;
+      let curOpen = 0, oldOpen = 0;
+      for (const it of t.items[ceMi]) { if (it[0].slice(0, 7) === MO[ceMi]) curOpen += it[1]; else oldOpen += it[1]; }
+      const met = ceMode === 'fifo' ? curOpen : curOpen + oldOpen;
+      if (met > 0.005) collectibles.push({ r, curOpen, oldOpen, met, tot: curOpen + oldOpen });
+    }
+    collectibles.sort((a, b) => b.met - a.met || b.tot - a.tot);
+    let ceCum = 0, cutN = 0;
+    for (const c of collectibles) {
+      if (ceCum < gapV - 0.005) { ceCum += c.met; c.inCut = true; c.cumAt = ceCum; cutN++; }
+    }
+    const gapMet = gapV <= 0.005;
+    // ── header chrome ──
+    const ceSub = mmyy(MO[ceMi]) + ' · FIFO within each tenant: money cures the OLDEST open charge first · aging runs from the date of charge — payment is due on charge';
+    const ceModeChips = [
+      { id: 'fifo', label: 'FIFO — THIS MONTH’S BILLING', tip: 'Collected-for-the-month ÷ the month’s own charges. The manager’s controllable number: old arrears can’t drag it, prepayments can’t flatter it.' },
+      { id: 'blend', label: 'BLENDED — YOUR FORMULA', tip: 'Actual collection ÷ (invoices + opening due). The book’s cash conversion — arrears keep the pressure on.' },
+    ].map(c => ({ label: c.label, tip: c.tip, onClick: () => this.setF({ ceMode: c.id }), bd: ceMode === c.id ? GOLD : '#D8D4C8', bg: ceMode === c.id ? '#FBF6EA' : '#FFFFFF', col: ceMode === c.id ? NAVY : MUT }));
+    const ceTgtVal = (S.ceTgt === undefined || S.ceTgt === null) ? '95' : S.ceTgt;
+    const onCeTgt = e => this.setF({ ceTgt: e && e.target ? e.target.value : '95' });
+    // ── KPI strip (selected month, current scope) ──
+    const bigWorst = agSums[3] > 0.005 ? '90+: ' + fN(agSums[3]) : (agSums[2] > 0.005 ? '61–90: ' + fN(agSums[2]) : 'nothing past 60 days');
+    const ceTile = (label, val, sub, col, tip, bg, bd) => ({ label, val, sub, col: col || NAVY, dcol: FAINT, tip: tip || '', bg: bg || '#FFFFFF', bd: bd || '#E5E3DC' });
+    const ceKpis = ceOn ? [
+      ceTile('Collected for ' + mmyy(MO[ceMi]) + '’s charges', fR1(fe.curRate), fN(fe.cur) + ' of ' + fN(inv_i) + ' billed · ' + fN(fe.advU) + ' via advances', GOLDD, 'Cash + advances applied to the month’s own charges (FIFO). The billing-effectiveness rate.'),
+      ceTile('Old dues cured', fR1(fe.arrRate), fN(fe.arr) + ' of ' + fN(rsM[ceMi].od) + ' opening arrears', BLUE, 'Cash applied to charges from earlier months — the backlog work.'),
+      ceTile('Receivables open', fN(agTot), bigWorst, agTot > 0.005 ? REDD : GREEND, 'Open charges at month-end, aged from the date of charge. Σ ties the closing dues to the cent.'),
+      ceTile('Target ' + tgtN + '%', gapMet ? 'MET ✓' : fN(gapV) + ' short', ceMode === 'fifo' ? 'on this month’s billing (FIFO)' : 'on the blended formula', gapMet ? GREEND : REDD, 'The gap between the target and ' + (ceMode === 'fifo' ? 'collected-for-the-month' : 'actual collection') + '. The focus list at right closes it.', gapMet ? '#F2F7F0' : '#FBF0ED', gapMet ? '#D6E4D2' : '#EAD1C8'),
+      ceTile('Payments bounced', '' + fe.nsf, fe.nsf ? 'reversed payments this month' : 'none this month', fe.nsf ? REDD : GREEND, 'Buildium Reversed Payment rows — each re-opens the original charge at its original date.'),
+    ] : [];
+    // ── identity strip ──
+    const ceIdLab = 'THE SPLIT RE-SUMS TO YOUR FORMULA · ' + mmyy(MO[ceMi]).toUpperCase();
+    const ceIdCur = f2(fe.cur), ceIdArr = f2(fe.arr), ceIdCrp = f2(fe.crP), ceIdAct = f2(act_i);
+    // ── chart (two methods + target; window months) ──
+    const serFifo = winIdx.map(i => feM[i].curRate), serBlend = winIdx.map(i => rsM[i].rate), serArr = winIdx.map(i => feM[i].arrRate);
+    const ceArrOn = ceOn && ceMode === 'fifo' && serArr.some(v => v !== null);
+    const allV = [...serFifo, ...serBlend, ...(ceArrOn ? serArr : []), tgtN].filter(v => v !== null && isFinite(v));
+    let yLo = Math.min(...allV), yHi = Math.max(...allV);
+    yLo = Math.max(0, Math.floor((yLo - 4) / 5) * 5); yHi = Math.ceil((yHi + 4) / 5) * 5;
+    if (yHi - yLo < 10) yHi = yLo + 10;
+    const X0 = 52, X1 = 620, T0 = 14, B0 = 186, nW = winIdx.length;
+    const xAt = j => nW === 1 ? (X0 + X1) / 2 : X0 + j * (X1 - X0) / (nW - 1);
+    const yAt = v => T0 + (yHi - v) / (yHi - yLo) * (B0 - T0);
+    const pathOf = ser => ser.map((v, j) => v === null ? null : xAt(j).toFixed(1) + ',' + yAt(v).toFixed(1)).filter(Boolean).join(' ');
+    const mainSer = ceMode === 'fifo' ? serFifo : serBlend, dimSer = ceMode === 'fifo' ? serBlend : serFifo;
+    const ceMainCol = ceMode === 'fifo' ? GOLD : '#3D64A8', ceDimCol = ceMode === 'fifo' ? '#3D64A8' : GOLD;
+    const cePathMain = pathOf(mainSer), cePathDim = pathOf(dimSer), cePathArr = ceArrOn ? pathOf(serArr) : '';
+    const gStep = (yHi - yLo) <= 15 ? 5 : (yHi - yLo) <= 30 ? 10 : 20;
+    const ceGrid = [], ceGridLabs = [];
+    for (let gv2 = Math.ceil(yLo / gStep) * gStep; gv2 <= yHi; gv2 += gStep) {
+      ceGrid.push({ y: yAt(gv2).toFixed(1) });
+      ceGridLabs.push({ topPct: (yAt(gv2) / 200 * 100).toFixed(1) + '%', v: gv2 + '%' });
+    }
+    const ceTgtOn = ceOn && tgtN >= yLo && tgtN <= yHi;
+    const ceTgtY = yAt(tgtN).toFixed(1), ceTgtTopPct = (yAt(tgtN) / 200 * 100).toFixed(1) + '%', ceTgtLab = tgtN + '%';
+    const cePts = [], ceLabs = [];
+    winIdx.forEach((i, j) => {
+      const sel = i === ceMi;
+      const vM = mainSer[j], vD = dimSer[j];
+      if (vD !== null) cePts.push({ cx: xAt(j).toFixed(1), cy: yAt(vD).toFixed(1), r: 2.6, fill: '#FFFFFF', stroke: ceDimCol });
+      if (ceArrOn && serArr[j] !== null) cePts.push({ cx: xAt(j).toFixed(1), cy: yAt(serArr[j]).toFixed(1), r: 2.2, fill: '#FFFFFF', stroke: '#B04A33' });
+      if (vM !== null) {
+        cePts.push({ cx: xAt(j).toFixed(1), cy: yAt(vM).toFixed(1), r: sel ? 4.6 : 3.4, fill: sel ? ceMainCol : '#FFFFFF', stroke: ceMainCol });
+        const crowd = vD !== null && Math.abs(yAt(vD) - yAt(vM)) < 14;   // series crossing — lift the label clear
+        ceLabs.push({ leftPct: (xAt(j) / 640 * 100).toFixed(1) + '%', topPct: (yAt(vM) / 200 * 100).toFixed(1) + '%', dy: crowd ? '-175%' : '-135%', col: ceMode === 'fifo' ? GOLDD : '#3D64A8', v: vM.toFixed(1) + '%' });
+        if (sel && vD !== null) ceLabs.push({ leftPct: (xAt(j) / 640 * 100).toFixed(1) + '%', topPct: (yAt(vD) / 200 * 100).toFixed(1) + '%', dy: '45%', col: ceDimCol, v: vD.toFixed(1) + '%' });
+      }
+    });
+    const slotW = nW === 1 ? (X1 - X0) : (X1 - X0) / (nW - 1);
+    const ceHits = winIdx.map((i, j) => ({
+      x: Math.max(0, xAt(j) - slotW / 2).toFixed(1), w: slotW.toFixed(1),
+      onClick: () => this.setState({ ceM: i, ceBkt: null, ceDrillAll: false, ceExp: null }),
+    }));
+    const ceMonths = winIdx.map(i => ({ m: mmyy(MO[i]), fw: i === ceMi ? 800 : 600, col: i === ceMi ? NAVY : FAINT, onClick: () => this.setState({ ceM: i, ceBkt: null, ceDrillAll: false, ceExp: null }) }));
+    const ceLegend = ceOn ? [
+      { sw: '2.5px solid ' + GOLD, label: 'This month’s billing (FIFO)', val: fR1(feM[ceMi].curRate), fw: ceMode === 'fifo' ? 800 : 600, tip: 'Collected-for-the-month ÷ the month’s own charges' },
+      { sw: '2px solid #3D64A8', label: 'Your formula (blended)', val: fR1(rsM[ceMi].rate), fw: ceMode === 'blend' ? 800 : 600, tip: '(collections + adv in − adv out) ÷ (invoices + opening due)' },
+      ...(ceArrOn ? [{ sw: '2px dashed #B04A33', label: 'Old-dues cure', val: fR1(feM[ceMi].arrRate), fw: 600, tip: 'Applied to prior months’ charges ÷ opening arrears' }] : []),
+      { sw: '2px dashed #2A6F4E', label: 'Target', val: tgtN + '%', fw: 600, tip: 'Set the target at the top right of this section' },
+    ] : [];
+    const ceChartFoot = 'Click a month — the whole section follows it. Gold answers “of what we billed this month, how much came in?” (the manager’s controllable number). Blue is your blended formula — old dues keep dragging it until collected or written off. Brick dashes: % of opening arrears cured in the month.';
+    // ── aging tiles + drill ──
+    const ceAgLab = 'RECEIVABLES BY AGE OF CHARGE — ' + mmyy(MO[ceMi]).toUpperCase() + ' · TOTAL ' + fN(agTot);
+    const ceAgTiles = ceOn ? AGL.map((k, bi) => {
+      const sel2 = S.ceBkt === bi;
+      const d0 = agSums[bi] - agPrevSums[bi];
+      return {
+        k, kc: bi >= 2 ? REDD : GOLDD, v: fN(agSums[bi]), col: bi >= 2 && agSums[bi] > 0.005 ? REDD : NAVY,
+        n: agNs[bi] + ' open charge' + (agNs[bi] === 1 ? '' : 's'),
+        delta: ceMi >= 1 ? (d0 > 0.005 ? '▲ ' + fK(d0) + ' MoM' : d0 < -0.005 ? '▼ ' + fK(-d0) + ' MoM' : '· flat MoM') : '· first data month',
+        dcol: d0 > 0.005 ? REDD : d0 < -0.005 ? GREEND : FAINT,
+        shareW: (agTot > 0 ? agSums[bi] / agTot * 100 : 0).toFixed(1) + '%', barC: AGC[bi],
+        bd: sel2 ? GOLD : '#EDEBE2', bg: sel2 ? '#FBF6EA' : '#FBFAF6',
+        tip: k + ': ' + f2(agSums[bi]) + ' across ' + agNs[bi] + ' open charges — click to see every charge and who owes it',
+        onClick: () => this.setState({ ceBkt: sel2 ? null : bi, ceDrillAll: false }),
+      };
+    }).concat([{
+      k: 'ROLL SINCE ' + (ceMi >= 1 ? mmyy(MO[ceMi - 1]).toUpperCase() : '—'), kc: MUT, v: (() => { let s2 = 0; for (let b2 = 0; b2 < 4; b2++) s2 += agSums[b2] - agPrevSums[b2]; return (s2 >= 0 ? '+' : '') + fK(s2); })(), col: NAVY,
+      n: 'net receivables move', delta: S.ceRoll ? 'table open below' : 'open the roll table ▾', dcol: BLUE,
+      shareW: '0%', barC: '#8A93A6', bd: S.ceRoll ? GOLD : '#EDEBE2', bg: S.ceRoll ? '#FBF6EA' : '#FBFAF6',
+      tip: 'Where last month’s open charges went: collected, forgiven, written off, or still open — and what new dues arrived',
+      onClick: () => this.setState({ ceRoll: !S.ceRoll }),
+    }]) : [];
+    const ceAgNote = 'Aged from each charge’s date (rent is due on the charge). Pre-2026 opening balances age from 31-Dec-25 — a floor, their true age is AT LEAST what’s shown. Click a bucket to name every open charge in it.' + (S.ceBkt !== null && S.ceBkt !== undefined ? ' Showing ' + AGL[S.ceBkt].toLowerCase() + ' — click again to clear.' : '');
+    const onCeRoll = () => this.setState({ ceRoll: !S.ceRoll });
+    const ceRollTog = S.ceRoll ? 'HIDE THE ROLL ✕' : 'WHERE DID LAST MONTH’S DUES GO? ▾';
+    // roll table (exact per-charge flows between the two snapshots)
+    const ceRollOn = !!(ceOn && S.ceRoll);
+    let ceRollRows = [], ceRollFoot = '', ceRollLab = '';
+    if (ceRollOn) {
+      if (ceMi < 1) { ceRollLab = 'NO PRIOR MONTH IN THE DATA WINDOW'; ceRollFoot = 'January is the first data month — the roll needs a previous month-end to compare against.'; }
+      else {
+        ceRollLab = 'THE ROLL — ' + mmyy(MO[ceMi - 1]).toUpperCase() + ' OPEN CHARGES → ' + mmyy(MO[ceMi]).toUpperCase();
+        const E0 = mEnd(ceMi - 1);
+        const rows5 = [[0, 0, 0, 0, 0], [0, 0, 0, 0, 0], [0, 0, 0, 0, 0], [0, 0, 0, 0, 0]];
+        let newOpen = 0;
+        for (const r of allRows) {
+          const t = r.t; if (!Array.isArray(t.items)) continue;
+          const prev = t.items[ceMi - 1] || [], nowI = t.items[ceMi] || [];
+          const woNow = Math.abs(t.cl[ceMi - 1]) > 0.005;
+          const cash = {}, cred = {};
+          for (const ap of (t.apps[ceMi] || [])) { const m2 = ap[2] ? cred : cash; m2[ap[0]] = (m2[ap[0]] || 0) + ap[1]; }
+          const curMap = {}; for (const it of nowI) curMap[it[0]] = it[1];
+          const prevSet = new Set(prev.map(it => it[0]));
+          for (const it of nowI) if (!prevSet.has(it[0])) newOpen += it[1];
+          for (const it of prev) {
+            const b2 = bktOf2(dayDiff(E0, dParse(it[0])));
+            rows5[b2][0] += it[1];
+            if (woNow) { rows5[b2][3] += it[1]; continue; }
+            rows5[b2][1] += cash[it[0]] || 0; rows5[b2][2] += cred[it[0]] || 0;
+            rows5[b2][4] += curMap[it[0]] || 0;
+          }
+        }
+        ceRollRows = AGL.map((k, b2) => ({
+          k: k, kc: b2 >= 2 ? REDD : GOLDD,
+          open: f2(rows5[b2][0]), coll: f2(rows5[b2][1]), cred: f2(rows5[b2][2]), wo: f2(rows5[b2][3]),
+          still: f2(rows5[b2][4]), stillCol: rows5[b2][4] > 0.005 ? REDD : MUT,
+        })).filter((_, b2) => rows5[b2][0] > 0.005 || rows5[b2][4] > 0.005);
+        ceRollRows.push({ k: 'NEW THIS MONTH', kc: BLUE, open: '—', coll: '—', cred: '—', wo: '—', still: f2(newOpen), stillCol: newOpen > 0.005 ? REDD : MUT });
+        const stillTot = rows5[0][4] + rows5[1][4] + rows5[2][4] + rows5[3][4] + newOpen;
+        ceRollFoot = 'Conservation per bucket: was-open = collected + forgiven + written off + still-open, to the cent (reversed payments net inside “collected”). Still-open ' + fN(stillTot - newOpen) + ' + new ' + fN(newOpen) + ' = the tiles above (' + fN(agTot) + '). “Forgiven” = credits — money nobody collected.';
+      }
+    }
+    // bucket drill
+    const ceDrillOn = ceOn && S.ceBkt !== null && S.ceBkt !== undefined;
+    let ceDrillRows = [], ceDrillLab = '', ceDrillSum = '', ceDrillMoreShow = false, ceDrillMoreLab = '';
+    if (ceDrillOn) {
+      const inB = agNow.filter(x => x.bkt === S.ceBkt).sort((a, b) => b.rem - a.rem);
+      ceDrillLab = 'EVERY OPEN CHARGE · ' + AGL[S.ceBkt] + ' · ' + mmyy(MO[ceMi]).toUpperCase();
+      ceDrillSum = fN(inB.reduce((s2, x) => s2 + x.rem, 0)) + ' — ties the tile to the cent';
+      const shown2 = S.ceDrillAll ? inB : inB.slice(0, 10);
+      ceDrillMoreShow = !S.ceDrillAll && inB.length > 10;
+      ceDrillMoreLab = 'Show all ' + inB.length + ' open charges ▾';
+      ceDrillRows = shown2.map(x => {
+        const F3 = x.r.t.flags || [];
+        const badges2 = [];
+        if (F3.includes('pending-writeoff')) badges2.push({ t: 'CL · JUNE CONFIRMS', bg: '#FBF0ED', col: REDD });
+        else if (F3.includes('moved-out')) badges2.push({ t: 'MOVED OUT', bg: '#F0EEE6', col: MUT });
+        if (sum((x.r.t.nsfN || []).slice(0, ceMi + 1))) badges2.push({ t: 'BOUNCED ×' + sum((x.r.t.nsfN || []).slice(0, ceMi + 1)), bg: '#FBF0ED', col: REDD });
+        return {
+          tenant: x.r.t.tenant, prop: x.r.d, amt: f2(x.rem),
+          chargeLab: x.ds === '2025-12-31' ? 'pre-2026 opening balance (age floor)' : 'charged ' + prettyD(x.ds),
+          daysLab: x.days + ' days old', daysCol: AGC[x.bkt],
+          badges: badges2, txHref: './transactions.dc.html?door=' + esc(x.r.d),
+          onChase: (e) => { if (e && e.stopPropagation) e.stopPropagation(); this.setState({ ceQ: x.r.t.tenant, ceExp: rosterKey(x.r), ceAll: false }); },
+        };
+      });
+    }
+    const onCeDrillMore = () => this.setState({ ceDrillAll: true });
+    // ── focus list (the goal engine) ──
+    const modeLab = ceMode === 'fifo' ? 'this month’s billing' : 'the blended formula';
+    const ceFocusLab = gapMet ? 'TARGET MET — PUSH THE STRETCH LIST' : 'TO HIT ' + tgtN + '% — COLLECT THESE';
+    const ceFocusCol = gapMet ? GREEND : REDD;
+    const ceFocusBg = gapMet ? '#F7FAF6' : '#FDF8F6', ceFocusBd = gapMet ? '#D6E4D2' : '#EAD1C8';
+    const ceFocusCap = mmyy(MO[ceMi]) + ' · ' + modeLab;
+    const ceFocusLine = gapMet
+      ? 'At ' + fR1(haveRate) + ', ' + mmyy(MO[ceMi]) + ' clears the ' + tgtN + '% target on ' + modeLab + '. The list below is the stretch — every dollar still on the table.'
+      : 'At ' + fR1(haveRate) + ' against a ' + tgtN + '% target: ' + fN(gapV) + ' more must land' + (ceMode === 'fifo' ? ' on this month’s own charges. ' + (cutN > 0 ? 'The top ' + cutN + ' tenant' + (cutN === 1 ? '' : 's') + ' on this list close it' + (cutN > 7 ? ' (first 7 shown)' : '') + ' — FIFO means an arrears tenant pays old dues first, so their “collect” figure is the full catch-up.' : 'No open current-month charges remain in scope — the gap is not collectible this month.') : '. ' + (cutN > 0 ? 'The ' + cutN + ' largest open balance' + (cutN === 1 ? '' : 's') + (cutN > 7 ? ' (first 7 shown)' : '') + ' cover it.' : 'No open balances remain in scope.'));
+    const ceFocusBarW = Math.min(100, needV > 0 ? haveV / needV * 100 : 100).toFixed(1) + '%';
+    const ceFocusBarC = gapMet ? '#3E8E63' : GOLD;
+    const focShown = collectibles.slice(0, 7);
+    const ceFocusRows = focShown.map((c, i2) => {
+      const F3 = c.r.t.flags || [];
+      const badges2 = [];
+      if (ceMode === 'fifo' && c.oldOpen > 0.005) badges2.push({ t: 'ALSO OWES OLD ' + fK(c.oldOpen), bg: '#FBF6EA', col: GOLDD });
+      if (F3.includes('pending-writeoff')) badges2.push({ t: 'CL · JUNE CONFIRMS', bg: '#FBF0ED', col: REDD });
+      else if (F3.includes('moved-out')) badges2.push({ t: 'MOVED OUT', bg: '#F0EEE6', col: MUT });
+      const nsfW = sum((c.r.t.nsfN || []).slice(0, ceMi + 1));
+      if (nsfW) badges2.push({ t: 'BOUNCED ×' + nsfW, bg: '#FBF0ED', col: REDD });
+      const inCut = !gapMet && c.inCut;
+      return {
+        rk: '#' + (i2 + 1), rkCol: inCut ? REDD : FAINT,
+        tenant: c.r.t.tenant, prop: c.r.d,
+        get: ceMode === 'fifo' ? fN(c.tot) : fN(c.met),
+        badges: badges2.slice(0, 2),
+        cumLab: inCut ? 'running ' + fK(Math.min(c.cumAt, gapV)) + ' of ' + fK(gapV) : (gapMet ? 'stretch' : 'beyond target'),
+        cumCol: inCut ? REDD : FAINT,
+        bd: inCut ? '#EAD1C8' : '#EDEBE2', bg: inCut ? '#FFFFFF' : 'transparent', op: inCut || gapMet ? '1' : '0.62',
+        onClick: () => this.setState({ ceQ: c.r.t.tenant, ceExp: rosterKey(c.r), ceAll: false }),
+      };
+    });
+    const ceFocusFoot = (collectibles.length > 7 ? '+' + (collectibles.length - 7) + ' more with open ' + (ceMode === 'fifo' ? 'current-month charges' : 'balances') + ' — the roster below has everyone. ' : '') + (ceMode === 'fifo' ? '“Collect” = the tenant’s full open balance; the portion on this month’s charges is what moves the rate. ' : '') + 'Tenants holding advances never appear here — their next charges are pre-funded; do not chase them. Click a row to open the tenant’s ledger below.';
+    // ── roster: every tenant balance, from their first charge month ──
+    const firstActOf = t => {
+      if (Math.abs(t.opening) > 0.005) return 0;
+      for (let i2 = 0; i2 < NM; i2++) if (Math.abs(t.chg[i2]) > 0.005 || Math.abs(t.coll[i2]) > 0.005) return i2;
+      return null;
+    };
+    const ceRoster0 = allRows.filter(r => { const fa = firstActOf(r.t); return fa !== null && fa <= ceMi; });
+    const ceQv = (S.ceQ || '').toLowerCase();
+    const ceMatch = ceRoster0.filter(r => !ceQv || r.t.tenant.toLowerCase().includes(ceQv) || r.d.toLowerCase().includes(ceQv));
+    const metOf = r => { const c = collectibles.find(c2 => c2.r === r); return c ? c.met : 0; };
+    const ceSorters = {
+      impact: (a, b) => metOf(b) - metOf(a) || b.t.close[ceMi] - a.t.close[ceMi],
+      bal: (a, b) => b.t.close[ceMi] - a.t.close[ceMi],
+      rate: (a, b) => {
+        const pa = a.t.chg[ceMi] > 0.005 ? a.t.fifoCur[ceMi] / a.t.chg[ceMi] : 2, pb = b.t.chg[ceMi] > 0.005 ? b.t.fifoCur[ceMi] / b.t.chg[ceMi] : 2;
+        return pa - pb;
+      },
+      az: (a, b) => a.t.tenant.localeCompare(b.t.tenant),
+    };
+    ceMatch.sort(ceSorters[S.ceSort] || ceSorters.impact);
+    const CE_CAP = 9;
+    const ceShown = (S.ceAll || ceQv) ? ceMatch : ceMatch.slice(0, CE_CAP);
+    const advHolders = ceRoster0.filter(r => r.t.close[ceMi] < -0.005);
+    const advHeld = -sum(advHolders.map(r => r.t.close[ceMi]));
+    const ceRosterLab = 'EVERY TENANT BALANCE — ' + mmyy(MO[ceMi]).toUpperCase();
+    const ceRosterCap = ceRoster0.length + ' tenants · ' + advHolders.length + ' prepaid ' + fN(advHeld);
+    const ceSortChips = [
+      { id: 'impact', lab: 'FOCUS FIRST' }, { id: 'bal', lab: 'BALANCE' }, { id: 'rate', lab: 'WORST RATE' }, { id: 'az', lab: 'A–Z' },
+    ].map(c => ({ label: c.lab, onClick: () => this.setState({ ceSort: c.id, ceAll: false }), bd: (S.ceSort || 'impact') === c.id ? GOLD : '#D8D4C8', bg: (S.ceSort || 'impact') === c.id ? '#FBF6EA' : '#FFFFFF' }));
+    const ceRows = ceShown.map(r => {
+      const t = r.t, open2 = S.ceExp === rosterKey(r);
+      const bal2 = t.close[ceMi];
+      const fa = firstActOf(t);
+      const items2 = (Array.isArray(t.items) && t.items[ceMi]) ? t.items[ceMi] : [];
+      const E2 = mEnd(ceMi);
+      const segsSrc = items2.map(it => ({ b: bktOf2(dayDiff(E2, dParse(it[0]))), rem: it[1] }));
+      const segSums = [0, 0, 0, 0]; for (const s3 of segsSrc) segSums[s3.b] += s3.rem;
+      const segTot = segSums[0] + segSums[1] + segSums[2] + segSums[3];
+      const agSeg = segTot > 0.005 ? AGL.map((k, b2) => ({ w: (segSums[b2] / segTot * 100).toFixed(1) + '%', c: segSums[b2] > 0.005 ? AGC[b2] : 'transparent', tip: k + ': ' + f2(segSums[b2]) })).filter(s3 => s3.c !== 'transparent') : [{ w: '100%', c: bal2 < -0.005 ? '#CDE3D2' : '#EDEBE2', tip: bal2 < -0.005 ? 'prepaid — no open charges' : 'nothing open' }];
+      const badges2 = [];
+      if (bal2 < -0.005) badges2.push({ t: 'PREPAID ' + fK(-bal2), bg: '#F2F7F0', col: GREEND });
+      if (fa === ceMi && Math.abs(t.opening) < 0.005) badges2.push({ t: 'NEW THIS MONTH', bg: '#EFF3FA', col: BLUE });
+      const nsfW = sum((t.nsfN || []).slice(0, ceMi + 1));
+      if (nsfW) badges2.push({ t: 'BOUNCED ×' + nsfW, bg: '#FBF0ED', col: REDD });
+      const F3 = t.flags || [];
+      if (F3.includes('pending-writeoff')) badges2.push({ t: 'CL · JUNE CONFIRMS', bg: '#FBF0ED', col: REDD });
+      else if (F3.includes('written-off')) badges2.push({ t: 'WRITTEN OFF', bg: '#FBF6EA', col: GOLDD });
+      else if (F3.includes('moved-out')) badges2.push({ t: 'MOVED OUT', bg: '#F0EEE6', col: MUT });
+      const chg2 = t.chg[ceMi], cur2 = Array.isArray(t.fifoCur) ? t.fifoCur[ceMi] : 0;
+      const pct = chg2 > 0.005 ? cur2 / chg2 * 100 : null;
+      const mini2 = winIdx.map(i2 => ({
+        m: mmyy(MO[i2]), chg: f2(t.chg[i2]), cur: f2(t.fifoCur ? t.fifoCur[i2] : 0), arr: f2(t.fifoArr ? t.fifoArr[i2] : 0),
+        adv: f2(t.advUse ? t.advUse[i2] : 0), close: f2(t.close[i2]),
+        closeCol: t.close[i2] > 0.005 ? REDD : (t.close[i2] < -0.005 ? GREEND : MUT),
+      }));
+      const itemRows = items2.map(it => { const dd2 = dayDiff(E2, dParse(it[0])); const b2 = bktOf2(dd2); return { d: it[0] === '2025-12-31' ? 'Pre-2026 opening (floor)' : prettyD(it[0]) + ' · ' + dd2 + 'd', bkt: AGL[b2], bg: '#FBF6EA', col: b2 >= 2 ? REDD : GOLDD, amt: f2(it[1]) }; });
+      const noteBits = [];
+      if (t.advNew && t.advNew[ceMi] > 0.005) noteBits.push('took ' + f2(t.advNew[ceMi]) + ' in advances this month (applies to future charges)');
+      if (t.advUse && t.advUse[ceMi] > 0.005) noteBits.push(f2(t.advUse[ceMi]) + ' of earlier advances covered this month’s charges');
+      if (t.crM && t.crM[ceMi] > 0.005) noteBits.push('credits of ' + f2(t.crM[ceMi]) + ' given (forgiveness — in neither rate)');
+      if (nsfW) noteBits.push(nsfW + ' payment' + (nsfW === 1 ? '' : 's') + ' reversed in window — re-opened at original charge dates');
+      return {
+        bd: open2 ? GOLD : '#EDEBE2', bg: open2 ? '#FDF9F0' : 'transparent',
+        onClick: () => this.setState({ ceExp: open2 ? null : rosterKey(r) }),
+        open: open2, tenant: t.tenant, prop: r.d,
+        bal: f2(bal2), balCol: bal2 > 0.005 ? REDD : (bal2 < -0.005 ? GREEND : MUT),
+        curPctLab: pct === null ? '· no charges' : '· ' + pct.toFixed(0) + '% COLLECTED', curW: Math.min(100, Math.max(0, pct === null ? 0 : pct)).toFixed(1) + '%',
+        agSeg, badges: badges2.slice(0, 3),
+        sideLab: (t.fifoArr && t.fifoArr[ceMi] > 0.005 ? 'cured old ' + fK(t.fifoArr[ceMi]) : (t.advUse && t.advUse[ceMi] > 0.005 ? 'from advances ' + fK(t.advUse[ceMi]) : '')),
+        mini: mini2, hasItems: itemRows.length > 0, itemsMonth: mmyy(MO[ceMi]).toUpperCase(), items: itemRows,
+        note: noteBits.length ? noteBits.join(' · ') : 'No advance, credit or reversal activity this month.',
+        plHref: './PL%20Story%20-%20Main.dc.html?door=' + esc(r.d), loanHref: './loans.dc.html?door=' + esc(r.d), txHref: './transactions.dc.html?door=' + esc(r.d),
+        onFocus: (e) => { if (e && e.stopPropagation) e.stopPropagation(); this.setF({ fp: S.fp.length === 1 && S.fp[0] === r.d ? [] : [r.d] }); },
+        focusLab: S.fp.length === 1 && S.fp[0] === r.d ? 'RELEASE FOCUS ✕' : 'FOCUS PAGE ⌖',
+      };
+    });
+    const ceEmpty = ceOn && ceShown.length === 0;
+    const ceEmptyTxt = ceQv ? 'No tenant matches “' + S.ceQ + '” with activity by ' + mmyy(MO[ceMi]) + '.' : 'No tenant activity in scope by ' + mmyy(MO[ceMi]) + '.';
+    const ceMoreShow = ceOn && !S.ceAll && !ceQv && ceMatch.length > CE_CAP;
+    const ceMoreLab = 'Show all ' + ceMatch.length + ' tenants ▾';
+    const onCeMore = () => this.setState({ ceAll: true });
+    const onCeQ = e => this.setState({ ceQ: e && e.target ? e.target.value : '', ceAll: false });
+    const ceQVal = S.ceQ || '';
+    const ceFoot = 'Method (locked 2026-07-20): within each tenant, receipts and advances cure the OLDEST open charge first — a stated convention, since the journals don’t record which charge a payment targeted. Collected-for-the-month = cash + advances applied to the month’s own charges; old-dues cured = applied to earlier charges; the two re-sum to your formula’s actual collection to the cent, for every tenant and month (credit-created advances shown in the strip when present). Advances apply the moment the future charge lands — a prepaid tenant reads 100% on billing, and never appears on the chase list. Credits are forgiveness: they close dues in the aging but count in neither rate. Reversed payments re-open their charges at the ORIGINAL charge date, so bounced rent ages from when it was billed. Aging runs from the date of charge (payment is due on charge); pre-2026 balances age from 31-Dec-25 as a disclosed floor. The blended rate, the telescoped YTD and the sections above are untouched — this section adds the manager’s lens beside them.';
+
     // ══ ledger table ══
     const lqv = (S.lq || '').toLowerCase();
     const match = r => !lqv || r.t.tenant.toLowerCase().includes(lqv) || r.d.toLowerCase().includes(lqv);
@@ -1038,6 +1672,16 @@ class Component extends DCLogic {
       agLab, agTiles, agNote, crByChips, crRightLab, crRightCap,
       crRows, crEmpty, crEmptyTxt, crMoreShow, crMoreLab, onCrMore, onCrq, crqVal,
       rwSub, rwHeadLab, rwHead, rwHeadCol, rwHeadCap, rwTiles, rwFoot,
+      ceSub, ceModeChips, ceTgtVal, onCeTgt, ceOn, ceOff,
+      ceKpis, ceIdLab, ceIdCur, ceIdArr, ceIdCrp, ceIdAct,
+      ceLegend, ceGrid, ceGridLabs, ceTgtOn, ceTgtY, ceTgtTopPct, ceTgtLab,
+      ceArrOn, cePathArr, cePathDim, ceDimCol, cePathMain, ceMainCol,
+      cePts, ceHits, ceLabs, ceMonths, ceChartFoot,
+      ceAgLab, onCeRoll, ceRollTog, ceAgTiles, ceAgNote,
+      ceRollOn, ceRollLab, ceRollRows, ceRollFoot,
+      ceDrillOn, ceDrillLab, ceDrillSum, ceDrillRows, ceDrillMoreShow, onCeDrillMore, ceDrillMoreLab,
+      ceFocusBg, ceFocusBd, ceFocusCol, ceFocusLab, ceFocusCap, ceFocusLine, ceFocusBarC, ceFocusBarW, ceFocusRows, ceFocusFoot,
+      ceRosterLab, ceRosterCap, onCeQ, ceQVal, ceSortChips, ceRows, ceEmpty, ceEmptyTxt, ceMoreShow, onCeMore, ceMoreLab, ceFoot,
       ldSub, idOpen: f2(idOpen), idChg: f2(idChgV), idColl: f2(idCollV), idCl: f2(idClV), idClose: f2(idCloseV), idCloseCol: idCloseV < 0 ? GREEND : REDD, idNote,
       lq: S.lq, onLq: e => this.setState({ lq: e.target.value, lAll: false }), lBucketChips, lSortChips,
       lRows, lEmpty: lShown.length === 0, lEmptyTxt: 'No tenant ledgers match — clear the search or chips.',
