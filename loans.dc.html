@@ -107,7 +107,7 @@ input:focus{outline:2px solid #C9A45C;outline-offset:1px}
     </div>
 
     <!-- ══ KPI band ══ -->
-    <div style="margin-top:14px;display:grid;grid-template-columns:repeat(12,1fr);gap:14px">
+    <div data-sec="kpis" style="margin-top:14px;display:grid;grid-template-columns:repeat(12,1fr);gap:14px">
       <sc-for list="{{ kpis }}" as="k" hint-placeholder-count="6">
         <div style="grid-column:span {{ k.span }};display:flex;flex-direction:column;background:#FFFFFF;border:1px solid #E5E3DC;border-radius:16px;padding:16px 20px 14px">
           <div style="display:flex;justify-content:space-between;align-items:baseline;gap:8px">
@@ -164,7 +164,7 @@ input:focus{outline:2px solid #C9A45C;outline-offset:1px}
 
     <!-- ══ Needs attention ══ -->
     <sc-if value="{{ hasAttn }}" hint-placeholder-val="{{ false }}">
-      <div style="margin-top:14px;background:#FFFFFF;border:1px solid #EAD9C0;border-radius:16px;padding:14px 20px">
+      <div data-sec="attention" style="margin-top:14px;background:#FFFFFF;border:1px solid #EAD9C0;border-radius:16px;padding:14px 20px">
         <div style="font-size:11px;letter-spacing:0.08em;font-weight:700;color:#96742F;text-transform:uppercase">Needs attention</div>
         <div style="margin-top:8px;display:flex;gap:8px;flex-wrap:wrap">
           <sc-for list="{{ attn }}" as="at" hint-placeholder-count="3">
@@ -178,7 +178,7 @@ input:focus{outline:2px solid #C9A45C;outline-offset:1px}
     </sc-if>
 
     <!-- ══ Loan register ══ -->
-    <div style="margin-top:14px;background:#FFFFFF;border:1px solid #E5E3DC;border-radius:16px;padding:20px 24px;position:relative;z-index:30">
+    <div data-sec="register" style="margin-top:14px;background:#FFFFFF;border:1px solid #E5E3DC;border-radius:16px;padding:20px 24px;position:relative;z-index:30">
       <div style="display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:10px" onClick="{{ stopProp }}">
         <div>
           <div style="font-family:'Source Serif 4',Georgia,serif;font-size:18px;font-weight:600;color:#16233A">Loan register <span style="font-size:12px;font-weight:600;color:#8A93A6">· grouped by lender</span></div>
@@ -339,7 +339,7 @@ input:focus{outline:2px solid #C9A45C;outline-offset:1px}
     </div>
 
     <!-- ══ Debt service trends & properties (one integrated section) ══ -->
-    <div style="margin-top:14px;background:#FFFFFF;border:1px solid #E5E3DC;border-radius:16px;padding:22px 26px" onClick="{{ stopProp }}">
+    <div data-sec="trends" style="margin-top:14px;background:#FFFFFF;border:1px solid #E5E3DC;border-radius:16px;padding:22px 26px" onClick="{{ stopProp }}">
       <div style="display:flex;justify-content:space-between;align-items:baseline;flex-wrap:wrap;gap:8px">
         <div style="font-family:'Source Serif 4',Georgia,serif;font-size:18px;font-weight:600;color:#16233A">Interest &amp; principal trends, month on month</div>
         <div style="font-size:12px;color:#8A93A6">Pick a year and series, then drill into the properties behind them — click a property to focus its line</div>
@@ -431,7 +431,7 @@ input:focus{outline:2px solid #C9A45C;outline-offset:1px}
     </div>
 
     <!-- ══ Prepays & releases ══ -->
-    <div style="margin-top:14px;background:#FFFFFF;border:1px solid #E5E3DC;border-radius:16px;padding:22px 26px" onClick="{{ stopProp }}">
+    <div data-sec="timeline" style="margin-top:14px;background:#FFFFFF;border:1px solid #E5E3DC;border-radius:16px;padding:22px 26px" onClick="{{ stopProp }}">
       <div style="display:flex;justify-content:space-between;align-items:baseline;flex-wrap:wrap;gap:8px">
         <div style="font-family:'Source Serif 4',Georgia,serif;font-size:18px;font-weight:600;color:#16233A">Prepayments &amp; property releases</div>
         <div style="font-size:12px;color:#8A93A6">Every event that moved principal outside the monthly schedule — click one for its property split</div>
@@ -502,7 +502,7 @@ input:focus{outline:2px solid #C9A45C;outline-offset:1px}
     </div>
 
     <!-- ══ Prepayment penalty & refinance breakeven ══ -->
-    <div style="margin-top:14px;background:#FFFFFF;border:1px solid #E5E3DC;border-radius:16px;padding:22px 26px" onClick="{{ stopProp }}">
+    <div data-sec="refi" style="margin-top:14px;background:#FFFFFF;border:1px solid #E5E3DC;border-radius:16px;padding:22px 26px" onClick="{{ stopProp }}">
       <div style="display:flex;justify-content:space-between;align-items:baseline;flex-wrap:wrap;gap:8px">
         <div style="font-family:'Source Serif 4',Georgia,serif;font-size:18px;font-weight:600;color:#16233A">Prepayment penalty &amp; refinance breakeven</div>
         <div style="font-size:12px;color:#8A93A6">Cost = penalty + 1% origination fee &nbsp;·&nbsp; benefit = rate saved on the balance &nbsp;·&nbsp; breakeven = cost ÷ yearly benefit</div>
@@ -603,7 +603,7 @@ input:focus{outline:2px solid #C9A45C;outline-offset:1px}
     </div>
 
     <!-- ══ Ledger cross-check ══ -->
-    <div style="margin-top:14px;background:#FFFFFF;border:1px solid #E5E3DC;border-radius:16px;padding:20px 24px">
+    <div data-sec="recon" style="margin-top:14px;background:#FFFFFF;border:1px solid #E5E3DC;border-radius:16px;padding:20px 24px">
       <div style="display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:10px">
         <div>
           <div style="font-family:'Source Serif 4',Georgia,serif;font-size:18px;font-weight:600;color:#16233A">Ledger cross-check — interest by door &amp; month</div>
@@ -693,6 +693,10 @@ class Component extends DCLogic {
     try {
       if (typeof location === 'undefined' || !location.search || !this.state.data) return;
       const q = new URLSearchParams(location.search);
+      const sec0 = q.get('sec');
+      if (sec0 && /^[a-z-]{2,24}$/.test(sec0)) {
+        try { setTimeout(() => { try { const el0 = document.querySelector('[data-sec="' + sec0 + '"]'); if (el0 && el0.scrollIntoView) el0.scrollIntoView({ behavior: 'smooth', block: 'start' }); } catch (e9) {} }, 700); } catch (e8) {}
+      }
       const li = (k) => (q.get(k) || '').split(',').map(s => s.trim()).filter(Boolean);
       const patch = {};
       if (q.get('m')) patch.fm = li('m');

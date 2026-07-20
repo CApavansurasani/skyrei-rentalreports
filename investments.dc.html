@@ -111,7 +111,7 @@ input:focus{outline:2px solid #C9A45C;outline-offset:1px}
     </div>
 
     <!-- ══ Income on investment ══ -->
-    <div style="margin-top:16px;background:#FFFFFF;border:1px solid #E5E3DC;border-radius:16px;padding:22px 26px">
+    <div data-sec="cards" style="margin-top:16px;background:#FFFFFF;border:1px solid #E5E3DC;border-radius:16px;padding:22px 26px">
       <div style="display:flex;justify-content:space-between;align-items:baseline;flex-wrap:wrap;gap:8px">
         <div style="font-family:'Source Serif 4',Georgia,serif;font-size:18px;font-weight:600;color:#16233A">Income on investment</div>
         <div style="font-size:11.5px;color:#8A93A6">{{ invSub }}</div>
@@ -151,7 +151,7 @@ input:focus{outline:2px solid #C9A45C;outline-offset:1px}
     </div>
 
     <!-- ══ Cross-sheet ties & attention ══ -->
-    <div style="margin-top:14px;background:#FFFDF6;border:1px solid #EAD9C0;border-radius:16px;padding:16px 22px" onClick="{{ stopProp }}">
+    <div data-sec="ties" style="margin-top:14px;background:#FFFDF6;border:1px solid #EAD9C0;border-radius:16px;padding:16px 22px" onClick="{{ stopProp }}">
       <div style="display:flex;align-items:center;gap:10px;flex-wrap:wrap">
         <div style="font-family:'Source Serif 4',Georgia,serif;font-size:15px;font-weight:600;color:#16233A">Checks &amp; balances</div>
         <div style="padding:3px 10px;border-radius:99px;background:{{ tieBg }};color:{{ tieCol }};font-size:10px;font-weight:700;letter-spacing:0.07em;white-space:nowrap">{{ tieBadge }}</div>
@@ -182,7 +182,7 @@ input:focus{outline:2px solid #C9A45C;outline-offset:1px}
     </div>
 
     <!-- ══ Margin of safety ══ -->
-    <div style="margin-top:16px;background:#FFFFFF;border:1px solid #E5E3DC;border-radius:16px;padding:22px 26px" onClick="{{ stopProp }}">
+    <div data-sec="mos" style="margin-top:16px;background:#FFFFFF;border:1px solid #E5E3DC;border-radius:16px;padding:22px 26px" onClick="{{ stopProp }}">
       <div style="display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:8px;row-gap:10px">
         <div>
           <div style="font-family:'Source Serif 4',Georgia,serif;font-size:18px;font-weight:600;color:#16233A">Margin of safety — equity, value &amp; appreciation</div>
@@ -374,7 +374,7 @@ input:focus{outline:2px solid #C9A45C;outline-offset:1px}
     </div>
 
     <!-- ══ Balance sheet ══ -->
-    <div style="margin-top:16px;background:#FFFFFF;border:1px solid #E5E3DC;border-radius:16px;padding:20px 24px">
+    <div data-sec="bs" style="margin-top:16px;background:#FFFFFF;border:1px solid #E5E3DC;border-radius:16px;padding:20px 24px">
       <div style="display:flex;justify-content:space-between;align-items:baseline;flex-wrap:wrap;gap:8px">
         <div style="font-family:'Source Serif 4',Georgia,serif;font-size:18px;font-weight:600;color:#16233A">Balance sheet <span style="font-size:12px;font-weight:600;color:#8A93A6">· at cost basis · {{ bsAsOf }}</span></div>
         <div style="font-size:11px;color:#8A93A6">{{ bsSub }}</div>
@@ -427,7 +427,7 @@ input:focus{outline:2px solid #C9A45C;outline-offset:1px}
     </div>
 
     <!-- ══ How the portfolio was built ══ -->
-    <div style="margin-top:16px;background:#FFFFFF;border:1px solid #E5E3DC;border-radius:16px;padding:22px 26px" onClick="{{ stopProp }}">
+    <div data-sec="growth" style="margin-top:16px;background:#FFFFFF;border:1px solid #E5E3DC;border-radius:16px;padding:22px 26px" onClick="{{ stopProp }}">
       <div style="display:flex;justify-content:space-between;align-items:baseline;flex-wrap:wrap;gap:8px">
         <div style="font-family:'Source Serif 4',Georgia,serif;font-size:18px;font-weight:600;color:#16233A">How the portfolio was built</div>
         <div style="font-size:11.5px;color:#8A93A6">{{ gSub }}</div>
@@ -530,7 +530,7 @@ input:focus{outline:2px solid #C9A45C;outline-offset:1px}
     </div>
 
     <!-- ══ Watchlist ══ -->
-    <div style="margin-top:16px;background:#FFFFFF;border:1px solid #E5E3DC;border-radius:16px;padding:24px 30px">
+    <div data-sec="watchlist" style="margin-top:16px;background:#FFFFFF;border:1px solid #E5E3DC;border-radius:16px;padding:24px 30px">
       <div style="display:flex;justify-content:space-between;align-items:baseline;flex-wrap:wrap;gap:8px">
         <div style="font-family:'Source Serif 4',Georgia,serif;font-size:18px;font-weight:600;color:#16233A">Watchlist — doors off the game plan</div>
         <div style="font-size:11.5px;color:#8A93A6">{{ wSub }}</div>
@@ -614,7 +614,7 @@ input:focus{outline:2px solid #C9A45C;outline-offset:1px}
     </div>
 
     <!-- ══ Entity table ══ -->
-    <div style="margin-top:16px;background:#FFFFFF;border:1px solid #E5E3DC;border-radius:16px;padding:22px 28px">
+    <div data-sec="entity" style="margin-top:16px;background:#FFFFFF;border:1px solid #E5E3DC;border-radius:16px;padding:22px 28px">
       <div style="display:flex;justify-content:space-between;align-items:baseline;flex-wrap:wrap;gap:8px">
         <div style="font-family:'Source Serif 4',Georgia,serif;font-size:18px;font-weight:600;color:#16233A">By entity</div>
         <div style="font-size:12px;color:#8A93A6">{{ entSub }}</div>
@@ -665,7 +665,7 @@ input:focus{outline:2px solid #C9A45C;outline-offset:1px}
     </div>
 
     <!-- ══ Coverage & disclosures ══ -->
-    <div style="margin-top:16px;background:#FFFFFF;border:1px solid #E5E3DC;border-radius:16px;padding:22px 28px">
+    <div data-sec="coverage" style="margin-top:16px;background:#FFFFFF;border:1px solid #E5E3DC;border-radius:16px;padding:22px 28px">
       <div style="display:flex;align-items:center;gap:10px">
         <div style="font-family:'Source Serif 4',Georgia,serif;font-size:15px;font-weight:600;color:#16233A">How these numbers are built</div>
         <div style="padding:3px 10px;border-radius:99px;background:#E3EEE7;color:#2F7351;font-size:10px;font-weight:700;letter-spacing:0.07em;white-space:nowrap">TIED OUT</div>
@@ -737,6 +737,10 @@ class Component extends DCLogic {
     try {
       if (typeof location === 'undefined' || !location.search || !this.state.bs) return;
       const q = new URLSearchParams(location.search);
+      const sec0 = q.get('sec');
+      if (sec0 && /^[a-z-]{2,24}$/.test(sec0)) {
+        try { setTimeout(() => { try { const el0 = document.querySelector('[data-sec="' + sec0 + '"]'); if (el0 && el0.scrollIntoView) el0.scrollIntoView({ behavior: 'smooth', block: 'start' }); } catch (e9) {} }, 700); } catch (e8) {}
+      }
       const li = (k) => (q.get(k) || '').split(',').map(s => s.trim()).filter(Boolean);
       const patch = {};
       if (q.get('m')) patch.fm = li('m');

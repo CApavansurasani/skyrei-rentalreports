@@ -117,7 +117,7 @@ input:focus{outline:2px solid #C9A45C;outline-offset:1px}
     <sc-if value="{{ ready }}" hint-placeholder-val="{{ false }}">
 
     <!-- ══ Top KPI cards ══ -->
-    <div style="margin-top:18px;display:grid;grid-template-columns:repeat(4,1fr);gap:14px">
+    <div data-sec="kpis" style="margin-top:18px;display:grid;grid-template-columns:repeat(4,1fr);gap:14px">
       <sc-for list="{{ sparks }}" as="sp" hint-placeholder-count="8">
         <div style="background:#FFFFFF;border:1px solid #E5E3DC;border-radius:16px;padding:18px 20px">
           <div style="font-size:11px;letter-spacing:0.08em;font-weight:700;color:#5E6B82;text-transform:uppercase">{{ sp.label }}</div>
@@ -137,7 +137,7 @@ input:focus{outline:2px solid #C9A45C;outline-offset:1px}
     </div>
 
     <!-- ══ Rental income allocation + net income ══ -->
-    <div style="margin-top:16px;display:grid;grid-template-columns:7fr 5fr;gap:16px">
+    <div data-sec="alloc" style="margin-top:16px;display:grid;grid-template-columns:7fr 5fr;gap:16px">
       <div style="background:#FFFFFF;border:1px solid #E5E3DC;border-radius:16px;padding:20px 24px">
         <div style="display:flex;justify-content:space-between;align-items:baseline;flex-wrap:wrap;gap:8px">
           <div style="font-family:'Source Serif 4',Georgia,serif;font-size:18px;font-weight:600;color:#16233A">Rental income allocation</div>
@@ -231,7 +231,7 @@ input:focus{outline:2px solid #C9A45C;outline-offset:1px}
     </div>
 
     <!-- ══ Waterfall ══ -->
-    <div style="margin-top:16px;background:#FFFFFF;border:1px solid #E5E3DC;border-radius:16px;padding:24px 30px">
+    <div data-sec="waterfall" style="margin-top:16px;background:#FFFFFF;border:1px solid #E5E3DC;border-radius:16px;padding:24px 30px">
       <div style="display:flex;justify-content:space-between;align-items:baseline;flex-wrap:wrap;gap:8px">
         <div style="font-family:'Source Serif 4',Georgia,serif;font-size:18px;font-weight:600;color:#16233A">How rent became income</div>
         <div style="font-size:12px;color:#8A93A6">Rent roll → what stayed in the business · {{ wvScopeLine }} · click any line — the doors behind it open right under it</div>
@@ -457,7 +457,7 @@ input:focus{outline:2px solid #C9A45C;outline-offset:1px}
     </div>
 
     <!-- ══ Trend explorer ══ -->
-    <div data-trends-root="1" style="margin-top:16px;background:#FFFFFF;border:1px solid #E5E3DC;border-radius:16px;padding:24px 30px">
+    <div data-trends-root="1" data-sec="trends" style="margin-top:16px;background:#FFFFFF;border:1px solid #E5E3DC;border-radius:16px;padding:24px 30px">
       <div style="display:flex;justify-content:space-between;align-items:baseline;flex-wrap:wrap;gap:8px">
         <div style="font-family:'Source Serif 4',Georgia,serif;font-size:18px;font-weight:600;color:#16233A">Income, expense &amp; loss trends, month on month</div>
         <div style="font-size:12px;color:#8A93A6">Pick a line, then drill into the doors behind it — sorted so the vital few show first</div>
@@ -716,7 +716,7 @@ input:focus{outline:2px solid #C9A45C;outline-offset:1px}
 
     <!-- ══ Needing attention ══ -->
     <sc-if value="{{ showSpot }}" hint-placeholder-val="{{ true }}">
-        <div style="margin-top:16px;background:#FFFFFF;border:1px solid #E5E3DC;border-radius:16px;padding:24px 30px">
+        <div data-sec="attention" style="margin-top:16px;background:#FFFFFF;border:1px solid #E5E3DC;border-radius:16px;padding:24px 30px">
           <div style="display:flex;justify-content:space-between;align-items:baseline;flex-wrap:wrap;gap:8px">
             <div style="font-family:'Source Serif 4',Georgia,serif;font-size:18px;font-weight:600;color:#16233A">Needing attention</div>
             <div style="font-size:12px;color:#8A93A6">{{ attSub }}</div>
@@ -818,7 +818,7 @@ input:focus{outline:2px solid #C9A45C;outline-offset:1px}
     </sc-if>
 
     <!-- ══ Full statement table ══ -->
-    <div style="margin-top:16px;background:#FFFFFF;border:1px solid #E5E3DC;border-radius:16px">
+    <div data-sec="statement" style="margin-top:16px;background:#FFFFFF;border:1px solid #E5E3DC;border-radius:16px">
       <div style="display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:12px;padding:22px 30px 16px">
         <div>
           <div style="font-family:'Source Serif 4',Georgia,serif;font-size:18px;font-weight:600;color:#16233A">The full statement</div>
@@ -992,6 +992,10 @@ class Component extends DCLogic {
     try {
       if (typeof location !== 'undefined' && location.search) {
         const q = new URLSearchParams(location.search);
+      const sec0 = q.get('sec');
+      if (sec0 && /^[a-z-]{2,24}$/.test(sec0)) {
+        try { setTimeout(() => { try { const el0 = document.querySelector('[data-sec="' + sec0 + '"]'); if (el0 && el0.scrollIntoView) el0.scrollIntoView({ behavior: 'smooth', block: 'start' }); } catch (e9) {} }, 700); } catch (e8) {}
+      }
         const patch = {};
         if (q.get('door')) patch.doors = [q.get('door')];
         if (q.get('entity')) patch.cos = [q.get('entity')];

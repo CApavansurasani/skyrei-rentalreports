@@ -111,7 +111,7 @@ input:focus{outline:2px solid #C9A45C;outline-offset:1px}
     </div>
 
     <!-- ══ KPI row ══ -->
-    <div style="margin-top:16px;display:grid;grid-template-columns:repeat(6,1fr);gap:12px">
+    <div data-sec="kpis" style="margin-top:16px;display:grid;grid-template-columns:repeat(6,1fr);gap:12px">
       <sc-for list="{{ kpis }}" as="k" hint-placeholder-count="6">
         <div title="{{ k.tip }}" style="background:{{ k.bg }};border:1px solid {{ k.bd }};border-radius:14px;padding:14px 16px">
           <div style="font-size:9.5px;letter-spacing:0.07em;font-weight:700;color:#5E6B82;text-transform:uppercase;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">{{ k.label }}</div>
@@ -122,7 +122,7 @@ input:focus{outline:2px solid #C9A45C;outline-offset:1px}
     </div>
 
     <!-- ══ HERO: How rent becomes income — the cash statement walk ══ -->
-    <div style="margin-top:16px;background:#FFFFFF;border:1px solid #E5E3DC;border-radius:16px;padding:24px 30px">
+    <div data-sec="statement" style="margin-top:16px;background:#FFFFFF;border:1px solid #E5E3DC;border-radius:16px;padding:24px 30px">
       <div style="display:flex;justify-content:space-between;align-items:flex-start;gap:18px;flex-wrap:wrap">
         <div>
           <div style="font-family:'Source Serif 4',Georgia,serif;font-size:19px;font-weight:600;color:#16233A">How rent becomes income</div>
@@ -408,7 +408,7 @@ input:focus{outline:2px solid #C9A45C;outline-offset:1px}
     </div>
 
     <!-- ══ Where the cash went + financing events ══ -->
-    <div style="margin-top:16px;display:grid;grid-template-columns:3fr 2fr;gap:16px;align-items:start">
+    <div data-sec="outflows" style="margin-top:16px;display:grid;grid-template-columns:3fr 2fr;gap:16px;align-items:start">
       <div style="background:#FFFFFF;border:1px solid #E5E3DC;border-radius:16px;padding:22px 26px">
         <div style="display:flex;justify-content:space-between;align-items:baseline;flex-wrap:wrap;gap:8px">
           <div style="font-family:'Source Serif 4',Georgia,serif;font-size:18px;font-weight:600;color:#16233A">Where the cash went</div>
@@ -481,7 +481,7 @@ input:focus{outline:2px solid #C9A45C;outline-offset:1px}
     </div>
 
     <!-- ══ Checks & balances ══ -->
-    <div style="margin-top:16px;background:#FFFFFF;border:1px solid #E5E3DC;border-radius:16px;padding:22px 26px">
+    <div data-sec="recon" style="margin-top:16px;background:#FFFFFF;border:1px solid #E5E3DC;border-radius:16px;padding:22px 26px">
       <div style="display:flex;justify-content:space-between;align-items:baseline;flex-wrap:wrap;gap:8px">
         <div style="font-family:'Source Serif 4',Georgia,serif;font-size:18px;font-weight:600;color:#16233A">Checks &amp; balances</div>
         <div style="font-size:11.5px;color:#8A93A6">every figure cross-checked against its source — differences shown, never absorbed</div>
@@ -598,6 +598,10 @@ class Component extends DCLogic {
     try {
       if (typeof location === 'undefined' || !location.search || !this.state.cf) return;
       const q = new URLSearchParams(location.search);
+      const sec0 = q.get('sec');
+      if (sec0 && /^[a-z-]{2,24}$/.test(sec0)) {
+        try { setTimeout(() => { try { const el0 = document.querySelector('[data-sec="' + sec0 + '"]'); if (el0 && el0.scrollIntoView) el0.scrollIntoView({ behavior: 'smooth', block: 'start' }); } catch (e9) {} }, 700); } catch (e8) {}
+      }
       const li = (k) => (q.get(k) || '').split(',').map(s => s.trim()).filter(Boolean);
       const patch = {};
       if (q.get('m')) patch.fm = li('m');

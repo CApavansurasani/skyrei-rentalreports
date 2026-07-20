@@ -90,7 +90,7 @@ input:focus{outline:2px solid #C9A45C;outline-offset:1px}
     </div>
 
         <!-- ══ KPI row ══ -->
-    <div style="margin-top:16px;display:grid;grid-template-columns:repeat(6,1fr);gap:12px">
+    <div data-sec="kpis" style="margin-top:16px;display:grid;grid-template-columns:repeat(6,1fr);gap:12px">
       <sc-for list="{{ kpis }}" as="k" hint-placeholder-count="6">
         <div title="{{ k.tip }}" style="background:{{ k.bg }};border:1px solid {{ k.bd }};border-radius:14px;padding:14px 16px">
           <div style="font-size:9.5px;letter-spacing:0.07em;font-weight:700;color:#5E6B82;text-transform:uppercase;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">{{ k.label }}</div>
@@ -101,7 +101,7 @@ input:focus{outline:2px solid #C9A45C;outline-offset:1px}
     </div>
 
     <!-- ══ Collection rate — trend + why-not-100% ══ -->
-    <div style="margin-top:16px;background:#FFFFFF;border:1px solid #E5E3DC;border-radius:16px;padding:22px 26px">
+    <div data-sec="rate" style="margin-top:16px;background:#FFFFFF;border:1px solid #E5E3DC;border-radius:16px;padding:22px 26px">
       <div style="display:flex;justify-content:space-between;align-items:baseline;flex-wrap:wrap;gap:8px">
         <div style="font-family:'Source Serif 4',Georgia,serif;font-size:18px;font-weight:600;color:#16233A">Collection rate — and who is holding it back</div>
         <div style="font-size:11.5px;color:#8A93A6">{{ rwSub }}</div>
@@ -276,7 +276,7 @@ input:focus{outline:2px solid #C9A45C;outline-offset:1px}
     </div>
 
     <!-- ══ Collection efficiency — the manager's scorecard (owner 2026-07-20) ══ -->
-    <div style="margin-top:16px;background:#FFFFFF;border:1px solid #E5E3DC;border-radius:16px;padding:22px 26px">
+    <div data-sec="eff" style="margin-top:16px;background:#FFFFFF;border:1px solid #E5E3DC;border-radius:16px;padding:22px 26px">
       <div style="display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:10px">
         <div>
           <div style="font-family:'Source Serif 4',Georgia,serif;font-size:18px;font-weight:600;color:#16233A">Collection efficiency — the manager&rsquo;s scorecard</div>
@@ -595,7 +595,7 @@ input:focus{outline:2px solid #C9A45C;outline-offset:1px}
     </div>
 
     <!-- ══ Tenant ledger ══ -->
-    <div style="margin-top:16px;background:#FFFFFF;border:1px solid #E5E3DC;border-radius:16px;padding:22px 26px">
+    <div data-sec="ledger" style="margin-top:16px;background:#FFFFFF;border:1px solid #E5E3DC;border-radius:16px;padding:22px 26px">
       <div style="display:flex;justify-content:space-between;align-items:baseline;flex-wrap:wrap;gap:8px">
         <div style="font-family:'Source Serif 4',Georgia,serif;font-size:18px;font-weight:600;color:#16233A">Tenant balances — the rent ledger</div>
         <div style="font-size:11.5px;color:#8A93A6">{{ ldSub }}</div>
@@ -692,7 +692,7 @@ input:focus{outline:2px solid #C9A45C;outline-offset:1px}
     </div>
 
     <!-- ══ Collections watchlist ══ -->
-    <div style="margin-top:16px;background:#FFFFFF;border:1px solid #E5E3DC;border-radius:16px;padding:22px 26px">
+    <div data-sec="watch" style="margin-top:16px;background:#FFFFFF;border:1px solid #E5E3DC;border-radius:16px;padding:22px 26px">
       <div style="display:flex;justify-content:space-between;align-items:baseline;flex-wrap:wrap;gap:8px">
         <div style="font-family:'Source Serif 4',Georgia,serif;font-size:18px;font-weight:600;color:#16233A">Collections watchlist — tenants off the plan</div>
         <div style="font-size:11.5px;color:#8A93A6">{{ wSub }}</div>
@@ -823,6 +823,10 @@ class Component extends DCLogic {
     try {
       if (typeof location === 'undefined' || !location.search || !this.state.cf) return;
       const q = new URLSearchParams(location.search);
+      const sec0 = q.get('sec');
+      if (sec0 && /^[a-z-]{2,24}$/.test(sec0)) {
+        try { setTimeout(() => { try { const el0 = document.querySelector('[data-sec="' + sec0 + '"]'); if (el0 && el0.scrollIntoView) el0.scrollIntoView({ behavior: 'smooth', block: 'start' }); } catch (e9) {} }, 700); } catch (e8) {}
+      }
       const li = (k) => (q.get(k) || '').split(',').map(s => s.trim()).filter(Boolean);
       const patch = {};
       if (q.get('m')) patch.fm = li('m');
