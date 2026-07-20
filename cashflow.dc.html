@@ -414,35 +414,71 @@ input:focus{outline:2px solid #C9A45C;outline-offset:1px}
           <div style="font-family:'Source Serif 4',Georgia,serif;font-size:18px;font-weight:600;color:#16233A">Where the cash went</div>
           <div style="font-size:11.5px;color:#8A93A6">{{ ofSub }}</div>
         </div>
-        <div style="margin-top:14px;font-size:10px;letter-spacing:0.09em;font-weight:800;color:#96742F">OPERATING — CASH-BASIS GL</div>
-        <sc-for list="{{ ofOp }}" as="o" hint-placeholder-count="10">
-          <div style="display:flex;align-items:center;gap:10px;padding:6px 0;border-bottom:1px solid #F4F2EA">
-            <span style="flex:1.6;font-size:11.5px;color:#2A3550;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">{{ o.k }}</span>
-            <span style="flex:1;height:6px;border-radius:3px;background:#F0EEE6;overflow:hidden"><span style="display:block;height:6px;border-radius:3px;background:#B04A33;opacity:0.75;width:{{ o.w }}"></span></span>
-            <span style="width:86px;text-align:right;font-size:11.5px;font-weight:700;color:#2A3550;font-variant-numeric:tabular-nums">{{ o.v }}</span>
-            <span style="width:52px;text-align:right;font-size:10px;color:#8A93A6;font-variant-numeric:tabular-nums">{{ o.pct }}</span>
+        <div style="margin-top:14px;font-size:10px;letter-spacing:0.09em;font-weight:800;color:#96742F">EVERY BILLED DOLLAR, GROUPED — CLICK A GROUP FOR ITS LEDGERS</div>
+        <div title="{{ ofBilledTip }}" style="display:flex;align-items:center;gap:10px;padding:8px 0;border-bottom:1px solid #E5E1D4">
+          <span style="width:14px;flex:none"></span>
+          <span style="flex:1.35;min-width:0;display:flex;flex-direction:column">
+            <span style="font-size:12px;font-weight:800;color:#16233A;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">Billed this window</span>
+            <span style="font-size:9px;color:#9AA3B5;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">rent, SD, fees, utilities — groups below are slices of this bar</span>
+          </span>
+          <span style="flex:1;height:10px;border-radius:5px;background:#F0EEE6;overflow:hidden"><span style="display:block;height:10px;background:#3D5175;width:100%"></span></span>
+          <span style="width:104px;flex:none;text-align:right;font-size:12px;font-weight:800;color:#16233A;font-variant-numeric:tabular-nums">{{ ofBilled }}</span>
+          <span style="width:46px;flex:none;text-align:right;font-size:10px;color:#8A93A6;font-variant-numeric:tabular-nums">100%</span>
+        </div>
+        <sc-for list="{{ ofRows }}" as="o" hint-placeholder-count="8">
+          <div>
+            <div onClick="{{ o.onClick }}" title="{{ o.tip }}" style-hover="background:#FBFAF6" style="display:flex;align-items:center;gap:10px;padding:7px 0;border-bottom:1px solid #F4F2EA;cursor:pointer;background:{{ o.bg }};border-radius:6px">
+              <span style="width:14px;flex:none;text-align:center;font-size:9.5px;font-weight:700;color:{{ o.chevCol }}">{{ o.chev }}</span>
+              <span style="flex:1.35;min-width:0;display:flex;flex-direction:column">
+                <span style="font-size:12px;font-weight:700;color:#16233A;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">{{ o.k }}</span>
+                <span style="font-size:9px;color:#9AA3B5;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">{{ o.sub }}</span>
+              </span>
+              <span style="flex:1;height:10px;border-radius:5px;background:#F0EEE6;overflow:hidden"><span style="display:block;height:10px;background:{{ o.barC }};width:{{ o.w }}"></span></span>
+              <span style="width:104px;flex:none;text-align:right;font-size:12px;font-weight:700;color:{{ o.vcol }};font-variant-numeric:tabular-nums">{{ o.v }}</span>
+              <span style="width:46px;flex:none;text-align:right;font-size:10px;color:#8A93A6;font-variant-numeric:tabular-nums">{{ o.pct }}</span>
+            </div>
+            <sc-if value="{{ o.exp }}" hint-placeholder-val="{{ false }}">
+              <div style="margin:4px 0 10px 14px;background:#FCFBF8;border:1px solid #EDEAE0;border-radius:12px;padding:10px 14px" onClick="{{ stopProp }}">
+                <sc-for list="{{ o.eRows }}" as="oe" hint-placeholder-count="5">
+                  <div title="{{ oe.tip }}" style="display:flex;align-items:center;gap:9px;padding:6px 4px;border-top:1px solid #F0EEE7;background:{{ oe.bg }};border-radius:6px">
+                    <span style="flex:1.55;min-width:0;font-size:11.5px;font-weight:{{ oe.fw }};color:{{ oe.col }};white-space:nowrap;overflow:hidden;text-overflow:ellipsis">{{ oe.k }}</span>
+                    <sc-if value="{{ oe.tagOn }}" hint-placeholder-val="{{ false }}">
+                      <span style="padding:2px 8px;border-radius:99px;font-size:8.5px;font-weight:800;background:{{ oe.tagBg }};color:{{ oe.tagCol }};white-space:nowrap;flex:none">{{ oe.tag }}</span>
+                    </sc-if>
+                    <sc-if value="{{ oe.linkOn }}" hint-placeholder-val="{{ false }}">
+                      <a href="{{ oe.href }}" onClick="{{ stopProp }}" style-hover="background:#F6ECD9" style="font-size:8px;font-weight:800;letter-spacing:0.04em;color:#96742F;text-decoration:none;border:1px solid #E2D9C4;border-radius:99px;padding:2px 7px;flex:none">{{ oe.linkLab }}</a>
+                    </sc-if>
+                    <span style="flex:1;height:5px;border-radius:3px;background:#F0EDE3;overflow:hidden"><span style="display:block;height:5px;border-radius:3px;background:{{ oe.barC }};width:{{ oe.w }}"></span></span>
+                    <span style="width:96px;flex:none;text-align:right;font-size:11.5px;font-weight:700;color:{{ oe.vcol }};font-variant-numeric:tabular-nums">{{ oe.v }}</span>
+                    <span style="width:44px;flex:none;text-align:right;font-size:9.5px;color:#9AA3B5;font-variant-numeric:tabular-nums">{{ oe.pct }}</span>
+                  </div>
+                </sc-for>
+                <sc-if value="{{ o.noteOn }}" hint-placeholder-val="{{ false }}">
+                  <div style="margin-top:8px;padding:7px 11px;background:#FBF6EA;border:1px solid #EAD9C0;border-radius:9px;font-size:10px;line-height:1.55;color:#96742F">{{ o.note }}</div>
+                </sc-if>
+              </div>
+            </sc-if>
           </div>
         </sc-for>
-        <div style="display:flex;justify-content:space-between;padding:8px 0;font-size:12px;font-weight:800;color:#16233A;font-variant-numeric:tabular-nums"><span>Total operating</span><span>{{ ofOpTot }}</span></div>
-        <div style="margin-top:12px;font-size:10px;letter-spacing:0.09em;font-weight:800;color:#96742F">STATUTORY &amp; ESCROW — CASH BASIS</div>
-        <sc-for list="{{ ofStat }}" as="s" hint-placeholder-count="4">
-          <div style="display:flex;align-items:center;gap:10px;padding:6px 0;border-bottom:1px solid #F4F2EA">
-            <span style="flex:1.6;font-size:11.5px;color:#2A3550;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">{{ s.k }}</span>
-            <span style="padding:2px 8px;border-radius:99px;font-size:8.5px;font-weight:800;background:{{ s.tagBg }};color:{{ s.tagCol }};white-space:nowrap">{{ s.tag }}</span>
-            <span style="margin-left:auto;width:86px;text-align:right;font-size:11.5px;font-weight:700;color:#2A3550;font-variant-numeric:tabular-nums">{{ s.v }}</span>
+        <sc-for list="{{ ofMemo }}" as="om" hint-placeholder-count="2">
+          <div title="{{ om.tip }}" style="display:flex;align-items:center;gap:10px;padding:5px 0;border-bottom:1px solid #F4F2EA">
+            <span style="width:14px;flex:none"></span>
+            <span style="flex:1.35;min-width:0;font-size:11px;color:#8A93A6;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">{{ om.k }}</span>
+            <span style="flex:1"></span>
+            <span style="width:104px;flex:none;text-align:right;font-size:11px;font-weight:600;color:{{ om.vcol }};font-variant-numeric:tabular-nums">{{ om.v }}</span>
+            <span style="width:46px;flex:none;text-align:right;font-size:9.5px;color:#B9C2D2;font-variant-numeric:tabular-nums">{{ om.pct }}</span>
           </div>
         </sc-for>
-        <div style="display:flex;justify-content:space-between;padding:8px 0;font-size:12px;font-weight:800;color:#16233A;font-variant-numeric:tabular-nums"><span>Total statutory &amp; escrow</span><span>{{ ofStatTot }}</span></div>
-        <div style="padding:8px 12px;background:#FBF6EA;border:1px solid #EAD9C0;border-radius:9px;font-size:10.5px;line-height:1.6;color:#96742F">{{ ofStatNote }}</div>
-        <div style="margin-top:12px;font-size:10px;letter-spacing:0.09em;font-weight:800;color:#96742F">DEBT SERVICE</div>
-        <sc-for list="{{ ofDebt }}" as="d" hint-placeholder-count="3">
-          <div style="display:flex;align-items:center;gap:10px;padding:6px 0;border-bottom:1px solid #F4F2EA">
-            <span style="flex:1.6;font-size:11.5px;color:#2A3550;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">{{ d.k }}</span>
-            <span style="padding:2px 8px;border-radius:99px;font-size:8.5px;font-weight:800;background:{{ d.chipBg }};color:{{ d.chipCol }};white-space:nowrap">{{ d.chip }}</span>
-            <span style="margin-left:auto;width:86px;text-align:right;font-size:11.5px;font-weight:700;color:#2A3550;font-variant-numeric:tabular-nums">{{ d.v }}</span>
-          </div>
-        </sc-for>
-        <div style="display:flex;justify-content:space-between;padding:8px 0;font-size:12px;font-weight:800;color:#16233A;font-variant-numeric:tabular-nums"><span>Total debt service</span><span>{{ ofDebtTot }}</span></div>
+        <div title="{{ ofKeptTip }}" style="margin-top:10px;display:flex;align-items:center;gap:10px;padding:10px 12px;background:#16233A;border-radius:10px">
+          <span style="width:14px;flex:none"></span>
+          <span style="flex:1.35;min-width:0;display:flex;flex-direction:column">
+            <span style="font-size:11px;letter-spacing:0.1em;font-weight:800;color:#C9A45C">NET CASH KEPT</span>
+            <span style="font-size:9px;color:#8A96AD;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">{{ ofKeptSub }}</span>
+          </span>
+          <span style="flex:1;height:10px;border-radius:5px;background:#23324E;overflow:hidden"><span style="display:block;height:10px;background:#4E9F76;width:{{ ofKeptW }}"></span></span>
+          <span style="width:104px;flex:none;text-align:right;font-size:12.5px;font-weight:800;color:#8FD0A8;font-variant-numeric:tabular-nums">{{ ofKept }}</span>
+          <span style="width:46px;flex:none;text-align:right;font-size:10px;color:#8A96AD;font-variant-numeric:tabular-nums">{{ ofKeptPct }}</span>
+        </div>
         <div style="margin-top:10px;font-size:10.5px;color:#9AA3B5;line-height:1.65">{{ ofFoot }}</div>
       </div>
 
@@ -568,7 +604,7 @@ class Component extends DCLogic {
     fm: [], fe: [], fp: [],
     ddOpen: null, fq: '',
     ckOpen: null,
-    stOpen: null, stQ: '', stGrp: null, stLed: null, stAll: false,
+    stOpen: null, stQ: '', stGrp: null, stLed: null, stAll: false, ofG: null,
     hmSel: [], hcmp: false, haSel: [], hbSel: [], hbBud: false, hDd: null, heroQ: '',
     txd: null, txErr: false, _txLoading: false, txOpen: null, txAll: false,
   };
@@ -651,7 +687,7 @@ class Component extends DCLogic {
       wkRows: [],
       spotQ: '', onSpotQ: () => {}, spotOpen: false, spotOpts: [], spotNone: false, spotChipOn: false, spotChip: '', onSpotClear: () => {}, spotBd: '#D8D4C8',
       stIdent: '', stNetLine: '', driftOn: false, driftLine: '', wfFoot: '',
-      ofSub: '', ofOp: [], ofOpTot: '', ofStat: [], ofStatTot: '', ofStatNote: '', ofDebt: [], ofDebtTot: '', ofFoot: '',
+      ofSub: '', ofBilled: '', ofBilledTip: '', ofRows: [], ofMemo: [], ofKept: '', ofKeptW: '0%', ofKeptPct: '', ofKeptSub: '', ofKeptTip: '', ofFoot: '',
       evSub: '', evOn: false, evEmpty: false, evGroups: [], evFoot: '',
       ckCards: [], ckFoot: '',
       asRows: [], pendRows: [], asFoot: '',
@@ -1424,32 +1460,99 @@ class Component extends DCLogic {
     const driftLine = 'Collection loss recognised in this span: ' + fN(spanCL) + ' — your AR-file write-offs plus in-window movers’ residuals per your lease rule (' + (CLX.clDetail || []).length + ' events). ' + (CLX.pendingWriteoffs || []).length + ' window-end recognitions await the June AR column.';
     const wfFoot = 'Statement basis: Buildium journals at tenant grain, cash figures only — flow bars hang off the running total (dashed line), subtotal bars show each activity’s own net. Escrow and principal are YOUR Cashflow.xlsx actuals per your 17-Jul call (escrow file rows are property-named — each drills with P&L/BS/LOANS links; the LOANS link opens that property’s note) — the lender engine stays as the cross-check in Checks & balances. MONTHS is a multi-select: any set of months re-runs the whole statement; COMPARE takes month-sets on both sides, or the BUDGET slot (pending your standards, scales × FROM months). Click ANY line — including every subtotal — and it opens in place: groups → ledgers → top-5 properties with search and Show-all. Capital events settle from sale proceeds / new notes, so they sit as a memo outside net cash. Bank tie-out activates when balances land.';
 
-    // ══ where the cash went ══
+    // ══ where the cash went — every billed dollar, grouped (owner spec 2026-07-20: 7 groups + expand to ledgers) ══
     const opexAccts = {};
     for (const d of scoped) { const A = DOORS[d].opexByAcct; for (const k in A) opexAccts[k] = (opexAccts[k] || 0) + sum(winIdx.map(i => A[k][i])); }
     if (unfiltered) { for (const k in OH.opexByAcct) opexAccts[k] = (opexAccts[k] || 0) + sum(winIdx.map(i => OH.opexByAcct[k][i])); }
-    const opexSorted = Object.entries(opexAccts).filter(([k, v]) => Math.abs(v) > 0.005).sort((a, b) => b[1] - a[1]);
-    const opMax = Math.max(...opexSorted.map(x => Math.abs(x[1])), 1);
-    const ofOp = opexSorted.map(([k, v]) => ({ k, v: fN(v), w: Math.round(Math.abs(v) / opMax * 100) + '%', pct: coll > 0 ? (v / coll * 100).toFixed(1) + '%' : '—' }));
-    const ofOpTot = fN(opex);
-    const ofStat = [
-      { k: 'T&I escrow to lenders', tag: 'CASH · FILE', tagBg: '#F2F7F0', tagCol: GREEND, v: fN(fileEscW) },
-      { k: 'Insurance — paid direct', tag: 'CASH · FILE', tagBg: '#F2F7F0', tagCol: GREEND, v: fN(insDirW) },
-      { k: 'Property tax — paid direct', tag: 'CASH · FILE', tagBg: '#F2F7F0', tagCol: GREEND, v: fN(ptDirW) },
-      { k: 'HOA fees', tag: 'GL PROXY', tagBg: '#FBF6EA', tagCol: GOLDD, v: fN(hoaProxyW) },
-    ];
-    const ofStatTot = fN(statCash);
-    const ofStatNote = 'GL accrual for property tax, insurance & HOA in this scope is ' + fN(statAccr) + ' vs ' + fN(statCash) + ' cash shown — a ' + fN(statAccr - statCash) + ' timing gap. Most non-escrowed tax and insurance bills land seasonally; the gap will close as actual payment data arrives.' + (unfiltered ? '' : ' Direct-paid tax/insurance actuals are portfolio-level in the file and drop out of door-filtered scopes.');
+    const unpaidW = chg - coll, unpNeg = unpaidW < -0.005;
     const dIntFile = sum(winIdx.map(i => RC.interest.file[i])), dIntGl = sum(winIdx.map(i => RC.interest.gl[i]));
     const dPrinFile = sum(winIdx.map(i => RC.principal.file[i])), dPrinEng = sum(winIdx.map(i => RC.principal.engineSched[i]));
-    const ofDebt = [
-      { k: 'Interest', chip: unfiltered ? 'GL · file Δ ' + f2(dIntFile - dIntGl) : 'GL actuals', chipBg: unfiltered && Math.abs(dIntFile - dIntGl) <= 0.25 ? '#F2F7F0' : '#FBF6EA', chipCol: unfiltered && Math.abs(dIntFile - dIntGl) <= 0.25 ? GREEND : GOLDD, v: fN(intW) },
-      { k: 'Principal — repaid', chip: unfiltered ? 'CASH · FILE · engine Δ ' + fK(dPrinEng - dPrinFile) : 'CASH · FILE', chipBg: '#F2F7F0', chipCol: GREEND, v: fN(prinW) },
-      { k: 'Escrow (inside EMI)', chip: 'counted above', chipBg: '#F0EEE6', chipCol: MUT, v: 'in statutory' },
+    // ledger → group by GL prefix: Rent Ready / Repairs / Property Management named; every other opex ledger falls into Others automatically (future ledgers too)
+    const ofGrpOf = a => { const p = a.indexOf(' - ') > 0 ? a.split(' - ')[0] : a; return p === 'Rent Ready' ? 'rr' : p === 'Repairs' ? 'rep' : (p === 'Property Management Expense' || p === 'Property Management') ? 'pm' : 'oth'; };
+    const ofLedgers = { rr: [], rep: [], pm: [], oth: [] };
+    for (const a in opexAccts) ofLedgers[ofGrpOf(a)].push([a, opexAccts[a]]);
+    for (const g in ofLedgers) ofLedgers[g].sort((x, y) => Math.abs(y[1]) - Math.abs(x[1]));
+    const ledSum = g => sum(ofLedgers[g].map(x => x[1]));
+    const gV = { ip: intW + prinW, stat: statCash, rr: ledSum('rr'), rep: ledSum('rep'), pm: ledSum('pm'), oth: ledSum('oth'), capex: capexW, unpaid: unpaidW };
+    const ofCostSum = gV.ip + gV.stat + gV.rr + gV.rep + gV.pm + gV.oth + gV.capex;
+    const mWinParam = 'm=' + winIdx.map(i => MO[i]).join(',');
+    const ofScope = (S.fe.length ? '&entity=' + S.fe.map(esc).join(',') : '') + (S.fp.length ? '&door=' + S.fp.map(esc).join(',') : '');
+    const txAcctHref = accts => './transactions.dc.html?' + mWinParam + ofScope + '&acct=' + esc(accts.join(','));
+    const pctOfBilled = v => chg > 0.005 ? (v / chg * 100).toFixed(1) + '%' : '—';
+    const ofScaleBase = chg > 0.005 ? chg : Math.max(...Object.keys(gV).map(k => Math.abs(gV[k])), Math.abs(kept), 1);
+    const shareW = v => Math.max(1.5, Math.abs(v) / ofScaleBase * 100).toFixed(1) + '%';
+    const nLedLab = g => ofLedgers[g].filter(x => Math.abs(x[1]) > 0.005).length + ' ledger' + (ofLedgers[g].filter(x => Math.abs(x[1]) > 0.005).length === 1 ? '' : 's');
+    const ofDefs = [
+      { key: 'ip', k: 'Interest & Principal', sub: '2 lines — the banks first', tip: 'The banks come first: interest ' + f2(intW) + ' + scheduled principal ' + f2(prinW) + ' = ' + f2(intW + prinW) + ' — ' + pctOfBilled(intW + prinW) + ' of every billed dollar. Principal comes back to you as equity, but it still leaves the bank account every month. Click for both lines.' },
+      { key: 'stat', k: 'Statutory', sub: 'escrow + property tax, insurance, HOA', tip: 'Costs that arrive whether or not rent does: T&I escrow inside the EMI, property tax and insurance paid direct, HOA. Click for the four components.' },
+      { key: 'rr', k: 'Rent Ready', sub: nLedLab('rr') + ' — making empty doors rentable', tip: 'Getting vacant doors ready to rent — materials, payroll, contractors. Click for the ledgers.' },
+      { key: 'rep', k: 'Repairs', sub: nLedLab('rep') + ' — fixing what breaks', tip: 'Fixing what breaks in occupied doors — payroll, materials, contractors. Click for the ledgers.' },
+      { key: 'pm', k: 'Property Management', sub: nLedLab('pm') + ' — the management layer', tip: 'What the management layer itself costs. Click for the ledger.' },
+      { key: 'oth', k: 'Others', sub: nLedLab('oth') + ' — utilities, misc, renter’s insurance', tip: 'Every cash-basis GL ledger outside the named groups. A new ledger in the GL lands here automatically until we name it into a group. Click for the ledgers.' },
+      { key: 'capex', k: 'CapEx', sub: 'capital ledgers — in operating (your 17-Jul call)', tip: 'Improvements the books capitalise (HVAC, appliances) but that left the bank in cash this window. Sits inside operating per your 17-Jul call. Click for the register link.' },
+      { key: 'unpaid', k: unpNeg ? 'Drawn from balances' : 'Unpaid receivables', sub: unpNeg ? 'receipts beat billing — old dues paid down' : 'billed but not yet received — owed, not spent', tip: unpNeg ? 'Receipts beat this window’s billing — tenants paid old dues down, adding cash on top of the window’s own billing. Detail on the Collections page.' : 'Billed this window but not yet in the bank, net of tenants paying down old dues — money still owed to you, not money spent. Aged tenant-by-tenant on the Collections page. Click for the properties holding it.' },
     ];
-    const ofDebtTot = fN(intW + prinW);
+    const ofOpen = S.ofG || null;
+    const ofClick = key => (e) => { if (e && e.stopPropagation) e.stopPropagation(); this.setState({ ofG: ofOpen === key ? null : key }); };
+    const ofTagGreen = { tagOn: true, tagBg: '#F2F7F0', tagCol: GREEND }, ofTagGold = { tagOn: true, tagBg: '#FBF6EA', tagCol: GOLDD };
+    const ofBaseE = { fw: 600, col: INK, tagOn: false, tag: '', tagBg: '#F0EEE6', tagCol: MUT, linkOn: false, href: '', linkLab: '', barC: '#B04A33', w: '0%', rv: 0, v: '', vcol: INK, pct: '', tip: '', bg: 'transparent' };
+    const ofGlRows = g => ofLedgers[g].filter(x => Math.abs(x[1]) > 0.005).map(([a, v]) => ({ ...ofBaseE, k: a, linkOn: true, href: txAcctHref([a]), linkLab: 'TXN →', rv: v, v: f2(v), pct: pctOfBilled(v), tip: 'Cash-basis GL ledger · ' + pctOfBilled(v) + ' of billed · TXN opens the dated register, pre-filtered to this window' + (unfiltered ? '' : ' and scope') + '.' }));
+    const ofERows = key => {
+      if (key === 'ip') return [
+        { ...ofBaseE, k: 'Interest', ...(unfiltered ? (Math.abs(dIntFile - dIntGl) <= 0.25 ? ofTagGreen : ofTagGold) : ofTagGold), tag: unfiltered ? 'GL · FILE Δ ' + f2(dIntFile - dIntGl) : 'GL ACTUALS', linkOn: true, href: txAcctHref(['Interest Cost']), linkLab: 'TXN →', rv: intW, v: f2(intW), pct: pctOfBilled(intW), tip: 'GL Interest Cost — ties your Cashflow.xlsx within 6¢ across the window.' },
+        { ...ofBaseE, k: 'Principal repaid', ...ofTagGreen, tag: unfiltered ? 'CASH · FILE · ENGINE Δ ' + fK(dPrinEng - dPrinFile) : 'CASH · FILE', linkOn: true, href: txAcctHref(['Principal Repaid']), linkLab: 'TXN →', rv: prinW, v: f2(prinW), pct: pctOfBilled(prinW), tip: 'Your Cashflow.xlsx actuals — the lender engine’s scheduled figure stays as the cross-check in Checks & balances.' },
+      ];
+      if (key === 'stat') return [
+        { ...ofBaseE, k: 'T&I escrow to lenders', ...ofTagGreen, tag: 'CASH · FILE', linkOn: true, href: txAcctHref(['Escrow T&I']), linkLab: 'TXN →', rv: fileEscW, v: f2(fileEscW), pct: pctOfBilled(fileEscW), tip: 'Tax & insurance collected inside the EMI, from your Cashflow.xlsx rows.' },
+        { ...ofBaseE, k: 'HOA fees', ...ofTagGold, tag: 'GL PROXY', linkOn: true, href: txAcctHref(['HOA Fee']), linkLab: 'TXN →', rv: hoaProxyW, v: f2(hoaProxyW), pct: pctOfBilled(hoaProxyW), tip: 'GL stands in until direct HOA payment actuals land.' },
+        ...(unfiltered ? [
+          { ...ofBaseE, k: 'Insurance — paid direct', ...ofTagGreen, tag: 'FILE · PORTFOLIO GRAIN', rv: insDirW, v: f2(insDirW), pct: pctOfBilled(insDirW), tip: 'Paid outside escrow, portfolio-level in the file — drops out of door-filtered scopes.' },
+          { ...ofBaseE, k: 'Property tax — paid direct', ...ofTagGreen, tag: 'FILE · PORTFOLIO GRAIN', rv: ptDirW, v: f2(ptDirW), pct: pctOfBilled(ptDirW), tip: 'Paid outside escrow, portfolio-level in the file — drops out of door-filtered scopes.' },
+        ] : []),
+      ];
+      if (key === 'capex') return [{ ...ofBaseE, k: 'Capital expenditure — HVAC & appliances', ...ofTagGold, tag: 'GL · IN OPERATING', linkOn: true, href: txAcctHref(CAPX_GL), linkLab: 'TXN →', rv: capexW, v: f2(capexW), pct: pctOfBilled(capexW), tip: 'The two GL capital ledgers, dated register behind the TXN link.' }];
+      if (key === 'unpaid') {
+        const per = scoped.map(d => ({ d, v: wsum(d, 'chg') - wsum(d, 'coll') })).filter(x => Math.abs(x.v) > 0.005);
+        const pos = per.filter(x => x.v > 0).sort((x, y) => y.v - x.v), neg = per.filter(x => x.v < 0);
+        const top = pos.slice(0, 5), restV = sum(pos.slice(5).map(x => x.v)), negV = sum(neg.map(x => x.v));
+        const rows = top.map(x => ({ ...ofBaseE, k: x.d, barC: '#C9A45C', linkOn: true, href: './collections.dc.html?' + mWinParam + '&door=' + esc(x.d) + '&sec=ledger', linkLab: 'LEDGER →', rv: x.v, v: f2(x.v), tip: 'Still out at ' + x.d + ' — LEDGER opens its tenants on the Collections page, aged and named.' }));
+        if (pos.length > 5) rows.push({ ...ofBaseE, k: '… ' + (pos.length - 5) + ' more propert' + (pos.length - 5 === 1 ? 'y' : 'ies'), col: FAINT, barC: '#C9A45C', rv: restV, v: f2(restV) });
+        if (neg.length) rows.push({ ...ofBaseE, k: 'less: ' + neg.length + ' propert' + (neg.length === 1 ? 'y' : 'ies') + ' paid down old dues', col: FAINT, barC: '#7FA88C', rv: negV, v: f2(negV), vcol: GREEND, tip: 'Tenants there paid old dues down — receipts exceeded this window’s billing, netting the group down.' });
+        rows.push({ ...ofBaseE, k: 'Every tenant, aged and named', fw: 700, col: GOLDD, linkOn: true, href: './collections.dc.html?' + mWinParam + (ofScope.indexOf('&door=') >= 0 ? '&door=' + S.fp.map(esc).join(',') : '') + '&sec=ledger', linkLab: 'COLLECTIONS →', v: '', pct: '' });
+        return rows;
+      }
+      return ofGlRows(key);
+    };
+    const ofNotes = {
+      stat: 'GL accrual for property tax, insurance & HOA in this scope is ' + fN(statAccr) + ' vs ' + fN(statCash) + ' cash shown — a ' + fN(statAccr - statCash) + ' timing gap: most non-escrowed bills land seasonally, and it closes as payment actuals arrive.' + (unfiltered ? '' : ' Direct-paid tax/insurance actuals are portfolio-level in the file and drop out of door-filtered scopes.'),
+      ip: 'Scheduled EMI only — prepayments, payoffs and releases are the financing events at right, outside these lines. Lender-engine cross-check (' + fK(escEngW) + ' escrow · ' + fK(prinEngW) + ' principal) lives in Checks & balances.',
+      unpaid: 'Net figure — the same “Unpaid → receivables” line as the statement above, property by property. Advances tenants have paid ahead sit outside it and are never chased.',
+    };
+    const ofRows = ofDefs.filter(df => Math.abs(gV[df.key]) > 0.005 || ofOpen === df.key).sort((a, b) => Math.abs(gV[b.key]) - Math.abs(gV[a.key])).map(df => {
+      const v = gV[df.key], open = ofOpen === df.key;
+      const eRows = open ? ofERows(df.key) : [];
+      const mx = Math.max(...eRows.map(r => Math.abs(r.rv || 0)), 1);
+      return {
+        k: df.k, sub: df.sub, tip: df.tip,
+        chev: open ? '▾' : '▸', chevCol: open ? GOLDD : '#B9C2D2', bg: open ? '#FBF6EA' : 'transparent',
+        onClick: ofClick(df.key),
+        barC: df.key === 'unpaid' ? '#C9A45C' : '#B04A33', w: shareW(v),
+        v: f2(v), vcol: v < -0.005 ? GREEND : INK, pct: pctOfBilled(v),
+        exp: open, noteOn: open && !!ofNotes[df.key], note: ofNotes[df.key] || '',
+        eRows: eRows.map(r => ({ ...r, w: r.v ? Math.max(1.5, Math.abs(r.rv || 0) / mx * 100).toFixed(1) + '%' : '0%' })),
+      };
+    });
+    const ofBilled = f2(chg);
+    const ofBilledTip = 'Every tenant charge raised in this window — rent, security deposits, fees, utilities (Buildium journals; refund rows excluded). This bar is the whole dollar: every group below is a slice of it.';
+    const ofMemo = [
+      { k: '+ Insurance claims received (outside billing)', v: f2(claims), vcol: GREEND, pct: pctOfBilled(claims), tip: 'Insurance claim receipts (GL) — cash that came in on top of tenant billing; part of operating cash in the statement.' },
+      { k: '− Refunds to tenants (outside AR)', v: f2(refOutW), vcol: refOutW > 0.005 ? REDD : FAINT, pct: pctOfBilled(refOutW), tip: 'Deposit-style refunds paid out that never touched the tenant AR ledger — the statement’s refunds line.' },
+    ];
+    const ofKept = f2(kept), ofKeptW = shareW(kept), ofKeptPct = pctOfBilled(kept);
+    const ofKeptSub = 'what survived of every billed dollar';
+    const ofKeptTip = 'Billed − unpaid − the cost groups + claims − refunds = ' + f2(kept) + '. Ties the statement’s NET CASH KEPT to the cent.';
     const ofSub = spanLab + (unfiltered ? ' · portfolio incl. company overhead' : ' · filtered scope, overhead excluded');
-    const ofFoot = 'Cash kept = collected + insurance claims − refunds paid out (outside AR) − these three blocks. Capex per GL (' + fN(capexW) + ') sits inside operating expenses (your 17-Jul call). Escrow and principal are your Cashflow.xlsx actuals — the lender engine (' + fK(escEngW) + ' escrow · ' + fK(prinEngW) + ' principal) stays as the cross-check in Checks & balances. Prepayments, payoffs and releases are financing events at right.';
+    const ofFoot = 'The walk, to the cent: billed ' + f2(chg) + ' − unpaid ' + f2(unpaidW) + ' = collected ' + f2(coll) + ' · + claims ' + f2(claims) + ' − refunds ' + f2(refOutW) + ' − cost groups ' + f2(ofCostSum) + ' = ' + f2(kept) + ' net cash kept. Shares are % of billed. Groups combine cash-basis GL ledgers by name — Rent Ready, Repairs and Property Management as you grouped them, everything unnamed in Others; escrow & principal are your Cashflow.xlsx actuals (lender engine in Checks & balances); CapEx inside operating per your 17-Jul call. Unpaid is receivable — owed, not spent. Prepayments, payoffs and releases are financing events at right.';
 
     // ══ financing events ══
     const evs = (CF.events || []).filter(e => MO.indexOf(e.m) >= firstI && MO.indexOf(e.m) <= lastI);
@@ -1572,7 +1675,7 @@ class Component extends DCLogic {
       wkRows,
       spotQ, onSpotQ, spotOpen, spotOpts, spotNone, spotChipOn, spotChip, onSpotClear, spotBd,
       stIdent, stNetLine, driftOn, driftLine, wfFoot,
-      ofSub, ofOp, ofOpTot, ofStat, ofStatTot, ofStatNote, ofDebt, ofDebtTot, ofFoot,
+      ofSub, ofBilled, ofBilledTip, ofRows, ofMemo, ofKept, ofKeptW, ofKeptPct, ofKeptSub, ofKeptTip, ofFoot,
       evSub, evOn, evEmpty, evGroups, evFoot,
       ckCards, ckFoot,
       asRows, pendRows, asFoot,
