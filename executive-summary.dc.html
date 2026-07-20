@@ -65,6 +65,9 @@ input:focus{outline:2px solid #C9A45C;outline-offset:1px}
           </div>
           <sc-if value="{{ fb.open }}" hint-placeholder-val="{{ false }}">
             <div style="position:absolute;top:42px;left:0;width:{{ fb.w }};background:#FFFFFF;border:1px solid #D8D4C8;border-radius:12px;box-shadow:0 14px 36px rgba(14,24,48,0.20);z-index:80;padding:6px;max-height:340px;display:flex;flex-direction:column">
+              <sc-if value="{{ fb.hasSearch }}" hint-placeholder-val="{{ false }}">
+                <input value="{{ fb.q }}" onInput="{{ fb.onQ }}" placeholder="Type to search…" style="margin:2px 2px 6px;padding:7px 10px;border-radius:8px;border:1px solid #D8D4C8;font-size:12px;font-family:inherit;color:#16233A">
+              </sc-if>
               <div onClick="{{ fb.onClear }}" style-hover="background:#F6F4EC" style="padding:7px 10px;border-radius:7px;font-size:12px;font-weight:700;color:#96742F;cursor:pointer;display:flex;justify-content:space-between"><span>All {{ fb.allLabel }}</span><span>{{ fb.allCheck }}</span></div>
               <div class="scr" style="overflow-y:auto;flex:1">
                 <sc-for list="{{ fb.opts }}" as="op" hint-placeholder-count="6">
@@ -88,12 +91,20 @@ input:focus{outline:2px solid #C9A45C;outline-offset:1px}
       <span style="margin-left:auto;font-size:11px;color:#8A93A6;white-space:nowrap">{{ asOfLine }}</span>
     </div>
 
-    <!-- ══ The story at a glance — six numbers ══ -->
-    <div style="margin-top:16px;display:grid;grid-template-columns:repeat(6,1fr);gap:12px">
-      <sc-for list="{{ heroTiles }}" as="ht" hint-placeholder-count="6">
+    <!-- ══ The story at a glance — the period's flows over the position they built ══ -->
+    <div style="margin-top:16px;display:grid;grid-template-columns:repeat(4,1fr);gap:12px">
+      <sc-for list="{{ heroTiles }}" as="ht" hint-placeholder-count="8">
         <a href="{{ ht.href }}" title="{{ ht.tip }}" style="text-decoration:none;background:{{ ht.bg }};border:1px solid {{ ht.bd }};border-radius:14px;padding:14px 16px;display:block" style-hover="border-color:#C9A45C">
           <div style="font-size:9.5px;letter-spacing:0.07em;font-weight:700;color:#5E6B82;text-transform:uppercase;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">{{ ht.label }}</div>
           <div style="margin-top:5px;font-family:'Source Serif 4',Georgia,serif;font-size:22px;font-weight:600;color:{{ ht.col }};font-variant-numeric:tabular-nums;white-space:nowrap">{{ ht.val }}</div>
+          <sc-if value="{{ ht.barOn }}" hint-placeholder-val="{{ false }}">
+            <div style="margin-top:5px;display:flex;height:8px;border-radius:5px;overflow:hidden;background:#F0EDE3">
+              <sc-for list="{{ ht.segs }}" as="hs" hint-placeholder-count="2">
+                <span title="{{ hs.tip }}" style="width:{{ hs.w }};background:{{ hs.col }}"></span>
+              </sc-for>
+            </div>
+            <div style="margin-top:3px;font-size:9px;color:#8A93A6;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">{{ ht.barLab }}</div>
+          </sc-if>
           <div style="margin-top:3px;font-size:10px;color:#8A93A6;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">{{ ht.sub }}</div>
           <div style="margin-top:6px;font-size:8.5px;font-weight:800;letter-spacing:0.06em;color:#96742F">{{ ht.linkLab }}</div>
         </a>
@@ -127,32 +138,28 @@ input:focus{outline:2px solid #C9A45C;outline-offset:1px}
         </div>
         <div style="margin-top:16px;display:grid;grid-template-columns:1.15fr 1fr;gap:16px">
           <div style="background:#FBFAF6;border:1px solid #EDEBE2;border-radius:12px;padding:14px 16px">
-            <div style="display:flex;justify-content:space-between;align-items:baseline;gap:8px">
-              <span style="font-size:10px;letter-spacing:0.07em;font-weight:800;color:#5E6B82">{{ c1Title }}</span>
-              <span style="font-size:10px;font-weight:700;color:{{ c1DeltaCol }};font-variant-numeric:tabular-nums">{{ c1Delta }}</span>
+            <div style="font-size:10px;letter-spacing:0.07em;font-weight:800;color:#5E6B82">{{ cvTitle }}</div>
+            <div style="margin-top:4px;display:flex;gap:8px;padding:0 0 3px;font-size:8px;letter-spacing:0.05em;font-weight:800;color:#9AA3B5">
+              <span style="width:44px;flex:none"></span><span style="flex:1"></span>
+              <span style="width:82px;flex:none;text-align:right">BILLED</span>
+              <span style="width:82px;flex:none;text-align:right">COLLECTED</span>
+              <span style="width:44px;flex:none;text-align:right">RATE</span>
+              <span style="width:66px;flex:none;text-align:right">± vs BILLED</span>
             </div>
-            <div style="margin-top:8px;position:relative">
-              <svg viewBox="0 0 320 84" preserveAspectRatio="none" style="width:100%;height:84px;display:block;overflow:visible">
-                <line x1="0" y1="{{ c1ZeroY }}" x2="320" y2="{{ c1ZeroY }}" stroke="#E5E0D2" stroke-width="1" stroke-dasharray="3 3"></line>
-                <sc-if value="{{ c1Line2On }}" hint-placeholder-val="{{ true }}">
-                  <polyline points="{{ c1Path2 }}" fill="none" stroke="#8FA8C9" stroke-width="1.6" stroke-linejoin="round" stroke-linecap="round"></polyline>
-                </sc-if>
-                <polyline points="{{ c1Path }}" fill="none" stroke="{{ c1Col }}" stroke-width="2" stroke-linejoin="round" stroke-linecap="round"></polyline>
-                <sc-for list="{{ c1Pts }}" as="p1" hint-placeholder-count="5">
-                  <circle cx="{{ p1.cx }}" cy="{{ p1.cy }}" r="{{ p1.r }}" fill="{{ p1.fill }}" stroke="{{ p1.stroke }}" stroke-width="1.4"></circle>
-                  <circle onClick="{{ p1.onClick }}" cx="{{ p1.cx }}" cy="{{ p1.cy }}" r="9" fill="transparent" style="cursor:pointer"></circle>
-                </sc-for>
-              </svg>
-              <sc-for list="{{ c1Labs }}" as="b1" hint-placeholder-count="5">
-                <span style="position:absolute;left:{{ b1.leftPct }};top:{{ b1.topPct }};transform:translate(-50%,-130%);font-size:8.5px;font-weight:700;color:{{ b1.col }};font-variant-numeric:tabular-nums;white-space:nowrap;pointer-events:none">{{ b1.v }}</span>
-              </sc-for>
-            </div>
-            <div style="margin-top:4px;display:flex;justify-content:space-between">
-              <sc-for list="{{ c1Months }}" as="m1" hint-placeholder-count="5">
-                <span onClick="{{ m1.onClick }}" style-hover="color:#96742F" style="font-size:9px;font-weight:{{ m1.fw }};color:{{ m1.col }};cursor:pointer">{{ m1.m }}</span>
-              </sc-for>
-            </div>
-            <div style="margin-top:6px;font-size:9.5px;color:#9AA3B5;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">{{ c1Sub }}</div>
+            <sc-for list="{{ cvRows }}" as="cv" hint-placeholder-count="5">
+              <div onClick="{{ cv.onClick }}" title="{{ cv.tip }}" style-hover="background:#F6F4EC" style="display:flex;align-items:center;gap:8px;padding:5.5px 0;border-top:1px solid #F0EDE3;cursor:pointer;border-radius:6px">
+                <span style="width:44px;flex:none;font-size:10.5px;font-weight:{{ cv.fw }};color:#2A3550">{{ cv.m }}</span>
+                <span style="flex:1;min-width:0;display:flex;flex-direction:column;gap:2px">
+                  <span style="height:6px;background:#E7ECF4;border-radius:3px;overflow:hidden;position:relative"><span style="position:absolute;left:0;top:0;bottom:0;width:{{ cv.chgW2 }};background:#8FA8C9;border-radius:3px"></span></span>
+                  <span style="height:6px;background:#F0EDE3;border-radius:3px;overflow:hidden;position:relative"><span style="position:absolute;left:0;top:0;bottom:0;width:{{ cv.colW2 }};background:#C9A45C;border-radius:3px"></span></span>
+                </span>
+                <span style="width:82px;flex:none;text-align:right;font-size:10.5px;font-weight:600;color:#3D64A8;font-variant-numeric:tabular-nums">{{ cv.chg }}</span>
+                <span style="width:82px;flex:none;text-align:right;font-size:10.5px;font-weight:700;color:#96742F;font-variant-numeric:tabular-nums">{{ cv.coll }}</span>
+                <span style="width:44px;flex:none;text-align:right;font-size:10px;font-weight:800;color:{{ cv.rateCol }};font-variant-numeric:tabular-nums">{{ cv.rate }}</span>
+                <span title="{{ cv.dLab }}" style="width:66px;flex:none;text-align:right;font-size:10px;font-weight:700;color:{{ cv.dCol }};font-variant-numeric:tabular-nums">{{ cv.d }}</span>
+              </div>
+            </sc-for>
+            <div style="margin-top:8px;padding-top:7px;border-top:1px solid #EDEAE0;font-size:9.5px;color:#9AA3B5;line-height:1.55">{{ cvFoot }}</div>
           </div>
           <div style="background:#FBFAF6;border:1px solid #EDEBE2;border-radius:12px;padding:14px 16px">
             <div style="display:flex;justify-content:space-between;align-items:baseline;gap:8px;flex-wrap:wrap">
@@ -205,20 +212,41 @@ input:focus{outline:2px solid #C9A45C;outline-offset:1px}
         </div>
         <div style="margin-top:16px;display:grid;grid-template-columns:1.15fr 1fr;gap:16px">
           <div style="background:#FBFAF6;border:1px solid #EDEBE2;border-radius:12px;padding:14px 16px">
-            <div style="display:flex;justify-content:space-between;align-items:center;gap:8px;flex-wrap:wrap">
-              <span style="font-size:10px;letter-spacing:0.07em;font-weight:800;color:#5E6B82">THE OPERATING BILL — {{ opexTot }} ACROSS {{ opexN }} LEDGERS</span>
-              <span onClick="{{ onXAll }}" style-hover="border-color:#C9A45C" style="font-size:9.5px;font-weight:800;color:#96742F;border:1px solid #E2D9C4;border-radius:99px;padding:3px 10px;cursor:pointer">{{ xAllLab }}</span>
+            <div style="display:flex;justify-content:space-between;align-items:baseline;gap:8px;flex-wrap:wrap">
+              <span style="font-size:10px;letter-spacing:0.07em;font-weight:800;color:#5E6B82">{{ bucketTitle }}</span>
+              <span style="font-size:9px;color:#8A93A6">▸ opens the ledgers inside</span>
             </div>
-            <sc-for list="{{ opexRows }}" as="xr" hint-placeholder-count="6">
-              <div style="display:flex;align-items:center;gap:10px;padding:5px 0;border-top:1px solid #F0EDE3">
-                <span style="flex:1.2;min-width:0;font-size:11px;font-weight:600;color:#2A3550;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">{{ xr.name }}</span>
-                <span style="flex:1;height:7px;background:#F0EDE3;border-radius:4px;overflow:hidden;position:relative"><span style="position:absolute;left:0;top:0;bottom:0;width:{{ xr.w }};background:{{ xr.barCol }};border-radius:4px"></span></span>
-                <span style="width:76px;flex:none;text-align:right;font-size:11px;font-weight:700;color:#16233A;font-variant-numeric:tabular-nums">{{ xr.v }}</span>
-                <span style="width:44px;flex:none;text-align:right;font-size:9.5px;color:#8A93A6;font-variant-numeric:tabular-nums">{{ xr.pct }}</span>
-                <a href="{{ xr.href }}" style-hover="background:#F6ECD9" style="flex:none;font-size:7.5px;font-weight:800;color:#96742F;text-decoration:none;border:1px solid #E2D9C4;border-radius:99px;padding:1px 7px">P&amp;L →</a>
+            <div style="margin-top:4px;display:flex;gap:8px;padding:0 0 3px;font-size:8px;letter-spacing:0.05em;font-weight:800;color:#9AA3B5">
+              <span style="width:14px;flex:none"></span><span style="flex:1.2"></span><span style="flex:1"></span>
+              <span style="width:72px;flex:none;text-align:right">TOTAL</span>
+              <span style="width:58px;flex:none;text-align:right">% GROSS RENT</span>
+              <span style="width:46px;flex:none"></span>
+            </div>
+            <sc-for list="{{ bucketRows }}" as="bu" hint-placeholder-count="6">
+              <div>
+                <div onClick="{{ bu.onExp }}" style-hover="background:#F6F4EC" style="display:flex;align-items:center;gap:8px;padding:5.5px 0;border-top:1px solid #F0EDE3;cursor:pointer;border-radius:6px">
+                  <span style="width:14px;flex:none;font-size:10px;font-weight:700;color:{{ bu.chevCol }};text-align:center">{{ bu.chev }}</span>
+                  <span style="flex:1.2;min-width:0;font-size:11px;font-weight:700;color:#2A3550;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">{{ bu.name }}</span>
+                  <span style="flex:1;height:7px;background:#F0EDE3;border-radius:4px;overflow:hidden;position:relative"><span style="position:absolute;left:0;top:0;bottom:0;width:{{ bu.w }};background:{{ bu.barCol }};border-radius:4px"></span></span>
+                  <span style="width:72px;flex:none;text-align:right;font-size:11px;font-weight:700;color:#16233A;font-variant-numeric:tabular-nums">{{ bu.v }}</span>
+                  <span style="width:58px;flex:none;text-align:right;font-size:10px;font-weight:800;color:#96742F;font-variant-numeric:tabular-nums">{{ bu.pct }}</span>
+                  <a href="{{ bu.href }}" onClick="{{ stopProp }}" style-hover="background:#F6ECD9" style="width:46px;flex:none;text-align:center;font-size:7.5px;font-weight:800;color:#96742F;text-decoration:none;border:1px solid #E2D9C4;border-radius:99px;padding:1px 0">OPEN →</a>
+                </div>
+                <sc-if value="{{ bu.open }}" hint-placeholder-val="{{ false }}">
+                  <div style="margin:2px 0 6px 22px;background:#FFFFFF;border:1px solid #EDEBE2;border-radius:9px;padding:7px 12px">
+                    <sc-for list="{{ bu.comps }}" as="bx" hint-placeholder-count="4">
+                      <div style="display:flex;align-items:center;gap:8px;padding:3.5px 0;border-top:1px solid #F6F4EC;font-size:10.5px">
+                        <span style="flex:1;min-width:0;color:#2A3550;font-weight:600;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">{{ bx.name }}</span>
+                        <span style="width:72px;flex:none;text-align:right;font-weight:700;color:#16233A;font-variant-numeric:tabular-nums">{{ bx.v }}</span>
+                        <span style="width:52px;flex:none;text-align:right;font-size:9.5px;color:#8A93A6;font-variant-numeric:tabular-nums">{{ bx.pct }}</span>
+                        <a href="{{ bx.href }}" style-hover="background:#F6ECD9" style="flex:none;font-size:7.5px;font-weight:800;color:#96742F;text-decoration:none;border:1px solid #E2D9C4;border-radius:99px;padding:1px 7px">{{ bx.lab }}</a>
+                      </div>
+                    </sc-for>
+                  </div>
+                </sc-if>
               </div>
             </sc-for>
-            <div style="margin-top:8px;padding-top:7px;border-top:1px solid #EDEAE0;font-size:9.5px;color:#9AA3B5;line-height:1.5">{{ opexFoot }}</div>
+            <div style="margin-top:8px;padding-top:7px;border-top:1px solid #EDEAE0;font-size:9.5px;color:#9AA3B5;line-height:1.5">{{ bucketFoot }}</div>
           </div>
           <div style="display:flex;flex-direction:column;gap:12px">
             <div style="background:#FBFAF6;border:1px solid #EDEBE2;border-radius:12px;padding:14px 16px">
@@ -366,7 +394,30 @@ input:focus{outline:2px solid #C9A45C;outline-offset:1px}
       </div>
       <div style="padding:18px 26px 22px">
         <div style="font-family:'Source Serif 4',Georgia,serif;font-size:15.5px;color:#2A3550;line-height:1.6;max-width:1100px">{{ a4Line }}</div>
-        <div style="margin-top:16px;display:flex;align-items:stretch;gap:6px;flex-wrap:wrap">
+        <div style="margin-top:14px;display:flex;align-items:center;gap:10px;flex-wrap:wrap;position:relative;z-index:40" onClick="{{ stopProp }}">
+          <span style="font-size:9px;letter-spacing:0.09em;font-weight:800;color:#96742F">NET EQUITY VALUED BY</span>
+          <div style="position:relative">
+            <div onClick="{{ onVmToggle }}" style-hover="border-color:#C9A45C" style="display:flex;align-items:center;gap:8px;padding:8px 13px;border-radius:10px;border:1.5px solid #C9A45C;background:#FBF6EA;font-size:12px;font-weight:700;color:#16233A;cursor:pointer;white-space:nowrap">
+              <span>{{ vmLabel }}</span><span style="font-size:8.5px;color:#5E6B82">▾</span>
+            </div>
+            <sc-if value="{{ vmOpen }}" hint-placeholder-val="{{ false }}">
+              <div style="position:absolute;top:42px;left:0;width:330px;background:#FFFFFF;border:1px solid #D8D4C8;border-radius:12px;box-shadow:0 14px 36px rgba(14,24,48,0.20);z-index:80;padding:6px">
+                <sc-for list="{{ vmOpts }}" as="vd" hint-placeholder-count="4">
+                  <div onClick="{{ vd.onClick }}" style-hover="background:#F6F4EC" style="padding:8px 10px;border-radius:7px;cursor:pointer;background:{{ vd.bg }}">
+                    <div style="display:flex;justify-content:space-between;gap:10px;font-size:12.5px;font-weight:{{ vd.fw }};color:#2A3550"><span>{{ vd.label }}</span><span style="color:#96742F;font-weight:700">{{ vd.check }}</span></div>
+                    <div style="margin-top:2px;font-size:10px;color:#8A93A6;line-height:1.45">{{ vd.sub }}</div>
+                  </div>
+                </sc-for>
+              </div>
+            </sc-if>
+          </div>
+          <sc-if value="{{ vmCapOn }}" hint-placeholder-val="{{ false }}">
+            <span style="font-size:9px;letter-spacing:0.07em;font-weight:800;color:#5E6B82">CAP RATE %</span>
+            <input type="number" min="1" max="20" step="0.1" value="{{ vmCapVal }}" onInput="{{ onVmCap }}" style="width:66px;box-sizing:border-box;padding:7px 9px;border-radius:9px;border:1.5px solid #C9A45C;font-family:inherit;font-size:12.5px;font-weight:700;color:#16233A;background:#FFFFFF">
+          </sc-if>
+          <span style="font-size:10px;color:#8A93A6;line-height:1.5">{{ vmCovLine }}</span>
+        </div>
+        <div style="margin-top:12px;display:flex;align-items:stretch;gap:6px;flex-wrap:wrap">
           <sc-for list="{{ posRail }}" as="r4" hint-placeholder-count="3">
             <a href="{{ r4.href }}" title="{{ r4.tip }}" style="text-decoration:none;flex:1;min-width:150px;background:{{ r4.bg }};border:1px solid {{ r4.bd }};border-radius:11px;padding:11px 13px;display:block" style-hover="border-color:#C9A45C">
               <div style="font-size:8.5px;letter-spacing:0.06em;font-weight:800;color:{{ r4.kcol }};white-space:nowrap;overflow:hidden;text-overflow:ellipsis">{{ r4.k }}</div>
@@ -452,7 +503,7 @@ input:focus{outline:2px solid #C9A45C;outline-offset:1px}
     <div data-act="earn" style="margin-top:14px;background:#FFFFFF;border:1px solid #E5E3DC;border-radius:16px;overflow:hidden">
       <div style="background:#16233A;padding:13px 26px;display:flex;align-items:center;gap:14px;flex-wrap:wrap;border-bottom:3px solid #C9A45C">
         <span style="font-family:'Source Serif 4',Georgia,serif;font-size:12px;font-weight:700;letter-spacing:0.14em;color:#C9A45C">ACT&nbsp;V</span>
-        <span style="font-family:'Source Serif 4',Georgia,serif;font-size:17px;font-weight:600;color:#E9EDF5">What our money is earning</span>
+        <span style="font-family:'Source Serif 4',Georgia,serif;font-size:17px;font-weight:600;color:#E9EDF5">What the borrowed money built — and what it returns</span>
         <span style="margin-left:auto;display:flex;gap:6px;flex-wrap:wrap">
           <sc-for list="{{ a5Links }}" as="l5" hint-placeholder-count="2">
             <a href="{{ l5.href }}" style-hover="background:rgba(201,164,92,0.25)" style="font-size:8.5px;font-weight:800;letter-spacing:0.05em;color:#C9A45C;text-decoration:none;border:1px solid rgba(201,164,92,0.45);border-radius:99px;padding:3px 10px">{{ l5.lab }}</a>
@@ -461,7 +512,35 @@ input:focus{outline:2px solid #C9A45C;outline-offset:1px}
       </div>
       <div style="padding:18px 26px 22px">
         <div style="font-family:'Source Serif 4',Georgia,serif;font-size:15.5px;color:#2A3550;line-height:1.6;max-width:1100px">{{ a5Line }}</div>
-        <div style="margin-top:16px;display:flex;align-items:stretch;gap:6px;flex-wrap:wrap">
+        <div style="margin-top:16px;background:#FBFAF6;border:1px solid #EDEBE2;border-radius:12px;padding:16px 18px">
+          <div style="font-size:10px;letter-spacing:0.07em;font-weight:800;color:#5E6B82">{{ barsTitle }}</div>
+          <div style="margin-top:12px">
+            <div style="font-size:9px;letter-spacing:0.05em;font-weight:800;color:#8A93A6">{{ barALab }}</div>
+            <div style="margin-top:5px;width:{{ barAW }};display:flex;height:34px;border-radius:8px;overflow:hidden;border:1px solid #E5E3DC">
+              <sc-for list="{{ barA }}" as="sa" hint-placeholder-count="2">
+                <span title="{{ sa.tip }}" style="width:{{ sa.w }};background:{{ sa.col }};display:flex;align-items:center;padding:0 10px;min-width:0"><span style="font-size:9px;font-weight:800;letter-spacing:0.04em;color:rgba(255,255,255,0.92);white-space:nowrap;overflow:hidden;text-overflow:ellipsis">{{ sa.lab }}</span></span>
+              </sc-for>
+            </div>
+          </div>
+          <div style="margin-top:12px">
+            <div style="font-size:9px;letter-spacing:0.05em;font-weight:800;color:#8A93A6">{{ barBLab }}</div>
+            <div style="margin-top:5px;width:{{ barBW }};display:flex;height:34px;border-radius:8px;overflow:hidden;border:1px solid #E5E3DC">
+              <sc-for list="{{ barB }}" as="sb" hint-placeholder-count="2">
+                <span title="{{ sb.tip }}" style="width:{{ sb.w }};background:{{ sb.col }};display:flex;align-items:center;padding:0 10px;min-width:0"><span style="font-size:9px;font-weight:800;letter-spacing:0.04em;color:rgba(255,255,255,0.92);white-space:nowrap;overflow:hidden;text-overflow:ellipsis">{{ sb.lab }}</span></span>
+              </sc-for>
+            </div>
+          </div>
+          <div style="margin-top:14px;display:grid;grid-template-columns:repeat(4,1fr);gap:10px">
+            <sc-for list="{{ punchChips }}" as="px" hint-placeholder-count="4">
+              <div title="{{ px.tip }}" style="background:#FFFFFF;border:1px solid #EDEBE2;border-radius:10px;padding:10px 13px">
+                <div style="font-size:8px;letter-spacing:0.06em;font-weight:800;color:#8A93A6;line-height:1.5">{{ px.k }}</div>
+                <div style="margin-top:4px;font-family:'Source Serif 4',Georgia,serif;font-size:18px;font-weight:600;color:{{ px.col }};font-variant-numeric:tabular-nums;white-space:nowrap">{{ px.v }}</div>
+                <div style="margin-top:3px;font-size:9.5px;color:#8A93A6;line-height:1.5">{{ px.sub }}</div>
+              </div>
+            </sc-for>
+          </div>
+        </div>
+        <div style="margin-top:14px;display:flex;align-items:stretch;gap:6px;flex-wrap:wrap">
           <sc-for list="{{ invRail }}" as="r5" hint-placeholder-count="5">
             <a href="{{ r5.href }}" title="{{ r5.tip }}" style="text-decoration:none;flex:1;min-width:132px;background:{{ r5.bg }};border:1px solid {{ r5.bd }};border-radius:11px;padding:11px 13px;display:block" style-hover="border-color:#C9A45C">
               <div style="font-size:8.5px;letter-spacing:0.06em;font-weight:800;color:{{ r5.kcol }};white-space:nowrap;overflow:hidden;text-overflow:ellipsis">{{ r5.k }}</div>
@@ -508,18 +587,28 @@ input:focus{outline:2px solid #C9A45C;outline-offset:1px}
           </sc-for>
         </div>
       </div>
-      <div style="margin-top:12px;display:grid;grid-template-columns:16px minmax(120px,1.4fr) 62px repeat(4,minmax(96px,1fr)) minmax(150px,1.4fr) 120px;gap:0 10px;padding:0 8px 6px;border-bottom:1px solid #EDEBE2;font-size:9px;letter-spacing:0.07em;font-weight:800;color:#8A93A6;align-items:end">
+      <div style="margin-top:12px;display:grid;grid-template-columns:16px minmax(108px,1.25fr) 52px repeat(5,minmax(86px,1fr)) minmax(138px,1.3fr) 100px;gap:0 9px;padding:0 8px 6px;border-bottom:1px solid #EDEBE2;font-size:9px;letter-spacing:0.07em;font-weight:800;color:#8A93A6;align-items:end">
         <span></span><span>ENTITY</span><span>DOORS</span>
         <span style="text-align:right">COLLECTED <span style="color:#C9C4B6">· rate</span></span>
         <span style="text-align:right">NET INCOME</span>
         <span style="text-align:right">CASH KEPT</span>
+        <span style="text-align:right">IN THE DEAL <span style="color:#C9C4B6">inv + repaid</span></span>
         <span style="text-align:right">DEBT</span>
-        <span>EQUITY <span style="color:#C9C4B6">share of value</span></span>
+        <span style="position:relative" onClick="{{ stopProp }}">NET EQUITY
+          <span onClick="{{ onEvmToggle }}" style-hover="border-color:#C9A45C;background:#FBF6EA" style="display:inline-block;margin-left:5px;padding:2px 8px;border-radius:99px;border:1px solid #E2D9C4;background:#FFFFFF;font-size:8.5px;font-weight:800;color:#96742F;cursor:pointer;letter-spacing:0.02em;text-transform:none">{{ evmTag }}</span>
+          <sc-if value="{{ evmOpen }}" hint-placeholder-val="{{ false }}">
+            <span style="position:absolute;top:22px;left:0;width:240px;background:#FFFFFF;border:1px solid #D8D4C8;border-radius:11px;box-shadow:0 14px 36px rgba(14,24,48,0.20);z-index:80;padding:5px;display:block;text-transform:none;letter-spacing:0">
+              <sc-for list="{{ evmOpts }}" as="ev" hint-placeholder-count="4">
+                <span onClick="{{ ev.onClick }}" style-hover="background:#F6F4EC" style="display:flex;justify-content:space-between;gap:8px;padding:7px 10px;border-radius:7px;cursor:pointer;background:{{ ev.bg }};font-size:11.5px;font-weight:{{ ev.fw }};color:#2A3550"><span>{{ ev.label }}</span><span style="color:#96742F;font-weight:700">{{ ev.check }}</span></span>
+              </sc-for>
+            </span>
+          </sc-if>
+        </span>
         <span style="text-align:right">VALUE</span>
       </div>
       <sc-for list="{{ entRows }}" as="es" hint-placeholder-count="7">
         <div>
-          <div onClick="{{ es.onClick }}" style-hover="background:#FBFAF6" style="display:grid;grid-template-columns:16px minmax(120px,1.4fr) 62px repeat(4,minmax(96px,1fr)) minmax(150px,1.4fr) 120px;gap:0 10px;align-items:center;padding:9px 8px;border-top:1px solid #F4F2EA;border-radius:8px;cursor:pointer;background:{{ es.bg }}">
+          <div onClick="{{ es.onClick }}" style-hover="background:#FBFAF6" style="display:grid;grid-template-columns:16px minmax(108px,1.25fr) 52px repeat(5,minmax(86px,1fr)) minmax(138px,1.3fr) 100px;gap:0 9px;align-items:center;padding:9px 8px;border-top:1px solid #F4F2EA;border-radius:8px;cursor:pointer;background:{{ es.bg }}">
             <span onClick="{{ es.onExp }}" style-hover="color:#96742F" style="font-size:10px;font-weight:700;color:{{ es.chevCol }};cursor:pointer;text-align:center">{{ es.chev }}</span>
             <span style="min-width:0">
               <span style="display:block;font-size:13px;font-weight:{{ es.nameFw }};color:{{ es.nameCol }};white-space:nowrap;overflow:hidden;text-overflow:ellipsis">{{ es.name }}</span>
@@ -532,6 +621,10 @@ input:focus{outline:2px solid #C9A45C;outline-offset:1px}
             </span>
             <span style="text-align:right;font-size:12.5px;font-weight:700;color:{{ es.niCol }};font-variant-numeric:tabular-nums">{{ es.ni }}</span>
             <span style="text-align:right;font-size:12.5px;font-weight:700;color:{{ es.keptCol }};font-variant-numeric:tabular-nums">{{ es.kept }}</span>
+            <span style="text-align:right;min-width:0">
+              <span style="display:block;font-size:12.5px;font-weight:700;color:#16233A;font-variant-numeric:tabular-nums">{{ es.indeal }}</span>
+              <span style="display:block;font-size:9px;color:#9AA3B5;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;font-variant-numeric:tabular-nums">{{ es.indealSub }}</span>
+            </span>
             <span style="text-align:right;font-size:12.5px;font-weight:600;color:#A03E28;font-variant-numeric:tabular-nums">{{ es.debt }}</span>
             <span style="min-width:0">
               <span style="display:block;height:7px;background:#F0EDE3;border-radius:4px;overflow:hidden;position:relative">
@@ -630,7 +723,12 @@ input:focus{outline:2px solid #C9A45C;outline-offset:1px}
                     <span style="width:92px;flex:none;text-align:right;font-weight:700;color:{{ fv.vcol }};font-variant-numeric:tabular-nums">{{ fv.v }}</span>
                   </div>
                 </sc-for>
-                <div style="margin-top:6px;font-size:9px;color:#9AA3B5">{{ fc.evFoot }}</div>
+                <div style="margin-top:6px;display:flex;justify-content:space-between;align-items:baseline;gap:8px">
+                  <span style="font-size:9px;color:#9AA3B5">{{ fc.evFoot }}</span>
+                  <sc-if value="{{ fc.evMoreOn }}" hint-placeholder-val="{{ false }}">
+                    <span onClick="{{ fc.onEvMore }}" style-hover="border-color:#C9A45C" style="flex:none;font-size:9px;font-weight:800;color:#96742F;border:1px solid #E2D9C4;border-radius:99px;padding:2px 9px;cursor:pointer">{{ fc.evMoreLab }}</span>
+                  </sc-if>
+                </div>
               </div>
             </sc-if>
             <a href="{{ fc.href }}" style="display:inline-block;margin-top:8px;font-size:8.5px;font-weight:800;letter-spacing:0.06em;color:#96742F;text-decoration:none">{{ fc.linkLab }}</a>
@@ -687,10 +785,11 @@ input:focus{outline:2px solid #C9A45C;outline-offset:1px}
 class Component extends DCLogic {
   state = {
     pld: null, cfd: null, bsd: null, ld: null, loadError: null,
-    fm: [], fe: [],
+    fm: [], fe: [], fp: [],
+    vm: 'arv', vcap: '8',
     ddOpen: null, fq: '',
     esSort: 'kept', entOpen: null,
-    xAll: false, fOpen: null,
+    xAll: false, xOpen: null, fOpen: null, fAll: null,
   };
 
   loadData() {
@@ -712,6 +811,10 @@ class Component extends DCLogic {
       const patch = {};
       if (q.get('m')) patch.fm = li('m');
       if (q.get('entity')) patch.fe = li('entity');
+      if (q.get('door')) patch.fp = li('door');
+      const mth = q.get('method');
+      if (mth && ['arv', 'county', 'appraisal', 'noi'].includes(mth)) patch.vm = mth;
+      if (q.get('cap')) patch.vcap = q.get('cap');
       if (Object.keys(patch).length) this.setState(patch);
     } catch (e) {}
   }
@@ -722,6 +825,9 @@ class Component extends DCLogic {
       const S = this.state, q = new URLSearchParams();
       if (S.fm.length) q.set('m', S.fm.join(','));
       if (S.fe.length) q.set('entity', S.fe.join(','));
+      if (S.fp.length) q.set('door', S.fp.join(','));
+      if (S.vm && S.vm !== 'arv') q.set('method', S.vm);
+      if (S.vcap != null && String(S.vcap) !== '8' && String(S.vcap) !== '') q.set('cap', String(S.vcap));
       const s = q.toString();
       history.replaceState(null, '', location.pathname + (s ? '?' + s : ''));
     } catch (e) {}
@@ -746,7 +852,7 @@ class Component extends DCLogic {
 
   renderVals() {
     const S = this.state;
-    const NAVY = '#16233A', INK = '#2A3550', MUT = '#5E6B82', FAINT = '#8A93A6', RED = '#B04A33', REDD = '#A03E28', GREEND = '#2A6F4E', GREEN2 = '#2E7D54', GOLD = '#C9A45C', GOLDD = '#96742F', BLUE = '#3D64A8';
+    const NAVY = '#16233A', INK = '#2A3550', MUT = '#5E6B82', FAINT = '#8A93A6', RED = '#B04A33', REDD = '#A03E28', GREEND = '#2A6F4E', GREEN2 = '#2E7D54', GOLD = '#C9A45C', GOLDD = '#96742F', BLUE = '#3D64A8', BRICK = '#B04A33';
     const stopProp = e => e.stopPropagation();
     const noop = () => {};
     const CH0 = p => { const o = {}; o[p + 'Title'] = ''; o[p + 'Delta'] = ''; o[p + 'DeltaCol'] = FAINT; o[p + 'ZeroY'] = '70'; o[p + 'Line2On'] = false; o[p + 'Path'] = ''; o[p + 'Path2'] = ''; o[p + 'Pts'] = []; o[p + 'Labs'] = []; o[p + 'Months'] = []; o[p + 'Sub'] = ''; o[p + 'Col'] = NAVY; return o; };
@@ -757,14 +863,14 @@ class Component extends DCLogic {
       scopeLine: S.loadError ? 'Data failed to load' : 'Loading…', asOfLine: '',
       filters: [], hasActive: false, onReset: noop, jumpChips: [],
       heroTiles: [],
-      a1Links: [], a1Line: '', a1Rail: [], agTot: '', agTiles: [], agFoot: '',
-      a2Links: [], a2Line: '', a2Span: '', dollarBands: [], dollarFoot: '', opexTot: '', opexN: '', onXAll: noop, xAllLab: '', opexRows: [], opexFoot: '', bankChips: [], bankFoot: '', costCompare: [],
+      a1Links: [], a1Line: '', a1Rail: [], cvTitle: '', cvRows: [], cvFoot: '', agTot: '', agTiles: [], agFoot: '',
+      a2Links: [], a2Line: '', a2Span: '', dollarBands: [], dollarFoot: '', bucketTitle: '', bucketRows: [], bucketFoot: '', bankChips: [], bankFoot: '', costCompare: [],
       a3Links: [], a3Line: '', pipeCash: [], pipeAccr: [], bridge: [], bridgeFoot: '',
-      a4Links: [], a4Line: '', a4Span: '', posRail: [], debtWalk: [], debtWalkFoot: '', mrScope: '', mrSum: '', matRows: [], mrFoot: '', drawnRows: [], drawnFoot: '',
-      a5Links: [], a5Line: '', invRail: [], retTiles: [], levChips: [], a5Foot: '',
-      esSub: '', esSortChips: [], entRows: [], esFoot: '',
+      a4Links: [], a4Line: '', a4Span: '', vmLabel: '', vmOpen: false, onVmToggle: noop, vmOpts: [], vmCapOn: false, vmCapVal: '', onVmCap: noop, vmCovLine: '', posRail: [], debtWalk: [], debtWalkFoot: '', mrScope: '', mrSum: '', matRows: [], mrFoot: '', drawnRows: [], drawnFoot: '',
+      a5Links: [], a5Line: '', barsTitle: '', barA: [], barB: [], barALab: '', barBLab: '', barAW: '', barBW: '', punchChips: [], invRail: [], retTiles: [], levChips: [], a5Foot: '',
+      esSub: '', esSortChips: [], entRows: [], esFoot: '', evmOpen: false, onEvmToggle: noop, evmOpts: [], evmTag: '',
       planChips: [], findCards: [], pendChips: [], tieRows: [], tieFoot: '',
-    }, CH0('c1'), CH0('c2'), CH0('c3'), CH0('c4'));
+    }, CH0('c2'), CH0('c3'), CH0('c4'));
 
     const PLD = S.pld, CFD = S.cfd, BSD = S.bsd, LD = S.ld;
     const MO = CFD.meta.months, NM = MO.length, DOORS = CFD.doors, OH = CFD.overhead, RC = CFD.recon, CLX = CFD.collections;
@@ -777,7 +883,7 @@ class Component extends DCLogic {
     const esc = s => encodeURIComponent(s);
     const addM2 = (ym, n) => { const y = +ym.slice(0, 4), m0 = +ym.slice(5, 7) - 1 + n; return (y + Math.floor(m0 / 12)) + '-' + String((m0 % 12 + 12) % 12 + 1).padStart(2, '0'); };
 
-    // ══ window (contiguous, same rule as Cash Flow) + entity scope ══
+    // ══ window + entity + property scope ══
     const selM = (S.fm || []).filter(m => MO.includes(m)).sort();
     let firstI = 0, lastI = NM - 1;
     if (selM.length) { firstI = MO.indexOf(selM[0]); lastI = MO.indexOf(selM[selM.length - 1]); }
@@ -790,40 +896,70 @@ class Component extends DCLogic {
     const feAct = (S.fe || []).filter(e => ENTITIES.includes(e));
     const entOn = e => !feAct.length || feAct.includes(e);
     const allEnts = feAct.length === 0;
-    const entLab = allEnts ? '' : ' · ' + feAct.join(' + ');
+    const BSP = Object.values(BSD.properties);
+    const doorNames = Object.keys(DOORS);
+    const ALLDOORS = [...new Set([...doorNames, ...BSP.map(p => p.door)])].sort();
+    const fpAct = (S.fp || []).filter(d => ALLDOORS.includes(d));
+    const fpOn = d => !fpAct.length || fpAct.includes(d);
+    const noProp = fpAct.length === 0;
+    const ovOn = allEnts && noProp; // company overhead & portfolio-grain items belong only to the full portfolio view (the investments-page rule)
+    const entLab = (allEnts ? '' : ' · ' + feAct.join(' + ')) + (noProp ? '' : ' · ' + (fpAct.length === 1 ? fpAct[0] : fpAct.length + ' properties'));
 
-    // ══ P&L — GL accrual per entity (the 23 known accounts, P&L-page grouping) ══
+    // ══ P&L — GL accrual, door-aware (fp threads through the rows) ══
+    const A_RENT = ['Rental Income', 'Increase/(Decrease) in Rent'];
     const A_INC = ['Rental Income', 'Increase/(Decrease) in Rent', 'Vacancy Loss', 'Other Income', 'SD - Forfeit Income', 'Insurance Claim'];
     const A_CL = 'Collection Loss';
     const A_OPEX = ['Property Tax', 'Insurance', 'HOA Fee', 'Property Management Expense', 'Utilities', "Renter's Insurance", 'Other Misc Cost', 'Repairs - Payroll', 'Repairs - Materials', 'Repairs - Contractors', 'Rent Ready - Payroll', 'Rent Ready - Materials', 'Rent Ready - Contractors', 'Capex - HVAC', 'Capex - Appliances'];
     const A_INT = 'Interest Cost';
+    const OVERD = new Set((PLD.meta && PLD.meta.overheadDoors) || []);
     const glz = () => MO.map(() => 0);
-    const glEnt = {};
-    for (const e of ENTITIES) glEnt[e] = { inc: glz(), opex: glz(), int: glz(), ni: glz() };
-    const opexMixW = {}; let clW = 0;
+    const incM = glz(), opexM = glz(), intGlM = glz(), niM = glz(), rentM = glz();
+    const niByEntW = {}; for (const e of ENTITIES) niByEntW[e] = 0;
+    const mixW = {}; let clW = 0;
+    // door-grain NOI/interest maps for the investments-page returns + NOI÷cap valuation
+    const noiBy = new Map(), intBy = new Map();
+    let noiOver = 0, intOver = 0;
     for (const [ent, door, acct, valsR] of PLD.rows) {
-      const g = glEnt[ent]; if (!g) continue;
-      const inScopeE = entOn(ent);
-      for (let i = 0; i < NM; i++) {
-        const v = valsR[i] || 0;
-        if (A_INC.includes(acct)) { g.inc[i] += v; g.ni[i] += v; }
-        else if (acct === A_CL) { g.inc[i] -= v; g.ni[i] -= v; if (inScopeE && winIdx.includes(i)) clW += v; }
-        else if (A_OPEX.includes(acct)) { g.opex[i] += v; g.ni[i] -= v; if (inScopeE && winIdx.includes(i)) opexMixW[acct] = (opexMixW[acct] || 0) + v; }
-        else if (acct === A_INT) { g.int[i] += v; g.ni[i] -= v; }
+      const scoped = entOn(ent) && (noProp ? true : fpAct.includes(door)); // overhead door rows drop out under a property filter automatically
+      const winTot = sum(winIdx.map(i => valsR[i] || 0));
+      // scoped monthly series
+      if (scoped) {
+        for (let i = 0; i < NM; i++) {
+          const v = valsR[i] || 0;
+          if (A_INC.includes(acct)) { incM[i] += v; niM[i] += v; }
+          else if (acct === A_CL) { incM[i] -= v; niM[i] -= v; }
+          else if (A_OPEX.includes(acct)) { opexM[i] += v; niM[i] -= v; }
+          else if (acct === A_INT) { intGlM[i] += v; niM[i] -= v; }
+          if (A_RENT.includes(acct)) rentM[i] += v;
+        }
+        if (acct === A_CL) clW += winTot;
+        if (A_OPEX.includes(acct) || acct === A_INT) mixW[acct] = (mixW[acct] || 0) + winTot;
+      }
+      // per-entity NI over the window (scorecard; fp-scoped)
+      if (noProp ? true : fpAct.includes(door)) {
+        let d0 = 0;
+        if (A_INC.includes(acct)) d0 = winTot;
+        else if (acct === A_CL || A_OPEX.includes(acct) || acct === A_INT) d0 = -winTot;
+        niByEntW[ent] = (niByEntW[ent] || 0) + d0;
+      }
+      // door-grain NOI/interest (window) for returns + NOI-valuation — entity/property-agnostic maps
+      if (acct === A_INT) { if (OVERD.has(door)) intOver += winTot; else intBy.set(door, (intBy.get(door) || 0) + winTot); }
+      else {
+        let dl = null;
+        if (A_INC.includes(acct)) dl = winTot;
+        else if (acct === A_CL || A_OPEX.includes(acct)) dl = -winTot;
+        if (dl !== null) { if (OVERD.has(door)) noiOver += dl; else noiBy.set(door, (noiBy.get(door) || 0) + dl); }
       }
     }
-    const glSum = (key, ents) => { const out = glz(); for (const e of ents) for (let i = 0; i < NM; i++) out[i] += glEnt[e][key][i]; return out; };
-    const entsIn = ENTITIES.filter(entOn);
-    const incM = glSum('inc', entsIn), opexM = glSum('opex', entsIn), intGlM = glSum('int', entsIn), niM = glSum('ni', entsIn);
     const w = arr => sum(winIdx.map(i => arr[i]));
     const incW = w(incM), opexBookW = w(opexM), intBookW = w(intGlM), niW = w(niM), noiBookW = incW - opexBookW;
+    const grossRentW = w(rentM);
     const margin = incW > 0.005 ? niW / incW * 100 : null;
     const opexPct = incW > 0.005 ? opexBookW / incW * 100 : null;
     const intPct = incW > 0.005 ? intBookW / incW * 100 : null;
 
     // ══ Cash Flow — Buildium + files, per door (the Cash Flow page's exact component rules) ══
-    const doorNames = Object.keys(DOORS);
-    const cfDoors = doorNames.filter(d => entOn(DOORS[d].entity));
+    const cfDoors = doorNames.filter(d => entOn(DOORS[d].entity) && fpOn(d));
     const cfDoorSet = new Set(cfDoors);
     const TIW = (RC.escrow && RC.escrow.tiRows) || {};
     const tiOtherKeys = Object.keys(TIW).filter(k => !DOORS[k]);
@@ -832,20 +968,21 @@ class Component extends DCLogic {
     const dHoa = d => sum(winIdx.map(i => (((DOORS[d].statByAcct || {})['HOA Fee'] || [])[i] || 0)));
     const dRef = d => sum((CLX.sdRefunds || []).filter(x => x.cash && x.prop === d && winIdx.includes(MO.indexOf(x.m))).map(x => Math.abs(x.amt)));
     const dKept = d => dW(d, 'coll') + dW(d, 'claims') - dRef(d) - dW(d, 'opex') - dW(d, 'capex') - dEsc(d) - dHoa(d) - dW(d, 'int') - dW(d, 'filePrin');
-    const chgW = sum(cfDoors.map(d => dW(d, 'chg'))) + (allEnts ? sum(winIdx.map(i => OH.chg[i])) : 0);
-    const collW = sum(cfDoors.map(d => dW(d, 'coll'))) + (allEnts ? sum(winIdx.map(i => OH.coll[i])) : 0);
+    const chgW = sum(cfDoors.map(d => dW(d, 'chg'))) + (ovOn ? sum(winIdx.map(i => OH.chg[i])) : 0);
+    const collW = sum(cfDoors.map(d => dW(d, 'coll'))) + (ovOn ? sum(winIdx.map(i => OH.coll[i])) : 0);
     const doorKeptW = sum(cfDoors.map(dKept));
     const ohKept = sum(winIdx.map(i => OH.claims[i] - OH.opex[i] - OH.capex[i] - OH.int[i]));
     const tiOtherW = sum(tiOtherKeys.map(k => sum(winIdx.map(i => ((TIW[k] || [])[i] || 0)))));
     const insDirW = sum(winIdx.map(i => RC.statutoryCash.insurance[i]));
     const ptDirW = sum(winIdx.map(i => RC.statutoryCash.propertyTax[i]));
-    const companyKept = allEnts ? (ohKept - tiOtherW - insDirW - ptDirW) : 0;
+    const companyKept = ovOn ? (ohKept - tiOtherW - insDirW - ptDirW) : 0;
     const keptW = doorKeptW + companyKept;
     // owner-formula collection rate, telescoped MONTH BY MONTH (write-offs move the advance
     // chain between months, so the monthly sum is the formula — a shortcut drifts bps)
-    const rateOf = (doors) => {
+    const rateWin = (doors, idxArr) => {
       let act = 0;
-      for (const i of winIdx) {
+      const f0 = idxArr[0];
+      for (const i of idxArr) {
         let oa = 0, ca = 0, co = 0;
         for (const d of doors) for (const t of DOORS[d].tenants) {
           const o = i === 0 ? t.opening : t.postSweep[i - 1];
@@ -858,23 +995,24 @@ class Component extends DCLogic {
       }
       let od = 0, ch = 0;
       for (const d of doors) for (const t of DOORS[d].tenants) {
-        const o = firstI === 0 ? t.opening : t.postSweep[firstI - 1];
+        const o = f0 === 0 ? t.opening : t.postSweep[f0 - 1];
         if (o > 0.005) od += o;
-        for (const i of winIdx) ch += t.chg[i];
+        for (const i of idxArr) ch += t.chg[i];
       }
       const due = od + ch;
       return { due, act, rate: due > 0 ? act / due * 100 : null };
     };
+    const rateOf = (doors) => rateWin(doors, winIdx);
     const rateAll = rateOf(cfDoors);
     const rateTxt = rateAll.rate === null ? '—' : rateAll.rate.toFixed(2) + '%';
-    const opexCashW = sum(cfDoors.map(d => dW(d, 'opex'))) + (allEnts ? sum(winIdx.map(i => OH.opex[i])) : 0);
-    const capexCashW = sum(cfDoors.map(d => dW(d, 'capex'))) + (allEnts ? sum(winIdx.map(i => OH.capex[i])) : 0);
-    const claimsW = sum(cfDoors.map(d => dW(d, 'claims'))) + (allEnts ? sum(winIdx.map(i => OH.claims[i])) : 0);
+    const opexCashW = sum(cfDoors.map(d => dW(d, 'opex'))) + (ovOn ? sum(winIdx.map(i => OH.opex[i])) : 0);
+    const capexCashW = sum(cfDoors.map(d => dW(d, 'capex'))) + (ovOn ? sum(winIdx.map(i => OH.capex[i])) : 0);
+    const claimsW = sum(cfDoors.map(d => dW(d, 'claims'))) + (ovOn ? sum(winIdx.map(i => OH.claims[i])) : 0);
     const refW = sum(cfDoors.map(dRef));
-    const escW = sum(cfDoors.map(dEsc)) + (allEnts ? tiOtherW : 0);
+    const escW = sum(cfDoors.map(dEsc)) + (ovOn ? tiOtherW : 0);
     const hoaW = sum(cfDoors.map(dHoa));
-    const statCashW = escW + hoaW + (allEnts ? insDirW + ptDirW : 0);
-    const intCashW = sum(cfDoors.map(d => dW(d, 'int'))) + (allEnts ? sum(winIdx.map(i => OH.int[i])) : 0);
+    const statCashW = escW + hoaW + (ovOn ? insDirW + ptDirW : 0);
+    const intCashW = sum(cfDoors.map(d => dW(d, 'int'))) + (ovOn ? sum(winIdx.map(i => OH.int[i])) : 0);
     const prinCashW = sum(cfDoors.map(d => dW(d, 'filePrin')));
     const netOpW = collW + claimsW - refW - opexCashW - capexCashW - statCashW;
     const dsCashW = intCashW + prinCashW;
@@ -897,7 +1035,6 @@ class Component extends DCLogic {
     for (const d of cfDoors) for (const t of DOORS[d].tenants) { curLastNum += (t.fifoCur || [])[lastI] || 0; curLastDen += t.chg[lastI]; }
     const curRateLast = curLastDen > 0.005 ? curLastNum / curLastDen * 100 : null;
     const CE_TARGET = 95; // the Collections page's default current-billing target
-    // aging from the date of charge, at the window-end month close (engine bucket rule)
     const endTs = Date.UTC(+lastM.slice(0, 4), +lastM.slice(5, 7), 0);
     const bkt = dstr => { const days = Math.floor((endTs - Date.parse(dstr)) / 86400000); return days <= 30 ? 0 : days <= 60 ? 1 : days <= 90 ? 2 : 3; };
     const agingRe = [0, 0, 0, 0], agingCt = [0, 0, 0, 0];
@@ -907,10 +1044,9 @@ class Component extends DCLogic {
     }
 
     // ══ Balance sheet + investments engine (the Investments page's exact rules) ══
-    const BSP = Object.values(BSD.properties);
     const exitMonth = p => (p.exit && /^\d{4}-\d{2}/.test(p.exit)) ? p.exit.slice(0, 7) : null;
     const timeOkAt = (p, m) => { if (p.status !== 'Sold' && p.status !== 'Held for Sale') return true; const em = exitMonth(p); return !!em && m < em; };
-    const owned = BSP.filter(p => timeOkAt(p, lastM) && entOn(p.entity));
+    const owned = BSP.filter(p => timeOkAt(p, lastM) && entOn(p.entity) && fpOn(p.door));
     const LDD = LD.doors;
     const loansOk = LD.loans.filter(l => l.schedule && l.schedule.length);
     const noteFirst = {}, noteP0 = {};
@@ -960,38 +1096,20 @@ class Component extends DCLogic {
       const saleF = (relByDoor[d] || []).reduce((a, r) => a + (r.m <= m ? r.base : 0), 0);
       return { owner: init - close - refiF - saleF, init, close, refiF, saleF };
     };
-    const valueW = owned.reduce((s, p) => s + (p.value || 0), 0);
     const debtW = owned.reduce((s, p) => s + debtAt(p.door, lastM), 0);
-    const equityW = valueW - debtW;
-    const mosPct = valueW > 0 ? equityW / valueW * 100 : null;
-    const unvalued = owned.filter(p => !(p.value > 0));
     const tCost = owned.reduce((s, p) => s + p.cost, 0), tRefi = owned.reduce((s, p) => s + p.refi, 0);
     const tInv = tCost - tRefi;
     const tRepaid = owned.reduce((s, p) => s + doorCalc(p.door, lastM).owner, 0);
     const tCap = tInv + tRepaid;
-    const excludedBS = BSP.filter(p => !timeOkAt(p, lastM) && entOn(p.entity));
+    const excludedBS = BSP.filter(p => !timeOkAt(p, lastM) && entOn(p.entity) && fpOn(p.door));
     const excludedDebt = excludedBS.reduce((s, p) => s + debtAt(p.door, lastM), 0);
-    // returns: door-grain GL join over the window (investments-page scope rule)
-    const OVERD = new Set((PLD.meta && PLD.meta.overheadDoors) || []);
-    const noiBy = new Map(), intBy = new Map();
-    let noiOver = 0, intOver = 0;
-    for (const [ent, door, acct, valsR] of PLD.rows) {
-      const tot = sum(winIdx.map(i => valsR[i] || 0));
-      if (acct === A_INT) { if (OVERD.has(door)) intOver += tot; else intBy.set(door, (intBy.get(door) || 0) + tot); continue; }
-      let dl = null;
-      if (A_INC.includes(acct)) dl = tot;
-      else if (acct === A_CL || A_OPEX.includes(acct)) dl = -tot;
-      if (dl === null) continue;
-      if (OVERD.has(door)) noiOver += dl; else noiBy.set(door, (noiBy.get(door) || 0) + dl);
-    }
-    const ovAdd = allEnts;
+    const ovAdd = ovOn;
+    const ann = v => nWin ? v / nWin * 12 : 0;
     const noiScopeW = owned.reduce((s, p) => s + (noiBy.get(p.door) || 0), 0) + (ovAdd ? noiOver : 0);
     const intScopeW = owned.reduce((s, p) => s + (intBy.get(p.door) || 0), 0) + (ovAdd ? intOver : 0);
     const niScopeW = noiScopeW - intScopeW;
-    const ann = v => nWin ? v / nWin * 12 : 0;
     const capCost = tCost > 0 && nWin ? ann(noiScopeW) / tCost * 100 : null;
     const niRoi = tCap > 0 && nWin ? ann(niScopeW) / tCap * 100 : null;
-    // cash-on-cash, the Investments card's exact recipe (engine escrow + scheduled principal, no CapEx)
     const cfRefOut = (d2, ci) => { let s2 = 0; for (const x of (CLX.sdRefunds || [])) if (x.cash && x.prop === d2 && MO[ci] === x.m) s2 += -x.amt; return s2; };
     const cocKeptDoor = (d2, ci) => {
       const r = DOORS[d2]; if (!r) return 0;
@@ -1002,9 +1120,43 @@ class Component extends DCLogic {
     const cocKeptW = owned.reduce((s2, p) => s2 + winIdx.reduce((a, ci) => a + cocKeptDoor(p.door, ci), 0), 0) + (ovAdd ? winIdx.reduce((a, ci) => a + cocKeptOver(ci), 0) : 0);
     const cocRoi = nWin && tInv > 0 ? ann(cocKeptW) / tInv * 100 : null;
     const levPurch = tInv > 0 ? tRefi / tInv : null;
-    const levToday = equityW > 0 ? debtW / equityW : null;
 
-    // ══ Loans — note grain (notes carry no entity; always portfolio-wide) ══
+    // ══ Net-equity valuation methods (the Investments MoS v2 engine, page-global here) ══
+    const SALE_READY = 30000;
+    const VMETHODS = [
+      { id: 'arv', label: 'ARV — sale-ready adjusted', short: 'ARV − $30K sale-ready', sub: 'policy value (ARV first, county fallback) − $30K per door to make it sale-ready, taken out before the bank is repaid' },
+      { id: 'county', label: 'County assessed — as is', short: 'county — as is', sub: 'county tax-assessed value, sold as it stands' },
+      { id: 'appraisal', label: 'Bank appraised — as is', short: 'bank appraised', sub: 'lender appraisal on file; doors without one drop out until loaded' },
+      { id: 'noi', label: 'NOI ÷ cap rate', short: 'NOI ÷ cap', sub: 'income approach: annualized door NOI over the window ÷ your cap rate' },
+    ];
+    const vMeth = VMETHODS.some(v => v.id === S.vm) ? S.vm : 'arv';
+    const VDEF = VMETHODS.find(v => v.id === vMeth);
+    const capRaw = parseFloat(String(S.vcap == null ? '8' : S.vcap).replace('%', '').trim());
+    const capPct = Math.min(20, Math.max(1, isFinite(capRaw) ? capRaw : 8));
+    const capStr = (Math.round(capPct * 10) / 10) + '%';
+    const noiAnnOf = d => noiBy.has(d) ? ann(noiBy.get(d)) : null;
+    const vValRaw = p =>
+      vMeth === 'county' ? (p.county > 0 ? p.county : 0) :
+      vMeth === 'appraisal' ? (p.appraisal > 0 ? p.appraisal : 0) :
+      vMeth === 'noi' ? (() => { const nA = noiAnnOf(p.door); return nA !== null && nA > 0 ? nA / (capPct / 100) : 0; })() :
+      (p.value > 0 ? p.value : 0);
+    const vNetOf = gv => vMeth === 'arv' ? gv - SALE_READY : gv;
+    const vNetVal = p => { const gv = vValRaw(p); return gv > 0 ? Math.max(vNetOf(gv), 0) : 0; };
+    const vIncluded = p => { const gv = vValRaw(p); return gv > 0 && vNetOf(gv) > 0; };
+    const valuedSet = owned.filter(vIncluded);
+    const vNoVal = owned.filter(p => !(vValRaw(p) > 0));
+    const vFloorN = owned.length - valuedSet.length - vNoVal.length;
+    const valueM = valuedSet.reduce((s, p) => s + vNetOf(vValRaw(p)), 0);
+    const debtValued = valuedSet.reduce((s, p) => s + debtAt(p.door, lastM), 0);
+    const equityM = valueM - debtValued;
+    const mosPctM = valueM > 0 ? equityM / valueM * 100 : null;
+    const exclDebtM = debtW - debtValued;
+    const vShort = vMeth === 'noi' ? 'NOI ÷ ' + capStr : VDEF.short;
+    const vExclLab = vMeth === 'appraisal' ? 'no bank appraisal yet' : vMeth === 'county' ? 'no county value' : vMeth === 'noi' ? 'no positive NOI in the window' : 'no valuation / below the $30K allowance';
+    const saleReadyW = vMeth === 'arv' ? SALE_READY * valuedSet.length : 0;
+    const levToday = equityM > 0 ? debtValued / equityM : null;
+
+    // ══ Loans — note grain (notes carry no entity/property; always portfolio-wide) ══
     const closeAtL = (l, m) => { let c = null; for (const r of l.schedule) { if (r.m <= m) c = r.close; else break; } return c === null ? 0 : c; };
     const prevM = addM2(firstM, -1);
     const loansOutOpen = loansOk.reduce((s, l) => s + closeAtL(l, prevM), 0);
@@ -1018,11 +1170,6 @@ class Component extends DCLogic {
       for (const r of (l.releases || [])) if (r.m >= firstM && r.m <= lastM) releaseW += r.paid;
     }
     const payoffW = eventsW - prepayW - releaseW;
-    let wtdRate = null; {
-      let n2 = 0, d2 = 0;
-      for (const l of loansOk) { const c = closeAtL(l, lastM); if (c > 0.005) { n2 += c * l.rate; d2 += c; } }
-      if (d2 > 0) wtdRate = n2 / d2 * 100;
-    }
     const noteName = l => /^\d{1,3}$/.test(String(l.displayId)) ? l.lender + ' #' + l.displayId : l.displayId + ' · ' + l.lender;
     const activeNotes = loansOk.filter(l => closeAtL(l, lastM) > 0.005);
     const radar = activeNotes.map(l => ({ l, mat: (l.start && l.term) ? addM2(l.start, l.term) : null, close: closeAtL(l, lastM) })).filter(r => r.mat);
@@ -1031,52 +1178,84 @@ class Component extends DCLogic {
     const upcoming = radar.filter(r => r.mat > lastM && r.mat <= horizon12).sort((a, b) => a.mat < b.mat ? -1 : 1);
     const maturedSum = matured.reduce((s, r) => s + r.close, 0);
     const upSum = upcoming.reduce((s, r) => s + r.close, 0);
-    // every bank dollar ever drawn — the identity, all doors
     let ownAll = 0, saleAll = 0, refiAll = 0, outAll = 0, drawnAll = 0;
     for (const d in LDD) { const c = doorCalc(d, lastM); ownAll += c.owner; saleAll += c.saleF; refiAll += c.refiF; outAll += c.close; drawnAll += c.init; }
 
+    // ══ scoped deep links (the "detailed interactive" rule: every link carries the current scope) ══
+    const qsOf = (keys, extra) => {
+      const q = [];
+      if (keys.includes('m') && selM.length) q.push('m=' + esc(selM.join(',')));
+      if (keys.includes('entity') && feAct.length) q.push('entity=' + esc(feAct.join(',')));
+      if (keys.includes('door') && fpAct.length) q.push('door=' + esc(fpAct.join(',')));
+      for (const [k, v] of Object.entries(extra || {})) if (v !== null && v !== undefined && v !== '') q.push(k + '=' + esc(String(v)));
+      return q.length ? '?' + q.join('&') : '';
+    };
+    const cfHref = './cashflow.dc.html' + qsOf(['m', 'entity', 'door']);
+    const collHref = './collections.dc.html' + qsOf(['m', 'entity', 'door']);
+    const collBktHref = bi => './collections.dc.html' + qsOf(['m', 'entity', 'door'], { bkt: bi });
+    const collTenHref = t => './collections.dc.html' + qsOf(['m', 'entity', 'door'], { tenant: t });
+    const plHref = './PL%20Story%20-%20Main.dc.html' + qsOf(['entity', 'door']);
+    const plDoorHref = d => './PL%20Story%20-%20Main.dc.html?door=' + esc(d);
+    const invHref = './investments.dc.html' + qsOf(['m', 'entity', 'door'], vMeth !== 'arv' ? { method: vMeth, cap: vMeth === 'noi' && String(capPct) !== '8' ? capPct : null } : {});
+    const invDoorHref = d => './investments.dc.html?door=' + esc(d) + (vMeth !== 'arv' ? '&method=' + vMeth : '');
+    const loansHref = './loans.dc.html' + qsOf(['m', 'entity', 'door']);
+    const loanHref = id => './loans.dc.html' + qsOf(['m'], { loan: id });
+    const txHref = './transactions.dc.html' + qsOf(['m', 'entity', 'door']);
+    const cfDoorHref = d => './cashflow.dc.html?door=' + esc(d) + (selM.length ? '&m=' + esc(selM.join(',')) : '');
+
     // ══ header story + scope ══
-    const storyLine = spanLab + entLab + ': tenants were billed ' + fK(chgW) + ' and paid ' + fK(collW) + ' (' + rateTxt + '). After every cost and the banks, ' + fK(keptW) + ' of cash stayed and the books earned ' + fK(niW) + ' net profit' + (margin !== null ? ' (' + margin.toFixed(1) + '% margin)' : '') + '. The portfolio: ' + fK(valueW) + ' value − ' + fK(debtW) + ' debt = ' + fK(equityW) + ' equity (' + (mosPct !== null ? mosPct.toFixed(1) + '%' : '—') + ' margin of safety), built on ' + fK(tInv) + ' of our own money' + (niRoi !== null ? ' earning ' + niRoi.toFixed(1) + '% ROI' : '') + '.';
-    const scopeLine = owned.length + ' doors owned at ' + mmyy(lastM) + ' · ' + entsIn.length + ' of ' + ENTITIES.length + ' entities in view · every figure recomputes live from the four published datasets and ties its source page to the cent';
+    const eqMult = tInv > 0 ? equityM / tInv : null;
+    const storyLine = spanLab + entLab + ': tenants were billed ' + fK(chgW) + ' and paid ' + fK(collW) + ' (' + rateTxt + '). After every cost and the banks, ' + fK(keptW) + ' of cash stayed and the books earned ' + fK(niW) + ' net profit' + (margin !== null ? ' (' + margin.toFixed(1) + '% margin)' : '') + '. Behind it: ' + fK(tCap) + ' of our money in the deal (' + fK(tInv) + ' invested + ' + fK(tRepaid) + ' repaid) now stands as ' + fK(equityM) + ' of net equity — ' + (eqMult !== null && eqMult > 0 ? eqMult.toFixed(1) + '× the cash we put in' : 'valuation pending') + (niRoi !== null ? ', earning ' + niRoi.toFixed(1) + '% ROI' : '') + '.';
+    const scopeLine = owned.length + ' doors owned at ' + mmyy(lastM) + ' · ' + ENTITIES.filter(entOn).length + ' of ' + ENTITIES.length + ' entities' + (noProp ? '' : ' · ' + fpAct.length + ' of ' + ALLDOORS.length + ' properties') + ' in view · net equity valued: ' + vShort + ' · every figure ties its source page to the cent';
     const asOfLine = 'P&L ' + (PLD.meta && PLD.meta.published ? String(PLD.meta.published).slice(0, 10) : '—') + ' · CF ' + (CFD.meta.published ? String(CFD.meta.published).slice(0, 10) : '—') + ' · BS ' + (BSD.meta && BSD.meta.published ? String(BSD.meta.published).slice(0, 10) : '—') + ' · Loans ' + (LD.meta && LD.meta.published ? String(LD.meta.published).slice(0, 10) : '—');
 
     // ══ filter bar + jump chips ══
     const openDd = (id) => (e) => { e.stopPropagation(); this.setState({ ddOpen: S.ddOpen === id ? null : id, fq: '' }); };
     const togList = (key, v) => (e) => { if (e && e.stopPropagation) e.stopPropagation(); const cur = new Set(S[key]); cur.has(v) ? cur.delete(v) : cur.add(v); this.setF({ [key]: [...cur], entOpen: null }); };
     const entN = {}; doorNames.forEach(d => { entN[DOORS[d].entity] = (entN[DOORS[d].entity] || 0) + 1; });
+    const doorEnt = d => (DOORS[d] ? DOORS[d].entity : (BSP.find(p => p.door === d) || {}).entity) || '';
     const mkOpts = (list, key, labOf, nOf) => list.map(v => ({
       label: labOf ? labOf(v) : v, n: nOf ? nOf(v) : '', check: S[key].includes(v) ? '✓' : '',
       fw: S[key].includes(v) ? 700 : 500, bg: S[key].includes(v) ? '#FBF6EA' : 'transparent', onClick: togList(key, v),
     }));
     const filters = [
-      { id: 'MONTH', key: 'fm', label: 'MONTH', all: 'months', w: '190px', list: MO, labOf: mmyy, val: selM.length ? spanLab : 'All months' },
-      { id: 'ENTITY', key: 'fe', label: 'ENTITY', all: 'entities', w: '230px', list: ENTITIES, nOf: v => entN[v] || '', val: feAct.length ? (feAct.length > 2 ? feAct.length + ' selected' : feAct.join(', ')) : 'All entities' },
-    ].map(f => ({
-      onToggle: openDd(f.id), bd: S[f.key].length ? GOLD : '#D8D4C8', bg: S[f.key].length ? '#FBF6EA' : '#FFFFFF',
-      label: f.label, value: f.val, open: S.ddOpen === f.id, w: f.w,
-      onClear: (e) => { if (e && e.stopPropagation) e.stopPropagation(); this.setF({ [f.key]: [] }); }, allLabel: f.all, allCheck: S[f.key].length ? '' : '✓',
-      opts: mkOpts(f.list, f.key, f.labOf, f.nOf),
-    }));
-    const hasActive = !!(S.fm.length || S.fe.length);
-    const onReset = () => this.setF({ fm: [], fe: [], entOpen: null });
-    const jumpChips = [['in', 'I · Came in'], ['cost', 'II · Cost'], ['kept', 'III · Stayed'], ['stand', 'IV · Stand'], ['earn', 'V · Earning'], ['entity', 'Entities'], ['next', 'Do next']].map(([id, lab]) => ({ lab, onClick: () => this.jumpTo(id) }));
+      { id: 'MONTH', key: 'fm', label: 'MONTH', all: 'months', w: '190px', list: MO, labOf: mmyy, val: selM.length ? spanLab : 'All months', hasSearch: false },
+      { id: 'ENTITY', key: 'fe', label: 'ENTITY', all: 'entities', w: '230px', list: ENTITIES, nOf: v => entN[v] || '', val: feAct.length ? (feAct.length > 2 ? feAct.length + ' selected' : feAct.join(', ')) : 'All entities', hasSearch: false },
+      { id: 'PROPERTY', key: 'fp', label: 'PROPERTY', all: 'properties', w: '300px', list: ALLDOORS, nOf: doorEnt, val: fpAct.length ? (fpAct.length === 1 ? fpAct[0] : fpAct.length + ' selected') : 'All properties', hasSearch: true },
+    ].map(f => {
+      const q = (S.ddOpen === f.id ? (S.fq || '') : '').toLowerCase();
+      const shown = q ? f.list.filter(v => String(v).toLowerCase().includes(q)) : f.list;
+      return {
+        onToggle: openDd(f.id), bd: S[f.key].length ? GOLD : '#D8D4C8', bg: S[f.key].length ? '#FBF6EA' : '#FFFFFF',
+        label: f.label, value: f.val, open: S.ddOpen === f.id, w: f.w,
+        hasSearch: f.hasSearch, q: S.ddOpen === f.id ? (S.fq || '') : '',
+        onQ: (e) => this.setState({ fq: e.target.value }),
+        onClear: (e) => { if (e && e.stopPropagation) e.stopPropagation(); this.setF({ [f.key]: [] }); }, allLabel: f.all, allCheck: S[f.key].length ? '' : '✓',
+        opts: mkOpts(shown.slice(0, 400), f.key, f.labOf, f.nOf),
+      };
+    });
+    const hasActive = !!(S.fm.length || S.fe.length || S.fp.length);
+    const onReset = () => this.setF({ fm: [], fe: [], fp: [], entOpen: null });
+    const jumpChips = [['in', 'I · Came in'], ['cost', 'II · Cost'], ['kept', 'III · Stayed'], ['stand', 'IV · Stand'], ['earn', 'V · Built'], ['entity', 'Entities'], ['next', 'Do next']].map(([id, lab]) => ({ lab, onClick: () => this.jumpTo(id) }));
 
-    // ══ hero tiles ══
-    const entQ = feAct.length ? '?entity=' + esc(feAct.join(',')) : '';
-    const entAmp = feAct.length ? '&entity=' + esc(feAct.join(',')) : '';
-    const mQ = '?m=' + selM.join(',');
-    const cfHref = './cashflow.dc.html' + (selM.length ? mQ + entAmp : entQ);
-    const collHref = './collections.dc.html' + (selM.length ? mQ + entAmp : entQ);
-    const plHref = './PL%20Story%20-%20Main.dc.html' + entQ;
-    const invHref = './investments.dc.html' + entQ;
-    const tile = (label, val, sub, col, href, linkLab, tip, bg, bd) => ({ label, val, sub, col, href, linkLab, tip: tip || '', bg: bg || '#FFFFFF', bd: bd || '#E5E3DC' });
+    // ══ hero — 2×4: the period's flows over the position they built ══
+    const tile = (label, val, sub, col, href, linkLab, tip, bg, bd) => ({ label, val, sub, col, href, linkLab, tip: tip || '', bg: bg || '#FFFFFF', bd: bd || '#E5E3DC', barOn: false, segs: [], barLab: '' });
+    const invTile = tile('Total investment · in the deal', fN(tCap), '', NAVY, invHref, 'INVESTMENTS →', 'Initial investment (cost − initial refinance) + principal the business repaid — the capital actually sitting in the deal');
+    invTile.barOn = tCap > 0.005 && tInv >= 0;
+    invTile.segs = invTile.barOn ? [
+      { w: Math.max(2, tInv / tCap * 100).toFixed(1) + '%', col: GOLDD, tip: 'initial investment ' + fN(tInv) },
+      { w: Math.max(2, tRepaid / tCap * 100).toFixed(1) + '%', col: GREEN2, tip: 'principal repaid ' + fN(tRepaid) },
+    ] : [];
+    invTile.barLab = 'invested ' + fK(tInv) + ' + repaid ' + fK(tRepaid);
     const heroTiles = [
       tile('Rent charged', fN(chgW), spanLab + ' · rent, SD, fees, utilities', BLUE, cfHref, 'CASH FLOW →', 'Buildium charge journal for the window'),
       tile('Cash collected', fN(collW), rateTxt + ' of everything due — owner formula', GOLDD, collHref, 'COLLECTIONS →', '(collections + opening advances − closing advances) ÷ (invoices + opening due)'),
-      tile('Cash kept', fN(keptW), 'after every cost and the banks', keptW >= 0 ? GREEND : REDD, cfHref, 'CASH FLOW →', 'Collections + claims − refunds − opex incl. CapEx − statutory cash − interest − principal (Cashflow.xlsx actuals)', keptW >= 0 ? '#F2F7F0' : '#FBF0ED', keptW >= 0 ? '#D6E4D2' : '#EAD1C8'),
+      tile('Net cash flow · kept', fN(keptW), 'after every cost and the banks', keptW >= 0 ? GREEND : REDD, cfHref, 'CASH FLOW →', 'Collections + claims − refunds − opex incl. CapEx − statutory cash − interest − principal (Cashflow.xlsx actuals)', keptW >= 0 ? '#F2F7F0' : '#FBF0ED', keptW >= 0 ? '#D6E4D2' : '#EAD1C8'),
       tile('Net profit (books)', fN(niW), (margin !== null ? margin.toFixed(1) + '% margin · ' : '') + 'GL, ' + spanLab, niW >= 0 ? NAVY : REDD, plHref, 'P&L →', 'GL accrual: income − operating expenses − interest'),
-      tile('Portfolio equity', fN(equityW), (mosPct !== null ? mosPct.toFixed(1) + '% margin of safety' : 'no valued doors in scope'), GREEN2, invHref, 'INVESTMENTS →', 'Policy value (ARV-first) − loans-engine debt at ' + mmyy(lastM)),
-      tile('Return on the deal', niRoi === null ? '—' : niRoi.toFixed(1) + '%', 'net-income ROI · cash-on-cash ' + (cocRoi === null ? '—' : cocRoi.toFixed(1) + '%'), GOLDD, invHref, 'INVESTMENTS →', 'Annualized (NOI − interest) ÷ capital in deal; CoC = annualized cash kept (engine recipe) ÷ initial investment'),
+      invTile,
+      tile('Debt outstanding', fN(debtW), mmyy(lastM) + (ovOn && excludedDebt > 0.005 ? ' · +' + fK(excludedDebt) + ' HFS = ' + fK(debtW + excludedDebt) + ' at the banks' : ' · loans engine'), REDD, loansHref, 'LOANS →', 'Loans-engine outstanding on the owned scope at the window end'),
+      tile('Net equity · ' + vShort, fN(equityM), (mosPctM !== null ? mosPctM.toFixed(1) + '% margin of safety' : 'no valued doors in scope') + (eqMult !== null && eqMult > 0 ? ' · ' + eqMult.toFixed(1) + '× our cash' : ''), GREEN2, invHref, 'INVESTMENTS →', VDEF.sub + ' — switch the method in Act IV', '#F2F7F0', '#D6E4D2'),
+      tile('Net ROI', niRoi === null ? '—' : niRoi.toFixed(1) + '%', 'net-income ROI · cash-on-cash ' + (cocRoi === null ? '—' : cocRoi.toFixed(1) + '%'), GOLDD, invHref, 'INVESTMENTS →', 'Annualized (NOI − interest) ÷ capital in deal; CoC = annualized cash kept (engine recipe) ÷ initial investment'),
     ];
 
     // ══ ACT I — what came in ══
@@ -1084,57 +1263,100 @@ class Component extends DCLogic {
     const a1Line = 'Tenants were billed ' + fN(chgW) + ' in ' + spanLab + entLab + '. ' + fN(collW) + ' of it actually arrived — ' + rateTxt + ' of everything due, counting advance payments where they belong — and ' + fN(laggSum) + ' is still out with ' + laggN + ' tenant' + (laggN === 1 ? '' : 's') + '. Collections against the window’s own bills ran ' + (curRateW === null ? '—' : curRateW.toFixed(1) + '%') + (curRateLast !== null && nWin > 1 ? ' (' + curRateLast.toFixed(1) + '% in ' + mmyy(lastM) + ')' : '') + ' against the ' + CE_TARGET + '% target.';
     const pcBox = (k, v, sub, href, kcol, vcol, tip, arrowOn, bg, bd) => ({ k, v, sub, href, kcol: kcol || MUT, vcol: vcol || INK, tip: tip || '', arrowOn: arrowOn !== false, bg: bg || '#FBFAF6', bd: bd || '#EDEBE2', op: '' });
     const a1Rail = [
-      pcBox('BILLED', fN(chgW), 'rent · SD · fees · utilities', cfHref, MUT, NAVY, 'Buildium tenant charges' + (allEnts ? ' incl. company items' : ' — doors of ' + feAct.join(', '))),
+      pcBox('BILLED', fN(chgW), 'rent · SD · fees · utilities', cfHref, MUT, NAVY, 'Buildium tenant charges' + (ovOn ? ' incl. company items' : ' — scoped view')),
       pcBox('COLLECTED', fN(collW), rateTxt + ' — the owner formula', collHref, GOLDD, GOLDD, '(collections + opening advances − closing advances) ÷ (invoices + opening due), telescoped over the window'),
       pcBox('PAID FOR THE WINDOW’S OWN BILLS', fN(fifoCurW), (curRateW === null ? '—' : curRateW.toFixed(1) + '%') + ' of billing · target ' + CE_TARGET + '%', collHref, MUT, curRateW !== null && curRateW >= CE_TARGET ? GREEND : curRateW !== null && curRateW >= 85 ? GOLDD : REDD, 'FIFO split: receipts cure the oldest charge first; this is the slice that paid the window’s own charges. Old dues cured on top: ' + fN(fifoArrW)),
       pcBox('STILL OUT', fN(laggSum), laggN + ' tenants · advances held ' + fN(advHeld), collHref, MUT, laggSum > 0.005 ? REDD : GREEND, 'Every positive tenant balance at ' + mmyy(lastM) + ' — name by name on the Collections page', false, laggSum > 0.005 ? '#FBF0ED' : '#F2F7F0', laggSum > 0.005 ? '#EAD1C8' : '#D6E4D2'),
     ];
+    // billed vs collected, month by month — paired bars with the owner's monthly rate
+    const chgMs = MO.map((_, i) => sum(cfDoors.map(d => DOORS[d].chg[i])) + (ovOn ? OH.chg[i] : 0));
+    const collMs = MO.map((_, i) => sum(cfDoors.map(d => DOORS[d].coll[i])) + (ovOn ? OH.coll[i] : 0));
+    const cvMax = Math.max(...winIdx.map(i => Math.max(chgMs[i], collMs[i])), 1);
+    const cvTitle = 'BILLED vs COLLECTED — MONTH BY MONTH';
+    const cvRows = winIdx.map(i => {
+      const mr = rateWin(cfDoors, [i]);
+      const diff = collMs[i] - chgMs[i];
+      return {
+        m: mmyy(MO[i]), fw: selM.length && winIdx.includes(i) && selM.includes(MO[i]) ? 800 : 700,
+        onClick: () => this.setF({ fm: [MO[i]], entOpen: null }),
+        chgW2: Math.max(1.5, chgMs[i] / cvMax * 100).toFixed(1) + '%',
+        colW2: Math.max(1.5, collMs[i] / cvMax * 100).toFixed(1) + '%',
+        chg: fN(chgMs[i]), coll: fN(collMs[i]),
+        rate: mr.rate === null ? '—' : mr.rate.toFixed(1) + '%',
+        rateCol: mr.rate === null ? FAINT : mr.rate >= 85 ? GREEND : mr.rate >= 75 ? GOLDD : REDD,
+        d: (diff >= 0 ? '+' : '−') + fK(Math.abs(diff)).replace('(', '').replace(')', ''),
+        dCol: diff >= 0 ? GREEND : REDD,
+        dLab: diff >= 0 ? 'arrears recovered on top' : 'left uncollected this month',
+        tip: mmyy(MO[i]) + ': billed ' + fN(chgMs[i]) + ' · collected ' + fN(collMs[i]) + ' · monthly rate (owner formula) ' + (mr.rate === null ? '—' : mr.rate.toFixed(2) + '%'),
+      };
+    });
+    const cvFoot = 'Blue = billed, gold = actually collected (cash, includes arrears and advances applied). The % is the owner-formula monthly rate — arrears drag pulls it below 100 even when the cash bar is taller. Click any month to focus the whole story.';
     const agColors = ['#3D64A8', '#96742F', '#C0763F', '#A03E28'];
     const agLabs = ['0–30 DAYS', '31–60 DAYS', '61–90 DAYS', '90+ DAYS'];
     const agMax = Math.max(...agingRe, 1);
     const agTiles = agingRe.map((v, i) => ({
       k: agLabs[i], v: fN(v), kcol: agColors[i], vcol: v > 0.005 ? (i >= 3 ? REDD : NAVY) : FAINT,
       w: Math.max(2, v / agMax * 100).toFixed(1) + '%', barCol: agColors[i],
-      sub: agingCt[i] + ' open charge' + (agingCt[i] === 1 ? '' : 's'),
+      sub: agingCt[i] + ' open charge' + (agingCt[i] === 1 ? '' : 's') + ' · open the tenants →',
       bd: i >= 3 && v > 0.005 ? '#EAD1C8' : '#EDEBE2',
-      href: collHref, tip: 'Aged from the date each charge was billed — drill the tenants behind it on the Collections page',
+      href: collBktHref(i), tip: 'Opens the Collections aging drill for this bracket, already scoped to ' + mmyy(lastM) + entLab,
     }));
     const agTot = fN(laggSum);
-    const agFoot = 'Buckets age each open charge from its billing date (pre-window openings age from Dec-25 — a disclosed floor). The four buckets sum to the ' + fN(sum(agingRe)) + ' still owed, to the cent. Advances held: ' + fN(advHeld) + ' — tenants paid ahead; they are never on the chase list.';
+    const agFoot = 'Buckets age each open charge from its billing date (pre-window openings age from Dec-25 — a disclosed floor). The four buckets sum to the ' + fN(sum(agingRe)) + ' still owed, to the cent. Advances held: ' + fN(advHeld) + ' — tenants paid ahead; they are never on the chase list. Click a bracket to land on that drill, scoped to this view.';
 
     // ══ ACT II — what it cost ══
-    const a2Links = [{ lab: 'P&L →', href: plHref }, { lab: 'CASH FLOW →', href: cfHref }, { lab: 'LOANS →', href: './loans.dc.html' }];
-    const mixRank = Object.entries(opexMixW).filter(([, v]) => Math.abs(v) > 0.005).sort((a, b) => b[1] - a[1]);
-    const topNames = mixRank.slice(0, 3).map(([k]) => k.toLowerCase());
-    const a2Line = incW > 0.005
-      ? 'Running the doors took ' + fN(opexBookW) + ' on the books — ' + Math.round(opexPct) + '¢ of every rent dollar, led by ' + (topNames.length ? topNames.join(', ') : '—') + ' — leaving ' + fN(noiBookW) + ' of NOI (' + (incW > 0 ? Math.round(noiBookW / incW * 100) : 0) + '¢). The banks then took ' + fN(dsCashW) + ' in cash: ' + fN(intCashW) + ' of interest and ' + fN(prinCashW) + ' of principal.'
-      : 'No GL income in this scope — the cost story needs a window with income.';
+    const a2Links = [{ lab: 'P&L →', href: plHref }, { lab: 'CASH FLOW →', href: cfHref }, { lab: 'LOANS →', href: loansHref }];
     const bandsOK = incW > 0.005;
-    const profCents = bandsOK ? Math.max(0, 100 - opexPct - intPct) : 0;
     const dollarBands = bandsOK ? [
       { k: 'OPERATING EXPENSES', v: Math.round(opexPct) + '¢ · ' + fK(opexBookW), w: Math.max(opexPct, 4).toFixed(1) + '%', bg: '#B04A33', kcol: 'rgba(255,255,255,0.75)', vcol: '#FFFFFF', href: plHref, tip: fN(opexBookW) + ' — statutory, PM, repairs, turns, CapEx (GL)' },
-      { k: 'INTEREST', v: Math.round(intPct) + '¢ · ' + fK(intBookW), w: Math.max(intPct, 4).toFixed(1) + '%', bg: '#7A4A38', kcol: 'rgba(255,255,255,0.75)', vcol: '#FFFFFF', href: './loans.dc.html', tip: fN(intBookW) + ' of GL interest cost' },
+      { k: 'INTEREST', v: Math.round(intPct) + '¢ · ' + fK(intBookW), w: Math.max(intPct, 4).toFixed(1) + '%', bg: '#7A4A38', kcol: 'rgba(255,255,255,0.75)', vcol: '#FFFFFF', href: loansHref, tip: fN(intBookW) + ' of GL interest cost' },
       { k: niW >= 0 ? 'NET PROFIT' : 'NET LOSS', v: Math.round(Math.abs(margin)) + '¢ · ' + fK(niW), w: Math.max(Math.abs(margin), 4).toFixed(1) + '%', bg: niW >= 0 ? '#2E7D54' : '#A03E28', kcol: 'rgba(255,255,255,0.8)', vcol: '#FFFFFF', href: plHref, tip: fN(niW) + ' kept on the books — ' + (margin !== null ? margin.toFixed(1) + '%' : '—') + ' net margin' },
     ] : [{ k: 'NO INCOME IN SCOPE', v: '—', w: '100%', bg: '#EDEBE2', kcol: MUT, vcol: MUT, href: plHref, tip: '' }];
     const dollarFoot = bandsOK ? 'GL books, income net of collection loss (' + fN(clW) + ' this window). Bands are proportional; exact splits: expenses ' + (opexPct !== null ? opexPct.toFixed(1) : '—') + '% · interest ' + (intPct !== null ? intPct.toFixed(1) : '—') + '% · margin ' + (margin !== null ? margin.toFixed(1) : '—') + '%.' : 'This scope has no GL income in the window.';
-    const opexTotal = mixRank.reduce((s, [, v]) => s + v, 0);
-    const mixMax = Math.max(...mixRank.map(([, v]) => Math.abs(v)), 1);
-    const shownMix = S.xAll ? mixRank : mixRank.slice(0, 6);
-    const opexRows = shownMix.map(([k, v]) => ({
-      name: k, v: fK(v), pct: opexTotal > 0.005 ? (v / opexTotal * 100).toFixed(1) + '%' : '—',
-      w: Math.max(2, Math.abs(v) / mixMax * 100).toFixed(1) + '%', barCol: v >= 0 ? '#B04A33' : '#2E7D54',
-      href: plHref,
-    }));
-    const onXAll = () => this.setState({ xAll: !S.xAll });
-    const xAllLab = S.xAll ? 'Top 6 only' : 'Show all ' + mixRank.length;
-    const opexTot = fK(opexBookW), opexN = String(mixRank.length);
-    const opexFoot = 'GL operating ledgers over ' + spanLab + entLab + ', ranked. Credits show green. The P&L page walks every ledger down to door and transaction grain.';
+    // the cost stack — six buckets, descending % of gross rent (the scheduled-rent line)
+    const BUCKET_DEFS = [
+      { id: 'stat', name: 'Statutory (tax · insurance · HOA)', accts: ['Property Tax', 'Insurance', 'HOA Fee'], col: '#C0763F' },
+      { id: 'rep', name: 'Repairs', accts: ['Repairs - Payroll', 'Repairs - Materials', 'Repairs - Contractors'], col: '#B04A33' },
+      { id: 'turn', name: 'Rent ready', accts: ['Rent Ready - Payroll', 'Rent Ready - Materials', 'Rent Ready - Contractors'], col: '#A0563B' },
+      { id: 'capex', name: 'CapEx (HVAC · appliances)', accts: ['Capex - HVAC', 'Capex - Appliances'], col: '#8A93A6' },
+      { id: 'int', name: 'Interest', accts: ['Interest Cost'], col: '#7A4A38' },
+      { id: 'oth', name: 'Others (PM · utilities · misc)', accts: ['Property Management Expense', 'Utilities', "Renter's Insurance", 'Other Misc Cost'], col: '#5E6B82' },
+    ];
+    const bucketsAll = BUCKET_DEFS.map(b => ({ ...b, tot: b.accts.reduce((s, a) => s + (mixW[a] || 0), 0) })).sort((a, b) => b.tot - a.tot);
+    const bMax = Math.max(...bucketsAll.map(b => Math.abs(b.tot)), 1);
+    const grOK = grossRentW > 0.005;
+    const bucketTitle = 'THE COST STACK — % OF GROSS RENT (' + (grOK ? fN(grossRentW) : '—') + ' SCHEDULED, ' + spanLab.toUpperCase() + ')';
+    const bucketRows = bucketsAll.map(b => {
+      const open = S.xOpen === b.id;
+      const comps = b.accts.map(a => ({ name: a, v: mixW[a] || 0 })).filter(x => Math.abs(x.v) > 0.005).sort((x, y) => y.v - x.v);
+      return {
+        name: b.name, v: fK(b.tot),
+        pct: grOK ? (b.tot / grossRentW * 100).toFixed(1) + '%' : '—',
+        w: Math.max(2, Math.abs(b.tot) / bMax * 100).toFixed(1) + '%', barCol: b.col,
+        chev: open ? '▾' : '▸', chevCol: open ? GOLDD : '#B9C2D2',
+        onExp: () => this.setState({ xOpen: open ? null : b.id }),
+        open,
+        href: b.id === 'int' ? loansHref : plHref,
+        comps: comps.map(x => ({
+          name: x.name, v: fK(x.v),
+          pct: grOK ? (x.v / grossRentW * 100).toFixed(1) + '%' : '—',
+          href: x.name === 'Interest Cost' ? loansHref : plHref,
+          lab: x.name === 'Interest Cost' ? 'LOANS →' : 'P&L →',
+        })),
+      };
+    });
+    const bucketTot = bucketsAll.reduce((s, b) => s + b.tot, 0);
+    const bucketFoot = 'Gross rent = the scheduled-rent line (Rental Income + rent increases) — ' + (grOK ? fN(grossRentW) : '—') + ' this window. The six buckets cover every operating ledger plus GL interest: ' + fK(bucketTot) + ' in total, ' + (grOK ? (bucketTot / grossRentW * 100).toFixed(1) + '% of gross rent' : '—') + '. ▸ opens the ledgers inside a bucket; every line links to its page, scoped to this view.';
+    const topBk = bucketsAll[0];
+    const a2Line = incW > 0.005
+      ? 'Of ' + fN(grossRentW) + ' in gross scheduled rent, running the doors took ' + fN(opexBookW) + ' on the books and the banks’ interest ' + fN(intBookW) + ' — the heaviest bucket: ' + topBk.name.toLowerCase() + ' at ' + (grOK ? (topBk.tot / grossRentW * 100).toFixed(1) + '% of gross rent' : '—') + '. In cash, debt service took ' + fN(dsCashW) + ': ' + fN(intCashW) + ' interest + ' + fN(prinCashW) + ' principal.'
+      : 'No GL income in this scope — the cost story needs a window with income.';
     const bankChips = [
-      { k: 'INTEREST PAID', v: fN(intCashW), sub: 'books accrued ' + fN(intBookW), href: './loans.dc.html', kcol: MUT, vcol: RED, bd: '#EDEBE2', tip: 'Cash interest (GL cash-basis by door); the Loans page reconciles engine vs GL note by note' },
-      { k: 'PRINCIPAL PAID', v: fN(prinCashW), sub: 'cash out — but equity in (Act IV)', href: './loans.dc.html', kcol: MUT, vcol: NAVY, bd: '#EDEBE2', tip: 'Cashflow.xlsx scheduled principal actuals; not an expense on the books' },
+      { k: 'INTEREST PAID', v: fN(intCashW), sub: 'books accrued ' + fN(intBookW), href: loansHref, kcol: MUT, vcol: RED, bd: '#EDEBE2', tip: 'Cash interest (GL cash-basis by door); the Loans page reconciles engine vs GL note by note' },
+      { k: 'PRINCIPAL PAID', v: fN(prinCashW), sub: 'cash out — but equity in (Act IV)', href: loansHref, kcol: MUT, vcol: NAVY, bd: '#EDEBE2', tip: 'Cashflow.xlsx scheduled principal actuals; not an expense on the books' },
       { k: 'DEBT SERVICE', v: fN(dsCashW), sub: netOpW > 0.005 && dsCashW > 0.005 ? 'covered ' + (netOpW / dsCashW).toFixed(2) + '× by operating cash' : '—', href: cfHref, kcol: MUT, vcol: REDD, bd: '#EAD1C8', tip: 'Interest + principal, cash. Coverage = net operating cash ÷ debt service for the window' },
     ];
-    const bankFoot = 'Principal is the wedge between the two verdicts in Act III: the bank account shrinks, the balance sheet debt shrinks with it — money moved, not spent.';
+    const bankFoot = 'Principal is the wedge between the two verdicts in Act III: the bank account shrinks, the balance-sheet debt shrinks with it — money moved, not spent.';
     const costCompare = [
       { k: 'Operating (opex + CapEx + statutory + refunds − claims)', cash: fN(opexCashW + capexCashW + statCashW + refW - claimsW), book: fN(opexBookW) },
       { k: 'Interest', cash: fN(intCashW), book: fN(intBookW) },
@@ -1148,43 +1370,39 @@ class Component extends DCLogic {
       : 'After every operating cost and the banks, the business consumed ' + fN(Math.abs(keptW)) + ' of cash')
       + ' in ' + spanLab + entLab + '. The books call the same period ' + fN(niW) + ' of net profit' + (margin !== null ? ' — a ' + margin.toFixed(1) + '% margin' : '') + '. Both are true; they answer different questions, and the bridge shows exactly where they part.';
     const pipeCash = [
-      pcBox('CHARGED', fK(chgW), 'what tenants owed', cfHref, MUT, NAVY),
-      pcBox('COLLECTED', fK(collW), rateTxt + ' collection rate', collHref, GOLDD, NAVY, 'owner formula, telescoped over the window'),
-      pcBox('− OPERATING COSTS', fK(-(opexCashW + capexCashW + statCashW + refW - claimsW)), 'opex · CapEx · statutory · refunds, net of claims', cfHref, MUT, RED),
-      pcBox('NET OPERATING CASH', fK(netOpW), 'before the banks', cfHref, MUT, netOpW >= 0 ? GREEND : REDD),
-      pcBox('− DEBT SERVICE', fK(-dsCashW), fK(intCashW) + ' interest · ' + fK(prinCashW) + ' principal', './loans.dc.html', MUT, RED),
-      pcBox('CASH KEPT', fK(keptW), 'stayed in the business', cfHref, GREEND, keptW >= 0 ? GREEND : REDD, '', false, keptW >= 0 ? '#F2F7F0' : '#FBF0ED', keptW >= 0 ? '#D6E4D2' : '#EAD1C8'),
+      pcBox('CHARGED', fN(chgW), 'what tenants owed', cfHref, MUT, NAVY),
+      pcBox('COLLECTED', fN(collW), rateTxt + ' collection rate', collHref, GOLDD, NAVY, 'owner formula, telescoped over the window'),
+      pcBox('− OPERATING COSTS', fN(-(opexCashW + capexCashW + statCashW + refW - claimsW)), 'opex · CapEx · statutory · refunds, net of claims', cfHref, MUT, RED),
+      pcBox('NET OPERATING CASH', fN(netOpW), 'before the banks', cfHref, MUT, netOpW >= 0 ? GREEND : REDD),
+      pcBox('− DEBT SERVICE', fN(-dsCashW), fK(intCashW) + ' interest · ' + fK(prinCashW) + ' principal', loansHref, MUT, RED),
+      pcBox('NET CASH FLOW · KEPT', fN(keptW), 'stayed in the business', cfHref, GREEND, keptW >= 0 ? GREEND : REDD, '', false, keptW >= 0 ? '#F2F7F0' : '#FBF0ED', keptW >= 0 ? '#D6E4D2' : '#EAD1C8'),
     ];
     const pipeAccr = [
-      pcBox('TOTAL INCOME', fK(incW), 'GL accrual, net of collection loss', plHref, MUT, NAVY),
-      pcBox('− OPERATING EXPENSES', fK(-opexBookW), 'statutory · PM · repairs · turns · CapEx', plHref, MUT, RED),
-      pcBox('NOI', fK(noiBookW), 'the property engine' + (incW > 0.005 ? ' · ' + (noiBookW / incW * 100).toFixed(1) + '% of income' : ''), plHref, MUT, noiBookW >= 0 ? GREEND : REDD),
-      pcBox('− INTEREST', fK(-intBookW), 'debt service on the books', './loans.dc.html', MUT, RED),
-      pcBox('NET PROFIT', fK(niW), (margin !== null ? margin.toFixed(1) + '% margin' : 'books verdict'), plHref, NAVY, niW >= 0 ? NAVY : REDD, '', false, '#F4F6FA', '#D9E0EC'),
-      pcBox('+ PRINCIPAL PAID', fK(prinCashW), 'became equity, not expense (Cashflow.xlsx)', './loans.dc.html', MUT, GREEN2, 'principal is cash out of the bank account but equity into the balance sheet — the main wedge between cash kept and net profit', false),
+      pcBox('TOTAL INCOME', fN(incW), 'GL accrual, net of collection loss', plHref, MUT, NAVY),
+      pcBox('− OPERATING EXPENSES', fN(-opexBookW), 'statutory · PM · repairs · turns · CapEx', plHref, MUT, RED),
+      pcBox('NOI', fN(noiBookW), 'the property engine' + (incW > 0.005 ? ' · ' + (noiBookW / incW * 100).toFixed(1) + '% of income' : ''), plHref, MUT, noiBookW >= 0 ? GREEND : REDD),
+      pcBox('− INTEREST', fN(-intBookW), 'debt service on the books', loansHref, MUT, RED),
+      pcBox('NET PROFIT', fN(niW), (margin !== null ? margin.toFixed(1) + '% margin' : 'books verdict'), plHref, NAVY, niW >= 0 ? NAVY : REDD, '', false, '#F4F6FA', '#D9E0EC'),
+      pcBox('+ PRINCIPAL PAID', fN(prinCashW), 'became equity, not expense (Cashflow.xlsx)', loansHref, MUT, GREEN2, 'principal is cash out of the bank account but equity into the balance sheet — the main wedge between cash kept and net profit', false),
     ];
     const wedge = keptW - niW + prinCashW;
     const bridge = [
       { k: 'NET PROFIT (BOOKS)', v: fN(niW), vcol: niW >= 0 ? NAVY : REDD, op: '−', arrowOn: true, tip: 'GL accrual verdict' },
       { k: 'PRINCIPAL PAID (CASH)', v: fN(prinCashW), vcol: RED, op: '+', arrowOn: true, tip: 'cash left the account but is not an expense — it became equity' },
       { k: 'TIMING & BASIS DIFFERENCES', v: fN(wedge), vcol: wedge >= 0 ? GREEND : REDD, op: '=', arrowOn: true, tip: 'derived: collections vs billing timing, statutory accrual vs escrow cash, non-cash collection loss, claims and refunds' },
-      { k: 'CASH KEPT', v: fN(keptW), vcol: keptW >= 0 ? GREEND : REDD, op: '', arrowOn: false, tip: 'the Cash Flow page’s bottom line' },
+      { k: 'NET CASH FLOW · KEPT', v: fN(keptW), vcol: keptW >= 0 ? GREEND : REDD, op: '', arrowOn: false, tip: 'the Cash Flow page’s bottom line' },
     ];
-    const bridgeFoot = 'Net profit − principal + timing/basis differences = cash kept, to the cent (' + fC(niW) + ' − ' + fC(prinCashW) + ' + ' + fC(wedge) + ' = ' + fC(keptW) + '). The middle term is derived and disclosed: cash collections vs billed income, statutory accrual vs escrow cash actually paid, non-cash collection loss, insurance claims and refunds.';
+    const bridgeFoot = 'Net profit − principal + timing/basis differences = net cash flow, to the cent (' + fC(niW) + ' − ' + fC(prinCashW) + ' + ' + fC(wedge) + ' = ' + fC(keptW) + '). The middle term is derived and disclosed: cash collections vs billed income, statutory accrual vs escrow cash actually paid, non-cash collection loss, insurance claims and refunds.';
 
     // ══ trends (shared chart maker) ══
-    const keptM = MO.map((_, i) => sum(cfDoors.map(d => (DOORS[d].coll[i] || 0) + (DOORS[d].claims[i] || 0) - (DOORS[d].opex[i] || 0) - (DOORS[d].capex[i] || 0) - ((TIW[d] || [])[i] || 0) - (((DOORS[d].statByAcct || {})['HOA Fee'] || [])[i] || 0) - (DOORS[d].int[i] || 0) - (DOORS[d].filePrin[i] || 0))) - sum((CLX.sdRefunds || []).filter(x => x.cash && MO.indexOf(x.m) === i && cfDoorSet.has(x.prop)).map(x => Math.abs(x.amt))) + (allEnts ? (OH.claims[i] - OH.opex[i] - OH.capex[i] - OH.int[i]) - sum(tiOtherKeys.map(k => ((TIW[k] || [])[i] || 0))) - RC.statutoryCash.insurance[i] - RC.statutoryCash.propertyTax[i] : 0));
-    const chgMs = MO.map((_, i) => sum(cfDoors.map(d => DOORS[d].chg[i])) + (allEnts ? OH.chg[i] : 0));
-    const collMs = MO.map((_, i) => sum(cfDoors.map(d => DOORS[d].coll[i])) + (allEnts ? OH.coll[i] : 0));
-    const debtMs = MO.map(m => BSP.filter(p => timeOkAt(p, m) && entOn(p.entity)).reduce((s, p) => s + debtAt(p.door, m), 0));
+    const keptM = MO.map((_, i) => sum(cfDoors.map(d => (DOORS[d].coll[i] || 0) + (DOORS[d].claims[i] || 0) - (DOORS[d].opex[i] || 0) - (DOORS[d].capex[i] || 0) - ((TIW[d] || [])[i] || 0) - (((DOORS[d].statByAcct || {})['HOA Fee'] || [])[i] || 0) - (DOORS[d].int[i] || 0) - (DOORS[d].filePrin[i] || 0))) - sum((CLX.sdRefunds || []).filter(x => x.cash && MO.indexOf(x.m) === i && cfDoorSet.has(x.prop)).map(x => Math.abs(x.amt))) + (ovOn ? (OH.claims[i] - OH.opex[i] - OH.capex[i] - OH.int[i]) - sum(tiOtherKeys.map(k => ((TIW[k] || [])[i] || 0))) - RC.statutoryCash.insurance[i] - RC.statutoryCash.propertyTax[i] : 0));
+    const debtMs = MO.map(m => BSP.filter(p => timeOkAt(p, m) && entOn(p.entity) && fpOn(p.door)).reduce((s, p) => s + debtAt(p.door, m), 0));
     const mkChart = (title, series, col, sub, opts) => {
       const o = opts || {};
       const s2 = o.series2 || null;
       const all = s2 ? [...series, ...s2] : series;
       let lo, hi;
       if (o.zoom && Math.min(...all) > 0) {
-        // always-positive series: zoom to the data range so month-on-month movement reads
-        // (safe — every point is labeled; the growth-chart idiom)
         const mn = Math.min(...all), mx = Math.max(...all), pad = (mx - mn) * 0.15 || mx * 0.02 || 1;
         lo = mn - pad; hi = mx + pad;
       } else { lo = Math.min(...all, 0); hi = Math.max(...all, 0); }
@@ -1204,7 +1422,7 @@ class Component extends DCLogic {
       const labs = series.map((v, i) => ({ leftPct: (X(i) / 320 * 100).toFixed(2) + '%', topPct: (Y(v) / 84 * 100).toFixed(2) + '%', v: fK(v), col: winSel && selSet.has(i) ? GOLDD : FAINT }));
       const months = MO.map((m, i) => ({ m: mmyy(m).slice(0, 3), fw: winSel && selSet.has(i) ? 800 : 500, col: winSel && selSet.has(i) ? NAVY : FAINT, onClick: () => this.setF({ fm: [m], entOpen: null }) }));
       const dd = series[NM - 1] - series[NM - 2];
-      const zy = (0 >= lo && 0 <= hi) ? Y(0) : 74; // clamp the dashed baseline to the floor when zero is out of range
+      const zy = (0 >= lo && 0 <= hi) ? Y(0) : 74;
       return {
         title, col, sub,
         path, path2, line2On: !!s2, zeroY: zy.toFixed(1),
@@ -1214,22 +1432,28 @@ class Component extends DCLogic {
       };
     };
     const flatCh = (p, ch) => { const o = {}; o[p + 'Title'] = ch.title; o[p + 'Delta'] = ch.delta; o[p + 'DeltaCol'] = ch.deltaCol; o[p + 'ZeroY'] = ch.zeroY; o[p + 'Line2On'] = ch.line2On; o[p + 'Path'] = ch.path; o[p + 'Path2'] = ch.path2; o[p + 'Pts'] = ch.pts; o[p + 'Labs'] = ch.labs; o[p + 'Months'] = ch.months; o[p + 'Sub'] = ch.sub; o[p + 'Col'] = ch.col; return o; };
-    const ch1 = mkChart('CHARGED vs COLLECTED — MONTH BY MONTH', collMs, GOLDD, 'gold = collected · blue = charged — the gap is the month’s uncollected rent. Click a point to focus the story.', { series2: chgMs, zoom: true });
     const ch2 = mkChart('NET PROFIT · BOOKS', niM, '#16233A', 'the GL verdict per month — May carries the owner’s collection-loss corrections');
-    const ch3 = mkChart('CASH KEPT · BANK', keptM, '#2E7D54', 'after every cost and the banks — the number that compounds');
+    const ch3 = mkChart('NET CASH FLOW · BANK', keptM, '#2E7D54', 'after every cost and the banks — the number that compounds');
     const ch4 = mkChart('DEBT OUTSTANDING · OWNED SCOPE', debtMs, '#B04A33', 'door-grain, owned scope at each month — new borrowings step it up, payoffs pull it down', { downGood: true, zoom: true });
 
     // ══ ACT IV — where we stand ══
-    const a4Links = [{ lab: 'INVESTMENTS →', href: invHref }, { lab: 'LOANS →', href: './loans.dc.html' }];
-    const debtDelta = loansOutClose - loansOutOpen;
-    const a4Line = 'At ' + mmyy(lastM) + ' the portfolio stands at ' + fN(valueW) + ' across ' + owned.length + ' doors, carrying ' + fN(debtW) + ' of debt' + (allEnts && excludedDebt > 0.005 ? ' (+' + fN(excludedDebt) + ' on held-for-sale doors = ' + fN(debtW + excludedDebt) + ' at the banks)' : '') + ' — ' + fN(equityW) + ' of equity, a ' + (mosPct !== null ? mosPct.toFixed(1) + '%' : '—') + ' margin of safety. ' + (allEnts ? 'The banks’ book moved ' + fK(loansOutOpen) + ' → ' + fK(loansOutClose) + ' this window: ' + fK(borrowW) + ' newly borrowed against ' + fK(schedPrinW + eventsW) + ' paid down.' : 'Debt walk and note radar below stay portfolio-wide — notes carry no entity.');
+    const a4Links = [{ lab: 'INVESTMENTS →', href: invHref }, { lab: 'LOANS →', href: loansHref }];
+    const a4Line = 'At ' + mmyy(lastM) + ' the ' + (valuedSet.length === owned.length ? owned.length + '-door' : valuedSet.length + ' of ' + owned.length + ' doors valued under this method') + ' portfolio prices at ' + fN(valueM) + ' (' + vShort + '), carrying ' + fN(debtValued) + ' of debt on those doors — ' + fN(equityM) + ' of net equity, a ' + (mosPctM !== null ? mosPctM.toFixed(1) + '%' : '—') + ' margin of safety. Full bank exposure: ' + fN(debtW) + (ovOn && excludedDebt > 0.005 ? ' + ' + fN(excludedDebt) + ' on held-for-sale doors = ' + fN(debtW + excludedDebt) + ' at the banks' : '') + '. ' + (ovOn ? 'The banks’ book moved ' + fK(loansOutOpen) + ' → ' + fK(loansOutClose) + ' this window: ' + fK(borrowW) + ' newly borrowed against ' + fK(schedPrinW + eventsW) + ' paid down.' : 'Debt walk and note radar below stay portfolio-wide — notes carry no entity or property scope.');
+    const onVmToggle = (e) => { if (e && e.stopPropagation) e.stopPropagation(); this.setState({ ddOpen: S.ddOpen === 'VM' ? null : S.ddOpen === 'VM2' ? null : 'VM' }); };
+    const vmOpts = VMETHODS.map(v => ({
+      label: v.label, sub: v.sub, check: vMeth === v.id ? '✓' : '', fw: vMeth === v.id ? 800 : 600,
+      bg: vMeth === v.id ? '#FBF6EA' : 'transparent',
+      onClick: (e) => { if (e && e.stopPropagation) e.stopPropagation(); this.setF({ vm: v.id }); this.setState({ ddOpen: null }); },
+    }));
+    const vmLabel = vMeth === 'noi' ? 'NOI ÷ ' + capStr + ' cap' : VDEF.label;
+    const vmCovLine = valuedSet.length + ' of ' + owned.length + ' doors valued' + (vNoVal.length || vFloorN ? ' · ' + (vNoVal.length + vFloorN) + ' excluded (' + vExclLab + ')' + (exclDebtM > 0.005 ? ' carrying ' + fN(exclDebtM) + ' of debt — counted in full exposure, not in this equity' : '') : '') + (vMeth === 'arv' ? ' · sale-ready allowance ' + fN(saleReadyW) + ' (' + fN(SALE_READY) + ' × ' + valuedSet.length + ')' : '');
     const posRail = [
-      pcBox('MARKET VALUE', fN(valueW), owned.length + ' owned doors · policy: ARV first' + (unvalued.length ? ' · ' + unvalued.length + ' unvalued' : ''), invHref, MUT, NAVY, 'ARV where present, county fallback (per-door source recorded)', true),
-      pcBox('DEBT TODAY', fN(debtW), 'loans engine at ' + mmyy(lastM) + (allEnts && excludedDebt > 0.005 ? ' · +' + fK(excludedDebt) + ' HFS' : ''), './loans.dc.html', MUT, RED, 'Outstanding on owned-scope doors; held-for-sale doors keep their own lines on the Balance Sheet', true),
-      pcBox('EQUITY', fN(equityW), (mosPct !== null ? mosPct.toFixed(1) + '% margin of safety' : '—'), invHref, GREEND, GREEND, 'Value − debt. The Investments page prices the same cushion under four valuation methods', false, '#F2F7F0', '#D6E4D2'),
+      pcBox('VALUE · ' + vShort.toUpperCase(), fN(valueM), valuedSet.length + ' valued doors' + (vNoVal.length + vFloorN > 0 ? ' · ' + (vNoVal.length + vFloorN) + ' excluded' : ''), invHref, MUT, NAVY, VDEF.sub, true),
+      pcBox('DEBT ON THOSE DOORS', fN(debtValued), 'full exposure ' + fN(debtW) + (ovOn && excludedDebt > 0.005 ? ' + ' + fK(excludedDebt) + ' HFS' : ''), loansHref, MUT, RED, 'Loans-engine outstanding on the valued set; excluded doors keep their debt in the full-exposure figure', true),
+      pcBox('NET EQUITY', fN(equityM), (mosPctM !== null ? mosPctM.toFixed(1) + '% margin of safety' : '—') + (eqMult !== null && eqMult > 0 ? ' · ' + eqMult.toFixed(1) + '× our cash in' : ''), invHref, GREEND, GREEND, 'Value − debt under the selected method. The Investments page prices the same cushion door by door', false, '#F2F7F0', '#D6E4D2'),
     ];
     posRail[0].op = '−'; posRail[1].op = '=';
-    const dwBox = (k, v, kcol, vcol, tip, href) => ({ k, v, kcol: kcol || MUT, vcol: vcol || INK, tip: tip || '', href: href || './loans.dc.html', bg: '#FFFFFF', bd: '#EDEBE2', arrowOn: true });
+    const dwBox = (k, v, kcol, vcol, tip, href) => ({ k, v, kcol: kcol || MUT, vcol: vcol || INK, tip: tip || '', href: href || loansHref, bg: '#FFFFFF', bd: '#EDEBE2', arrowOn: true });
     const debtWalk = [
       dwBox('OPEN · ' + mmyy(prevM), fK(loansOutOpen), MUT, NAVY, 'every note’s engine balance the month before the window'),
       dwBox('+ BORROWED', fK(borrowW), GOLDD, borrowW > 0.005 ? REDD : FAINT, borrowList.length ? borrowList.map(b => b.id + ' (' + b.lender + ') ' + fK(b.amt) + ' in ' + mmyy(b.m)).join(' · ') : 'no new notes in the window'),
@@ -1241,20 +1465,20 @@ class Component extends DCLogic {
     ];
     debtWalk[6].arrowOn = false; debtWalk[6].bg = '#F4F6FA'; debtWalk[6].bd = '#D9E0EC';
     const debtWalkFoot = 'All notes, portfolio-wide (' + fC(loansOutOpen) + ' + ' + fC(borrowW) + ' − ' + fC(schedPrinW) + ' − ' + fC(prepayW) + ' − ' + fC(releaseW) + ' − ' + fC(payoffW) + ' = ' + fC(loansOutClose) + ', to the cent).' + (borrowList.length ? ' New notes: ' + borrowList.map(b => b.id + ' ' + fK(b.amt)).join(' · ') + '.' : '');
-    const mrScope = 'ALL 47 NOTES · PORTFOLIO-WIDE' + (allEnts ? '' : ' (entity filter does not narrow notes)');
+    const mrScope = 'ALL ' + LD.loans.length + ' NOTES · PORTFOLIO-WIDE' + (ovOn ? '' : ' (entity/property filters do not narrow notes)');
     const mrSum = matured.length + ' matured (' + fK(maturedSum) + ') · ' + upcoming.length + ' due within 12 months (' + fK(upSum) + ')';
     const matRows = [
       ...matured.map(r => ({
         dot: '#A03E28', mcol: REDD, mat: 'MAT ' + mmyy(r.mat), name: noteName(r.l), type: r.l.type === 'Hard Money' ? 'HARD $' : r.l.type.toUpperCase(),
-        v: fN(r.close), href: './loans.dc.html?loan=' + esc(r.l.id),
+        v: fN(r.close), href: loanHref(r.l.id),
       })),
       ...upcoming.slice(0, 6 - Math.min(matured.length, 3)).map(r => ({
         dot: r.mat <= addM2(lastM, 3) ? '#C9A45C' : '#B9C2D2', mcol: r.mat <= addM2(lastM, 3) ? GOLDD : MUT, mat: mmyy(r.mat), name: noteName(r.l), type: r.l.type === 'Hard Money' ? 'HARD $' : r.l.type.toUpperCase(),
-        v: fN(r.close), href: './loans.dc.html?loan=' + esc(r.l.id),
+        v: fN(r.close), href: loanHref(r.l.id),
       })),
     ];
     const upShown = Math.max(0, matRows.length - matured.length);
-    const mrFoot = (upcoming.length > upShown ? '+' + (upcoming.length - upShown) + ' more notes mature within 12 months of ' + mmyy(lastM) + ' — ' + fK(upSum) + ' in total. ' : '') + 'Maturity = origination + term (the sheet’s first-payment rule). A matured note carrying balance needs a payoff or extension row.';
+    const mrFoot = (upcoming.length > upShown ? '+' + (upcoming.length - upShown) + ' more notes mature within 12 months of ' + mmyy(lastM) + ' — ' + fK(upSum) + ' in total; the full list sits in the findings below. ' : '') + 'Maturity = origination + term (the sheet’s first-payment rule). A matured note carrying balance needs a payoff or extension row.';
     const drawnMax = Math.max(drawnAll, 1);
     const drow = (k, v, barCol, vcol, tip, fw, kcol) => ({ k, v: fN(v), w: Math.max(1.5, v / drawnMax * 100).toFixed(1) + '%', barCol, vcol: vcol || INK, tip: tip || '', fw: fw || 600, kcol: kcol || INK });
     const drawnRows = [
@@ -1266,14 +1490,36 @@ class Component extends DCLogic {
     const drawnFoot = 'The banks have handed over ' + fN(drawnAll) + ' across every note ever originated. Identity, portfolio-wide, to the cent: ' + fC(ownAll) + ' + ' + fC(saleAll) + ' + ' + fC(refiAll) + ' + ' + fC(outAll) + ' = ' + fC(drawnAll) + '.';
     const a4Span = spanLab;
 
-    // ══ ACT V — what it's earning ══
-    const a5Links = [{ lab: 'INVESTMENTS →', href: invHref }, { lab: 'P&L →', href: plHref }];
-    const a5Line = 'Everything above runs on ' + fN(tInv) + ' of our own money — ' + fN(tCost) + ' of property bought, minus ' + fN(tRefi) + ' the banks handed back at refinance. The business has since repaid ' + fN(tRepaid) + ' of principal, so ' + fN(tCap) + ' sits in the deal today — earning ' + (niRoi !== null ? niRoi.toFixed(1) + '%' : '—') + ' on the books and ' + (cocRoi !== null ? cocRoi.toFixed(1) + '%' : '—') + ' in cash, annualized from this window.';
+    // ══ ACT V — what the debt built ══
+    const a5Links = [{ lab: 'INVESTMENTS →', href: invHref }, { lab: 'LOANS →', href: loansHref }];
+    const a5Line = 'The purchase was ' + fN(tCost) + ' of property — ' + fN(tInv) + ' of it our cash, ' + fN(tRefi) + ' the banks’. Today the same doors price at ' + fN(valueM) + ' (' + vShort + '), the banks are down to ' + fN(debtValued) + ', and ' + fN(equityM) + ' of net equity is ours — ' + (eqMult !== null && eqMult > 0 ? eqMult.toFixed(1) + '× the cash we put in' : '—') + '. The business has also repaid ' + fN(tRepaid) + ' of their money and still handed back ' + fN(keptW) + ' of net cash flow this window.';
+    const barsTitle = 'WHAT THE BORROWED MONEY BUILT — AT PURCHASE vs ' + mmyy(lastM).toUpperCase() + ' · ' + vShort.toUpperCase();
+    const barMax = Math.max(tCost, valueM, 1);
+    const barAW = Math.max(6, tCost / barMax * 100).toFixed(1) + '%';
+    const barBW = Math.max(6, valueM / barMax * 100).toFixed(1) + '%';
+    const barALab = 'AT PURCHASE — ' + fN(tCost) + ' of property = OUR CASH ' + fN(tInv) + ' + THE BANKS’ ' + fN(tRefi) + (tInv < 0 ? ' (cash-out beyond basis — see Investments)' : '');
+    const barBLab = 'TODAY — the same doors at ' + fN(valueM) + ' (' + vShort + ') = STILL THE BANKS’ ' + fN(debtValued) + ' + OURS ' + fN(equityM);
+    const barA = tCost > 0.005 ? [
+      { w: Math.max(1.5, Math.max(tInv, 0) / tCost * 100).toFixed(1) + '%', col: GOLDD, lab: Math.max(tInv, 0) / tCost > 0.12 ? 'OUR CASH ' + fK(tInv) : '', tip: 'our cash at purchase: ' + fN(tInv) + ' (cost − initial refinance)' },
+      { w: Math.max(1.5, Math.min(tRefi, tCost) / tCost * 100).toFixed(1) + '%', col: BRICK, lab: 'THE BANKS ' + fK(tRefi), tip: 'the banks funded ' + fN(tRefi) + ' back at refinance — the foreclosure playbook' },
+    ] : [{ w: '100%', col: '#EDEBE2', lab: 'no cost basis in scope', tip: '' }];
+    const barB = valueM > 0.005 ? [
+      { w: Math.max(1.5, debtValued / valueM * 100).toFixed(1) + '%', col: BRICK, lab: 'STILL THE BANKS’ ' + fK(debtValued), tip: 'debt outstanding on the valued doors: ' + fN(debtValued) },
+      { w: Math.max(1.5, Math.max(equityM, 0) / valueM * 100).toFixed(1) + '%', col: GREEN2, lab: equityM > 0 ? 'OURS — NET EQUITY ' + fK(equityM) : '', tip: 'net equity under ' + vShort + ': ' + fN(equityM) },
+    ] : [{ w: '100%', col: '#EDEBE2', lab: 'no valued doors in scope', tip: '' }];
+    const policyRatio = tCost > 0.005 ? (owned.reduce((s, p) => s + (p.value || 0), 0) / tCost) : null;
+    const unlev = policyRatio !== null && tInv > 0 ? tInv * policyRatio : null;
+    const punchChips = [
+      { k: 'EQUITY BUILT PER $1 OF OUR CASH', v: eqMult !== null && eqMult > 0 ? '$' + eqMult.toFixed(2) : '—', sub: fK(equityM) + ' of net equity on ' + fK(tInv) + ' invested', col: GREEN2, tip: 'net equity ÷ initial investment' },
+      { k: 'THE TENANTS PAY THE LOAN, NOT US', v: fN(tRepaid), sub: 'principal the business has repaid — it became this equity', col: NAVY, tip: 'the owner-paid principal engine: scheduled + extra + release excess' },
+      { k: 'SAME CASH, NO BANKS — A MIRROR', v: unlev !== null ? '≈ ' + fK(unlev) : '—', sub: unlev !== null ? 'what ' + fK(tInv) + ' alone would be worth at the same appreciation — vs ' + fK(equityM) + ' with the banks' : 'needs cost + valuation in scope', col: MUT, tip: 'hypothetical: initial investment × (policy value ÷ cost). Same market, no leverage — disclosed as a mirror, not a promise' },
+      { k: 'AND IT STILL PAYS', v: fK(keptW) + ' · ' + fK(niW), sub: 'net cash flow · net profit this window, after every bank dollar', col: GREEND, tip: 'the debt services itself out of rent: coverage ' + (netOpW > 0.005 && dsCashW > 0.005 ? (netOpW / dsCashW).toFixed(2) + '×' : '—') },
+    ];
     const invRail = [
       pcBox('PROPERTY COST', fN(tCost), owned.length + ' doors · at cost basis', invHref, MUT, NAVY, 'Balance-sheet cost basis of the owned scope'),
-      pcBox('PULLED BACK AT REFINANCE', fN(tRefi), 'the banks funded it back', './loans.dc.html', MUT, RED, 'Initial refinance per the BS sheet — the foreclosure playbook: buy, fix, refinance out'),
+      pcBox('PULLED BACK AT REFINANCE', fN(tRefi), 'the banks funded it back', loansHref, MUT, RED, 'Initial refinance per the BS sheet — buy, fix, refinance out'),
       pcBox('OUR MONEY IN', fN(tInv), 'cost − refinance', invHref, GOLDD, GOLDD, 'Initial investment — what actually stayed in from our pocket'),
-      pcBox('REPAID SINCE', fN(tRepaid), 'principal the business paid back', './loans.dc.html', MUT, GREEND, 'Owner-paid principal engine: scheduled + extra + release excess; sale-settled and refi-funded payoffs excluded'),
+      pcBox('REPAID SINCE', fN(tRepaid), 'principal the business paid back', loansHref, MUT, GREEND, 'Owner-paid principal engine: scheduled + extra + release excess; sale-settled and refi-funded payoffs excluded'),
       pcBox('IN THE DEAL TODAY', fN(tCap), 'the ROI denominator', invHref, MUT, NAVY, 'Initial investment + principal repaid — capital in deal', false, '#F4F6FA', '#D9E0EC'),
     ];
     invRail[0].op = '−'; invRail[1].op = '='; invRail[2].op = '+'; invRail[3].op = '=';
@@ -1284,30 +1530,41 @@ class Component extends DCLogic {
     ];
     const levChips = [
       { k: 'LEVERAGE AT PURCHASE', v: levPurch === null ? '—' : levPurch.toFixed(1) + '×', vcol: NAVY, sub: 'bank money ÷ our money at the start (' + fK(tRefi) + ' ÷ ' + fK(tInv) + ')', tip: 'initial refinance ÷ initial investment' },
-      { k: 'LEVERAGE TODAY', v: levToday === null ? '—' : levToday.toFixed(1) + '×', vcol: levToday !== null && levPurch !== null && levToday < levPurch ? GREEND : NAVY, sub: levToday !== null && levPurch !== null && levToday < levPurch ? 'deleveraged — equity now outweighs the debt' : 'debt ÷ equity at ' + mmyy(lastM), tip: 'debt outstanding ÷ equity (value − debt)' },
+      { k: 'LEVERAGE TODAY', v: levToday === null ? '—' : levToday.toFixed(1) + '×', vcol: levToday !== null && levPurch !== null && levToday < levPurch ? GREEND : NAVY, sub: levToday !== null && levPurch !== null && levToday < levPurch ? 'deleveraged — equity now outweighs the debt' : 'debt ÷ net equity at ' + mmyy(lastM), tip: 'debt on valued doors ÷ net equity (' + vShort + ')' },
     ];
-    const a5Foot = 'Returns annualize the selected window (' + spanLab + ') — a short window amplifies seasonal costs. Cash-on-cash follows the Investments card’s recipe (engine escrow + scheduled principal, no CapEx), so it ties that page, not Act III’s file-based cash kept — both definitions are disclosed where they appear. Principal repaid counts only money we paid: sale-settled releases and the refinance-funded payoff on 410 Virginia Dr are excluded.';
+    const a5Foot = 'Returns annualize the selected window (' + spanLab + ') — a short window amplifies seasonal costs. Net equity follows the Act IV valuation method (' + vShort + '); the “same cash, no banks” chip is a disclosed hypothetical at the policy-value appreciation ratio. Cash-on-cash follows the Investments card’s recipe (engine escrow + scheduled principal, no CapEx), so it ties that page, not Act III’s file-based net cash flow — both definitions are disclosed where they appear. Principal repaid counts only money we paid: sale-settled releases and the refinance-funded payoff on 410 Virginia Dr are excluded.';
 
     // ══ entity scorecard ══
     const rowsE = ENTITIES.map(e => {
-      const eDoors = doorNames.filter(d => DOORS[d].entity === e);
-      const eOwned = BSP.filter(p => timeOkAt(p, lastM) && p.entity === e);
+      const eDoors = cfDoors.filter(d => DOORS[d].entity === e);
+      const eOwned = owned.filter(p => p.entity === e);
+      const eValued = eOwned.filter(vIncluded);
       const eChg = sum(eDoors.map(d => dW(d, 'chg')));
       const eColl = sum(eDoors.map(d => dW(d, 'coll')));
       const eKept = sum(eDoors.map(dKept));
-      const eNi = sum(winIdx.map(i => glEnt[e].ni[i]));
+      const eNi = niByEntW[e] || 0;
       const eRate = rateOf(eDoors);
-      const eVal = eOwned.reduce((s, p) => s + (p.value || 0), 0);
-      const eDebt = eOwned.reduce((s, p) => s + debtAt(p.door, lastM), 0);
-      return { e, eDoors, eOwned, eChg, eColl, eKept, eNi, eRate, eVal, eDebt, eEq: eVal - eDebt };
+      const eVal = eValued.reduce((s, p) => s + vNetOf(vValRaw(p)), 0);
+      const eDebtV = eValued.reduce((s, p) => s + debtAt(p.door, lastM), 0);
+      const eDebtAll = eOwned.reduce((s, p) => s + debtAt(p.door, lastM), 0);
+      const eInv = eOwned.reduce((s, p) => s + (p.cost - p.refi), 0);
+      const eRep = eOwned.reduce((s, p) => s + doorCalc(p.door, lastM).owner, 0);
+      return { e, eDoors, eOwned, eValued, eChg, eColl, eKept, eNi, eRate, eVal, eDebtV, eDebtAll, eEq: eVal - eDebtV, eInv, eRep, eCap: eInv + eRep };
     });
-    const sortDefs = { kept: r => r.eKept, ni: r => r.eNi, rate: r => (r.eRate.rate === null ? -1 : r.eRate.rate), equity: r => r.eEq, doors: r => r.eOwned.length };
+    const sortDefs = { kept: r => r.eKept, ni: r => r.eNi, rate: r => (r.eRate.rate === null ? -1 : r.eRate.rate), indeal: r => r.eCap, equity: r => r.eEq, doors: r => r.eOwned.length };
     const esSort = sortDefs[S.esSort] ? S.esSort : 'kept';
-    const rowsSorted = [...rowsE].sort((a, b) => sortDefs[esSort](b) - sortDefs[esSort](a));
-    const esSortChips = [['kept', 'Cash kept'], ['ni', 'Net income'], ['rate', 'Collection rate'], ['equity', 'Equity'], ['doors', 'Doors']].map(([id, lab]) => ({
+    const rowsSorted = [...rowsE].filter(r => entOn(r.e)).sort((a, b) => sortDefs[esSort](b) - sortDefs[esSort](a));
+    const esSortChips = [['kept', 'Cash kept'], ['ni', 'Net income'], ['rate', 'Collection rate'], ['indeal', 'In the deal'], ['equity', 'Equity'], ['doors', 'Doors']].map(([id, lab]) => ({
       label: lab, onClick: () => this.setState({ esSort: id }),
       bd: esSort === id ? GOLD : '#D8D4C8', bg: esSort === id ? '#FBF6EA' : '#FFFFFF',
     }));
+    const onEvmToggle = (e) => { if (e && e.stopPropagation) e.stopPropagation(); this.setState({ ddOpen: S.ddOpen === 'VM2' ? null : 'VM2' }); };
+    const evmOpts = VMETHODS.map(v => ({
+      label: v.label, check: vMeth === v.id ? '✓' : '', fw: vMeth === v.id ? 800 : 600,
+      bg: vMeth === v.id ? '#FBF6EA' : 'transparent',
+      onClick: (e) => { if (e && e.stopPropagation) e.stopPropagation(); this.setF({ vm: v.id }); this.setState({ ddOpen: null }); },
+    }));
+    const evmTag = vShort + ' ▾';
     const entRows = rowsSorted.map(r => {
       const focused = feAct.length === 1 && feAct[0] === r.e;
       const isOpen = S.entOpen === r.e;
@@ -1315,8 +1572,9 @@ class Component extends DCLogic {
       const kMax = Math.max(...keptBars.map(b => Math.abs(b.v)), 1);
       const dRank = r.eDoors.map(d => ({ d, v: dKept(d) })).sort((a, b) => a.v - b.v);
       const drag = dRank.slice(0, 3), best = dRank.slice(-3).reverse();
-      const exDoors = [...best.map(x => ({ name: x.d, v: fK(x.v), vcol: x.v >= 0 ? GREEND : REDD, href: './cashflow.dc.html?door=' + esc(x.d) + (selM.length ? '&m=' + selM.join(',') : '') })),
-        ...drag.filter(x => !best.some(b2 => b2.d === x.d)).map(x => ({ name: x.d, v: fK(x.v), vcol: x.v >= 0 ? GREEND : REDD, href: './cashflow.dc.html?door=' + esc(x.d) + (selM.length ? '&m=' + selM.join(',') : '') }))];
+      const exDoors = [...best.map(x => ({ name: x.d, v: fK(x.v), vcol: x.v >= 0 ? GREEND : REDD, href: cfDoorHref(x.d) })),
+        ...drag.filter(x => !best.some(b2 => b2.d === x.d)).map(x => ({ name: x.d, v: fK(x.v), vcol: x.v >= 0 ? GREEND : REDD, href: cfDoorHref(x.d) }))];
+      const eRoi = r.eCap > 0 && nWin ? ann(r.eNi) / r.eCap * 100 : null;
       return {
         name: r.e, sub: r.eDoors.length + ' ledgered doors · ' + r.eOwned.length + ' owned', nameFw: focused ? 800 : 600, nameCol: focused ? GOLDD : NAVY,
         bg: focused ? '#FBF6EA' : 'transparent',
@@ -1328,7 +1586,8 @@ class Component extends DCLogic {
         rateCol: r.eRate.rate === null ? FAINT : r.eRate.rate >= 90 ? GREEND : r.eRate.rate >= 80 ? GOLDD : REDD,
         ni: fK(r.eNi), niCol: r.eNi >= 0 ? NAVY : REDD,
         kept: fK(r.eKept), keptCol: r.eKept >= 0 ? GREEND : REDD,
-        debt: fK(r.eDebt),
+        indeal: fK(r.eCap), indealSub: fK(r.eInv) + ' + ' + fK(r.eRep),
+        debt: fK(r.eDebtAll),
         eqW: (r.eVal > 0 ? Math.max(0, Math.min(r.eEq / r.eVal * 100, 100)) : 0).toFixed(1) + '%',
         eqLab: fK(r.eEq) + (r.eVal > 0 ? ' · ' + (r.eEq / r.eVal * 100).toFixed(1) + '% of ' + fK(r.eVal) : ' · no valued doors'),
         val: fK(r.eVal),
@@ -1338,7 +1597,7 @@ class Component extends DCLogic {
           { lab: 'P&L →', href: './PL%20Story%20-%20Main.dc.html?entity=' + esc(r.e) },
           { lab: 'CASH FLOW →', href: './cashflow.dc.html?entity=' + esc(r.e) + (selM.length ? '&m=' + selM.join(',') : '') },
           { lab: 'COLLECTIONS →', href: './collections.dc.html?entity=' + esc(r.e) + (selM.length ? '&m=' + selM.join(',') : '') },
-          { lab: 'INVESTMENTS →', href: './investments.dc.html?entity=' + esc(r.e) },
+          { lab: 'INVESTMENTS →', href: './investments.dc.html?entity=' + esc(r.e) + (vMeth !== 'arv' ? '&method=' + vMeth : '') },
           { lab: 'TRANSACTIONS →', href: './transactions.dc.html?entity=' + esc(r.e) + (selM.length ? '&m=' + selM.join(',') : '') },
         ],
         exFacts: [
@@ -1347,9 +1606,13 @@ class Component extends DCLogic {
           { k: 'Collection rate', v: r.eRate.rate === null ? '—' : r.eRate.rate.toFixed(2) + '%', col: r.eRate.rate !== null && r.eRate.rate >= 90 ? GREEND : NAVY },
           { k: 'Net income (GL)', v: fN(r.eNi), col: r.eNi >= 0 ? NAVY : REDD },
           { k: 'Cash kept (door-grain)', v: fN(r.eKept), col: r.eKept >= 0 ? GREEND : REDD },
-          { k: 'Debt · ' + mmyy(lastM), v: fN(r.eDebt), col: REDD },
-          { k: 'Value (policy)', v: fN(r.eVal), col: NAVY },
-          { k: 'Equity', v: fN(r.eEq), col: GREEN2 },
+          { k: 'Our money in', v: fN(r.eInv), col: GOLDD },
+          { k: 'Repaid since', v: fN(r.eRep), col: GREEND },
+          { k: 'In the deal', v: fN(r.eCap), col: NAVY },
+          { k: 'Net ROI (annualized)', v: eRoi === null ? '—' : eRoi.toFixed(1) + '%', col: eRoi !== null && eRoi < 0 ? REDD : '#3E8E63' },
+          { k: 'Debt · ' + mmyy(lastM), v: fN(r.eDebtAll), col: REDD },
+          { k: 'Value · ' + vShort, v: fN(r.eVal), col: NAVY },
+          { k: 'Net equity', v: fN(r.eEq), col: GREEN2 },
         ],
         exBars: keptBars.map(b => ({ m: mmyy(b.m).slice(0, 3), h: Math.max(4, Math.abs(b.v) / kMax * 56).toFixed(0) + 'px', bg: b.v >= 0 ? '#2E7D54' : '#B04A33', tip: mmyy(b.m) + ' cash kept ' + fN(b.v) })),
         exDoorsLab: 'BEST & HARDEST-WORKING DOORS — CASH KEPT, ' + spanLab.toUpperCase(),
@@ -1357,15 +1620,15 @@ class Component extends DCLogic {
         exFoot: 'Door-grain cash: collections + claims − refunds − opex − CapEx − T&I escrow (file) − HOA − interest − principal (file). Company overhead is not attributable to an entity — it lives in the portfolio row. Doors ranked by cash kept over the window; the bottom names are the conversation list.',
       };
     });
-    if (allEnts && Math.abs(companyKept) > 0.005) entRows.push({
+    if (ovOn && Math.abs(companyKept) > 0.005) entRows.push({
       name: 'Company overhead & portfolio-grain', sub: 'claims · opex · CapEx · interest · company escrow · direct PT/Ins', nameFw: 600, nameCol: FAINT, bg: 'transparent',
       chev: '', chevCol: 'transparent', onExp: noop, onClick: noop,
       doors: '—', coll: '—', rate: '', rateCol: FAINT, ni: '—', niCol: FAINT,
-      kept: fK(companyKept), keptCol: companyKept >= 0 ? GREEND : REDD, debt: '—', eqW: '0%', eqLab: 'not door-attributable', val: '—',
+      kept: fK(companyKept), keptCol: companyKept >= 0 ? GREEND : REDD, indeal: '—', indealSub: '', debt: '—', eqW: '0%', eqLab: 'not door-attributable', val: '—',
       exp: false, exTitle: '', exLinks: [], exFacts: [], exBars: [], exDoorsLab: '', exDoors: [], exFoot: '',
     });
-    const esSub = 'every column recomputes for ' + spanLab + ' · click a row to focus the whole story on that entity · ▸ opens the entity’s detail card';
-    const esFoot = 'DOORS = owned at ' + mmyy(lastM) + ' (sold / HFS-exited excluded — the investments-page rule); money columns cover every ledgered door of the entity, so a door sold mid-window still shows its collections. CASH KEPT is door-grain (company overhead sits in the portfolio row' + (allEnts ? '' : ' — visible in the all-entities view') + '); columns therefore sum exactly to the Cash Flow page’s bottom line' + (allEnts ? ' of ' + fN(keptW) : ' when all entities are in view') + '. EQUITY = policy value − loans-engine debt.';
+    const esSub = 'every column recomputes for ' + spanLab + entLab + ' · click a row to focus the whole story on that entity · ▸ opens the entity’s detail card · equity follows the valuation selector';
+    const esFoot = 'DOORS = owned at ' + mmyy(lastM) + ' (sold / HFS-exited excluded — the investments-page rule); money columns cover every ledgered door of the entity in scope. IN THE DEAL = our money in (cost − refi) + principal repaid. CASH KEPT is door-grain (company overhead sits in the portfolio row' + (ovOn ? '' : ' — visible in the all-entities view') + '); columns therefore sum exactly to the Cash Flow page’s bottom line' + (ovOn ? ' of ' + fN(keptW) : ' when the full portfolio is in view') + '. NET EQUITY = ' + vShort + ' value − loans-engine debt on the valued doors; DEBT column is the full exposure.';
 
     // ══ the next chapter — objectives, findings & recommendations ══
     const neverRefi = owned.filter(p => p.cost > 0 && !(p.refi > 0));
@@ -1381,89 +1644,97 @@ class Component extends DCLogic {
     const sevSty = s => s === 'red' ? { dot: '#A03E28', kcol: REDD, col: REDD, bg: '#FBF0ED', bd: '#EAD1C8' } : s === 'gold' ? { dot: '#C9A45C', kcol: GOLDD, col: '#7A6A2F', bg: '#FBF6EA', bd: '#EAD9C0' } : { dot: '#2E7D54', kcol: GREEND, col: GREEND, bg: '#F2F7F0', bd: '#D6E4D2' };
     const under = owned.filter(p => p.value > 0 && debtAt(p.door, lastM) > p.value);
     const underSorted = under.slice().sort((a, b) => (debtAt(b.door, lastM) / b.value) - (debtAt(a.door, lastM) / a.value));
-    const mkFind = (id, sev, title, big, finding, rec, href, linkLab, evid, evFoot) => {
+    const mkFind = (id, sev, title, big, finding, rec, href, linkLab, evidFull, evFoot) => {
       const st = sevSty(sev);
       const isOpen = S.fOpen === id;
+      const showAll = S.fAll === id;
+      const evid = isOpen ? (showAll ? evidFull : evidFull.slice(0, 6)) : [];
       return Object.assign({}, st, {
         title, big, finding, rec, href, linkLab,
-        exp: isOpen && evid.length > 0,
-        chev: evid.length ? (isOpen ? '▾ close' : '▸ evidence') : '',
-        chevCol: evid.length ? (isOpen ? GOLDD : '#B9C2D2') : 'transparent',
-        onExp: () => this.setState({ fOpen: isOpen ? null : id }),
-        evid, evFoot: evFoot || '',
+        exp: isOpen && evidFull.length > 0,
+        chev: evidFull.length ? (isOpen ? '▾ close' : '▸ evidence') : '',
+        chevCol: evidFull.length ? (isOpen ? GOLDD : '#B9C2D2') : 'transparent',
+        onExp: () => this.setState({ fOpen: isOpen ? null : id, fAll: null }),
+        evid,
+        evMoreOn: isOpen && evidFull.length > 6,
+        evMoreLab: showAll ? 'Top 6 only' : 'Show all ' + evidFull.length,
+        onEvMore: (e) => { if (e && e.stopPropagation) e.stopPropagation(); this.setState({ fAll: showAll ? null : id }); },
+        evFoot: evFoot || '',
       });
     };
     const findCards = [];
     findCards.push(mkFind('mat', matured.length ? 'red' : 'green', 'Notes past maturity', matured.length ? fN(maturedSum) : 'Clear',
       matured.length ? matured.map(r => noteName(r.l) + ' matured ' + mmyy(r.mat) + ' still carrying ' + fN(r.close)).join(' · ') + '.' : 'No matured note is carrying a balance at ' + mmyy(lastM) + '.',
-      matured.length ? 'Agree payoff or extension with the lender now — every month adds ' + (matured.length === 1 ? 'interest at ' + (matured[0].l.rate * 100).toFixed(2) + '%' : 'hard-money interest') + '. A release row locks the ledger the day it settles.' : 'Nothing to do — the radar below stays on watch.',
-      './loans.dc.html', 'LOANS →',
-      matured.map(r => ({ k: noteName(r.l) + ' · matured ' + mmyy(r.mat), v: fN(r.close), vcol: REDD, href: './loans.dc.html?loan=' + esc(r.l.id), lab: 'LOANS →' })), ''));
+      matured.length ? 'Agree payoff or extension with the lender now — every month adds ' + (matured.length === 1 ? 'interest at ' + (matured[0].l.rate * 100).toFixed(2) + '%' : 'hard-money interest') + '. A release row locks the ledger the day it settles.' : 'Nothing to do — the radar above stays on watch.',
+      loansHref, 'LOANS →',
+      matured.map(r => ({ k: noteName(r.l) + ' · matured ' + mmyy(r.mat), v: fN(r.close), vcol: REDD, href: loanHref(r.l.id), lab: 'LOANS →' })), ''));
     findCards.push(mkFind('due', upcoming.length ? (upcoming[0] && upcoming[0].mat <= addM2(lastM, 3) ? 'red' : 'gold') : 'green', 'Balloons due within 12 months', upcoming.length ? fN(upSum) : 'Clear',
       upcoming.length ? upcoming.length + ' notes mature by ' + mmyy(horizon12) + (upcoming[0] ? ' — first: ' + noteName(upcoming[0].l) + ' ' + fN(upcoming[0].close) + ' in ' + mmyy(upcoming[0].mat) : '') + '.' : 'No note matures within 12 months of ' + mmyy(lastM) + '.',
       upcoming.length ? 'Line up refinance or payoff before each balloon — the Loans page’s refinance-breakeven section prices every candidate at today’s rate.' : 'Nothing due — revisit after the next loans publish.',
-      './loans.dc.html', 'LOANS →',
-      upcoming.slice(0, 8).map(r => ({ k: noteName(r.l) + ' · ' + mmyy(r.mat), v: fN(r.close), vcol: NAVY, href: './loans.dc.html?loan=' + esc(r.l.id), lab: 'LOANS →' })),
-      upcoming.length > 8 ? '+' + (upcoming.length - 8) + ' more within the horizon' : ''));
+      loansHref, 'LOANS →',
+      upcoming.map(r => ({ k: noteName(r.l) + ' · ' + mmyy(r.mat), v: fN(r.close), vcol: NAVY, href: loanHref(r.l.id), lab: 'LOANS →' })), ''));
     findCards.push(mkFind('owe', laggSum > 0.005 ? 'gold' : 'green', 'Tenants still owe', laggSum > 0.005 ? fN(laggSum) : 'Clear',
-      laggSum > 0.005 ? laggN + ' tenants carry a balance at ' + mmyy(lastM) + '; ' + fN(agingRe[3]) + ' of it is 90+ days old' + (agingRe[3] > 0.005 && laggList.length ? '' : '') + '. Current-billing collection ran ' + (curRateLast === null ? '—' : curRateLast.toFixed(1) + '%') + ' in ' + mmyy(lastM) + ' against the ' + CE_TARGET + '% target.' : 'No tenant carries a balance at ' + mmyy(lastM) + '.',
+      laggSum > 0.005 ? laggN + ' tenants carry a balance at ' + mmyy(lastM) + '; ' + fN(agingRe[3]) + ' of it is 90+ days old. Current-billing collection ran ' + (curRateLast === null ? '—' : curRateLast.toFixed(1) + '%') + ' in ' + mmyy(lastM) + ' against the ' + CE_TARGET + '% target.' : 'No tenant carries a balance at ' + mmyy(lastM) + '.',
       laggSum > 0.005 ? 'Run the Collections focus list — the smallest set of tenants that closes the gap to target; advance payers are never chased.' : 'Keep the focus list empty.',
       collHref, 'COLLECTIONS →',
-      laggList.slice(0, 6).map(t => ({ k: t.tenant + ' · ' + t.prop, v: fN(t.bal), vcol: REDD, href: './collections.dc.html?tenant=' + esc(t.tenant), lab: 'LEDGER →' })),
-      laggList.length > 6 ? '+' + (laggList.length - 6) + ' more — every name on the Collections page' : ''));
+      laggList.map(t => ({ k: t.tenant + ' · ' + t.prop, v: fN(t.bal), vcol: REDD, href: collTenHref(t.tenant), lab: 'LEDGER →' })),
+      'every name opens its tenant ledger, scoped to this view'));
     findCards.push(mkFind('und', under.length ? 'red' : 'green', 'Underwater doors', String(under.length),
-      under.length ? 'Debt above policy value on ' + under.length + ' doors — worst ' + underSorted[0].door + ' at ' + Math.round(debtAt(underSorted[0].door, lastM) / underSorted[0].value * 100) + '% LTV. Mostly county-valued.' : 'Every valued door carries equity at ' + mmyy(lastM) + '.',
+      under.length ? 'Debt above policy value on ' + under.length + ' doors — worst ' + underSorted[0].door + ' at ' + Math.round(debtAt(underSorted[0].door, lastM) / underSorted[0].value * 100) + '% LTV. Mostly county-valued (policy view; switch methods on Investments).' : 'Every valued door carries equity at ' + mmyy(lastM) + '.',
       under.length ? 'Order ARVs or appraisals for the cluster — a true after-repair value may lift them above water; the ones that stay under belong on the exit list.' : 'Nothing under water.',
       invHref, 'INVESTMENTS →',
-      underSorted.slice(0, 6).map(p => ({ k: p.door + ' · ' + p.entity + ' · ' + (p.valueSource || 'value'), v: Math.round(debtAt(p.door, lastM) / p.value * 100) + '% LTV', vcol: REDD, href: './investments.dc.html?door=' + esc(p.door), lab: 'INV →' })),
-      under.length > 6 ? '+' + (under.length - 6) + ' more in the cluster' : ''));
+      underSorted.map(p => ({ k: p.door + ' · ' + p.entity + ' · ' + (p.valueSource || 'value'), v: Math.round(debtAt(p.door, lastM) / p.value * 100) + '% LTV', vcol: REDD, href: invDoorHref(p.door), lab: 'INV →' })),
+      'ranked worst-first · policy value basis'));
     findCards.push(mkFind('ble', bleed.length ? 'gold' : 'green', 'Doors that consumed cash', bleed.length ? String(bleed.length) : 'Clear',
       bleed.length ? 'These doors took in less cash than they cost to run and finance this window — ' + fN(Math.abs(bleedSum)) + ' consumed in total.' : 'Every ledgered door kept cash this window.',
       bleed.length ? 'Open the conversation list: rent, turns, or exit — the Investments watchlist prices each fix and the solve simulator totals what clears.' : 'Keep them all above water.',
       cfHref, 'CASH FLOW →',
-      bleed.slice(0, 6).map(x => ({ k: x.d + ' · ' + DOORS[x.d].entity, v: fN(x.v), vcol: REDD, href: './cashflow.dc.html?door=' + esc(x.d), lab: 'CF →' })),
-      bleed.length > 6 ? '+' + (bleed.length - 6) + ' more — ranked worst-first' : ''));
-    findCards.push(mkFind('unv', unvalued.length ? 'gold' : 'green', 'Doors without a valuation', unvalued.length ? String(unvalued.length) : 'Clear',
-      unvalued.length ? unvalued.slice(0, 3).map(p => p.door).join(' · ') + (unvalued.length > 3 ? ' +' + (unvalued.length - 3) + ' more' : '') + (unvalued.length === 1 ? ' sits outside equity and margin-of-safety today.' : ' sit outside equity and margin-of-safety today.') : 'Every owned door in scope carries a value.',
-      unvalued.length ? 'Add a value in the Balance Sheet workbook (ARV, county, or appraisal) and republish — equity is understated until then.' : 'Valuation coverage is complete.',
+      bleed.map(x => ({ k: x.d + ' · ' + DOORS[x.d].entity, v: fN(x.v), vcol: REDD, href: cfDoorHref(x.d), lab: 'CF →' })),
+      'ranked worst-first · every door opens its cash statement, scoped to the window'));
+    const unvaluedPol = owned.filter(p => !(p.value > 0));
+    findCards.push(mkFind('unv', unvaluedPol.length ? 'gold' : 'green', 'Doors without a valuation', unvaluedPol.length ? String(unvaluedPol.length) : 'Clear',
+      unvaluedPol.length ? unvaluedPol.slice(0, 3).map(p => p.door).join(' · ') + (unvaluedPol.length > 3 ? ' +' + (unvaluedPol.length - 3) + ' more' : '') + (unvaluedPol.length === 1 ? ' sits outside equity and margin-of-safety today.' : ' sit outside equity and margin-of-safety today.') : 'Every owned door in scope carries a value.',
+      unvaluedPol.length ? 'Add a value in the Balance Sheet workbook (ARV, county, or appraisal) and republish — equity is understated until then.' : 'Valuation coverage is complete.',
       invHref, 'INVESTMENTS →',
-      unvalued.slice(0, 6).map(p => ({ k: p.door + ' · ' + p.entity, v: 'no value', vcol: GOLDD, href: './investments.dc.html?door=' + esc(p.door), lab: 'INV →' })), ''));
+      unvaluedPol.map(p => ({ k: p.door + ' · ' + p.entity, v: 'no value', vcol: GOLDD, href: invDoorHref(p.door), lab: 'INV →' })), ''));
     findCards.push(mkFind('good', 'green', 'What’s working', rateAll.rate === null ? '—' : rateTxt,
-      'Collections at ' + rateTxt + ' for the window' + (curRateW !== null ? ' (' + curRateW.toFixed(1) + '% of the window’s own bills)' : '') + ' · ' + fK(keptW) + ' cash kept · equity cushion ' + (mosPct !== null ? mosPct.toFixed(1) + '%' : '—') + (levToday !== null && levPurch !== null && levToday < levPurch ? ' · leverage down from ' + levPurch.toFixed(1) + '× to ' + levToday.toFixed(1) + '×' : '') + '.',
+      'Collections at ' + rateTxt + ' for the window' + (curRateW !== null ? ' (' + curRateW.toFixed(1) + '% of the window’s own bills)' : '') + ' · ' + fK(keptW) + ' net cash flow · net equity ' + fK(equityM) + (eqMult !== null && eqMult > 0 ? ' = ' + eqMult.toFixed(1) + '× our cash' : '') + (levToday !== null && levPurch !== null && levToday < levPurch ? ' · leverage down from ' + levPurch.toFixed(1) + '× to ' + levToday.toFixed(1) + '×' : '') + '.',
       'Publish June when the AR lands — it confirms the May write-off sweep and keeps the streak honest.',
       collHref, 'COLLECTIONS →', [], ''));
-    const sevRank = { red: 0, gold: 1, green: 2 };
-    findCards.sort((a, b) => sevRank[a.dot === '#A03E28' ? 'red' : a.dot === '#C9A45C' ? 'gold' : 'green'] - sevRank[b.dot === '#A03E28' ? 'red' : b.dot === '#C9A45C' ? 'gold' : 'green']);
+    const sevRank = { '#A03E28': 0, '#C9A45C': 1, '#2E7D54': 2 };
+    findCards.sort((a, b) => sevRank[a.dot] - sevRank[b.dot]);
     const pendChips = ['June AR column (confirms May write-offs)', 'Bank balances (cash tie-out)', 'Contributions & distributions', 'Sale proceeds & purchases (investing band)', 'Budget standards (compare slot)', 'GL memo & vendor columns'].map(t => ({ t }));
 
     // ══ checks & balances — live ties ══
     const tieRows = [];
     const tie = (k, lhs, rhs, eq, eps) => tieRows.push({ k, eq, mark: Math.abs(lhs - rhs) <= (eps || 0.02) ? '✓' : 'Δ', mcol: Math.abs(lhs - rhs) <= (eps || 0.02) ? '#67B587' : '#E08A70' });
     const entKeptSum = rowsE.filter(r => entOn(r.e)).reduce((s, r) => s + r.eKept, 0) + companyKept;
-    tie('ENTITY ROWS Σ CASH KEPT', entKeptSum, keptW, 'Σ entity rows ' + (allEnts ? '+ company row ' : '') + '= ' + fC(entKeptSum) + ' = the Cash Flow bottom line ' + fC(keptW));
+    tie('ENTITY ROWS Σ CASH KEPT', entKeptSum, keptW, 'Σ entity rows ' + (ovOn ? '+ company row ' : '') + '= ' + fC(entKeptSum) + ' = the Cash Flow bottom line ' + fC(keptW));
+    const entEqSum = rowsE.filter(r => entOn(r.e)).reduce((s, r) => s + r.eEq, 0);
+    tie('ENTITY ROWS Σ NET EQUITY', entEqSum, equityM, 'Σ entity equity (' + vShort + ') ' + fC(entEqSum) + ' = portfolio net equity ' + fC(equityM));
     tie('AGE OF DUES Σ', sum(agingRe), laggSum, fC(agingRe[0]) + ' + ' + fC(agingRe[1]) + ' + ' + fC(agingRe[2]) + ' + ' + fC(agingRe[3]) + ' = ' + fC(sum(agingRe)) + ' = still owed ' + fC(laggSum));
-    tie('CASH RAIL CHAIN', netOpW - dsCashW, keptW, 'net operating ' + fC(netOpW) + ' − debt service ' + fC(dsCashW) + ' = cash kept ' + fC(keptW));
+    tie('CASH RAIL CHAIN', netOpW - dsCashW, keptW, 'net operating ' + fC(netOpW) + ' − debt service ' + fC(dsCashW) + ' = net cash flow ' + fC(keptW));
     tie('BRIDGE CLOSES', niW - prinCashW + wedge, keptW, 'net profit ' + fC(niW) + ' − principal ' + fC(prinCashW) + ' + timing ' + fC(wedge) + ' = ' + fC(keptW));
-    if (allEnts) {
+    if (ovOn) {
       tie('BANKS vs BALANCE SHEET', loansOutClose, debtW + excludedDebt, 'all notes ' + fC(loansOutClose) + ' = owned-scope debt ' + fC(debtW) + ' + held-for-sale ' + fC(excludedDebt));
       tie('EVERY BANK DOLLAR', drawnAll, ownAll + saleAll + refiAll + outAll, 'drawn ' + fC(drawnAll) + ' = repaid by us ' + fC(ownAll) + ' + sale-settled ' + fC(saleAll) + ' + refi-funded ' + fC(refiAll) + ' + outstanding ' + fC(outAll));
       tie('DEBT WALK CLOSES', loansOutOpen + borrowW - schedPrinW - prepayW - releaseW - payoffW, loansOutClose, fC(loansOutOpen) + ' + ' + fC(borrowW) + ' − ' + fC(schedPrinW + prepayW + releaseW + payoffW) + ' = ' + fC(loansOutClose));
     }
-    const tieFoot = 'Cross-dataset identities recomputed on every render — the same gates the harness pins to the cent. ' + (allEnts ? 'All seven ties are in view.' : 'Note-grain ties (banks vs balance sheet, drawn identity, debt walk) are portfolio-wide and appear when all entities are in view.');
+    const tieFoot = 'Cross-dataset identities recomputed on every render — the same gates the harness pins to the cent. ' + (ovOn ? 'All eight ties are in view.' : 'Note-grain ties (banks vs balance sheet, drawn identity, debt walk) are portfolio-wide and appear when the full portfolio is in view.');
 
     return Object.assign({
       ready: true, loading: false, loadError: false, retryLoad: () => this.loadData(), stopProp,
       storyLine, scopeLine, asOfLine,
       filters, hasActive, onReset, jumpChips,
       heroTiles,
-      a1Links, a1Line, a1Rail, agTot, agTiles, agFoot,
-      a2Links, a2Line, a2Span: spanLab, dollarBands, dollarFoot, opexTot, opexN, onXAll, xAllLab, opexRows, opexFoot, bankChips, bankFoot, costCompare,
+      a1Links, a1Line, a1Rail, cvTitle, cvRows, cvFoot, agTot, agTiles, agFoot,
+      a2Links, a2Line, a2Span: spanLab, dollarBands, dollarFoot, bucketTitle, bucketRows, bucketFoot, bankChips, bankFoot, costCompare,
       a3Links, a3Line, pipeCash, pipeAccr, bridge, bridgeFoot,
-      a4Links, a4Line, a4Span, posRail, debtWalk, debtWalkFoot, mrScope, mrSum, matRows, mrFoot, drawnRows, drawnFoot,
-      a5Links, a5Line, invRail, retTiles, levChips, a5Foot,
-      esSub, esSortChips, entRows, esFoot,
+      a4Links, a4Line, a4Span, vmLabel, vmOpen: S.ddOpen === 'VM', onVmToggle, vmOpts, vmCapOn: vMeth === 'noi', vmCapVal: String(S.vcap == null ? '8' : S.vcap), onVmCap: (e) => this.setF({ vcap: e.target.value }), vmCovLine, posRail, debtWalk, debtWalkFoot, mrScope, mrSum, matRows, mrFoot, drawnRows, drawnFoot,
+      a5Links, a5Line, barsTitle, barA, barB, barALab, barBLab, barAW, barBW, punchChips, invRail, retTiles, levChips, a5Foot,
+      esSub, esSortChips, entRows, esFoot, evmOpen: S.ddOpen === 'VM2', onEvmToggle, evmOpts, evmTag,
       planChips, findCards, pendChips, tieRows, tieFoot,
-    }, flatCh('c1', ch1), flatCh('c2', ch2), flatCh('c3', ch3), flatCh('c4', ch4));
+    }, flatCh('c2', ch2), flatCh('c3', ch3), flatCh('c4', ch4));
   }
 }
 </script>

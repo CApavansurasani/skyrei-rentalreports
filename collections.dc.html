@@ -373,7 +373,7 @@ input:focus{outline:2px solid #C9A45C;outline-offset:1px}
                 <span style="font-size:9.5px;letter-spacing:0.09em;font-weight:800;color:#96742F">{{ ceAgLab }}</span>
                 <span onClick="{{ onCeRoll }}" style-hover="color:#16233A" style="font-size:10px;font-weight:800;color:#3D64A8;cursor:pointer">{{ ceRollTog }}</span>
               </div>
-              <div style="margin-top:8px;display:grid;grid-template-columns:repeat(5,1fr);gap:8px">
+              <div data-ce-aging="1" style="margin-top:8px;display:grid;grid-template-columns:repeat(5,1fr);gap:8px">
                 <sc-for list="{{ ceAgTiles }}" as="ca" hint-placeholder-count="5">
                   <div onClick="{{ ca.onClick }}" title="{{ ca.tip }}" style-hover="border-color:#C9A45C" style="border:1.5px solid {{ ca.bd }};background:{{ ca.bg }};border-radius:10px;padding:9px 11px;cursor:pointer">
                     <div style="font-size:8.5px;letter-spacing:0.04em;font-weight:800;color:{{ ca.kc }};white-space:nowrap">{{ ca.k }}</div>
@@ -832,7 +832,18 @@ class Component extends DCLogic {
       if (q.get('q')) patch.crq = q.get('q');
       if (q.get('rate')) patch.ceMode = q.get('rate') === 'blended' ? 'blend' : 'fifo';
       if (q.get('tgt')) patch.ceTgt = q.get('tgt');
-      if (Object.keys(patch).length) this.setState(patch);
+      if (q.get('bkt') !== null && q.get('bkt') !== undefined && q.get('bkt') !== '') {
+        const b = parseInt(q.get('bkt'), 10);
+        if (b === 0 || b === 1 || b === 2 || b === 3) { patch.ceBkt = b; this._jumpAging = true; }
+      }
+      if (Object.keys(patch).length) this.setState(patch, () => {
+        if (!this._jumpAging) return;
+        this._jumpAging = false;
+        try {
+          if (typeof document === 'undefined' || typeof setTimeout === 'undefined') return;
+          setTimeout(() => { try { const el = document.querySelector('[data-ce-aging]'); if (el && el.scrollIntoView) el.scrollIntoView({ behavior: 'smooth', block: 'start' }); } catch (e2) {} }, 350);
+        } catch (e3) {}
+      });
     } catch (e) {}
   }
 
@@ -846,6 +857,7 @@ class Component extends DCLogic {
       if (S.ft.length) q.set('tenant', S.ft.join(','));
       if (S.ceMode === 'blend') q.set('rate', 'blended');
       if (S.ceTgt && S.ceTgt !== '95') q.set('tgt', S.ceTgt);
+      if (S.ceBkt === 0 || S.ceBkt === 1 || S.ceBkt === 2 || S.ceBkt === 3) q.set('bkt', String(S.ceBkt));
       const s = q.toString();
       history.replaceState(null, '', location.pathname + (s ? '?' + s : ''));
     } catch (e) {}
