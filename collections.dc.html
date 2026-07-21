@@ -1283,8 +1283,8 @@ class Component extends DCLogic {
     const esc=s=>encodeURIComponent(s);
     const prettyISO=iso=>{const p=(iso||'').split('-');return p.length===3?(+p[2])+' '+MMM[+p[1]-1]+' '+p[0].slice(2):iso;};
     const monthsOf=(s,e)=>{const a=[];let y=+s.slice(0,4),m=+s.slice(5,7);const ey=+e.slice(0,4),em=+e.slice(5,7);let g=0;while((y<ey||(y===ey&&m<=em))&&g++<800){a.push(y+'-'+String(m).padStart(2,'0'));m++;if(m>12){y++;m=1;}}return a;};
-    let mQ='';   // period query for deep links — set once the period is known below; read at call time
-    const plH=d=>'./PL%20Story%20-%20Main.dc.html?door='+esc(d)+mQ,bsH=d=>'./investments.dc.html?door='+esc(d),lnH=d=>'./loans.dc.html?door='+esc(d),txH=d=>'./transactions.dc.html?door='+esc(d)+mQ,coH=d=>'./collections.dc.html?door='+esc(d)+mQ,cfH=d=>'./cashflow.dc.html?door='+esc(d)+mQ;
+    let scopeQ='';   // door + ENTITY (fe) + PERIOD (∩ target window) — the full active scope; set once known below, read at call time
+    const plH=d=>'./PL%20Story%20-%20Main.dc.html?door='+esc(d)+scopeQ,bsH=d=>'./investments.dc.html?door='+esc(d)+scopeQ,lnH=d=>'./loans.dc.html?door='+esc(d)+scopeQ,txH=d=>'./transactions.dc.html?door='+esc(d)+scopeQ,coH=d=>'./collections.dc.html?door='+esc(d)+scopeQ,cfH=d=>'./cashflow.dc.html?door='+esc(d)+scopeQ;
     const tab=S.tab==='vacancy'?'vacancy':'loss',showVac=tab==='vacancy',showLoss=tab==='loss';
     const V=S.vac;
     const vTot0=V&&V.portfolio?V.portfolio.totalLoss:0;
@@ -1331,7 +1331,9 @@ class Component extends DCLogic {
     // deep-link month param — intersect the period with what P&L/CF/TXN actually cover (their 5-month window)
     const glMonths=V.glMonths||[],glSet=new Set(glMonths);
     const linkMs=periodMonths.filter(m=>glSet.has(m));
-    mQ=(linkMs.length&&linkMs.length<glMonths.length)?'&m='+linkMs.join(','):'';
+    const mQ=(linkMs.length&&linkMs.length<glMonths.length)?'&m='+linkMs.join(','):'';
+    const feQ=(eSet.size)?'&entity='+[...eSet].map(esc).join(','):'';
+    scopeQ=mQ+feQ;   // every deep link carries the door + the active entity filter + the period (intersected with the target page's month coverage)
     const lossP=d=>{let s=0;for(const mk of periodMonths)s+=lossAt(d,mk);return s;};
     const pTotal=sum(keys.map(lossP)),pDoors=keys.filter(d=>lossP(d)>0);
     // every vacancy SPELL (completed gap OR the ongoing vacancy) touching the period

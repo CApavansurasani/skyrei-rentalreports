@@ -937,7 +937,7 @@ class Component extends DCLogic {
     this.setState({ loadError: null });
     fetch('./pl-data.json')
       .then(r => { if (!r.ok) throw new Error('HTTP ' + r.status + ' fetching pl-data.json'); return r.json(); })
-      .then(raw => this.setState({ data: this.normalizeData(raw) }))
+      .then(raw => { const data = this.normalizeData(raw); const patch = { data }; try { if (typeof location !== 'undefined' && location.search && data && data.periods) { const mm = new URLSearchParams(location.search).get('m'); if (mm) { const idx = mm.split(',').map(s => data.periods.indexOf(s.trim())).filter(i => i >= 0); if (idx.length) patch.msel = idx; } } } catch (e) {} this.setState(patch); })
       .catch(e => this.setState({ data: null, loadError: (e && e.message ? e.message : String(e)) }));
   }
 
