@@ -53,7 +53,7 @@ input:focus{outline:2px solid #C9A45C;outline-offset:1px}
     <sc-if value="{{ ready }}" hint-placeholder-val="{{ false }}">
 
         <!-- ══ Filter bar ══ -->
-    <div style="margin-top:18px;background:#FFFFFF;border:1px solid #E5E3DC;border-radius:16px;padding:12px 16px;display:flex;align-items:center;gap:8px;flex-wrap:wrap;position:relative;z-index:50" onClick="{{ stopProp }}">
+    <div data-dd-root style="margin-top:18px;background:#FFFFFF;border:1px solid #E5E3DC;border-radius:16px;padding:12px 16px;display:flex;align-items:center;gap:8px;flex-wrap:wrap;position:relative;z-index:50" onClick="{{ stopProp }}">
       <span style="font-size:10px;letter-spacing:0.1em;font-weight:700;color:#96742F;margin-right:2px">SCOPE</span>
       <sc-for list="{{ filters }}" as="fb" hint-placeholder-count="4">
         <div style="position:relative">
@@ -1268,10 +1268,12 @@ class Component extends DCLogic {
   componentDidMount() {
     this.loadData();
     this.loadVac();
-    this._doc = () => { if (this.state.ddOpen) this.setState({ ddOpen: null }); };
-    document.addEventListener('click', this._doc);
+    // Close any open scope dropdown on a click ANYWHERE outside the filter bar. Capture phase so that
+    // cards which stopPropagation in the bubble phase (data-sec="vac"/renewals) can't swallow the close.
+    this._doc = (e) => { if (!this.state.ddOpen) return; try { if (e && e.target && e.target.closest && e.target.closest('[data-dd-root]')) return; } catch (_) {} this.setState({ ddOpen: null }); };
+    document.addEventListener('click', this._doc, true);
   }
-  componentWillUnmount() { document.removeEventListener('click', this._doc); }
+  componentWillUnmount() { document.removeEventListener('click', this._doc, true); }
 
   vacVals(S) {
     const NAVY='#16233A',INK='#2A3550',MUT='#5E6B82',FAINT='#8A93A6',REDD='#A03E28',RED='#B04A33',GREEND='#2A6F4E',GOLD='#C9A45C',GOLDD='#96742F',AMBER='#B5852A',BLUE='#3D64A8';
@@ -1791,11 +1793,11 @@ class Component extends DCLogic {
     const togMonthF = mk => () => { const cur = new Set(S.fm); cur.has(mk) ? cur.delete(mk) : cur.add(mk); this.setF({ fm: [...cur].sort() }); };
     const togYearF = y => () => { const cur = new Set(S.fm); const ym = vMonths.filter(m => m.slice(0, 4) === y); const full = ym.every(m => cur.has(m)); ym.forEach(m => full ? cur.delete(m) : cur.add(m)); this.setF({ fm: [...cur].sort() }); };
     const vacMonthOpts = [];
-    for (const y of vYears) {
+    for (const y of [...vYears].reverse()) {   // newest year first
       const ym = vMonths.filter(m => m.slice(0, 4) === y);
       const full = ym.every(m => fmSet0.has(m)), any = ym.some(m => fmSet0.has(m));
       vacMonthOpts.push({ label: y + ' — whole year', n: ym.length + ' mo', check: full ? '✓' : (any ? '–' : ''), fw: 800, bg: full ? '#FBF6EA' : (any ? '#FCFAF3' : 'transparent'), onClick: togYearF(y) });
-      for (const mk of ym) vacMonthOpts.push({ label: ' ' + mmyy(mk), n: '', check: fmSet0.has(mk) ? '✓' : '', fw: fmSet0.has(mk) ? 700 : 500, bg: fmSet0.has(mk) ? '#FBF6EA' : 'transparent', onClick: togMonthF(mk) });
+      for (const mk of [...ym].reverse()) vacMonthOpts.push({ label: ' ' + mmyy(mk), n: '', check: fmSet0.has(mk) ? '✓' : '', fw: fmSet0.has(mk) ? 700 : 500, bg: fmSet0.has(mk) ? '#FBF6EA' : 'transparent', onClick: togMonthF(mk) });
     }
     const fmMv = (S.fm || []).filter(m => vMonths.includes(m)).sort();
     const vacMonthVal = (() => { if (!fmMv.length) return 'All months'; const ys = [...new Set(fmMv.map(m => m.slice(0, 4)))].sort(); const full = ys.filter(y => vMonths.filter(m => m.slice(0, 4) === y).every(m => fmMv.includes(m))); if (fmMv.length === 1) return mmyy(fmMv[0]); if (full.length === ys.length) return ys.join(' + '); return mmyy(fmMv[0]) + ' – ' + mmyy(fmMv[fmMv.length - 1]); })();
