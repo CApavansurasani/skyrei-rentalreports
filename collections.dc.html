@@ -1282,8 +1282,9 @@ class Component extends DCLogic {
     const sum=a=>a.reduce((x,y)=>x+y,0);
     const esc=s=>encodeURIComponent(s);
     const prettyISO=iso=>{const p=(iso||'').split('-');return p.length===3?(+p[2])+' '+MMM[+p[1]-1]+' '+p[0].slice(2):iso;};
-    const plH=d=>'./PL%20Story%20-%20Main.dc.html?door='+esc(d),bsH=d=>'./investments.dc.html?door='+esc(d),lnH=d=>'./loans.dc.html?door='+esc(d),txH=d=>'./transactions.dc.html?door='+esc(d),coH=d=>'./collections.dc.html?door='+esc(d),cfH=d=>'./cashflow.dc.html?door='+esc(d);
     const monthsOf=(s,e)=>{const a=[];let y=+s.slice(0,4),m=+s.slice(5,7);const ey=+e.slice(0,4),em=+e.slice(5,7);let g=0;while((y<ey||(y===ey&&m<=em))&&g++<800){a.push(y+'-'+String(m).padStart(2,'0'));m++;if(m>12){y++;m=1;}}return a;};
+    let mQ='';   // period query for deep links — set once the period is known below; read at call time
+    const plH=d=>'./PL%20Story%20-%20Main.dc.html?door='+esc(d)+mQ,bsH=d=>'./investments.dc.html?door='+esc(d),lnH=d=>'./loans.dc.html?door='+esc(d),txH=d=>'./transactions.dc.html?door='+esc(d)+mQ,coH=d=>'./collections.dc.html?door='+esc(d)+mQ,cfH=d=>'./cashflow.dc.html?door='+esc(d)+mQ;
     const tab=S.tab==='vacancy'?'vacancy':'loss',showVac=tab==='vacancy',showLoss=tab==='loss';
     const V=S.vac;
     const vTot0=V&&V.portfolio?V.portfolio.totalLoss:0;
@@ -1314,57 +1315,68 @@ class Component extends DCLogic {
     const lossMonths=ms=>{let s=0;for(const d of keys)for(const mk of ms)s+=lossAt(d,mk);return s;};
     const doorsVacIn=ms=>keys.filter(d=>ms.some(mk=>lossAt(d,mk)>0));
 
-    // ── period: YEAR chips (multi) + MONTH chips (multi, within the years) — all inception months ──
-    const selYrs=[...new Set((S.vGyrs||[]).filter(y=>yrs.includes(y)))].sort();
-    const yearMonths=selYrs.length?MONTHS.filter(m=>selYrs.includes(m.slice(0,4))):[];
-    const selMos=[...new Set((S.vGmos||[]).filter(m=>yearMonths.includes(m)))].sort();
-    const axisMode=selYrs.length===0?'years':'months';
-    const axisKeys=axisMode==='years'?yrs:yearMonths;
-    const msOf=per=>axisMode==='years'?MONTHS.filter(m=>m.slice(0,4)===per):[per];
-    const fmM=(S.fm||[]).filter(m=>MONTHS.includes(m));
+    // ── PERIOD — driven by the shared SCOPE month filter (fm), inception-wide (year + month) ──
+    const fmM=(S.fm||[]).filter(m=>MONTHS.includes(m)).sort();
+    const selYrs=[...new Set(fmM.map(m=>m.slice(0,4)))].sort();
+    const yearMonthsOf=y=>MONTHS.filter(m=>m.slice(0,4)===y);
+    const fullYears=selYrs.filter(y=>yearMonthsOf(y).every(m=>fmM.includes(m)));
     let periodMonths,periodLab;
-    if(selMos.length){periodMonths=selMos.slice();periodLab=selMos.length===1?mmyy(selMos[0]):mmyy(selMos[0])+'…'+mmyy(selMos[selMos.length-1]);}
-    else if(selYrs.length){periodMonths=yearMonths.slice();periodLab=selYrs.join(' + ');}
-    else if(fmM.length){periodMonths=fmM.slice();periodLab=fmM.length===1?mmyy(fmM[0]):mmyy(fmM[0])+'…'+mmyy(fmM[fmM.length-1]);}
-    else{periodMonths=MONTHS.slice();periodLab='ITD';}
+    if(!fmM.length){periodMonths=MONTHS.slice();periodLab='ITD';}
+    else if(fmM.length===1){periodMonths=fmM.slice();periodLab=mmyy(fmM[0]);}
+    else if(fullYears.length===selYrs.length){periodMonths=fmM.slice();periodLab=selYrs.join(' + ');}
+    else{periodMonths=fmM.slice();periodLab=mmyy(fmM[0])+'…'+mmyy(fmM[fmM.length-1]);}
     const pset=new Set(periodMonths);
+    const inP=iso=>pset.has((iso||'').slice(0,7));
+    const overlapsP=(s,e)=>monthsOf(s,e||HOR).some(mk=>pset.has(mk));
+    // deep-link month param — intersect the period with what P&L/CF/TXN actually cover (their 5-month window)
+    const glMonths=V.glMonths||[],glSet=new Set(glMonths);
+    const linkMs=periodMonths.filter(m=>glSet.has(m));
+    mQ=(linkMs.length&&linkMs.length<glMonths.length)?'&m='+linkMs.join(','):'';
     const lossP=d=>{let s=0;for(const mk of periodMonths)s+=lossAt(d,mk);return s;};
     const pTotal=sum(keys.map(lossP)),pDoors=keys.filter(d=>lossP(d)>0);
-    // every vacancy SPELL (completed gap OR the current ongoing vacancy) that touches the period
+    // every vacancy SPELL (completed gap OR the ongoing vacancy) touching the period
     const spellsOf=d=>{const a=(D[d].gaps||[]).map(g=>({s:g.s,e:g.e,days:g.days,rent:g.rent,loss:g.loss,filledBy:g.filledBy,ongoing:false}));const c=D[d].current;if(c)a.push({s:c.since,e:null,days:c.days,rent:c.rent,loss:c.loss,filledBy:null,ongoing:true});return a.sort((x,y)=>x.s<y.s?-1:1);};
-    const spellsInP=d=>spellsOf(d).filter(sp=>monthsOf(sp.s,sp.e||HOR).some(mk=>pset.has(mk)));
+    const spellsInP=d=>spellsOf(d).filter(sp=>overlapsP(sp.s,sp.e));
     const pDays=d=>sum(spellsInP(d).map(sp=>sp.days));
+    // period-scoped renewals per door (events dated in the window)
+    const renInP=d=>(D[d].renEvents||[]).filter(e=>inP(e.on));
+    const turnInP=d=>(D[d].renHandoffs||[]).filter(h=>inP(h.on));
 
     // current vacancies + turns (as of today, not period)
     const current=(V.currentVacant||[]).filter(c=>pass(c.door)).slice().sort((a,b)=>b.days-a.days);
     const curLoss=sum(current.map(c=>c.loss)),curRent=sum(current.map(c=>c.rent));
-    const turns=[];keys.forEach(d=>(D[d].gaps||[]).forEach(g=>turns.push(g.days)));turns.sort((a,b)=>a-b);
+    // period-scoped turns (completed gaps whose span overlaps the period)
+    const periodGaps=[];keys.forEach(d=>(D[d].gaps||[]).forEach(g=>{if(overlapsP(g.s,g.e))periodGaps.push({door:d,entity:D[d].entity,days:g.days,loss:g.loss,when:prettyISO(g.s)+' → '+prettyISO(g.e)});}));
+    const turns=periodGaps.map(g=>g.days).sort((a,b)=>a-b);
     const pctl=p=>turns.length?turns[Math.min(turns.length-1,Math.floor(turns.length*p))]:0;
     const med=turns.length?turns[Math.floor(turns.length/2)]:0,avg=turns.length?Math.round(sum(turns)/turns.length):0;
     const tgt=(()=>{const p=parseFloat(S.vTgt);return isFinite(p)&&p>0?p:30;})();
     const withGap=keys.filter(d=>D[d].totalLoss>0).length,totalDays=sum(keys.map(d=>D[d].totalDays));
-    const vScopeLine='Lease-derived vacancy loss · inception → '+prettyISO(HOR)+' · '+scopeName;
-    const vHeroSub=withGap+' doors have sat empty between tenants · '+totalDays.toLocaleString('en-US')+' vacant-days';
+    const vScopeLine='Lease-derived vacancy loss · inception → '+prettyISO(HOR)+' · '+scopeName+' · viewing '+periodLab;
+    const vHeroSub=pDoors.length+' door'+(pDoors.length!==1?'s':'')+' sat empty in '+periodLab+' · '+sum(pDoors.map(pDays)).toLocaleString('en-US')+' vacant-days';
 
     // ── KPIs (period-reactive) ──
     const avgLoss=pDoors.length?pTotal/pDoors.length:0;
     const worst=pDoors.slice().sort((a,b)=>lossP(b)-lossP(a))[0];
     const vKpis=[
-      {label:'RENT LOST · '+periodLab,val:fK(pTotal),sub:pDoors.length+' door'+(pDoors.length!==1?'s':'')+' vacant',col:REDD,bg:'#FDF7F5',bd:'#E6D2CB',dcol:'#8A93A6',tip:'Vacancy loss over the selected period '+periodLab+'. Recomputes with the year chips, the month chips, the chart point you pick, and the Month filter.'},
+      {label:'RENT LOST · '+periodLab,val:fK(pTotal),sub:pDoors.length+' door'+(pDoors.length!==1?'s':'')+' vacant',col:REDD,bg:'#FDF7F5',bd:'#E6D2CB',dcol:'#8A93A6',tip:'Vacancy loss over the selected period '+periodLab+'. Everything on this tab — roster, renewals and turn-time included — reacts to the SCOPE month filter.'},
       {label:'PROPERTIES VACANT · '+periodLab,val:String(pDoors.length),sub:'of '+keys.length+' in scope',col:NAVY,bg:'#FFFFFF',bd:'#E5E3DC',dcol:'#8A93A6',tip:'Doors that sat empty at some point during '+periodLab+'.'},
       {label:'AVG LOSS / VACANT DOOR',val:fK(avgLoss),sub:worst?'worst '+worst+' '+fK(lossP(worst)):'—',col:NAVY,bg:'#FFFFFF',bd:'#E5E3DC',dcol:'#8A93A6',tip:'Average vacancy loss per affected door over '+periodLab+'.'},
       {label:'VACANT NOW',val:String(current.length),sub:current.length?fK(curLoss)+' lost so far':'all filled',col:current.length?REDD:GREEND,bg:'#FFFFFF',bd:'#E5E3DC',dcol:'#8A93A6',tip:'Doors owned and empty as of '+prettyISO(HOR)+' (always current, not the period).'},
-      {label:'MEDIAN TURN',val:med+'d',sub:'target '+tgt+'d · '+(med<=tgt?'on plan':(med-tgt)+'d over'),col:med<=tgt?GREEND:AMBER,bg:'#FFFFFF',bd:'#E5E3DC',dcol:med<=tgt?GREEND:AMBER,tip:'Median days from one lease ending to the next starting.'},
+      {label:'MEDIAN TURN · '+periodLab,val:med+'d',sub:'target '+tgt+'d · '+(med<=tgt?'on plan':(med-tgt)+'d over'),col:med<=tgt?GREEND:AMBER,bg:'#FFFFFF',bd:'#E5E3DC',dcol:med<=tgt?GREEND:AMBER,tip:'Median days to re-lease, for turns that fell in '+periodLab+'.'},
       {label:'RENT AT RISK /MO',val:fK(curRent),sub:'across '+current.length+' empty door'+(current.length!==1?'s':''),col:current.length?AMBER:GREEND,bg:'#FFFFFF',bd:'#E5E3DC',dcol:'#8A93A6',tip:'Scheduled monthly rent on the doors empty right now.'},
     ];
     const vHeadLab='RENT LOST TO EMPTY DOORS'+(scoped?' · '+scopeName:'');
-    const vHead=fN(V.portfolio?sum(keys.map(d=>D[d].totalLoss)):0);
-    const vHeadCap='inception → '+prettyISO(HOR)+' · '+totalDays.toLocaleString('en-US')+' vacant-days on '+withGap+' doors';
+    const vHead=fN(pTotal);
+    const vHeadCap=periodLab+' · '+sum(pDoors.map(pDays)).toLocaleString('en-US')+' vacant-days on '+pDoors.length+' doors';
     const R2=V.recon||{},diff=R2.diff||0;
     const vReconLine='Reconciliation — same window as the books: your lease formula '+fN(R2.formulaSameWindow||0)+' vs the GL Vacancy-Loss account '+fN(R2.glVacancyLoss||0)+' → Δ '+fN(Math.abs(diff))+' ('+(diff>=0?'formula slightly higher':'GL slightly higher')+'). Lease-derived; GL shown only for reconciliation.';
 
-    // ── growth-style chart ──
+    // ── growth-style chart (axis + selection derived from fm) ──
     const gMet=S.vGmetric==='doors'?'doors':'loss';
+    const axisMode=fmM.length?'months':'years';
+    const axisKeys=axisMode==='years'?yrs:MONTHS.filter(m=>selYrs.includes(m.slice(0,4)));
+    const msOf=per=>axisMode==='years'?yearMonthsOf(per):[per];
     const valOf=per=>{const ms=msOf(per);return gMet==='doors'?doorsVacIn(ms).length:lossMonths(ms);};
     const lossOf=per=>lossMonths(msOf(per));
     const propsOf=per=>doorsVacIn(msOf(per)).length;
@@ -1375,26 +1387,29 @@ class Component extends DCLogic {
     const gy=v=>gBot-(gBot-gTop)*(v/gMaxV);
     const gPath=gRaw.map((p,i)=>(i===0?'M':'L')+gx(i).toFixed(1)+' '+gy(p.val).toFixed(1)).join(' ');
     const gArea=gRaw.length?'M'+gx(0).toFixed(1)+' '+gBot+' '+gRaw.map((p,i)=>'L'+gx(i).toFixed(1)+' '+gy(p.val).toFixed(1)).join(' ')+' L'+gx(gRaw.length-1).toFixed(1)+' '+gBot+' Z':'';
-    const isSel=per=>axisMode==='years'?selYrs.includes(per):selMos.includes(per);
-    const anySel=axisMode==='years'?selYrs.length>0:selMos.length>0;
+    // fm mutators (write to the shared scope filter so URL + every section update together)
+    const toggleYearFm=y=>{const cur=new Set(fmM),ym=yearMonthsOf(y);const full=ym.every(m=>cur.has(m));ym.forEach(m=>full?cur.delete(m):cur.add(m));this.setF({fm:[...cur].sort()});};
+    const toggleMonthFm=mk=>{const cur=new Set(fmM);cur.has(mk)?cur.delete(mk):cur.add(mk);this.setF({fm:[...cur].sort()});};
+    const isSel=per=>axisMode==='years'?fullYears.includes(per):fmM.includes(per);
+    const anySel=fmM.length>0;
     const gPts=gRaw.map((p,i)=>{const on=anySel?isSel(p.per):false;return{
       cx:gx(i).toFixed(1),cy:gy(p.val).toFixed(1),r:on?6:4,fill:on?REDD:'#FFFFFF',ring:REDD,
       leftPct:(gx(i)/GW*100).toFixed(2)+'%',topPct:(gy(p.val)/GH*100).toFixed(2)+'%',
       vlab:gMet==='doors'?String(p.val):fK(p.loss),vfw:on?800:700,vcol:on?REDD:NAVY,
       dlab:gMet==='doors'?fK(p.loss):(p.props+' empty'),dcol:on?'#FFFFFF':GOLDD,dbg:on?REDD:'#FBF1E4',
       lab:p.lab,xfw:on?800:600,xcol:on?NAVY:MUT,
-      onClick:axisMode==='years'?(()=>{const s=new Set(selYrs);s.has(p.per)?s.delete(p.per):s.add(p.per);this.setState({vGyrs:[...s].sort(),vGmos:[]});}):(()=>{const s=new Set(selMos);s.has(p.per)?s.delete(p.per):s.add(p.per);this.setState({vGmos:[...s].sort()});}),
-      tip:p.lab+': '+fK(p.loss)+' lost · '+p.props+' doors vacant — click to '+(axisMode==='years'?'add/remove the year':'add/remove the month')};});
+      onClick:axisMode==='years'?(()=>toggleYearFm(p.per)):(()=>toggleMonthFm(p.per)),
+      tip:p.lab+': '+fK(p.loss)+' lost · '+p.props+' doors vacant — click to '+(axisMode==='years'?'select the whole year':'add/remove the month')};});
     const gP0=gRaw[0],gPn=gRaw[gRaw.length-1];
     const gGrow=(axisMode==='months'?('Month on month · '+(selYrs.join(' + ')||'')):'Year over year · inception to date')+':  '+(gP0?gP0.lab+' '+fK(gP0.loss):'')+'  →  '+(gPn?gPn.lab+' '+fK(gPn.loss):'')+'   ·   peak '+(()=>{let b=gRaw[0];for(const p of gRaw)if(p.loss>(b?b.loss:-1))b=p;return b?b.lab+' '+fK(b.loss):'—';})()+'   ·   viewing '+periodLab+': '+fK(pTotal);
     const gMetChips=[{k:'loss',label:'LOSS $'},{k:'doors',label:'DOORS'}].map(mc=>({label:mc.label,bd:gMet===mc.k?'#C9A45C':'#D8D4C8',bg:gMet===mc.k?'#FBF6EA':'#FFFFFF',onClick:()=>this.setState({vGmetric:mc.k})}));
-    const gYearChips=['ITD',...yrs].map(y=>{const on=(y==='ITD'&&selYrs.length===0)||(y!=='ITD'&&selYrs.includes(y));return{label:y,bd:on?'#C9A45C':'#D8D4C8',bg:on?'#FBF6EA':'#FFFFFF',col:on?'#96742F':'#5E6B82',onClick:()=>{if(y==='ITD'){this.setState({vGyrs:[],vGmos:[]});}else{const s=new Set(selYrs);s.has(y)?s.delete(y):s.add(y);this.setState({vGyrs:[...s].sort(),vGmos:[]});}}};});
-    const gYearHint=selYrs.length?('Showing '+selYrs.join(' + ')+' by month — tap months below to narrow, or tap years to combine · ITD resets'):'Tap a year (or two — they combine); then pick months, or leave it for the whole year';
+    const gYearChips=['ITD',...yrs].map(y=>{const on=(y==='ITD'&&!fmM.length)||(y!=='ITD'&&fullYears.includes(y));return{label:y,bd:on?'#C9A45C':'#D8D4C8',bg:on?'#FBF6EA':'#FFFFFF',col:on?'#96742F':'#5E6B82',onClick:()=>{y==='ITD'?this.setF({fm:[]}):toggleYearFm(y);}};});
+    const gYearHint=fmM.length?('Period = '+periodLab+' (from the SCOPE · MONTH filter) — every section below reacts to it. Tap a year to (de)select it, months to refine, ITD to reset.'):'Whole history. Tap a year (they combine) or use SCOPE · MONTH for exact months; the whole page follows.';
     const gMonthChipsOn=selYrs.length>0;
-    const gMonthLab='MONTHS'+(selMos.length?' · '+selMos.length+' picked':' — pick any (optional)');
-    const gMonthChips=gMonthChipsOn?yearMonths.map(mk=>{const on=selMos.includes(mk);return{label:mmyy(mk),bd:on?'#C9A45C':'#E0DCD0',bg:on?'#FBF1E4':'#FFFFFF',col:on?'#96742F':'#8A93A6',onClick:()=>{const s=new Set(selMos);s.has(mk)?s.delete(mk):s.add(mk);this.setState({vGmos:[...s].sort()});}};}):[];
+    const gMonthLab='MONTHS'+(fmM.length?' · '+fmM.length+' selected':' — pick any (optional)');
+    const gMonthChips=gMonthChipsOn?MONTHS.filter(m=>selYrs.includes(m.slice(0,4))).map(mk=>{const on=fmM.includes(mk);return{label:mmyy(mk),bd:on?'#C9A45C':'#E0DCD0',bg:on?'#FBF1E4':'#FFFFFF',col:on?'#96742F':'#8A93A6',onClick:()=>toggleMonthFm(mk)};}):[];
 
-    // right panel — properties vacant in the selected period (each expands to EVERY spell incl. the ongoing one)
+    // right panel — properties vacant in the selected period (each expands to EVERY spell incl. ongoing)
     const gqq=(S.vGq||'').trim().toLowerCase();
     const panelDoors=pDoors.filter(d=>!gqq||d.toLowerCase().includes(gqq)||(D[d].entity||'').toLowerCase().includes(gqq)).sort((a,b)=>lossP(b)-lossP(a));
     const gRows=panelDoors.map(d=>{
@@ -1415,7 +1430,7 @@ class Component extends DCLogic {
     const gPanelTitle='VACANT IN '+periodLab.toUpperCase();
     const gPanelSub=pDoors.length+' propert'+(pDoors.length===1?'y':'ies')+' · '+fK(pTotal)+' lost · click a row for every vacancy period';
     const gEmpty=gRows.length===0,gEmptyTxt=gqq?'Nothing matches this search.':'No vacancy '+(periodLab==='ITD'?'on record':'in '+periodLab)+' for this scope.';
-    const gPanelFoot='Income after fixed costs = rent − statutory (tax·ins·HOA) − interest, from the '+(V.glMonths?V.glMonths.length:5)+'-month ledger ÷ months. Months to recover = period loss ÷ that income. Expand a row to see every vacancy period, including one that is still empty now. Deep links open the same door on P&L / Balance Sheet / Loans / Cash Flow / Transactions.';
+    const gPanelFoot='Income after fixed costs = rent − statutory (tax·ins·HOA) − interest, from the '+(glMonths.length||5)+'-month ledger ÷ months. Months to recover = period loss ÷ that income. Deep links open the same door on P&L / Balance Sheet / Loans / Cash Flow / Transactions — pre-filtered to the months you picked where those pages have data.';
     const gTotOn=pDoors.length>0;
     const gTotTitle='VACANCY IN '+periodLab.toUpperCase()+', IN TOTAL';
     const gTotSub=pDoors.length+' propert'+(pDoors.length===1?'y':'ies')+' · dig into any on the right';
@@ -1429,21 +1444,21 @@ class Component extends DCLogic {
       {k:'Median turn',v:med+'d',col:med<=tgt?GREEND:AMBER},
     ];
 
-    // ── aging (current) ──
+    // ── aging (current, as-of today) ──
     const AGL=['0–30 DAYS','31–60 DAYS','61–90 DAYS','90+ DAYS'];
     const agC=[0,0,0,0],agL=[0,0,0,0];
     current.forEach(c=>{const b=c.days<=30?0:c.days<=60?1:c.days<=90?2:3;agC[b]++;agL[b]+=c.loss;});
     const maxAg=Math.max(1,...agC);
     const vAgTiles=AGL.map((k,bi)=>({k,v:String(agC[bi]),n:agC[bi]?fK(agL[bi])+' lost':'—',kc:bi>=2?REDD:GOLDD,col:bi>=2?REDD:NAVY,bg:S.vBkt===bi?'#FBF0EA':'#FFFFFF',bd:S.vBkt===bi?'#C9A45C':'#EDE9DF',barC:bi>=2?REDD:GOLD,shareW:Math.round(agC[bi]/maxAg*100)+'%',onClick:()=>this.setState({vBkt:S.vBkt===bi?null:bi}),tip:AGL[bi]+' vacant: '+agC[bi]+' door(s), '+fK(agL[bi])+' lost so far.'}));
     const vAgLab='HOW LONG THE CURRENT EMPTIES HAVE SAT — click a band';
-    const vAgNote=current.length?'The 90+ band is where re-leasing effort should concentrate.':'No doors are vacant right now in this scope.';
+    const vAgNote=current.length?'Current empties, as of '+prettyISO(HOR)+' (not period-bound). The 90+ band is where re-leasing effort should concentrate.':'No doors are vacant right now in this scope.';
     const vDrillOn=S.vBkt!==null&&S.vBkt!==undefined;
     let vDrillLab='',vDrillSum='',vDrillRows=[];
     if(vDrillOn){const b=S.vBkt,rows=current.filter(c=>{const bb=c.days<=30?0:c.days<=60?1:c.days<=90?2:3;return bb===b;});
       vDrillLab=AGL[b]+' — '+rows.length+' door'+(rows.length!==1?'s':'');vDrillSum=fK(sum(rows.map(r=>r.loss)))+' lost so far';
       vDrillRows=rows.map(c=>({door:c.door,since:'empty since '+prettyISO(c.since),days:c.days+' days',rent:c.rent?fN(c.rent)+'/mo at risk':'',loss:fN(c.loss),plHref:plH(c.door),bsHref:bsH(c.door),lnHref:lnH(c.door),cfHref:cfH(c.door),txHref:txH(c.door)}));}
 
-    // ── fill these first (expandable) ──
+    // ── fill these first (current empties) ──
     const maxCurDays=Math.max(1,...current.map(c=>c.days));
     const vFocusLab='Fill these first — doors empty right now';
     const vFocusCap=current.length?current.length+' vacant · '+fK(curRent)+'/mo at risk':'all filled';
@@ -1462,10 +1477,40 @@ class Component extends DCLogic {
         last:lv?{period:prettyISO(lv.s)+' → '+prettyISO(lv.e),fill:lv.days+' days to fill',filledBy:'re-let '+prettyISO(lv.filledBy),loss:fN(lv.loss)}:{period:'—',fill:'',filledBy:'',loss:''},
         plHref:plH(c.door),bsHref:bsH(c.door),lnHref:lnH(c.door),cfHref:cfH(c.door),txHref:txH(c.door)};});
     const vFocusEmpty=current.length===0,vFocusEmptyTxt='Every owned door in this scope is occupied — nothing to fill.';
-    const vFocusFoot=current.length?'Expand a door for its income after fixed costs, months-to-recover, and its last completed vacancy (days it took to fill) — the sensitivity read. Sold and on-hold doors are never counted here.':'';
+    const vFocusFoot=current.length?'Doors empty right now (as-of, not period-bound). Expand for income after fixed costs, months-to-recover, and the last completed vacancy. Sold and on-hold doors are never counted.':'';
 
-    // ── turn-time (tiles clickable → the turns behind each) ──
-    const allGaps=[];keys.forEach(d=>(D[d].gaps||[]).forEach(g=>allGaps.push({door:d,entity:D[d].entity,days:g.days,when:prettyISO(g.s)+' → '+prettyISO(g.e),loss:g.loss})));
+    // ── roster (period-reactive: loss/days/turnover all scoped to the selected months) ──
+    const vSort=['loss','days','turnover','current','az'].includes(S.vSort)?S.vSort:'loss';
+    let roster=keys.filter(d=>lossP(d)>0||spellsInP(d).length>0||turnInP(d).length>0).map(d=>({d,e:D[d].entity,loss:lossP(d),days:pDays(d),vac:spellsInP(d).length,turn:turnInP(d).length,cur:D[d].current?D[d].current.days:0,nLeases:D[d].nLeases,distinct:D[d].distinctTenants}));
+    const cmp={loss:(a,b)=>b.loss-a.loss,days:(a,b)=>b.days-a.days,turnover:(a,b)=>(b.vac-a.vac)||(b.turn-a.turn)||(b.days-a.days),current:(a,b)=>(b.cur-a.cur)||(b.loss-a.loss),az:(a,b)=>a.d.localeCompare(b.d)}[vSort];
+    roster.sort(cmp);
+    const vq=(S.vq||'').trim().toLowerCase(),rosterF=vq?roster.filter(r=>r.d.toLowerCase().includes(vq)||(r.e||'').toLowerCase().includes(vq)):roster,CAP=10;
+    const showAll=!!(S.vAll||vq);
+    const shown=showAll?rosterF:rosterF.slice(0,CAP);
+    const metricOf={loss:r=>r.loss,days:r=>r.days,turnover:r=>r.vac,current:r=>r.cur,az:r=>r.loss}[vSort];
+    const maxMetric=Math.max(1,...rosterF.map(metricOf));
+    const barColOf=vSort==='turnover'?RED:vSort==='current'?AMBER:vSort==='days'?GOLDD:REDD;
+    const metricLabOf=r=>vSort==='days'?r.days+'d empty':vSort==='turnover'?r.vac+'× vacant':vSort==='current'?(r.cur?r.cur+'d now':'—'):fN(r.loss);
+    const sortDef=[{k:'loss',l:'BIGGEST LOSS'},{k:'turnover',l:'MOST TURNOVER'},{k:'days',l:'MOST DAYS'},{k:'current',l:'VACANT NOW'},{k:'az',l:'A–Z'}];
+    const vSortChips=sortDef.map(s=>({label:s.l,onClick:()=>this.setState({vSort:s.k,vAll:false}),bg:vSort===s.k?'#0E1830':'#FFFFFF',col:vSort===s.k?'#E9EDF5':'#5E6B82',bd:vSort===s.k?'#0E1830':'#D8D4C8'}));
+    const vRows=shown.map(r=>{const isO=S.vExp===r.d,ho=turnInP(r.d);
+      return{d:r.d,entity:r.e,curLab:D[r.d].current?'empty '+D[r.d].current.days+'d now':(r.nLeases+' lease'+(r.nLeases!==1?'s':''))+' · '+(r.distinct||0)+' tenants',
+        hasBadge:!!D[r.d].current,badge:D[r.d].current?D[r.d].current.days+'D VACANT':'',
+        metric:metricLabOf(r),barW:Math.round(metricOf(r)/maxMetric*100)+'%',barC:barColOf,
+        sub:r.vac+'× vacant · '+r.turn+' tenant change'+(r.turn===1?'':'s')+' · '+r.days+'d empty · '+fN(r.loss)+' lost · in '+periodLab,
+        exTog:isO?'▾':'▸',open:isO,onClick:()=>this.setState({vExp:isO?null:r.d}),
+        gaps:spellsInP(r.d).map(g=>({when:prettyISO(g.s)+' → '+(g.ongoing?'still empty':prettyISO(g.e)),days:g.days+'d',rent:fN(g.rent)+'/mo',loss:fN(g.loss)})),
+        hasHand:ho.length>0,handoffs:ho.map(h=>({txt:prettyISO(h.on)+': '+(h.from||'—')+'  →  '+(h.to||'—')})),
+        plHref:plH(r.d),bsHref:bsH(r.d),lnHref:lnH(r.d),coHref:coH(r.d),cfHref:cfH(r.d),txHref:txH(r.d)};});
+    const vRosterLab='Vacancy & turnover roster — every door that sat empty in '+periodLab;
+    const sortName={loss:'biggest loss',days:'most days empty',turnover:'most turnover (vacancy count)',current:'vacant now',az:'name'}[vSort];
+    const vRosterCap=rosterF.length+' doors in '+periodLab+' · sorted by '+sortName;
+    const vRosterLegend='Reacts to the SCOPE month filter — everything here is for '+periodLab+'. Bar = '+sortName+'. Each door expands to its vacancy periods (dates · days-to-fill · loss) and its tenant hand-offs in the window.';
+    const vRosMaxH=(showAll&&shown.length>12)?'560px':'none';
+    const vMoreShow=!S.vAll&&!vq&&rosterF.length>CAP,vMoreLab='Show all '+rosterF.length+' doors ▾';
+    const vRosterFoot='Ranked worst-first for '+periodLab+'. A door that keeps emptying carries re-leasing cost even when each gap is cheap — that is where lease-renewal effort pays back most.';
+
+    // ── turn-time (period-reactive: only turns whose gaps fell in the window) ──
     const p90=pctl(0.9),slowest=turns.length?turns[turns.length-1]:0;
     const turnDef=[{k:'median',K:'MEDIAN',v:med+'d',sub:'target '+tgt+'d',col:med<=tgt?GREEND:AMBER},
       {k:'avg',K:'AVERAGE',v:avg+'d',sub:turns.length+' turns',col:NAVY},
@@ -1473,105 +1518,72 @@ class Component extends DCLogic {
       {k:'slowest',K:'SLOWEST',v:slowest+'d',sub:'worst single turn',col:REDD}];
     const vTurnSel=['median','avg','p90','slowest'].includes(S.vTurnSel)?S.vTurnSel:null;
     const vTurnTiles=turnDef.map(t=>({k:t.K,v:t.v,sub:t.sub,col:t.col,bg:vTurnSel===t.k?'#FBF0EA':'#FBFAF6',bd:vTurnSel===t.k?'#C9A45C':'#EDE9DF',onClick:()=>this.setState({vTurnSel:vTurnSel===t.k?null:t.k})}));
-    const vTurnLab='Turn-time — how fast empties get re-leased';
-    const vTurnCap=turns.length+' completed turns · click a tile for the turns behind it';
+    const vTurnLab='Turn-time — how fast empties got re-leased in '+periodLab;
+    const vTurnCap=turns.length+' completed turns in '+periodLab+' · click a tile for the turns behind it';
     let vTurnDrillOn=false,vTurnDrillLab='',vTurnDrillSum='',vTurnRows=[];
-    if(vTurnSel){vTurnDrillOn=true;let list=allGaps.slice();
+    if(vTurnSel){vTurnDrillOn=true;let list=periodGaps.slice();
       if(vTurnSel==='p90')list=list.filter(g=>g.days>=p90);
-      if(vTurnSel==='slowest'||vTurnSel==='p90')list.sort((a,b)=>b.days-a.days);
-      else if(vTurnSel==='median')list.sort((a,b)=>a.days-b.days);
-      else list.sort((a,b)=>b.days-a.days);
+      if(vTurnSel==='median')list.sort((a,b)=>a.days-b.days);else list.sort((a,b)=>b.days-a.days);
       const label={median:'ALL TURNS — SHORTEST FIRST (median '+med+'d)',avg:'ALL TURNS (average '+avg+'d)',p90:'THE SLOW TAIL — TURNS ≥ '+p90+'D',slowest:'LONGEST TURNS FIRST'}[vTurnSel];
-      vTurnDrillLab=label;vTurnDrillSum=list.length+' turn'+(list.length!==1?'s':'');
+      vTurnDrillLab=label;vTurnDrillSum=list.length+' turn'+(list.length!==1?'s':'')+' in '+periodLab;
       vTurnRows=list.slice(0,20).map(g=>({door:g.door,entity:g.entity,when:g.when,days:g.days+'d',loss:fN(g.loss),plHref:plH(g.door),coHref:coH(g.door),cfHref:cfH(g.door),txHref:txH(g.door)}));}
-    const vTurnFoot='Median is the typical re-lease speed; the 90th-percentile and slowest tiles surface the long tail — 318 Lincoln and 142 Bremer sit there. Sold and on-hold doors are excluded.';
+    const vTurnFoot='Only turns that fell in '+periodLab+'. Median is the typical re-lease speed; the 90th-percentile and slowest tiles surface the long tail. Sold and on-hold doors are excluded.';
 
-    // ── roster (vacancy + turnover/stability merged; ALL doors; per-period incl. the ongoing spell) ──
-    const vSort=['loss','days','turnover','current','az'].includes(S.vSort)?S.vSort:'loss';
-    let roster=keys.filter(d=>D[d].totalLoss>0||(D[d].vacancyCount||0)>0).map(d=>Object.assign({d},D[d]));
-    const cmp={loss:(a,b)=>b.totalLoss-a.totalLoss,days:(a,b)=>b.totalDays-a.totalDays,
-      turnover:(a,b)=>(b.vacancyCount-a.vacancyCount)||((b.renTurnover||0)-(a.renTurnover||0))||(b.totalDays-a.totalDays),
-      current:(a,b)=>((b.current?b.current.days:0)-(a.current?a.current.days:0))||(b.totalLoss-a.totalLoss),
-      az:(a,b)=>a.d.localeCompare(b.d)}[vSort];
-    roster.sort(cmp);
-    const vq=(S.vq||'').trim().toLowerCase(),rosterF=vq?roster.filter(r=>r.d.toLowerCase().includes(vq)||(r.entity||'').toLowerCase().includes(vq)):roster,CAP=10;
-    const showAll=!!(S.vAll||vq);
-    const shown=showAll?rosterF:rosterF.slice(0,CAP);
-    const metricOf={loss:r=>r.totalLoss,days:r=>r.totalDays,turnover:r=>(r.vacancyCount||0),current:r=>(r.current?r.current.days:0),az:r=>r.totalLoss}[vSort];
-    const maxMetric=Math.max(1,...rosterF.map(metricOf));
-    const barColOf=vSort==='turnover'?RED:vSort==='current'?AMBER:vSort==='days'?GOLDD:REDD;
-    const metricLabOf=r=>vSort==='days'?r.totalDays+'d empty':vSort==='turnover'?(r.vacancyCount||0)+'× vacant':vSort==='current'?(r.current?r.current.days+'d now':'—'):fN(r.totalLoss);
-    const sortDef=[{k:'loss',l:'BIGGEST LOSS'},{k:'turnover',l:'MOST TURNOVER'},{k:'days',l:'MOST DAYS'},{k:'current',l:'VACANT NOW'},{k:'az',l:'A–Z'}];
-    const vSortChips=sortDef.map(s=>({label:s.l,onClick:()=>this.setState({vSort:s.k,vAll:false}),bg:vSort===s.k?'#0E1830':'#FFFFFF',col:vSort===s.k?'#E9EDF5':'#5E6B82',bd:vSort===s.k?'#0E1830':'#D8D4C8'}));
-    const vRows=shown.map(r=>{const isO=S.vExp===r.d,ho=(r.renHandoffs||[]);
-      return{d:r.d,entity:r.entity,curLab:r.current?'empty '+r.current.days+'d now':(r.nLeases+' lease'+(r.nLeases!==1?'s':''))+' · '+(r.distinctTenants||0)+' tenants',
-        hasBadge:!!r.current,badge:r.current?r.current.days+'D VACANT':'',
-        metric:metricLabOf(r),barW:Math.round(metricOf(r)/maxMetric*100)+'%',barC:barColOf,
-        sub:(r.vacancyCount||0)+'× vacant · '+(r.renTurnover||0)+' tenant change'+((r.renTurnover||0)===1?'':'s')+' · '+r.totalDays+'d empty · '+fN(r.totalLoss)+' lost',
-        exTog:isO?'▾':'▸',open:isO,onClick:()=>this.setState({vExp:isO?null:r.d}),
-        gaps:spellsOf(r.d).map(g=>({when:prettyISO(g.s)+' → '+(g.ongoing?'still empty':prettyISO(g.e)),days:g.days+'d',rent:fN(g.rent)+'/mo',loss:fN(g.loss)})),
-        hasHand:ho.length>0,handoffs:ho.map(h=>({txt:prettyISO(h.on)+': '+(h.from||'—')+'  →  '+(h.to||'—')})),
-        plHref:plH(r.d),bsHref:bsH(r.d),lnHref:lnH(r.d),coHref:coH(r.d),cfHref:cfH(r.d),txHref:txH(r.d)};});
-    const vRosterLab='Vacancy & turnover roster — every door that has sat empty';
-    const sortName={loss:'biggest loss',days:'most days empty',turnover:'most turnover (vacancy count)',current:'vacant now',az:'name'}[vSort];
-    const vRosterCap=rosterF.length+' doors · sorted by '+sortName;
-    const vRosterLegend='Bar length = '+sortName+'. Each door expands to its vacancy periods (dates · days-to-fill · loss, including one that is still empty now) and its tenant hand-offs. Turnover = number of times a different tenant took over.';
-    const vRosMaxH=(showAll&&shown.length>12)?'560px':'none';
-    const vMoreShow=!S.vAll&&!vq&&rosterF.length>CAP,vMoreLab='Show all '+rosterF.length+' doors ▾';
-    const vRosterFoot='Ranked so the worst offenders sit on top. A door that keeps emptying (high turnover) carries re-leasing cost even when each gap is cheap — that is where lease-renewal effort pays back most.';
-
-    // ── renewals ──
+    // ── renewals (rate/renewed/turnover period-reactive; due & pending are forward-looking) ──
     const REN=V.renewals||{},balMonths=REN.balMonths||[];
+    const pRenewed=sum(keys.map(d=>renInP(d).length)),pTurn=sum(keys.map(d=>turnInP(d).length));
+    const pRate=(pRenewed+pTurn)?Math.round(pRenewed/(pRenewed+pTurn)*1000)/10:0;
+    const pEmbedded=sum(keys.map(d=>renInP(d).filter(e=>e.kind!=='new-row').length)),pCross=pRenewed-pEmbedded;
     const dueAll=(REN.due||[]).filter(x=>pass(x.door));
+    const pendCount=sum(keys.map(d=>D[d].pendingCount||0));
     const vcolF=v=>v==='RENEW'?GREEND:v==='WATCH'?AMBER:v==="DON'T RENEW"?REDD:'#8A93A6';
     const vbgF=v=>v==='RENEW'?'#EEF6F0':v==='WATCH'?'#FBF6EA':v==="DON'T RENEW"?'#FBF0EA':'#F4F2EA';
-    const rate=REN.ratePct||0;
     const cardOf=k=>S.vRenCard===k;
     const setCard=k=>()=>this.setState({vRenCard:cardOf(k)?null:k,vRenCardExp:null});
     const vRenTiles=[
-      {key:'rate',k:'LEASE RENEWAL RATE',v:rate+'%',sub:(REN.renewed||0)+' renewed / '+(REN.decisionPoints||0)+' decisions',col:rate>=70?GREEND:rate>=50?AMBER:REDD,bg:cardOf('rate')?'#FBF0EA':'#FBFAF6',bd:cardOf('rate')?'#C9A45C':'#EDE9DF',onClick:setCard('rate')},
-      {key:'renewed',k:'RENEWED',v:String(REN.renewed||0),sub:(REN.embedded||0)+' same-lease · '+(REN.crossRow||0)+' new-lease',col:GREEND,bg:cardOf('renewed')?'#EEF6F0':'#FBFAF6',bd:cardOf('renewed')?'#9CC7AC':'#EDE9DF',onClick:setCard('renewed')},
-      {key:'turnover',k:'TURNOVER',v:String(REN.turnover||0),sub:'a different tenant took over',col:REDD,bg:cardOf('turnover')?'#FBF0EA':'#FBFAF6',bd:cardOf('turnover')?'#DDB1A4':'#EDE9DF',onClick:setCard('turnover')},
-      {key:'due',k:'DUE ≤ '+(V.targets&&V.targets.dueWindow||120)+'D',v:String(dueAll.length),sub:'active leases coming up',col:NAVY,bg:cardOf('due')?'#EEF1F6':'#FBFAF6',bd:cardOf('due')?'#A9B6CC':'#EDE9DF',onClick:setCard('due')},
-      {key:'pending',k:'PENDING',v:String(REN.pending||0),sub:'active, not yet decided',col:MUT,bg:cardOf('pending')?'#F1EFF4':'#FBFAF6',bd:cardOf('pending')?'#BDB6C9':'#EDE9DF',onClick:setCard('pending')},
+      {key:'rate',k:'RENEWAL RATE · '+periodLab,v:pRate+'%',sub:pRenewed+' renewed / '+(pRenewed+pTurn)+' decisions',col:pRate>=70?GREEND:pRate>=50?AMBER:REDD,bg:cardOf('rate')?'#FBF0EA':'#FBFAF6',bd:cardOf('rate')?'#C9A45C':'#EDE9DF',onClick:setCard('rate')},
+      {key:'renewed',k:'RENEWED · '+periodLab,v:String(pRenewed),sub:pEmbedded+' same-lease · '+pCross+' new-lease',col:GREEND,bg:cardOf('renewed')?'#EEF6F0':'#FBFAF6',bd:cardOf('renewed')?'#9CC7AC':'#EDE9DF',onClick:setCard('renewed')},
+      {key:'turnover',k:'TURNOVER · '+periodLab,v:String(pTurn),sub:'a different tenant took over',col:REDD,bg:cardOf('turnover')?'#FBF0EA':'#FBFAF6',bd:cardOf('turnover')?'#DDB1A4':'#EDE9DF',onClick:setCard('turnover')},
+      {key:'due',k:'DUE ≤ '+(V.targets&&V.targets.dueWindow||120)+'D',v:String(dueAll.length),sub:'upcoming (not period-bound)',col:NAVY,bg:cardOf('due')?'#EEF1F6':'#FBFAF6',bd:cardOf('due')?'#A9B6CC':'#EDE9DF',onClick:setCard('due')},
+      {key:'pending',k:'PENDING',v:String(pendCount),sub:'active, not yet decided',col:MUT,bg:cardOf('pending')?'#F1EFF4':'#FBFAF6',bd:cardOf('pending')?'#BDB6C9':'#EDE9DF',onClick:setCard('pending')},
     ];
     let vRenCardOn=false,vCardLab='',vCardSum='',vCardRows=[],vCardFoot='';
     const cardKey=S.vRenCard;
     if(cardKey){vRenCardOn=true;const exp=S.vRenCardExp;
       if(cardKey==='renewed'||cardKey==='rate'){
-        const list=keys.filter(d=>(D[d].renCount||0)>0).sort((a,b)=>(D[b].renCount||0)-(D[a].renCount||0));
-        vCardLab=(cardKey==='rate'?'DOORS WE KEPT — RENEWALS BY PROPERTY':'RENEWED — BY PROPERTY');
-        vCardSum=list.length+' propert'+(list.length===1?'y':'ies')+' · '+sum(list.map(d=>D[d].renCount||0))+' renewals';
-        vCardRows=list.map(d=>{const dd=D[d],isO=exp===d;return{key:d,door:d,entity:dd.entity,metric:(dd.renCount||0)+' renewal'+((dd.renCount||0)===1?'':'s'),col:GREEND,
+        const list=keys.filter(d=>renInP(d).length>0).sort((a,b)=>renInP(b).length-renInP(a).length);
+        vCardLab=(cardKey==='rate'?'DOORS WE KEPT — RENEWALS BY PROPERTY · '+periodLab:'RENEWED — BY PROPERTY · '+periodLab);
+        vCardSum=list.length+' propert'+(list.length===1?'y':'ies')+' · '+pRenewed+' renewals';
+        vCardRows=list.map(d=>{const isO=exp===d,ev=renInP(d);return{key:d,door:d,entity:D[d].entity,metric:ev.length+' renewal'+(ev.length===1?'':'s'),col:GREEND,
           exTog:isO?'▾':'▸',open:isO,onClick:()=>this.setState({vRenCardExp:isO?null:d}),
-          events:(dd.renEvents||[]).slice().sort((a,b)=>a.on<b.on?1:-1).map(e=>({txt:prettyISO(e.on)+' · '+(e.tenant||'—')+' · '+(e.kind==='new-row'?'new lease row':'term extended')})),
+          events:ev.slice().sort((a,b)=>a.on<b.on?1:-1).map(e=>({txt:prettyISO(e.on)+' · '+(e.tenant||'—')+' · '+(e.kind==='new-row'?'new lease row':'term extended')})),
           plHref:plH(d),coHref:coH(d),cfHref:cfH(d),txHref:txH(d)};});
-        vCardFoot='Each renewal is one anniversary the same tenant stayed for — inside a multi-year term or via a new lease row. Click a property to see every one.';
+        vCardFoot='Each renewal is one anniversary the same tenant stayed for, dated in '+periodLab+'. Click a property to see every one.';
       } else if(cardKey==='turnover'){
-        const list=keys.filter(d=>(D[d].renTurnover||0)>0).sort((a,b)=>(D[b].renTurnover||0)-(D[a].renTurnover||0));
-        vCardLab='TURNOVER — BY PROPERTY';vCardSum=list.length+' propert'+(list.length===1?'y':'ies')+' · '+sum(list.map(d=>D[d].renTurnover||0))+' tenant changes';
-        vCardRows=list.map(d=>{const dd=D[d],isO=exp===d;return{key:d,door:d,entity:dd.entity,metric:(dd.renTurnover||0)+' change'+((dd.renTurnover||0)===1?'':'s'),col:REDD,
+        const list=keys.filter(d=>turnInP(d).length>0).sort((a,b)=>turnInP(b).length-turnInP(a).length);
+        vCardLab='TURNOVER — BY PROPERTY · '+periodLab;vCardSum=list.length+' propert'+(list.length===1?'y':'ies')+' · '+pTurn+' tenant changes';
+        vCardRows=list.map(d=>{const isO=exp===d,ho=turnInP(d);return{key:d,door:d,entity:D[d].entity,metric:ho.length+' change'+(ho.length===1?'':'s'),col:REDD,
           exTog:isO?'▾':'▸',open:isO,onClick:()=>this.setState({vRenCardExp:isO?null:d}),
-          events:(dd.renHandoffs||[]).slice().sort((a,b)=>a.on<b.on?1:-1).map(h=>({txt:prettyISO(h.on)+': '+(h.from||'—')+'  →  '+(h.to||'—')})),
+          events:ho.slice().sort((a,b)=>a.on<b.on?1:-1).map(h=>({txt:prettyISO(h.on)+': '+(h.from||'—')+'  →  '+(h.to||'—')})),
           plHref:plH(d),coHref:coH(d),cfHref:cfH(d),txHref:txH(d)};});
-        vCardFoot='A turnover is a lease ending where a different tenant took over. Each carries a re-leasing gap — cross-check the roster above.';
+        vCardFoot='A turnover is a lease ending in '+periodLab+' where a different tenant took over.';
       } else if(cardKey==='pending'){
         const list=keys.filter(d=>(D[d].pendingCount||0)>0).sort((a,b)=>(D[b].pendingCount||0)-(D[a].pendingCount||0));
         vCardLab='PENDING — ACTIVE LEASES NOT YET DECIDED, BY PROPERTY';vCardSum=list.length+' propert'+(list.length===1?'y':'ies')+' · '+sum(list.map(d=>D[d].pendingCount||0))+' active leases';
-        vCardRows=list.map(d=>{const dd=D[d],isO=exp===d;return{key:d,door:d,entity:dd.entity,metric:(dd.pendingCount||0)+' active lease'+((dd.pendingCount||0)===1?'':'s'),col:MUT,
+        vCardRows=list.map(d=>{const isO=exp===d;return{key:d,door:d,entity:D[d].entity,metric:(D[d].pendingCount||0)+' active lease'+((D[d].pendingCount||0)===1?'':'s'),col:MUT,
           exTog:isO?'▾':'▸',open:isO,onClick:()=>this.setState({vRenCardExp:isO?null:d}),
-          events:[{txt:'Renewal decision lands when the current term ends — see Due for renewal below when within '+(V.targets&&V.targets.dueWindow||120)+' days.'}],
+          events:[{txt:'Renewal decision lands when the current term ends — forward-looking, not tied to '+periodLab+'.'}],
           plHref:plH(d),coHref:coH(d),cfHref:cfH(d),txHref:txH(d)};});
-        vCardFoot='Active leases whose term has not yet ended — no renew/turnover decision has been reached.';
+        vCardFoot='Active leases whose term has not yet ended — forward-looking, independent of the selected period.';
       } else if(cardKey==='due'){
         const byDoor={};dueAll.forEach(x=>{(byDoor[x.door]=byDoor[x.door]||[]).push(x);});
         const list=Object.keys(byDoor).sort((a,b)=>byDoor[b].length-byDoor[a].length||a.localeCompare(b));
         vCardLab='DUE FOR RENEWAL — BY PROPERTY';vCardSum=list.length+' propert'+(list.length===1?'y':'ies')+' · '+dueAll.length+' lease'+(dueAll.length===1?'':'s')+' within '+(V.targets&&V.targets.dueWindow||120)+'d';
-        vCardRows=list.map(d=>{const dd=D[d],isO=exp===d,items=byDoor[d];return{key:d,door:d,entity:dd.entity,metric:items.length+' due',col:NAVY,
+        vCardRows=list.map(d=>{const isO=exp===d,items=byDoor[d];return{key:d,door:d,entity:D[d].entity,metric:items.length+' due',col:NAVY,
           exTog:isO?'▾':'▸',open:isO,onClick:()=>this.setState({vRenCardExp:isO?null:d}),
           events:items.slice().sort((a,b)=>a.daysToDue-b.daysToDue).map(it=>({txt:(it.tenant||'—')+' · due in '+it.daysToDue+'d ('+prettyISO(it.dueDate)+') · '+it.verdict})),
           plHref:plH(d),coHref:coH(d),cfHref:cfH(d),txHref:txH(d)};});
-        vCardFoot='The full payment-record read for each of these tenants is in the Due for renewal list below.';
+        vCardFoot='Upcoming renewals (next '+(V.targets&&V.targets.dueWindow||120)+' days) — forward-looking, not period-bound. Full read in the list below.';
       }
     }
     const DUECAP=6;
@@ -1602,23 +1614,22 @@ class Component extends DCLogic {
           {k:'Lease',v:prettyISO(x.leaseStart)+' → '+prettyISO(x.leaseEnd),col:INK},
         ]:[],
         plHref:plH(x.door),coHref:coH(x.door),cfHref:cfH(x.door),txHref:txH(x.door)};});
-    const vRenLab='Renewals — retention, and whether we retained the right tenants';
-    const vRenSub='standard term 1 yr · multi-year leases are already-renewed (term-split) · tap a card to see its properties · verdict reads the '+(balMonths.length||5)+'-month balance';
-    const vRenMethod='A renewal = the same tenant continuing — whether the lease term was extended on the same row OR a new lease row was created for them (matched on name, so a co-tenant added or dropped still counts as a renewal). A different tenant taking over is a turnover. Leases are keyed to their real unit, so a building whose units are filed under one index (e.g. the Gardner St B cluster) no longer shows several tenants as one door’s renewals. Rate = renewed ÷ (renewed + turnover); at-will/open-ended leases ('+(REN.atwill||0)+') and not-yet-expired leases are held aside. Row-level reading: '+(REN.rowLevel?REN.rowLevel.ratePct:0)+'%. Tap any card above to drill into the properties behind it.';
+    const vRenLab='Renewals — retention in '+periodLab+', and whether we kept the right tenants';
+    const vRenSub='rate/renewed/turnover are for '+periodLab+' (tap a card for the properties) · due & pending are forward-looking · verdict reads the '+(balMonths.length||5)+'-month balance';
+    const vRenMethod='A renewal = the same tenant continuing (same row extended OR a new lease row — fuzzy name match, so a co-tenant added/dropped still counts). A different tenant taking over is a turnover. Leases are keyed to their real unit (the Gardner St B cluster no longer conflates tenants). The RATE / RENEWED / TURNOVER cards count events dated in '+periodLab+'; DUE and PENDING are forward-looking. Rate = renewed ÷ (renewed + turnover). Tap any card to drill into the properties.';
     const vDueLab='Due for renewal — decide, with the month-end balance record';
-    const vDueCap=dueAll.length+' active lease'+(dueAll.length!==1?'s':'')+' ending within '+(V.targets&&V.targets.dueWindow||120)+' days';
+    const vDueCap=dueAll.length+' active lease'+(dueAll.length!==1?'s':'')+' ending within '+(V.targets&&V.targets.dueWindow||120)+' days (forward-looking)';
     const vDueEmpty=dueAll.length===0,vDueEmptyTxt='No leases coming up for renewal in this scope within the window.';
     const vDueMaxH=(dueShownAll&&dueShown.length>8)?'640px':'none';
     const vDueMoreShow=!S.vDueAll&&dueAll.length>DUECAP,vDueMoreLab='Show all '+dueAll.length+' due ▾';
     const vc=Object.assign({RENEW:0,WATCH:0,"DON'T RENEW":0,'NO DATA':0},{});dueAll.forEach(x=>{vc[x.verdict]=(vc[x.verdict]||0)+1;});
-    const vRenFoot='Verdict comes ONLY from the tenant’s month-end closing balance (owner rule): RENEW = clears to about zero each month; WATCH = carries roughly a month of rent; DON’T RENEW = a balance that keeps building. Bounced-payment (NSF) counts are shown for information but no longer drive the call. Verdicts here: '+vc['RENEW']+' renew · '+vc['WATCH']+' watch · '+vc["DON'T RENEW"]+" don't renew"+(vc['NO DATA']?' · '+vc['NO DATA']+' no data':'')+'. Based on '+(balMonths.length||5)+' months; deepens as more history lands.';
+    const vRenFoot='Verdict comes ONLY from the tenant’s month-end closing balance (owner rule): RENEW = clears to about zero each month; WATCH = carries roughly a month of rent; DON’T RENEW = a balance that keeps building. NSF counts are shown for info but no longer drive the call. Verdicts here: '+vc['RENEW']+' renew · '+vc['WATCH']+' watch · '+vc["DON'T RENEW"]+" don't renew"+(vc['NO DATA']?' · '+vc['NO DATA']+' no data':'')+'.';
 
     // ── flags ──
     const vFlagLab='DATA FLAGS';
     const vFlagRows=(V.missingLease||[]).filter(m=>!eSet.size||eSet.has(m.entity)).map(m=>({door:m.door,note:'Rented and earning on the GL, but has no rows in Leases.csv — add its leases so vacancy can be measured.',plHref:plH(m.door)}));
-    const exN=(V.excluded||[]).length;
-    const rerN=(V.reroutedLeases||[]).length;
-    const vExclLine=exN+' door'+(exN!==1?'s':'')+' excluded from vacancy entirely (on-hold, office or non-rental): '+(V.excluded||[]).map(e=>e.door).join(' · ')+'. Sold and held-for-sale doors stop accruing vacancy at their exit date.'+(rerN?' '+rerN+' lease'+(rerN!==1?'s':'')+' filed under one index were routed to their real unit (Gardner St B), so 3427-B / 3429-B now measure correctly and only genuinely lease-less doors would flag above.':'');
+    const exN=(V.excluded||[]).length,rerN=(V.reroutedLeases||[]).length;
+    const vExclLine=exN+' door'+(exN!==1?'s':'')+' excluded from vacancy entirely (on-hold, office or non-rental): '+(V.excluded||[]).map(e=>e.door).join(' · ')+'. Sold and held-for-sale doors stop accruing vacancy at their exit date.'+(rerN?' '+rerN+' lease'+(rerN!==1?'s':'')+' were routed to their real unit (Gardner St B), so 3427-B / 3429-B measure correctly.':'');
 
     return {showVac,showLoss,tabChips,tabHint,vScopeLine,vReady:true,vPending:false,vErr:false,vRetry:()=>this.loadVac(),
       vKpis,vHeadLab,vHead,vHeadCap,vHeroSub,vTgtVal:S.vTgt||'30',onVTgt:e=>this.setState({vTgt:e.target.value}),vReconLine,
@@ -1770,8 +1781,24 @@ class Component extends DCLogic {
       label: key === 'fm' ? mmyy(v) : v, n: nOf ? nOf(v) : '', check: S[key].includes(v) ? '✓' : '',
       fw: S[key].includes(v) ? 700 : 500, bg: S[key].includes(v) ? '#FBF6EA' : 'transparent', onClick: togList(key, v),
     }));
+    // MONTH filter is tab-aware: inception-wide (year rows + months) on Vacancy; the 5-month cf window on Collection Loss
+    const vacOn = S.tab === 'vacancy' && S.vac && S.vac.months && S.vac.months.length;
+    const vMonths = vacOn ? S.vac.months : MO;
+    const vYears = [...new Set(vMonths.map(m => m.slice(0, 4)))].sort();
+    const fmSet0 = new Set(S.fm || []);
+    const togMonthF = mk => () => { const cur = new Set(S.fm); cur.has(mk) ? cur.delete(mk) : cur.add(mk); this.setF({ fm: [...cur].sort() }); };
+    const togYearF = y => () => { const cur = new Set(S.fm); const ym = vMonths.filter(m => m.slice(0, 4) === y); const full = ym.every(m => cur.has(m)); ym.forEach(m => full ? cur.delete(m) : cur.add(m)); this.setF({ fm: [...cur].sort() }); };
+    const vacMonthOpts = [];
+    for (const y of vYears) {
+      const ym = vMonths.filter(m => m.slice(0, 4) === y);
+      const full = ym.every(m => fmSet0.has(m)), any = ym.some(m => fmSet0.has(m));
+      vacMonthOpts.push({ label: y + ' — whole year', n: ym.length + ' mo', check: full ? '✓' : (any ? '–' : ''), fw: 800, bg: full ? '#FBF6EA' : (any ? '#FCFAF3' : 'transparent'), onClick: togYearF(y) });
+      for (const mk of ym) vacMonthOpts.push({ label: ' ' + mmyy(mk), n: '', check: fmSet0.has(mk) ? '✓' : '', fw: fmSet0.has(mk) ? 700 : 500, bg: fmSet0.has(mk) ? '#FBF6EA' : 'transparent', onClick: togMonthF(mk) });
+    }
+    const fmMv = (S.fm || []).filter(m => vMonths.includes(m)).sort();
+    const vacMonthVal = (() => { if (!fmMv.length) return 'All months'; const ys = [...new Set(fmMv.map(m => m.slice(0, 4)))].sort(); const full = ys.filter(y => vMonths.filter(m => m.slice(0, 4) === y).every(m => fmMv.includes(m))); if (fmMv.length === 1) return mmyy(fmMv[0]); if (full.length === ys.length) return ys.join(' + '); return mmyy(fmMv[0]) + ' – ' + mmyy(fmMv[fmMv.length - 1]); })();
     const filtDef = [
-      { id: 'MONTH', key: 'fm', label: 'MONTH', all: 'months', w: '190px', search: false, list: MO, nOf: m => '', val: selM.length ? spanLab : 'All months' },
+      { id: 'MONTH', key: 'fm', label: 'MONTH', all: 'months', w: vacOn ? '240px' : '190px', search: false, list: MO, nOf: m => '', val: vacOn ? vacMonthVal : (selM.length ? spanLab : 'All months'), customOpts: vacOn ? vacMonthOpts : null },
       { id: 'ENTITY', key: 'fe', label: 'ENTITY', all: 'entities', w: '230px', search: false, list: entities, nOf: v => entN[v], val: S.fe.length ? (S.fe.length > 2 ? S.fe.length + ' selected' : S.fe.join(', ')) : 'All entities' },
       { id: 'PROPERTY', key: 'fp', label: 'PROPERTY', all: 'properties', w: '300px', search: true, list: doorNames, nOf: v => DOORS[v].entity, val: S.fp.length ? (S.fp.length > 1 ? S.fp.length + ' selected' : S.fp[0]) : 'All properties' },
       { id: 'TENANT', key: 'ft', label: 'TENANT', all: 'tenants', w: '300px', search: true, list: tenantNames, nOf: v => tenantDoor[v] || '', val: S.ft.length ? (S.ft.length > 1 ? S.ft.length + ' selected' : S.ft[0]) : 'All tenants' },
@@ -1786,7 +1813,7 @@ class Component extends DCLogic {
         onClear: () => this.setF({ [f.key]: [] }), allLabel: f.all, allCheck: S[f.key].length ? '' : '✓',
         selAllShow: !!(f.search && q && shown.length && shown.length <= 400), onSelAll: () => { const cur = new Set(S[f.key]); shown.forEach(v => cur.add(v)); this.setF({ [f.key]: [...cur] }); },
         selAllLabel: 'Select all ' + shown.length + ' matching',
-        opts: mkOpts(shown.slice(0, 260), f.key, f.nOf),
+        opts: f.customOpts ? f.customOpts : mkOpts(shown.slice(0, 260), f.key, f.nOf),
       };
     });
     const hasActive = !!(S.fm.length || S.fe.length || S.fp.length || S.ft.length);
