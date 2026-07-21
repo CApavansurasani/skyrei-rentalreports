@@ -144,6 +144,16 @@ input:focus{outline:2px solid #C9A45C;outline-offset:1px}
                 </sc-for>
               </div>
               <div style="font-size:9.5px;color:#9AA3B5;font-style:italic">{{ gYearHint }}</div>
+              <sc-if value="{{ gMonthChipsOn }}" hint-placeholder-val="{{ false }}">
+                <div style="margin-top:2px;display:flex;flex-direction:column;gap:4px">
+                  <div style="font-size:8.5px;letter-spacing:0.06em;font-weight:800;color:#96742F">{{ gMonthLab }}</div>
+                  <div style="display:flex;gap:5px;flex-wrap:wrap">
+                    <sc-for list="{{ gMonthChips }}" as="gmo" hint-placeholder-count="12">
+                      <div onClick="{{ gmo.onClick }}" style-hover="border-color:#C9A45C" style="padding:4px 9px;border-radius:99px;border:1px solid {{ gmo.bd }};background:{{ gmo.bg }};font-size:10px;font-weight:700;color:{{ gmo.col }};cursor:pointer;white-space:nowrap">{{ gmo.label }}</div>
+                    </sc-for>
+                  </div>
+                </div>
+              </sc-if>
             </div>
             <div style="display:flex;gap:6px">
               <sc-for list="{{ gMetChips }}" as="gmc" hint-placeholder-count="2">
@@ -300,20 +310,6 @@ input:focus{outline:2px solid #C9A45C;outline-offset:1px}
           <div style="margin-top:10px;font-size:10.5px;color:#9AA3B5;line-height:1.6">{{ vFocusFoot }}</div>
         </div>
 
-        <!-- Turn-time -->
-        <div style="margin-top:16px;background:#FFFFFF;border:1px solid #E5E3DC;border-radius:16px;padding:22px 26px">
-          <div style="font-family:'Source Serif 4',Georgia,serif;font-size:18px;font-weight:600;color:#16233A">{{ vTurnLab }}</div>
-          <div style="margin-top:12px;display:grid;grid-template-columns:repeat(4,1fr);gap:10px">
-            <sc-for list="{{ vTurnTiles }}" as="vtl" hint-placeholder-count="4">
-              <div style="background:{{ vtl.bg }};border:1px solid #EDE9DF;border-radius:12px;padding:11px 13px"><div style="font-size:9px;letter-spacing:0.06em;font-weight:800;color:#5E6B82">{{ vtl.k }}</div><div style="margin-top:4px;font-family:'Source Serif 4',Georgia,serif;font-size:18px;font-weight:600;color:{{ vtl.col }};font-variant-numeric:tabular-nums">{{ vtl.v }}</div><div style="font-size:9.5px;color:#8A93A6">{{ vtl.sub }}</div></div>
-            </sc-for>
-          </div>
-          <div style="margin-top:12px;font-size:9.5px;letter-spacing:0.08em;font-weight:800;color:#96742F">{{ vSlowLab }}</div>
-          <sc-for list="{{ vSlowRows }}" as="vsl" hint-placeholder-count="6">
-            <div style="margin-top:6px;display:flex;justify-content:space-between;align-items:center;gap:8px;border-bottom:1px solid #F4F2EA;padding-bottom:5px"><span style="font-size:11.5px;font-weight:600;color:#16233A">{{ vsl.door }} <span style="font-size:10px;color:#8A93A6">· {{ vsl.entity }}</span></span><span style="font-size:11px;color:#5E6B82;font-variant-numeric:tabular-nums;white-space:nowrap">{{ vsl.worst }} · {{ vsl.total }}</span></div>
-          </sc-for>
-        </div>
-
         <!-- Vacancy & turnover roster (merged) -->
         <div style="margin-top:16px;background:#FFFFFF;border:1px solid #E5E3DC;border-radius:16px;padding:22px 26px">
           <div style="display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:10px">
@@ -393,22 +389,28 @@ input:focus{outline:2px solid #C9A45C;outline-offset:1px}
                   <div style="border-top:1px solid #EDE9DF;background:#FBFAF6;padding:11px 13px">
                     <div style="font-size:10.5px;color:#6B5A2E;margin-bottom:8px"><b>Verdict (from month-end balance):</b> {{ vdu.reason }}</div>
                     <sc-if value="{{ vdu.hasBal }}" hint-placeholder-val="{{ false }}">
-                      <div style="margin-bottom:9px;padding:9px 11px;background:#FFFFFF;border:1px solid #EDE9DF;border-radius:9px">
-                        <div style="font-size:8.5px;letter-spacing:0.05em;font-weight:800;color:#96742F">{{ vdu.balCap }}</div>
-                        <div style="position:relative;margin-top:8px">
-                          <svg viewBox="0 0 250 54" style="width:100%;display:block;overflow:visible">
-                            <path d="{{ vdu.balZeroPath }}" fill="none" stroke="#D8D4C8" stroke-width="1" stroke-dasharray="3 3"></path>
-                            <path d="{{ vdu.balPath }}" fill="none" stroke="#B04A33" stroke-width="1.5" stroke-linejoin="round" stroke-linecap="round"></path>
-                            <sc-for list="{{ vdu.balPts }}" as="vbp" hint-placeholder-count="5">
-                              <circle cx="{{ vbp.cx }}" cy="{{ vbp.cy }}" r="{{ vbp.r }}" fill="{{ vbp.fill }}" stroke="#B04A33" stroke-width="1.5"></circle>
-                            </sc-for>
-                          </svg>
-                          <sc-for list="{{ vdu.balPts }}" as="vbp" hint-placeholder-count="5">
-                            <div style="position:absolute;left:{{ vbp.leftPct }};top:{{ vbp.topPct }};transform:translate(-50%,-150%);font-size:8px;font-weight:800;color:{{ vbp.vcol }};white-space:nowrap;pointer-events:none;font-variant-numeric:tabular-nums">{{ vbp.vlab }}</div>
-                          </sc-for>
+                      <div style="margin-bottom:10px;padding:10px 12px;background:#FFFFFF;border:1px solid #EDE9DF;border-radius:9px;display:flex;gap:18px;align-items:center;flex-wrap:wrap">
+                        <div style="min-width:92px">
+                          <div style="font-size:8.5px;letter-spacing:0.05em;font-weight:800;color:#8A93A6;text-transform:uppercase">Balance now</div>
+                          <div style="margin-top:2px;font-family:'Source Serif 4',Georgia,serif;font-size:21px;font-weight:600;color:{{ vdu.balNowCol }};font-variant-numeric:tabular-nums">{{ vdu.balNow }}</div>
+                          <div style="font-size:8px;color:#9AA3B5">{{ vdu.balCap }}</div>
                         </div>
-                        <div style="margin-top:4px;display:flex">
-                          <sc-for list="{{ vdu.balPts }}" as="vbp" hint-placeholder-count="5"><div style="flex:1;text-align:center;font-size:8px;color:#8A93A6">{{ vbp.lab }}</div></sc-for>
+                        <div style="width:300px;max-width:100%">
+                          <div style="position:relative;width:100%">
+                            <svg viewBox="0 0 230 40" style="width:100%;display:block;overflow:visible">
+                              <path d="{{ vdu.balZeroPath }}" fill="none" stroke="#E0DCD0" stroke-width="1" stroke-dasharray="3 3"></path>
+                              <path d="{{ vdu.balPath }}" fill="none" stroke="#B04A33" stroke-width="1.5" stroke-linejoin="round" stroke-linecap="round"></path>
+                              <sc-for list="{{ vdu.balPts }}" as="vbp" hint-placeholder-count="5">
+                                <circle cx="{{ vbp.cx }}" cy="{{ vbp.cy }}" r="{{ vbp.r }}" fill="{{ vbp.fill }}" stroke="#B04A33" stroke-width="1.3"></circle>
+                              </sc-for>
+                            </svg>
+                            <sc-for list="{{ vdu.balPts }}" as="vbp" hint-placeholder-count="5">
+                              <div style="position:absolute;left:{{ vbp.leftPct }};top:{{ vbp.topPct }};transform:translate(-50%,-160%);font-size:9px;font-weight:800;color:{{ vbp.vcol }};white-space:nowrap;pointer-events:none;font-variant-numeric:tabular-nums">{{ vbp.vlab }}</div>
+                            </sc-for>
+                          </div>
+                          <div style="margin-top:2px;display:flex;width:100%">
+                            <sc-for list="{{ vdu.balPts }}" as="vbp" hint-placeholder-count="5"><div style="flex:1;text-align:center;font-size:8px;color:#8A93A6">{{ vbp.lab }}</div></sc-for>
+                          </div>
                         </div>
                       </div>
                     </sc-if>
@@ -424,6 +426,30 @@ input:focus{outline:2px solid #C9A45C;outline-offset:1px}
           <sc-if value="{{ vDueEmpty }}" hint-placeholder-val="{{ false }}"><div style="margin-top:10px;padding:18px;text-align:center;font-size:12px;color:#8A93A6;background:#FBFAF6;border:1px solid #EDEBE2;border-radius:11px">{{ vDueEmptyTxt }}</div></sc-if>
           <sc-if value="{{ vDueMoreShow }}" hint-placeholder-val="{{ false }}"><div style="display:flex;justify-content:center;margin-top:10px"><div onClick="{{ onVDueMore }}" style-hover="background:#16233A;color:#FFFFFF;border-color:#16233A" style="padding:8px 16px;border-radius:9px;border:1px solid #D8D4C8;background:#FFFFFF;font-size:11.5px;font-weight:700;color:#2A3550;cursor:pointer">{{ vDueMoreLab }}</div></div></sc-if>
           <div style="margin-top:12px;padding-top:10px;border-top:1px solid #F0EEE7;font-size:10.5px;color:#9AA3B5;line-height:1.65">{{ vRenFoot }}</div>
+        </div>
+
+        <!-- Turn-time (moved to last; tiles clickable) -->
+        <div style="margin-top:16px;background:#FFFFFF;border:1px solid #E5E3DC;border-radius:16px;padding:22px 26px" onClick="{{ stopProp }}">
+          <div style="display:flex;justify-content:space-between;align-items:baseline;flex-wrap:wrap;gap:8px"><div style="font-family:'Source Serif 4',Georgia,serif;font-size:18px;font-weight:600;color:#16233A">{{ vTurnLab }}</div><div style="font-size:11px;color:#8A93A6">{{ vTurnCap }}</div></div>
+          <div style="margin-top:12px;display:grid;grid-template-columns:repeat(4,1fr);gap:10px">
+            <sc-for list="{{ vTurnTiles }}" as="vtl" hint-placeholder-count="4">
+              <div onClick="{{ vtl.onClick }}" style-hover="border-color:#C9A45C" style="background:{{ vtl.bg }};border:1.5px solid {{ vtl.bd }};border-radius:12px;padding:11px 13px;cursor:pointer"><div style="font-size:9px;letter-spacing:0.06em;font-weight:800;color:#5E6B82">{{ vtl.k }}</div><div style="margin-top:4px;font-family:'Source Serif 4',Georgia,serif;font-size:18px;font-weight:600;color:{{ vtl.col }};font-variant-numeric:tabular-nums">{{ vtl.v }}</div><div style="font-size:9.5px;color:#8A93A6">{{ vtl.sub }}</div></div>
+            </sc-for>
+          </div>
+          <sc-if value="{{ vTurnDrillOn }}" hint-placeholder-val="{{ false }}">
+            <div style="margin-top:12px;background:#FBFAF6;border:1px solid #EDEBE2;border-radius:11px;padding:11px 14px">
+              <div style="display:flex;justify-content:space-between;align-items:baseline;gap:8px;flex-wrap:wrap"><span style="font-size:9.5px;letter-spacing:0.08em;font-weight:800;color:#B04A33">{{ vTurnDrillLab }}</span><span style="font-size:10px;color:#8A93A6">{{ vTurnDrillSum }}</span></div>
+              <div class="scr" style="margin-top:8px;max-height:320px;overflow-y:auto;padding-right:4px">
+                <sc-for list="{{ vTurnRows }}" as="vtr" hint-placeholder-count="6">
+                  <div style="display:flex;justify-content:space-between;align-items:center;gap:10px;padding:6px 4px;border-bottom:1px solid #F0EEE6;flex-wrap:wrap">
+                    <span style="min-width:0;display:flex;align-items:center;gap:8px"><span style="font-size:12px;font-weight:600;color:#16233A;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">{{ vtr.door }}</span><span style="font-size:9px;color:#8A93A6">· {{ vtr.entity }}</span></span>
+                    <span style="display:flex;align-items:center;gap:10px;flex-wrap:wrap"><span style="font-size:10.5px;color:#5E6B82;font-variant-numeric:tabular-nums">{{ vtr.when }} · {{ vtr.loss }} lost</span><span style="font-size:12px;font-weight:800;color:#B04A33;font-variant-numeric:tabular-nums">{{ vtr.days }}</span><span style="display:flex;gap:9px;font-size:10px;font-weight:700"><a href="{{ vtr.plHref }}" style="color:#3D64A8;text-decoration:none">P&amp;L ›</a><a href="{{ vtr.cfHref }}" style="color:#2A6F4E;text-decoration:none">CASH FLOW ›</a><a href="{{ vtr.txHref }}" style="color:#96742F;text-decoration:none">TXN ›</a></span></span>
+                  </div>
+                </sc-for>
+              </div>
+            </div>
+          </sc-if>
+          <div style="margin-top:10px;font-size:10.5px;color:#9AA3B5;line-height:1.6">{{ vTurnFoot }}</div>
         </div>
 
         <!-- Flags -->
@@ -1161,7 +1187,7 @@ class Component extends DCLogic {
     wSel: [], wq: '', wExp: null, wAll: false,
     tab: 'loss', vac: null, vacErr: null,
     vTgt: '30', vYear: null, vBkt: null, vSort: 'loss', vExp: null, vAll: false, vFocusAll: false, vq: '',
-    vGmetric: 'loss', vGyr: null, vGyrs: [], vGm: null, vGsel: null, vGq: '', vFocusExp: null, vRosterView: 'loss', vRenExp: null, vRenAll: false, vDueAll: false, vRenCard: null, vRenCardExp: null,
+    vGmetric: 'loss', vGyr: null, vGyrs: [], vGmos: [], vGm: null, vGsel: null, vGq: '', vFocusExp: null, vTurnSel: null, vRosterView: 'loss', vRenExp: null, vRenAll: false, vDueAll: false, vRenCard: null, vRenCardExp: null,
   };
 
   loadData() {
@@ -1269,10 +1295,10 @@ class Component extends DCLogic {
     const EMPTY={showVac,showLoss,tabChips,tabHint,vScopeLine:S.vacErr?'Vacancy data failed to load':'Loading vacancy…',
       vReady:false,vPending:!S.vacErr,vErr:S.vacErr||false,vRetry:()=>this.loadVac(),
       vKpis:[],vHeadLab:'',vHead:'',vHeadCap:'',vHeroSub:'',vTgtVal:S.vTgt||'30',onVTgt:()=>{},vReconLine:'',
-      gMetChips:[],gYearChips:[],gYearHint:'',gPath:'',gArea:'',gPts:[],gGrow:'',gPanelTitle:'',gPanelSub:'',gRows:[],gPanelFoot:'',gEmpty:false,gEmptyTxt:'',gTotOn:false,gTotTitle:'',gTotSub:'',gTot:[],gqVal:S.vGq||'',onGq:()=>{},
+      gMetChips:[],gYearChips:[],gYearHint:'',gMonthChipsOn:false,gMonthLab:'',gMonthChips:[],gPath:'',gArea:'',gPts:[],gGrow:'',gPanelTitle:'',gPanelSub:'',gRows:[],gPanelFoot:'',gEmpty:false,gEmptyTxt:'',gTotOn:false,gTotTitle:'',gTotSub:'',gTot:[],gqVal:S.vGq||'',onGq:()=>{},
       vAgLab:'',vAgTiles:[],vAgNote:'',vDrillOn:false,vDrillLab:'',vDrillSum:'',vDrillRows:[],
       vFocusLab:'',vFocusCap:'',vFocusRows:[],vFocusEmpty:false,vFocusEmptyTxt:'',vFocusFoot:'',
-      vTurnLab:'',vTurnTiles:[],vSlowLab:'',vSlowRows:[],
+      vTurnLab:'',vTurnCap:'',vTurnTiles:[],vTurnDrillOn:false,vTurnDrillLab:'',vTurnDrillSum:'',vTurnRows:[],vTurnFoot:'',
       vRosterLab:'',vRosterCap:'',vRosterLegend:'',vqVal:S.vq||'',onVq:()=>{},vSortChips:[],vRows:[],vRosMaxH:'none',vMoreShow:false,onVMore:()=>{},vMoreLab:'',vRosterFoot:'',
       vRenLab:'',vRenSub:'',vRenTiles:[],vRenMethod:'',vRenCardOn:false,vCardLab:'',vCardSum:'',vCardRows:[],vCardFoot:'',vDueLab:'',vDueCap:'',vDueRows:[],vDueMaxH:'none',vDueMoreShow:false,onVDueMore:()=>{},vDueMoreLab:'',vDueEmpty:false,vDueEmptyTxt:'',vRenFoot:'',
       vFlagLab:'',vFlagRows:[],vExclLine:''};
@@ -1288,23 +1314,26 @@ class Component extends DCLogic {
     const lossMonths=ms=>{let s=0;for(const d of keys)for(const mk of ms)s+=lossAt(d,mk);return s;};
     const doorsVacIn=ms=>keys.filter(d=>ms.some(mk=>lossAt(d,mk)>0));
 
-    // ── selected period: shared month filter > chart point (vGm) > selected years (multi) > all ──
+    // ── period: YEAR chips (multi) + MONTH chips (multi, within the years) — all inception months ──
     const selYrs=[...new Set((S.vGyrs||[]).filter(y=>yrs.includes(y)))].sort();
+    const yearMonths=selYrs.length?MONTHS.filter(m=>selYrs.includes(m.slice(0,4))):[];
+    const selMos=[...new Set((S.vGmos||[]).filter(m=>yearMonths.includes(m)))].sort();
     const axisMode=selYrs.length===0?'years':'months';
-    const axisKeys=axisMode==='years'?yrs:MONTHS.filter(m=>selYrs.includes(m.slice(0,4)));
+    const axisKeys=axisMode==='years'?yrs:yearMonths;
     const msOf=per=>axisMode==='years'?MONTHS.filter(m=>m.slice(0,4)===per):[per];
-    const gm=(S.vGm&&axisKeys.includes(S.vGm))?S.vGm:null;
     const fmM=(S.fm||[]).filter(m=>MONTHS.includes(m));
     let periodMonths,periodLab;
-    if(fmM.length){periodMonths=fmM.slice();periodLab=fmM.length===1?mmyy(fmM[0]):mmyy(fmM[0])+'–'+mmyy(fmM[fmM.length-1]);}
-    else if(gm){periodMonths=msOf(gm);periodLab=axisMode==='years'?gm:mmyy(gm);}
-    else if(selYrs.length){periodMonths=axisKeys.slice();periodLab=selYrs.join(' + ');}
+    if(selMos.length){periodMonths=selMos.slice();periodLab=selMos.length===1?mmyy(selMos[0]):mmyy(selMos[0])+'…'+mmyy(selMos[selMos.length-1]);}
+    else if(selYrs.length){periodMonths=yearMonths.slice();periodLab=selYrs.join(' + ');}
+    else if(fmM.length){periodMonths=fmM.slice();periodLab=fmM.length===1?mmyy(fmM[0]):mmyy(fmM[0])+'…'+mmyy(fmM[fmM.length-1]);}
     else{periodMonths=MONTHS.slice();periodLab='ITD';}
     const pset=new Set(periodMonths);
     const lossP=d=>{let s=0;for(const mk of periodMonths)s+=lossAt(d,mk);return s;};
     const pTotal=sum(keys.map(lossP)),pDoors=keys.filter(d=>lossP(d)>0);
-    const gapsInP=d=>(D[d].gaps||[]).filter(g=>monthsOf(g.s,g.e).some(mk=>pset.has(mk)));
-    const pDays=d=>sum(gapsInP(d).map(g=>g.days));
+    // every vacancy SPELL (completed gap OR the current ongoing vacancy) that touches the period
+    const spellsOf=d=>{const a=(D[d].gaps||[]).map(g=>({s:g.s,e:g.e,days:g.days,rent:g.rent,loss:g.loss,filledBy:g.filledBy,ongoing:false}));const c=D[d].current;if(c)a.push({s:c.since,e:null,days:c.days,rent:c.rent,loss:c.loss,filledBy:null,ongoing:true});return a.sort((x,y)=>x.s<y.s?-1:1);};
+    const spellsInP=d=>spellsOf(d).filter(sp=>monthsOf(sp.s,sp.e||HOR).some(mk=>pset.has(mk)));
+    const pDays=d=>sum(spellsInP(d).map(sp=>sp.days));
 
     // current vacancies + turns (as of today, not period)
     const current=(V.currentVacant||[]).filter(c=>pass(c.door)).slice().sort((a,b)=>b.days-a.days);
@@ -1321,7 +1350,7 @@ class Component extends DCLogic {
     const avgLoss=pDoors.length?pTotal/pDoors.length:0;
     const worst=pDoors.slice().sort((a,b)=>lossP(b)-lossP(a))[0];
     const vKpis=[
-      {label:'RENT LOST · '+periodLab,val:fK(pTotal),sub:pDoors.length+' door'+(pDoors.length!==1?'s':'')+' vacant',col:REDD,bg:'#FDF7F5',bd:'#E6D2CB',dcol:'#8A93A6',tip:'Vacancy loss over the selected period '+periodLab+'. Recomputes with the year chips (multi-select), the chart point you pick, and the Month filter.'},
+      {label:'RENT LOST · '+periodLab,val:fK(pTotal),sub:pDoors.length+' door'+(pDoors.length!==1?'s':'')+' vacant',col:REDD,bg:'#FDF7F5',bd:'#E6D2CB',dcol:'#8A93A6',tip:'Vacancy loss over the selected period '+periodLab+'. Recomputes with the year chips, the month chips, the chart point you pick, and the Month filter.'},
       {label:'PROPERTIES VACANT · '+periodLab,val:String(pDoors.length),sub:'of '+keys.length+' in scope',col:NAVY,bg:'#FFFFFF',bd:'#E5E3DC',dcol:'#8A93A6',tip:'Doors that sat empty at some point during '+periodLab+'.'},
       {label:'AVG LOSS / VACANT DOOR',val:fK(avgLoss),sub:worst?'worst '+worst+' '+fK(lossP(worst)):'—',col:NAVY,bg:'#FFFFFF',bd:'#E5E3DC',dcol:'#8A93A6',tip:'Average vacancy loss per affected door over '+periodLab+'.'},
       {label:'VACANT NOW',val:String(current.length),sub:current.length?fK(curLoss)+' lost so far':'all filled',col:current.length?REDD:GREEND,bg:'#FFFFFF',bd:'#E5E3DC',dcol:'#8A93A6',tip:'Doors owned and empty as of '+prettyISO(HOR)+' (always current, not the period).'},
@@ -1331,8 +1360,8 @@ class Component extends DCLogic {
     const vHeadLab='RENT LOST TO EMPTY DOORS'+(scoped?' · '+scopeName:'');
     const vHead=fN(V.portfolio?sum(keys.map(d=>D[d].totalLoss)):0);
     const vHeadCap='inception → '+prettyISO(HOR)+' · '+totalDays.toLocaleString('en-US')+' vacant-days on '+withGap+' doors';
-    const R=V.recon||{},diff=R.diff||0;
-    const vReconLine='Reconciliation — same window as the books: your lease formula '+fN(R.formulaSameWindow||0)+' vs the GL Vacancy-Loss account '+fN(R.glVacancyLoss||0)+' → Δ '+fN(Math.abs(diff))+' ('+(diff>=0?'formula slightly higher':'GL slightly higher')+'). Lease-derived; GL shown only for reconciliation.';
+    const R2=V.recon||{},diff=R2.diff||0;
+    const vReconLine='Reconciliation — same window as the books: your lease formula '+fN(R2.formulaSameWindow||0)+' vs the GL Vacancy-Loss account '+fN(R2.glVacancyLoss||0)+' → Δ '+fN(Math.abs(diff))+' ('+(diff>=0?'formula slightly higher':'GL slightly higher')+'). Lease-derived; GL shown only for reconciliation.';
 
     // ── growth-style chart ──
     const gMet=S.vGmetric==='doors'?'doors':'loss';
@@ -1346,43 +1375,47 @@ class Component extends DCLogic {
     const gy=v=>gBot-(gBot-gTop)*(v/gMaxV);
     const gPath=gRaw.map((p,i)=>(i===0?'M':'L')+gx(i).toFixed(1)+' '+gy(p.val).toFixed(1)).join(' ');
     const gArea=gRaw.length?'M'+gx(0).toFixed(1)+' '+gBot+' '+gRaw.map((p,i)=>'L'+gx(i).toFixed(1)+' '+gy(p.val).toFixed(1)).join(' ')+' L'+gx(gRaw.length-1).toFixed(1)+' '+gBot+' Z':'';
-    const selKey=gm||(gRaw.length?gRaw[gRaw.length-1].per:null);
-    const gPts=gRaw.map((p,i)=>{const on=p.per===selKey;return{
+    const isSel=per=>axisMode==='years'?selYrs.includes(per):selMos.includes(per);
+    const anySel=axisMode==='years'?selYrs.length>0:selMos.length>0;
+    const gPts=gRaw.map((p,i)=>{const on=anySel?isSel(p.per):false;return{
       cx:gx(i).toFixed(1),cy:gy(p.val).toFixed(1),r:on?6:4,fill:on?REDD:'#FFFFFF',ring:REDD,
       leftPct:(gx(i)/GW*100).toFixed(2)+'%',topPct:(gy(p.val)/GH*100).toFixed(2)+'%',
       vlab:gMet==='doors'?String(p.val):fK(p.loss),vfw:on?800:700,vcol:on?REDD:NAVY,
       dlab:gMet==='doors'?fK(p.loss):(p.props+' empty'),dcol:on?'#FFFFFF':GOLDD,dbg:on?REDD:'#FBF1E4',
       lab:p.lab,xfw:on?800:600,xcol:on?NAVY:MUT,
-      onClick:()=>this.setState({vGm:on?null:p.per}),
-      tip:p.lab+': '+fK(p.loss)+' lost · '+p.props+' doors vacant — click to focus'};});
+      onClick:axisMode==='years'?(()=>{const s=new Set(selYrs);s.has(p.per)?s.delete(p.per):s.add(p.per);this.setState({vGyrs:[...s].sort(),vGmos:[]});}):(()=>{const s=new Set(selMos);s.has(p.per)?s.delete(p.per):s.add(p.per);this.setState({vGmos:[...s].sort()});}),
+      tip:p.lab+': '+fK(p.loss)+' lost · '+p.props+' doors vacant — click to '+(axisMode==='years'?'add/remove the year':'add/remove the month')};});
     const gP0=gRaw[0],gPn=gRaw[gRaw.length-1];
-    const gGrow=(axisMode==='months'?('Month on month · '+periodLab):'Year over year · inception to date')+':  '+(gP0?gP0.lab+' '+fK(gP0.loss):'')+'  →  '+(gPn?gPn.lab+' '+fK(gPn.loss):'')+'   ·   peak '+(()=>{let b=gRaw[0];for(const p of gRaw)if(p.loss>(b?b.loss:-1))b=p;return b?b.lab+' '+fK(b.loss):'—';})()+'   ·   viewing '+periodLab+': '+fK(pTotal);
+    const gGrow=(axisMode==='months'?('Month on month · '+(selYrs.join(' + ')||'')):'Year over year · inception to date')+':  '+(gP0?gP0.lab+' '+fK(gP0.loss):'')+'  →  '+(gPn?gPn.lab+' '+fK(gPn.loss):'')+'   ·   peak '+(()=>{let b=gRaw[0];for(const p of gRaw)if(p.loss>(b?b.loss:-1))b=p;return b?b.lab+' '+fK(b.loss):'—';})()+'   ·   viewing '+periodLab+': '+fK(pTotal);
     const gMetChips=[{k:'loss',label:'LOSS $'},{k:'doors',label:'DOORS'}].map(mc=>({label:mc.label,bd:gMet===mc.k?'#C9A45C':'#D8D4C8',bg:gMet===mc.k?'#FBF6EA':'#FFFFFF',onClick:()=>this.setState({vGmetric:mc.k})}));
-    const gYearChips=['ITD',...yrs].map(y=>{const on=(y==='ITD'&&selYrs.length===0)||(y!=='ITD'&&selYrs.includes(y));return{label:y,bd:on?'#C9A45C':'#D8D4C8',bg:on?'#FBF6EA':'#FFFFFF',col:on?'#96742F':'#5E6B82',onClick:()=>{if(y==='ITD'){this.setState({vGyrs:[],vGm:null});}else{const s=new Set(selYrs);if(s.has(y))s.delete(y);else s.add(y);this.setState({vGyrs:[...s].sort(),vGm:null});}}};});
-    const gYearHint=selYrs.length>=2?('Combining '+selYrs.join(' + ')+' — tap years to add or remove, ITD to reset'):'Tap two or more years to combine them';
+    const gYearChips=['ITD',...yrs].map(y=>{const on=(y==='ITD'&&selYrs.length===0)||(y!=='ITD'&&selYrs.includes(y));return{label:y,bd:on?'#C9A45C':'#D8D4C8',bg:on?'#FBF6EA':'#FFFFFF',col:on?'#96742F':'#5E6B82',onClick:()=>{if(y==='ITD'){this.setState({vGyrs:[],vGmos:[]});}else{const s=new Set(selYrs);s.has(y)?s.delete(y):s.add(y);this.setState({vGyrs:[...s].sort(),vGmos:[]});}}};});
+    const gYearHint=selYrs.length?('Showing '+selYrs.join(' + ')+' by month — tap months below to narrow, or tap years to combine · ITD resets'):'Tap a year (or two — they combine); then pick months, or leave it for the whole year';
+    const gMonthChipsOn=selYrs.length>0;
+    const gMonthLab='MONTHS'+(selMos.length?' · '+selMos.length+' picked':' — pick any (optional)');
+    const gMonthChips=gMonthChipsOn?yearMonths.map(mk=>{const on=selMos.includes(mk);return{label:mmyy(mk),bd:on?'#C9A45C':'#E0DCD0',bg:on?'#FBF1E4':'#FFFFFF',col:on?'#96742F':'#8A93A6',onClick:()=>{const s=new Set(selMos);s.has(mk)?s.delete(mk):s.add(mk);this.setState({vGmos:[...s].sort()});}};}):[];
 
-    // right panel — properties vacant in the selected period (each expands to ALL its vacancy periods)
+    // right panel — properties vacant in the selected period (each expands to EVERY spell incl. the ongoing one)
     const gqq=(S.vGq||'').trim().toLowerCase();
     const panelDoors=pDoors.filter(d=>!gqq||d.toLowerCase().includes(gqq)||(D[d].entity||'').toLowerCase().includes(gqq)).sort((a,b)=>lossP(b)-lossP(a));
     const gRows=panelDoors.map(d=>{
-      const dd=D[d],isExp=S.vGsel===d,gip=gapsInP(d),lp=lossP(d),iafc=dd.iafcMo||0;
+      const dd=D[d],isExp=S.vGsel===d,sp=spellsInP(d),lp=lossP(d),iafc=dd.iafcMo||0;
       const mtr=iafc>0.005?(lp/iafc).toFixed(1)+' mo':'—';
-      const periods=gip.map(g=>({when:prettyISO(g.s)+' → '+prettyISO(g.e),days:g.days+'d',rent:fN(g.rent)+'/mo',loss:fN(g.loss),filled:g.filledBy?('re-let '+prettyISO(g.filledBy)):'still empty'}));
+      const periods=sp.map(g=>({when:prettyISO(g.s)+' → '+(g.ongoing?'still empty':prettyISO(g.e)),days:g.days+'d',rent:fN(g.rent)+'/mo',loss:fN(g.loss),filled:g.ongoing?'ongoing now':(g.filledBy?('re-let '+prettyISO(g.filledBy)):'—')}));
       const facts=isExp?[
         {k:'Gross monthly rent',v:dd.grossRentMo>0?fN(dd.grossRentMo):'—',col:GREEND},
         {k:'Income after fixed costs /mo',v:iafc?fN(iafc):'—',col:iafc<0?RED:NAVY},
-        {k:'Vacancy periods',v:gip.length+' in '+periodLab,col:INK},
+        {k:'Vacancy periods',v:sp.length+' in '+periodLab,col:INK},
         {k:'Days vacant (period)',v:pDays(d)+'d',col:INK},
         {k:'Vacancy loss (period)',v:fN(lp),col:REDD},
         {k:'Months to recover',v:mtr,col:iafc>0?NAVY:'#8A93A6'},
       ]:[];
-      return{door:d,sub:(dd.entity||'')+' · '+(dd.status||'')+' · '+gip.length+' vacancy'+(gip.length!==1?' periods':' period')+' in '+periodLab,
+      return{door:d,sub:(dd.entity||'')+' · '+(dd.status||'')+' · '+sp.length+' vacancy'+(sp.length!==1?' periods':' period')+' in '+periodLab,
         val:fK(lp),caret:isExp?'▾':'▸',bg:isExp?'#FBFAF6':'transparent',selBd:isExp?'#C9A45C':'transparent',exp:isExp,facts,periods,
         hrefPl:plH(d),hrefBs:bsH(d),hrefLoan:lnH(d),hrefCf:cfH(d),hrefTx:txH(d),onClick:()=>this.setState({vGsel:isExp?null:d})};});
     const gPanelTitle='VACANT IN '+periodLab.toUpperCase();
     const gPanelSub=pDoors.length+' propert'+(pDoors.length===1?'y':'ies')+' · '+fK(pTotal)+' lost · click a row for every vacancy period';
     const gEmpty=gRows.length===0,gEmptyTxt=gqq?'Nothing matches this search.':'No vacancy '+(periodLab==='ITD'?'on record':'in '+periodLab)+' for this scope.';
-    const gPanelFoot='Income after fixed costs = rent − statutory (tax·ins·HOA) − interest, from the '+(V.glMonths?V.glMonths.length:5)+'-month ledger ÷ months. Months to recover = period loss ÷ that income. Expand a row to see every vacancy period it ran. Deep links open the same door on P&L / Balance Sheet / Loans / Cash Flow / Transactions.';
+    const gPanelFoot='Income after fixed costs = rent − statutory (tax·ins·HOA) − interest, from the '+(V.glMonths?V.glMonths.length:5)+'-month ledger ÷ months. Months to recover = period loss ÷ that income. Expand a row to see every vacancy period, including one that is still empty now. Deep links open the same door on P&L / Balance Sheet / Loans / Cash Flow / Transactions.';
     const gTotOn=pDoors.length>0;
     const gTotTitle='VACANCY IN '+periodLab.toUpperCase()+', IN TOTAL';
     const gTotSub=pDoors.length+' propert'+(pDoors.length===1?'y':'ies')+' · dig into any on the right';
@@ -1431,19 +1464,29 @@ class Component extends DCLogic {
     const vFocusEmpty=current.length===0,vFocusEmptyTxt='Every owned door in this scope is occupied — nothing to fill.';
     const vFocusFoot=current.length?'Expand a door for its income after fixed costs, months-to-recover, and its last completed vacancy (days it took to fill) — the sensitivity read. Sold and on-hold doors are never counted here.':'';
 
-    // ── turn-time ──
+    // ── turn-time (tiles clickable → the turns behind each) ──
+    const allGaps=[];keys.forEach(d=>(D[d].gaps||[]).forEach(g=>allGaps.push({door:d,entity:D[d].entity,days:g.days,when:prettyISO(g.s)+' → '+prettyISO(g.e),loss:g.loss})));
+    const p90=pctl(0.9),slowest=turns.length?turns[turns.length-1]:0;
+    const turnDef=[{k:'median',K:'MEDIAN',v:med+'d',sub:'target '+tgt+'d',col:med<=tgt?GREEND:AMBER},
+      {k:'avg',K:'AVERAGE',v:avg+'d',sub:turns.length+' turns',col:NAVY},
+      {k:'p90',K:'90TH PCTILE',v:p90+'d',sub:'slower tail',col:AMBER},
+      {k:'slowest',K:'SLOWEST',v:slowest+'d',sub:'worst single turn',col:REDD}];
+    const vTurnSel=['median','avg','p90','slowest'].includes(S.vTurnSel)?S.vTurnSel:null;
+    const vTurnTiles=turnDef.map(t=>({k:t.K,v:t.v,sub:t.sub,col:t.col,bg:vTurnSel===t.k?'#FBF0EA':'#FBFAF6',bd:vTurnSel===t.k?'#C9A45C':'#EDE9DF',onClick:()=>this.setState({vTurnSel:vTurnSel===t.k?null:t.k})}));
     const vTurnLab='Turn-time — how fast empties get re-leased';
-    const vTurnTiles=[
-      {k:'MEDIAN',v:med+'d',sub:'target '+tgt+'d',bg:'#FBFAF6',col:med<=tgt?GREEND:AMBER},
-      {k:'AVERAGE',v:avg+'d',sub:turns.length+' turns',bg:'#FBFAF6',col:NAVY},
-      {k:'90TH PCTILE',v:pctl(0.9)+'d',sub:'slower tail',bg:'#FBFAF6',col:AMBER},
-      {k:'SLOWEST',v:(turns.length?turns[turns.length-1]:0)+'d',sub:'worst single turn',bg:'#FBFAF6',col:REDD},
-    ];
-    const slow=keys.map(d=>{const g=D[d].gaps||[],worst=g.length?Math.max(...g.map(x=>x.days)):0;return{d,entity:D[d].entity,worst,total:D[d].totalDays};}).filter(x=>x.worst>0).sort((a,b)=>b.worst-a.worst).slice(0,6);
-    const vSlowLab='SLOWEST TURNS — LONGEST SINGLE VACANCY';
-    const vSlowRows=slow.map(x=>({door:x.d,entity:x.entity,worst:x.worst+'d longest gap',total:x.total+'d total empty'}));
+    const vTurnCap=turns.length+' completed turns · click a tile for the turns behind it';
+    let vTurnDrillOn=false,vTurnDrillLab='',vTurnDrillSum='',vTurnRows=[];
+    if(vTurnSel){vTurnDrillOn=true;let list=allGaps.slice();
+      if(vTurnSel==='p90')list=list.filter(g=>g.days>=p90);
+      if(vTurnSel==='slowest'||vTurnSel==='p90')list.sort((a,b)=>b.days-a.days);
+      else if(vTurnSel==='median')list.sort((a,b)=>a.days-b.days);
+      else list.sort((a,b)=>b.days-a.days);
+      const label={median:'ALL TURNS — SHORTEST FIRST (median '+med+'d)',avg:'ALL TURNS (average '+avg+'d)',p90:'THE SLOW TAIL — TURNS ≥ '+p90+'D',slowest:'LONGEST TURNS FIRST'}[vTurnSel];
+      vTurnDrillLab=label;vTurnDrillSum=list.length+' turn'+(list.length!==1?'s':'');
+      vTurnRows=list.slice(0,20).map(g=>({door:g.door,entity:g.entity,when:g.when,days:g.days+'d',loss:fN(g.loss),plHref:plH(g.door),coHref:coH(g.door),cfHref:cfH(g.door),txHref:txH(g.door)}));}
+    const vTurnFoot='Median is the typical re-lease speed; the 90th-percentile and slowest tiles surface the long tail — 318 Lincoln and 142 Bremer sit there. Sold and on-hold doors are excluded.';
 
-    // ── roster (vacancy + turnover/stability merged; ALL doors; meaningful bar by the chosen sort) ──
+    // ── roster (vacancy + turnover/stability merged; ALL doors; per-period incl. the ongoing spell) ──
     const vSort=['loss','days','turnover','current','az'].includes(S.vSort)?S.vSort:'loss';
     let roster=keys.filter(d=>D[d].totalLoss>0||(D[d].vacancyCount||0)>0).map(d=>Object.assign({d},D[d]));
     const cmp={loss:(a,b)=>b.totalLoss-a.totalLoss,days:(a,b)=>b.totalDays-a.totalDays,
@@ -1466,13 +1509,13 @@ class Component extends DCLogic {
         metric:metricLabOf(r),barW:Math.round(metricOf(r)/maxMetric*100)+'%',barC:barColOf,
         sub:(r.vacancyCount||0)+'× vacant · '+(r.renTurnover||0)+' tenant change'+((r.renTurnover||0)===1?'':'s')+' · '+r.totalDays+'d empty · '+fN(r.totalLoss)+' lost',
         exTog:isO?'▾':'▸',open:isO,onClick:()=>this.setState({vExp:isO?null:r.d}),
-        gaps:(r.gaps||[]).map(g=>({when:prettyISO(g.s)+' → '+prettyISO(g.e),days:g.days+'d',rent:fN(g.rent)+'/mo',loss:fN(g.loss)})),
+        gaps:spellsOf(r.d).map(g=>({when:prettyISO(g.s)+' → '+(g.ongoing?'still empty':prettyISO(g.e)),days:g.days+'d',rent:fN(g.rent)+'/mo',loss:fN(g.loss)})),
         hasHand:ho.length>0,handoffs:ho.map(h=>({txt:prettyISO(h.on)+': '+(h.from||'—')+'  →  '+(h.to||'—')})),
         plHref:plH(r.d),bsHref:bsH(r.d),lnHref:lnH(r.d),coHref:coH(r.d),cfHref:cfH(r.d),txHref:txH(r.d)};});
     const vRosterLab='Vacancy & turnover roster — every door that has sat empty';
     const sortName={loss:'biggest loss',days:'most days empty',turnover:'most turnover (vacancy count)',current:'vacant now',az:'name'}[vSort];
     const vRosterCap=rosterF.length+' doors · sorted by '+sortName;
-    const vRosterLegend='Bar length = '+sortName+'. Each door expands to its vacancy periods (dates · days-to-fill · loss) and its tenant hand-offs. Turnover = number of times a different tenant took over.';
+    const vRosterLegend='Bar length = '+sortName+'. Each door expands to its vacancy periods (dates · days-to-fill · loss, including one that is still empty now) and its tenant hand-offs. Turnover = number of times a different tenant took over.';
     const vRosMaxH=(showAll&&shown.length>12)?'560px':'none';
     const vMoreShow=!S.vAll&&!vq&&rosterF.length>CAP,vMoreLab='Show all '+rosterF.length+' doors ▾';
     const vRosterFoot='Ranked so the worst offenders sit on top. A door that keeps emptying (high turnover) carries re-leasing cost even when each gap is cheap — that is where lease-renewal effort pays back most.';
@@ -1483,22 +1526,18 @@ class Component extends DCLogic {
     const vcolF=v=>v==='RENEW'?GREEND:v==='WATCH'?AMBER:v==="DON'T RENEW"?REDD:'#8A93A6';
     const vbgF=v=>v==='RENEW'?'#EEF6F0':v==='WATCH'?'#FBF6EA':v==="DON'T RENEW"?'#FBF0EA':'#F4F2EA';
     const rate=REN.ratePct||0;
-    const dueCard=String(dueAll.length),pendCard=String(REN.pending||0);
-    // clickable rate cards
     const cardOf=k=>S.vRenCard===k;
     const setCard=k=>()=>this.setState({vRenCard:cardOf(k)?null:k,vRenCardExp:null});
     const vRenTiles=[
       {key:'rate',k:'LEASE RENEWAL RATE',v:rate+'%',sub:(REN.renewed||0)+' renewed / '+(REN.decisionPoints||0)+' decisions',col:rate>=70?GREEND:rate>=50?AMBER:REDD,bg:cardOf('rate')?'#FBF0EA':'#FBFAF6',bd:cardOf('rate')?'#C9A45C':'#EDE9DF',onClick:setCard('rate')},
       {key:'renewed',k:'RENEWED',v:String(REN.renewed||0),sub:(REN.embedded||0)+' same-lease · '+(REN.crossRow||0)+' new-lease',col:GREEND,bg:cardOf('renewed')?'#EEF6F0':'#FBFAF6',bd:cardOf('renewed')?'#9CC7AC':'#EDE9DF',onClick:setCard('renewed')},
       {key:'turnover',k:'TURNOVER',v:String(REN.turnover||0),sub:'a different tenant took over',col:REDD,bg:cardOf('turnover')?'#FBF0EA':'#FBFAF6',bd:cardOf('turnover')?'#DDB1A4':'#EDE9DF',onClick:setCard('turnover')},
-      {key:'due',k:'DUE ≤ '+(V.targets&&V.targets.dueWindow||120)+'D',v:dueCard,sub:'active leases coming up',col:NAVY,bg:cardOf('due')?'#EEF1F6':'#FBFAF6',bd:cardOf('due')?'#A9B6CC':'#EDE9DF',onClick:setCard('due')},
-      {key:'pending',k:'PENDING',v:pendCard,sub:'active, not yet decided',col:MUT,bg:cardOf('pending')?'#F1EFF4':'#FBFAF6',bd:cardOf('pending')?'#BDB6C9':'#EDE9DF',onClick:setCard('pending')},
+      {key:'due',k:'DUE ≤ '+(V.targets&&V.targets.dueWindow||120)+'D',v:String(dueAll.length),sub:'active leases coming up',col:NAVY,bg:cardOf('due')?'#EEF1F6':'#FBFAF6',bd:cardOf('due')?'#A9B6CC':'#EDE9DF',onClick:setCard('due')},
+      {key:'pending',k:'PENDING',v:String(REN.pending||0),sub:'active, not yet decided',col:MUT,bg:cardOf('pending')?'#F1EFF4':'#FBFAF6',bd:cardOf('pending')?'#BDB6C9':'#EDE9DF',onClick:setCard('pending')},
     ];
-    // card drill → the relevant PROPERTIES
     let vRenCardOn=false,vCardLab='',vCardSum='',vCardRows=[],vCardFoot='';
     const cardKey=S.vRenCard;
-    if(cardKey){vRenCardOn=true;
-      const exp=S.vRenCardExp;
+    if(cardKey){vRenCardOn=true;const exp=S.vRenCardExp;
       if(cardKey==='renewed'||cardKey==='rate'){
         const list=keys.filter(d=>(D[d].renCount||0)>0).sort((a,b)=>(D[b].renCount||0)-(D[a].renCount||0));
         vCardLab=(cardKey==='rate'?'DOORS WE KEPT — RENEWALS BY PROPERTY':'RENEWED — BY PROPERTY');
@@ -1540,31 +1579,32 @@ class Component extends DCLogic {
     const dueShown=dueShownAll?dueAll:dueAll.slice(0,DUECAP);
     const vDueRows=dueShown.map((x,i)=>{const isExp=S.vRenExp===(x.door+'|'+x.tenant),p=x.pattern;
       const bs=(x.balSeries||[]).filter(b=>b.bal!=null);
-      const bvals=bs.map(b=>b.bal),bmin=Math.min(0,...bvals),bmax=Math.max(0,...bvals,1),BW=250,BH=54,bpad=6;
+      const bvals=bs.map(b=>b.bal),bmin=Math.min(0,...bvals),bmax=Math.max(0,...bvals,1),BW=230,BH=40,bpad=8;
       const bx=k=>bs.length<=1?BW/2:bpad+k*(BW-2*bpad)/(bs.length-1);
-      const by=v=>BH-4-(BH-8)*((v-bmin)/((bmax-bmin)||1));
+      const by=v=>BH-6-(BH-12)*((v-bmin)/((bmax-bmin)||1));
       const balPath=bs.length?bs.map((b,k)=>(k===0?'M':'L')+bx(k).toFixed(1)+' '+by(b.bal).toFixed(1)).join(' '):'';
       const balZeroPath='M'+bpad+' '+by(0).toFixed(1)+' L'+(BW-bpad)+' '+by(0).toFixed(1);
-      const balPts=bs.map((b,k)=>({leftPct:(bx(k)/BW*100).toFixed(1)+'%',topPct:(by(b.bal)/BH*100).toFixed(1)+'%',
-        cx:bx(k).toFixed(1),cy:by(b.bal).toFixed(1),r:k===bs.length-1?4:2.5,fill:k===bs.length-1?(b.bal>0.05*(x.rent||1)?REDD:GREEND):'#FFFFFF',
-        lab:mmyy(b.m),vlab:fN(b.bal),vcol:b.bal>0.05*(x.rent||1)?REDD:GREEND}));
       const owedNow=bvals.length?bvals[bvals.length-1]:(p&&p.owed!=null?p.owed:null);
+      const balPts=bs.map((b,k)=>{const hi=b.bal>0.05*(x.rent||1);return{leftPct:(bx(k)/BW*100).toFixed(1)+'%',topPct:(by(b.bal)/BH*100).toFixed(1)+'%',
+        cx:bx(k).toFixed(1),cy:by(b.bal).toFixed(1),r:k===bs.length-1?3.4:2.4,fill:k===bs.length-1?(hi?REDD:GREEND):'#FFFFFF',
+        lab:mmyy(b.m),vlab:fN(b.bal),vcol:hi?REDD:GREEND};});
       return{key:x.door+'|'+x.tenant,door:x.door,tenant:x.tenant||'—',entity:x.entity,due:'in '+x.daysToDue+'d · '+prettyISO(x.dueDate),rent:fN(x.curRent||x.rent)+'/mo',prior:(x.priorRenewals||0)+' prior renewal'+(x.priorRenewals===1?'':'s'),
         verdict:x.verdict,verdictCol:vcolF(x.verdict),verdictBg:vbgF(x.verdict),reason:x.verdictReason||'',
         caret:isExp?'▾':'▸',open:isExp,onClick:()=>this.setState({vRenExp:isExp?null:(x.door+'|'+x.tenant)}),
-        hasBal:isExp&&bs.length>0,balPath,balZeroPath,balPts,balCap:bs.length?'Month-end balance · '+mmyy(bs[0].m)+' → '+mmyy(bs[bs.length-1].m)+' (the renewal signal)':'No month-end balances on record',
+        balNow:owedNow!=null?fN(owedNow):'—',balNowCol:owedNow>0.05*(x.rent||1)?REDD:GREEND,
+        hasBal:isExp&&bs.length>0,balPath,balZeroPath,balPts,balCap:bs.length?'month-end balance · '+mmyy(bs[0].m)+' → '+mmyy(bs[bs.length-1].m):'',
         facts:isExp?[
           {k:'Current monthly rent',v:fN(x.curRent||x.rent),col:GREEND},
-          {k:'Balance now',v:owedNow!=null?fN(owedNow):'—',col:owedNow>0.05*(x.rent||1)?REDD:GREEND},
           {k:'Peak balance (5 mo)',v:x.peakBal!=null?fN(x.peakBal):'—',col:x.peakBal>1.25*(x.rent||1)?REDD:INK},
           {k:'Collection rate (info)',v:p&&p.collRate!=null?p.collRate+'%':'—',col:INK},
           {k:'Bounced NSF (info only)',v:p&&p.nsf!=null?String(p.nsf):'—',col:FAINT},
+          {k:'Prior renewals',v:String(x.priorRenewals||0),col:INK},
           {k:'Lease',v:prettyISO(x.leaseStart)+' → '+prettyISO(x.leaseEnd),col:INK},
         ]:[],
         plHref:plH(x.door),coHref:coH(x.door),cfHref:cfH(x.door),txHref:txH(x.door)};});
     const vRenLab='Renewals — retention, and whether we retained the right tenants';
     const vRenSub='standard term 1 yr · multi-year leases are already-renewed (term-split) · tap a card to see its properties · verdict reads the '+(balMonths.length||5)+'-month balance';
-    const vRenMethod='A renewal = the same tenant continuing — whether the lease term was extended on the same row OR a new lease row was created for them (matched on name, so a co-tenant added or dropped still counts as a renewal). A different tenant taking over is a turnover. Rate = renewed ÷ (renewed + turnover); at-will/open-ended leases ('+(REN.atwill||0)+') and not-yet-expired leases are held aside. Row-level reading (distinct expired rows re-signed): '+(REN.rowLevel?REN.rowLevel.ratePct:0)+'%. Tap any card above to drill into the properties behind it.';
+    const vRenMethod='A renewal = the same tenant continuing — whether the lease term was extended on the same row OR a new lease row was created for them (matched on name, so a co-tenant added or dropped still counts as a renewal). A different tenant taking over is a turnover. Leases are keyed to their real unit, so a building whose units are filed under one index (e.g. the Gardner St B cluster) no longer shows several tenants as one door’s renewals. Rate = renewed ÷ (renewed + turnover); at-will/open-ended leases ('+(REN.atwill||0)+') and not-yet-expired leases are held aside. Row-level reading: '+(REN.rowLevel?REN.rowLevel.ratePct:0)+'%. Tap any card above to drill into the properties behind it.';
     const vDueLab='Due for renewal — decide, with the month-end balance record';
     const vDueCap=dueAll.length+' active lease'+(dueAll.length!==1?'s':'')+' ending within '+(V.targets&&V.targets.dueWindow||120)+' days';
     const vDueEmpty=dueAll.length===0,vDueEmptyTxt='No leases coming up for renewal in this scope within the window.';
@@ -1577,14 +1617,15 @@ class Component extends DCLogic {
     const vFlagLab='DATA FLAGS';
     const vFlagRows=(V.missingLease||[]).filter(m=>!eSet.size||eSet.has(m.entity)).map(m=>({door:m.door,note:'Rented and earning on the GL, but has no rows in Leases.csv — add its leases so vacancy can be measured.',plHref:plH(m.door)}));
     const exN=(V.excluded||[]).length;
-    const vExclLine=exN+' door'+(exN!==1?'s':'')+' excluded from vacancy entirely (on-hold, office or non-rental): '+(V.excluded||[]).map(e=>e.door).join(' · ')+'. Sold and held-for-sale doors stop accruing vacancy at their exit date.';
+    const rerN=(V.reroutedLeases||[]).length;
+    const vExclLine=exN+' door'+(exN!==1?'s':'')+' excluded from vacancy entirely (on-hold, office or non-rental): '+(V.excluded||[]).map(e=>e.door).join(' · ')+'. Sold and held-for-sale doors stop accruing vacancy at their exit date.'+(rerN?' '+rerN+' lease'+(rerN!==1?'s':'')+' filed under one index were routed to their real unit (Gardner St B), so 3427-B / 3429-B now measure correctly and only genuinely lease-less doors would flag above.':'');
 
     return {showVac,showLoss,tabChips,tabHint,vScopeLine,vReady:true,vPending:false,vErr:false,vRetry:()=>this.loadVac(),
       vKpis,vHeadLab,vHead,vHeadCap,vHeroSub,vTgtVal:S.vTgt||'30',onVTgt:e=>this.setState({vTgt:e.target.value}),vReconLine,
-      gMetChips,gYearChips,gYearHint,gPath,gArea,gPts,gGrow,gPanelTitle,gPanelSub,gRows,gPanelFoot,gEmpty,gEmptyTxt,gTotOn,gTotTitle,gTotSub,gTot,gqVal:S.vGq||'',onGq:e=>this.setState({vGq:e.target.value}),
+      gMetChips,gYearChips,gYearHint,gMonthChipsOn,gMonthLab,gMonthChips,gPath,gArea,gPts,gGrow,gPanelTitle,gPanelSub,gRows,gPanelFoot,gEmpty,gEmptyTxt,gTotOn,gTotTitle,gTotSub,gTot,gqVal:S.vGq||'',onGq:e=>this.setState({vGq:e.target.value}),
       vAgLab,vAgTiles,vAgNote,vDrillOn,vDrillLab,vDrillSum,vDrillRows,
       vFocusLab,vFocusCap,vFocusRows,vFocusEmpty,vFocusEmptyTxt,vFocusFoot,
-      vTurnLab,vTurnTiles,vSlowLab,vSlowRows,
+      vTurnLab,vTurnCap,vTurnTiles,vTurnDrillOn,vTurnDrillLab,vTurnDrillSum,vTurnRows,vTurnFoot,
       vRosterLab,vRosterCap,vRosterLegend,vqVal:S.vq||'',onVq:e=>this.setState({vq:e.target.value,vAll:false}),vSortChips,vRows,vRosMaxH,vMoreShow,onVMore:()=>this.setState({vAll:true}),vMoreLab,vRosterFoot,
       vRenLab,vRenSub,vRenTiles,vRenMethod,vRenCardOn,vCardLab,vCardSum,vCardRows,vCardFoot,vDueLab,vDueCap,vDueRows,vDueMaxH,vDueMoreShow,onVDueMore:()=>this.setState({vDueAll:true}),vDueMoreLab,vDueEmpty,vDueEmptyTxt,vRenFoot,
       vFlagLab,vFlagRows,vExclLine};
