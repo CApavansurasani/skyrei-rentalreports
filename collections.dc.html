@@ -545,16 +545,115 @@ input:focus{outline:2px solid #C9A45C;outline-offset:1px}
           </div>
         </div>
 
-        <!-- merged KPI strip (6) -->
+        <!-- merged KPI strip (6) — every card clickable (owner 2026-07-21): the drill below names who's behind the number -->
         <div style="margin-top:12px;display:grid;grid-template-columns:repeat(6,1fr);gap:10px">
           <sc-for list="{{ mkpis }}" as="ck" hint-placeholder-count="6">
-            <div title="{{ ck.tip }}" style="background:{{ ck.bg }};border:1px solid {{ ck.bd }};border-radius:12px;padding:11px 13px">
-              <div style="font-size:8.5px;letter-spacing:0.05em;font-weight:800;color:#5E6B82;text-transform:uppercase;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">{{ ck.label }}</div>
+            <div onClick="{{ ck.onClick }}" title="{{ ck.tip }}" style-hover="border-color:#C9A45C" style="background:{{ ck.bg }};border:1.5px solid {{ ck.bd }};border-radius:12px;padding:11px 13px;cursor:pointer">
+              <div style="display:flex;justify-content:space-between;align-items:baseline;gap:4px">
+                <div style="font-size:8.5px;letter-spacing:0.05em;font-weight:800;color:#5E6B82;text-transform:uppercase;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">{{ ck.label }}</div>
+                <div style="font-size:8.5px;font-weight:800;color:#96742F;flex:none">{{ ck.chev }}</div>
+              </div>
               <div style="margin-top:4px;font-family:'Source Serif 4',Georgia,serif;font-size:18px;font-weight:600;color:{{ ck.col }};font-variant-numeric:tabular-nums;white-space:nowrap">{{ ck.val }}</div>
               <div style="margin-top:2px;font-size:9px;color:#8A93A6;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">{{ ck.sub }}</div>
             </div>
           </sc-for>
         </div>
+
+        <!-- KPI card drill — who is behind the clicked number (owner 2026-07-21 pt 5) -->
+        <sc-if value="{{ ceCardOn }}" hint-placeholder-val="{{ false }}">
+          <div style="margin-top:10px;background:#FBFAF6;border:1.5px solid #E2D9C4;border-radius:12px;padding:12px 15px" onClick="{{ stopProp }}">
+            <div style="display:flex;justify-content:space-between;align-items:baseline;gap:8px;flex-wrap:wrap">
+              <span style="font-size:9.5px;letter-spacing:0.08em;font-weight:800;color:#96742F">{{ ceCardLab }}</span>
+              <span style="display:flex;gap:12px;align-items:baseline">
+                <span style="font-size:10px;color:#8A93A6;font-variant-numeric:tabular-nums">{{ ceCardSum }}</span>
+                <span onClick="{{ onCeCardClose }}" style-hover="color:#16233A" style="font-size:9px;font-weight:800;letter-spacing:0.04em;color:#96742F;cursor:pointer">CLOSE ✕</span>
+              </span>
+            </div>
+            <sc-if value="{{ ceCardMonthsOn }}" hint-placeholder-val="{{ false }}">
+              <div style="margin-top:8px;display:flex;padding:2px 0 4px;font-size:8px;letter-spacing:0.05em;font-weight:800;color:#8A93A6;border-bottom:1px solid #EDEBE2">
+                <span style="flex:0.8">MONTH</span><span style="flex:1;text-align:right">INVOICED</span><span style="flex:1;text-align:right">COLLECTED (YOUR FORMULA)</span><span style="flex:1;text-align:right">MONTHLY RATE</span><span style="flex:1;text-align:right">YTD RATE</span>
+              </div>
+              <sc-for list="{{ ceCardMonths }}" as="ym" hint-placeholder-count="5">
+                <div onClick="{{ ym.onClick }}" style-hover="background:#FBF6EA" style="display:flex;padding:4.5px 4px;font-size:10.5px;color:#2A3550;font-variant-numeric:tabular-nums;border-bottom:1px solid #F4F2EA;cursor:pointer;background:{{ ym.selBg }};border-radius:6px">
+                  <span style="flex:0.8;font-weight:{{ ym.fw }}">{{ ym.m }}</span>
+                  <span style="flex:1;text-align:right;color:#3D64A8">{{ ym.inv }}</span>
+                  <span style="flex:1;text-align:right;color:#96742F;font-weight:700">{{ ym.act }}</span>
+                  <span style="flex:1;text-align:right">{{ ym.rate }}</span>
+                  <span style="flex:1;text-align:right;font-weight:800;color:#2A6F4E">{{ ym.ytd }}</span>
+                </div>
+              </sc-for>
+              <div style="margin-top:7px;font-size:9.5px;color:#5E6B82;line-height:1.6;background:#FFFFFF;border:1px solid #EDEBE2;border-radius:8px;padding:8px 11px">{{ ceCardIdFoot }}</div>
+            </sc-if>
+            <sc-if value="{{ ceCardRowsOn }}" hint-placeholder-val="{{ false }}">
+              <div class="scr" style="margin-top:4px;max-height:340px;overflow-y:auto;overscroll-behavior:contain;padding-right:5px">
+                <sc-for list="{{ ceCardRows }}" as="kr" hint-placeholder-count="8">
+                  <div onClick="{{ kr.onClick }}" style-hover="border-color:#C9A45C" style="margin-top:6px;border:1.5px solid {{ kr.bd }};border-radius:9px;padding:8px 11px;background:{{ kr.bg }};cursor:pointer">
+                    <div style="display:flex;justify-content:space-between;align-items:baseline;gap:8px">
+                      <span style="min-width:0"><span style="font-size:11.5px;font-weight:700;color:#16233A">{{ kr.tenant }}</span><span style="font-size:10px;color:#8A93A6"> · {{ kr.prop }}</span></span>
+                      <span style="font-size:12.5px;font-weight:800;color:{{ kr.vCol }};font-variant-numeric:tabular-nums;white-space:nowrap">{{ kr.v }} <span style="font-size:8.5px;font-weight:800;color:#8A93A6">{{ kr.vLab }}</span></span>
+                    </div>
+                    <div style="margin-top:4px;display:flex;justify-content:space-between;align-items:center;gap:8px;flex-wrap:wrap">
+                      <span style="font-size:9.5px;color:#5E6B82">{{ kr.sub }} · {{ kr.exTog }}</span>
+                      <span style="display:flex;gap:5px;align-items:center">
+                        <sc-for list="{{ kr.badges }}" as="kb" hint-placeholder-count="2">
+                          <span style="font-size:8px;font-weight:800;letter-spacing:0.04em;padding:2px 7px;border-radius:99px;background:{{ kb.bg }};color:{{ kb.col }}">{{ kb.t }}</span>
+                        </sc-for>
+                      </span>
+                    </div>
+                    <sc-if value="{{ kr.open }}" hint-placeholder-val="{{ false }}">
+                      <div style="margin-top:8px;padding:9px 11px;background:#FFFFFF;border:1px solid #EDEBE2;border-radius:9px" onClick="{{ stopProp }}">
+                        <div style="display:flex;gap:6px;flex-wrap:wrap">
+                          <sc-for list="{{ kr.facts }}" as="kf" hint-placeholder-count="4">
+                            <span style="border:1px solid #EDEBE2;border-radius:8px;padding:4px 9px;background:#FBFAF6">
+                              <span style="display:block;font-size:7.5px;letter-spacing:0.04em;font-weight:800;color:{{ kf.kc }}">{{ kf.k }}</span>
+                              <span style="display:block;font-size:11px;font-weight:800;color:{{ kf.col }};font-variant-numeric:tabular-nums">{{ kf.v }}</span>
+                            </span>
+                          </sc-for>
+                        </div>
+                        <div style="margin-top:9px;font-size:8.5px;letter-spacing:0.05em;font-weight:800;color:#8A93A6">BALANCE BY MONTH — THEIR PATTERN</div>
+                        <div style="margin-top:4px;position:relative">
+                          <svg viewBox="0 0 240 54" preserveAspectRatio="none" style="width:100%;height:54px;display:block;overflow:visible">
+                            <sc-if value="{{ kr.zeroOn }}" hint-placeholder-val="{{ false }}">
+                              <line x1="6" y1="{{ kr.zeroY }}" x2="234" y2="{{ kr.zeroY }}" stroke="#E5E0D2" stroke-width="1" stroke-dasharray="3 3"></line>
+                            </sc-if>
+                            <polyline points="{{ kr.sparkPath }}" fill="none" stroke="#B04A33" stroke-width="1.8" stroke-linejoin="round" stroke-linecap="round"></polyline>
+                            <sc-for list="{{ kr.sparkPts }}" as="kp" hint-placeholder-count="5">
+                              <circle cx="{{ kp.cx }}" cy="{{ kp.cy }}" r="{{ kp.r }}" fill="{{ kp.fill }}" stroke="#B04A33" stroke-width="1.3"></circle>
+                              <circle onClick="{{ kp.onClick }}" cx="{{ kp.cx }}" cy="{{ kp.cy }}" r="9" fill="transparent" style="cursor:pointer"></circle>
+                            </sc-for>
+                          </svg>
+                          <sc-for list="{{ kr.sparkLabs }}" as="kl" hint-placeholder-count="5">
+                            <span style="position:absolute;left:{{ kl.leftPct }};top:{{ kl.topPct }};transform:translate(-50%,-135%);font-size:7.5px;font-weight:800;color:{{ kl.col }};font-variant-numeric:tabular-nums;white-space:nowrap;pointer-events:none">{{ kl.v }}</span>
+                          </sc-for>
+                        </div>
+                        <div style="margin-top:2px;display:flex;justify-content:space-between;padding:0 2px">
+                          <sc-for list="{{ kr.sparkMs }}" as="km" hint-placeholder-count="5">
+                            <span onClick="{{ km.onClick }}" style-hover="color:#96742F" style="font-size:8px;font-weight:{{ km.fw }};color:{{ km.col }};cursor:pointer">{{ km.m }}</span>
+                          </sc-for>
+                        </div>
+                        <sc-if value="{{ kr.hasDetail }}" hint-placeholder-val="{{ false }}">
+                          <div style="margin-top:8px;font-size:8.5px;letter-spacing:0.05em;font-weight:800;color:#8A93A6">{{ kr.detailLab }}</div>
+                          <sc-for list="{{ kr.detail }}" as="kd" hint-placeholder-count="4">
+                            <div style="display:flex;justify-content:space-between;gap:8px;padding:3px 0;font-size:10px;font-variant-numeric:tabular-nums;border-bottom:1px solid #F4F2EA">
+                              <span style="color:#5E6B82">{{ kd.d }} <span style="font-size:8px;font-weight:800;padding:1px 6px;border-radius:99px;background:{{ kd.tagBg }};color:{{ kd.tagCol }}">{{ kd.tag }}</span></span>
+                              <span style="font-weight:700;color:{{ kd.amtCol }}">{{ kd.amt }}</span>
+                            </div>
+                          </sc-for>
+                        </sc-if>
+                        <div style="margin-top:7px;display:flex;gap:6px;flex-wrap:wrap">
+                          <a href="{{ kr.txHref }}" style="font-size:8.5px;font-weight:800;letter-spacing:0.04em;color:#96742F;text-decoration:none;border:1px solid #E2D9C4;border-radius:99px;padding:2px 9px">TXN →</a>
+                          <span onClick="{{ kr.onChase }}" style-hover="background:#F6ECD9" style="font-size:8.5px;font-weight:800;letter-spacing:0.04em;color:#96742F;cursor:pointer;border:1px solid #E2D9C4;border-radius:99px;padding:2px 9px">OPEN IN ROSTER ▾</span>
+                          <span onClick="{{ kr.onFocus }}" style-hover="background:#F6ECD9" style="font-size:8.5px;font-weight:800;letter-spacing:0.04em;color:#96742F;cursor:pointer;border:1px solid #E2D9C4;border-radius:99px;padding:2px 9px">{{ kr.focusLab }}</span>
+                        </div>
+                      </div>
+                    </sc-if>
+                  </div>
+                </sc-for>
+              </div>
+            </sc-if>
+            <div style="margin-top:8px;font-size:9.5px;color:#9AA3B5;line-height:1.55">{{ ceCardFoot }}</div>
+          </div>
+        </sc-if>
 
         <!-- the split identity — FIFO re-sums to the owner formula, to the cent -->
         <div style="margin-top:12px;padding:11px 16px;background:#FBFAF6;border:1px solid #EDEBE2;border-radius:12px;display:flex;align-items:center;gap:9px;flex-wrap:wrap;font-variant-numeric:tabular-nums">
@@ -587,7 +686,6 @@ input:focus{outline:2px solid #C9A45C;outline-offset:1px}
                 <sc-if value="{{ ceArrOn }}" hint-placeholder-val="{{ false }}">
                   <polyline points="{{ cePathArr }}" fill="none" stroke="#B04A33" stroke-width="1.5" stroke-dasharray="3 4" stroke-linejoin="round" stroke-linecap="round" opacity="0.8"></polyline>
                 </sc-if>
-                <polyline points="{{ cePathDim }}" fill="none" stroke="{{ ceDimCol }}" stroke-width="1.8" stroke-linejoin="round" stroke-linecap="round" opacity="0.5"></polyline>
                 <polyline points="{{ cePathMain }}" fill="none" stroke="{{ ceMainCol }}" stroke-width="2.5" stroke-linejoin="round" stroke-linecap="round"></polyline>
                 <sc-for list="{{ cePts }}" as="cp" hint-placeholder-count="10">
                   <circle cx="{{ cp.cx }}" cy="{{ cp.cy }}" r="{{ cp.r }}" fill="{{ cp.fill }}" stroke="{{ cp.stroke }}" stroke-width="1.6"></circle>
@@ -762,6 +860,7 @@ input:focus{outline:2px solid #C9A45C;outline-offset:1px}
               </div>
               <div style="margin-top:6px;font-size:11.5px;color:#2A3550;line-height:1.5">{{ ceFocusLine }}</div>
               <div style="margin-top:8px;height:7px;border-radius:4px;background:#EFEDE4;overflow:hidden"><div style="height:7px;border-radius:4px;background:{{ ceFocusBarC }};width:{{ ceFocusBarW }}"></div></div>
+              <div class="scr" style="max-height:300px;overflow-y:auto;overscroll-behavior:contain;padding-right:5px">
               <sc-for list="{{ ceFocusRows }}" as="fr" hint-placeholder-count="7">
                 <div onClick="{{ fr.onClick }}" style-hover="border-color:#C9A45C" style="margin-top:6px;border:1px solid {{ fr.bd }};border-radius:9px;padding:7px 10px;background:{{ fr.bg }};cursor:pointer;opacity:{{ fr.op }}">
                   <div style="display:flex;justify-content:space-between;align-items:baseline;gap:8px">
@@ -781,6 +880,7 @@ input:focus{outline:2px solid #C9A45C;outline-offset:1px}
                   </div>
                 </div>
               </sc-for>
+              </div>
               <div style="margin-top:8px;font-size:9.5px;color:#9AA3B5;line-height:1.55">{{ ceFocusFoot }}</div>
             </div>
 
@@ -798,8 +898,9 @@ input:focus{outline:2px solid #C9A45C;outline-offset:1px}
               <sc-if value="{{ ceEmpty }}" hint-placeholder-val="{{ false }}">
                 <div style="margin-top:10px;padding:14px;text-align:center;font-size:11px;color:#8A93A6;background:#F8F7F2;border-radius:10px">{{ ceEmptyTxt }}</div>
               </sc-if>
+              <div class="scr" style="max-height:478px;overflow-y:auto;overscroll-behavior:contain;padding-right:5px">
               <sc-for list="{{ ceRows }}" as="ce" hint-placeholder-count="9">
-                <div onClick="{{ ce.onClick }}" style-hover="background:#FBFAF6" style="margin-top:6px;border:1px solid {{ ce.bd }};border-radius:10px;padding:8px 10px;cursor:pointer;background:{{ ce.bg }}">
+                <div data-ce-row="{{ ce.rkey }}" onClick="{{ ce.onClick }}" style-hover="background:#FBFAF6" style="margin-top:6px;border:1px solid {{ ce.bd }};border-radius:10px;padding:8px 10px;cursor:pointer;background:{{ ce.bg }}">
                   <div style="display:flex;justify-content:space-between;align-items:baseline;gap:8px">
                     <span style="min-width:0"><span style="font-size:12px;font-weight:700;color:#16233A">{{ ce.tenant }}</span><span style="font-size:10px;color:#8A93A6"> · {{ ce.prop }}</span></span>
                     <span style="font-size:12.5px;font-weight:800;color:{{ ce.balCol }};font-variant-numeric:tabular-nums;white-space:nowrap">{{ ce.bal }}</span>
@@ -826,17 +927,26 @@ input:focus{outline:2px solid #C9A45C;outline-offset:1px}
                   </div>
                   <sc-if value="{{ ce.open }}" hint-placeholder-val="{{ false }}">
                     <div style="margin-top:8px;padding:9px 11px;background:#FBFAF6;border:1px solid #EDEBE2;border-radius:9px" onClick="{{ stopProp }}">
-                      <div style="font-size:9px;color:#8A93A6;line-height:1.55;padding-bottom:6px;border-bottom:1px solid #EDEBE2">Every payment clears the <b>oldest</b> dues first. <b style="color:#5E6B82">PAID OLD DUES</b> = money that went to earlier months&rsquo; charges · <b style="color:#5E6B82">PAID FOR MONTH</b> = money that landed on that month&rsquo;s own charges · <b style="color:#5E6B82">PREPAID PART</b> = the slice of it covered by advance money the tenant had already paid.</div>
+                      <div style="font-size:9px;color:#8A93A6;line-height:1.55;padding-bottom:6px;border-bottom:1px solid #EDEBE2">The tenant&rsquo;s account, month by month: <b style="color:#5E6B82">OPENING + CHARGED − PAID = CLOSING</b>, to the cent. A written-off balance leaves the book between months and doesn&rsquo;t roll forward.</div>
                       <div style="display:flex;padding:5px 0 4px;font-size:8px;letter-spacing:0.05em;font-weight:800;color:#8A93A6;border-bottom:1px solid #EDEBE2">
-                        <span style="flex:0.8">MONTH</span><span style="flex:1;text-align:right">CHARGED</span><span style="flex:1;text-align:right">PAID FOR MONTH</span><span style="flex:1;text-align:right">PREPAID PART</span><span style="flex:1;text-align:right">PAID OLD DUES</span><span style="flex:1;text-align:right">CLOSING</span>
+                        <span style="flex:0.8">MONTH</span><span style="flex:1;text-align:right">OPENING</span><span style="flex:1;text-align:right">CHARGED</span><span style="flex:1;text-align:right">PAID</span><span style="flex:1;text-align:right">CLOSING</span>
                       </div>
                       <sc-for list="{{ ce.mini }}" as="cem" hint-placeholder-count="5">
                         <div style="display:flex;padding:3.5px 0;font-size:10px;color:#2A3550;font-variant-numeric:tabular-nums;border-bottom:1px solid #F4F2EA">
-                          <span style="flex:0.8;font-weight:700">{{ cem.m }}</span><span style="flex:1;text-align:right;color:#3D64A8">{{ cem.chg }}</span><span style="flex:1;text-align:right;color:#96742F;font-weight:700">{{ cem.cur }}</span><span style="flex:1;text-align:right;color:#2A6F4E">{{ cem.adv }}</span><span style="flex:1;text-align:right">{{ cem.arr }}</span><span style="flex:1;text-align:right;font-weight:700;color:{{ cem.closeCol }}">{{ cem.close }}</span>
+                          <span style="flex:0.8;font-weight:700">{{ cem.m }}</span><span style="flex:1;text-align:right;color:#5E6B82">{{ cem.open }}</span><span style="flex:1;text-align:right;color:#3D64A8">{{ cem.chg }}</span><span style="flex:1;text-align:right;color:#96742F;font-weight:700">{{ cem.coll }}</span><span style="flex:1;text-align:right;font-weight:700;color:{{ cem.closeCol }}">{{ cem.close }}</span>
                         </div>
                       </sc-for>
+                      <div style="margin-top:8px;font-size:8.5px;letter-spacing:0.05em;font-weight:800;color:#8A93A6">HOW OLD IS THE {{ ce.itemsMonth }} CLOSING BALANCE</div>
+                      <div style="margin-top:5px;display:flex;gap:6px;flex-wrap:wrap">
+                        <sc-for list="{{ ce.agChips }}" as="cg" hint-placeholder-count="5">
+                          <span style="border:1px solid #EDEBE2;border-radius:8px;padding:4px 9px;background:#FFFFFF">
+                            <span style="display:block;font-size:7.5px;letter-spacing:0.04em;font-weight:800;color:{{ cg.kc }}">{{ cg.k }}</span>
+                            <span style="display:block;font-size:11px;font-weight:800;color:{{ cg.col }};font-variant-numeric:tabular-nums">{{ cg.v }}</span>
+                          </span>
+                        </sc-for>
+                      </div>
                       <sc-if value="{{ ce.hasItems }}" hint-placeholder-val="{{ false }}">
-                        <div style="margin-top:7px;font-size:8.5px;letter-spacing:0.05em;font-weight:800;color:#8A93A6">OPEN CHARGES AT {{ ce.itemsMonth }} — OLDEST FIRST · THE NEXT PAYMENT CLEARS THE TOP ROW</div>
+                        <div style="margin-top:7px;font-size:8.5px;letter-spacing:0.05em;font-weight:800;color:#8A93A6">THE OPEN CHARGES BEHIND IT — OLDEST FIRST · THE NEXT PAYMENT CLEARS THE TOP ROW</div>
                         <sc-for list="{{ ce.items }}" as="ci" hint-placeholder-count="4">
                           <div style="display:flex;justify-content:space-between;gap:8px;padding:3px 0;font-size:10px;font-variant-numeric:tabular-nums;border-bottom:1px solid #F4F2EA">
                             <span style="color:#5E6B82">{{ ci.d }} <span style="font-size:8px;font-weight:800;padding:1px 6px;border-radius:99px;background:{{ ci.bg }};color:{{ ci.col }}">{{ ci.bkt }}</span></span>
@@ -855,6 +965,7 @@ input:focus{outline:2px solid #C9A45C;outline-offset:1px}
                   </sc-if>
                 </div>
               </sc-for>
+              </div>
               <sc-if value="{{ ceMoreShow }}" hint-placeholder-val="{{ false }}">
                 <div onClick="{{ onCeMore }}" style-hover="background:#F6ECD9" style="margin-top:8px;text-align:center;padding:7px;border:1px solid #D8D4C8;border-radius:9px;font-size:11px;font-weight:700;color:#96742F;cursor:pointer">{{ ceMoreLab }}</div>
               </sc-if>
@@ -1076,6 +1187,7 @@ class Component extends DCLogic {
     ddOpen: null, fq: '',
     ceMode: 'fifo', ceM: null, ceTgt: '95', ceTgtArr: '70', ceBkt: null, ceQ: '', ceSort: 'impact',
     ceExp: null, ceAll: false, ceRoll: false, ceDrillAll: false, ceDrillExp: null,
+    ceCard: null, ceCardExp: null,
     lq: '', lSort: 'bal', lBucket: null, lExp: null, lAll: false,
     wSel: [], wq: '', wExp: null, wAll: false,
     tab: 'loss', vac: null, vacErr: null,
@@ -1556,10 +1668,11 @@ class Component extends DCLogic {
       ceTgtArrVal: '70', onCeTgtArr: () => {},
       heroRateLab: '', heroRate: '', heroRateCol: '#16233A', heroRateSub: '', heroGaugeHead: '', gCollW: '0%', gCollCol: '#C9A45C', gGapW: '0%', gStretchW: '100%', gFlagLeft: '0%', gFlagLab: '', heroTicks: [], heroCallout: '', heroTgtLab: '', heroTgtBig: '', heroStatus: '', heroStatusCol: '#16233A', heroStatusBg: '#FFFFFF', mkpis: [],
       ceSub: '', ceModeChips: [], ceTgtVal: '', onCeTgt: () => {}, ceOn: false, ceOff: false,
-      ceKpis: [], ceIdLab: '', ceIdCur: '', ceIdArr: '', ceIdCrp: '', ceIdAct: '',
+      ceIdLab: '', ceIdCur: '', ceIdArr: '', ceIdCrp: '', ceIdAct: '',
       ceLegend: [], ceGrid: [], ceGridLabs: [], ceTgtOn: false, ceTgtY: '0', ceTgtTopPct: '0%', ceTgtLab: '',
-      ceArrOn: false, cePathArr: '', cePathDim: '', ceDimCol: '#3D64A8', cePathMain: '', ceMainCol: '#C9A45C',
+      ceArrOn: false, cePathArr: '', cePathMain: '', ceMainCol: '#C9A45C',
       cePts: [], ceHits: [], ceLabs: [], ceMonths: [], ceChartFoot: '',
+      ceCardOn: false, ceCardRowsOn: false, ceCardMonthsOn: false, ceCardLab: '', ceCardSum: '', ceCardFoot: '', ceCardIdFoot: '', ceCardRows: [], ceCardMonths: [], onCeCardClose: () => {},
       ceAgLab: '', onCeRoll: () => {}, ceRollTog: '', ceAgTiles: [], ceAgNote: '',
       ceRollOn: false, ceRollLab: '', ceRollRows: [], ceRollFoot: '',
       ceDrillOn: false, ceDrillLab: '', ceDrillSum: '', ceDrillRows: [], ceDrillMoreShow: false, onCeDrillMore: () => {}, ceDrillMoreLab: '',
@@ -1772,7 +1885,37 @@ class Component extends DCLogic {
     // per-tenant collectibles at the selected month (advance payers have no open items → never chased)
     const rosterKey = r => r.d + '||' + r.t.tenant;
     // owner 2026-07-20 pt 1: anything that opens a tenant in the roster also TAKES you there
-    const jumpRoster = () => { try { if (typeof document !== 'undefined' && document.querySelector) { const el = document.querySelector('[data-ce-roster]'); if (el && el.scrollIntoView) el.scrollIntoView({ behavior: 'smooth', block: 'start' }); } } catch (e) {} };
+    const jumpRoster = (key) => { try { if (typeof document !== 'undefined' && document.querySelector) {
+      let el = null;
+      if (key) { const cand = document.querySelectorAll('[data-ce-row]'); for (let z = 0; z < cand.length; z++) if (cand[z].getAttribute('data-ce-row') === key) { el = cand[z]; break; } }
+      const tgt = el || document.querySelector('[data-ce-roster]');
+      if (tgt && tgt.scrollIntoView) tgt.scrollIntoView({ behavior: 'smooth', block: el ? 'center' : 'start' });
+    } } catch (e) {} };
+    // balance-by-month spark for one tenant (shared by the bucket drill + the KPI-card drills)
+    const mkSpark = (t) => {
+      const ser = winIdx.map(i2 => t.close[i2]);
+      let sLo = Math.min(...ser, 0), sHi = Math.max(...ser, 1);
+      if (sHi - sLo < 1) sHi = sLo + 1;
+      const sx = j2 => winIdx.length === 1 ? 120 : 10 + j2 * 220 / (winIdx.length - 1);
+      const sy = v => 8 + (sHi - v) / (sHi - sLo) * 38;
+      return {
+        zeroOn: sLo < -0.005, zeroY: sy(0).toFixed(1),
+        sparkPath: ser.map((v, j2) => sx(j2).toFixed(1) + ',' + sy(v).toFixed(1)).join(' '),
+        sparkPts: ser.map((v, j2) => ({
+          cx: sx(j2).toFixed(1), cy: sy(v).toFixed(1), r: winIdx[j2] === ceMi ? 3.4 : 2.4,
+          fill: winIdx[j2] === ceMi ? '#B04A33' : '#FFFFFF',
+          onClick: (e) => { if (e && e.stopPropagation) e.stopPropagation(); this.setState({ ceM: winIdx[j2] }); },
+        })),
+        sparkLabs: ser.map((v, j2) => ({
+          leftPct: (sx(j2) / 240 * 100).toFixed(1) + '%', topPct: (sy(v) / 54 * 100).toFixed(1) + '%',
+          col: winIdx[j2] === ceMi ? REDD : FAINT, v: fK(v),
+        })),
+        sparkMs: winIdx.map((i2, j2) => ({
+          m: mmyy(MO[i2]).slice(0, 3), fw: i2 === ceMi ? 800 : 600, col: i2 === ceMi ? NAVY : FAINT,
+          onClick: (e) => { if (e && e.stopPropagation) e.stopPropagation(); this.setState({ ceM: i2 }); },
+        })),
+      };
+    };
     const collectibles = [];
     for (const r of allRows) {
       const t = r.t; if (!Array.isArray(t.items) || !t.items[ceMi]) continue;
@@ -1797,21 +1940,17 @@ class Component extends DCLogic {
     const onCeTgt = e => this.setF({ ceTgt: e && e.target ? e.target.value : '95' });
     // ── KPI strip (selected month, current scope) ──
     const bigWorst = agSums[3] > 0.005 ? '90+: ' + fN(agSums[3]) : (agSums[2] > 0.005 ? '61–90: ' + fN(agSums[2]) : 'nothing past 60 days');
-    const ceTile = (label, val, sub, col, tip, bg, bd) => ({ label, val, sub, col: col || NAVY, dcol: FAINT, tip: tip || '', bg: bg || '#FFFFFF', bd: bd || '#E5E3DC' });
-    const ceKpis = ceOn ? [
-      ceTile('Collected for ' + mmyy(MO[ceMi]) + '’s charges', fR1(fe.curRate), fN(fe.cur) + ' of ' + fN(inv_i) + ' billed · ' + fN(fe.advU) + ' via advances', GOLDD, 'Cash + advances applied to the month’s own charges (FIFO). The billing-effectiveness rate.'),
-      ceTile('Old dues collected', fR1(fe.arrRate), fN(fe.arr) + ' of ' + fN(rsM[ceMi].od) + ' opening arrears', BLUE, 'Cash applied to charges from earlier months — the backlog work.'),
-      ceTile('Receivables open', fN(agTot), bigWorst, agTot > 0.005 ? REDD : GREEND, 'Open charges at month-end, aged from the date of charge. Σ ties the closing dues to the cent.'),
-      ceTile('Target ' + tgtN + '%', gapMet ? 'MET ✓' : fN(gapV) + ' short', ceMode === 'fifo' ? 'on this month’s billing (FIFO)' : 'on the blended formula', gapMet ? GREEND : REDD, 'The gap between the target and ' + (ceMode === 'fifo' ? 'collected-for-the-month' : 'actual collection') + '. The focus list at right closes it.', gapMet ? '#F2F7F0' : '#FBF0ED', gapMet ? '#D6E4D2' : '#EAD1C8'),
-      ceTile('Payments bounced', '' + fe.nsf, fe.nsf ? 'reversed payments this month' : 'none this month', fe.nsf ? REDD : GREEND, 'Buildium Reversed Payment rows — each re-opens the original charge at its original date.'),
-    ] : [];
+    // (the old ceKpis strip merged into the hero + mkpis on 2026-07-21 — the cards now click open to drills)
     // ── identity strip ──
     const ceIdLab = 'THE SPLIT RE-SUMS TO YOUR FORMULA · ' + mmyy(MO[ceMi]).toUpperCase();
     const ceIdCur = f2(fe.cur), ceIdArr = f2(fe.arr), ceIdCrp = f2(fe.crP), ceIdAct = f2(act_i);
-    // ── chart (two methods + target; window months) ──
+    // ── chart (ONE method at a time — owner 2026-07-21: the line follows the RATE METHOD toggle) ──
+    // FIFO mode: gold billing line + brick old-dues dash. BLENDED mode: the blue formula line alone.
+    // Target dash in both. The y-axis zooms to the DRAWN series only, so each view reads clearly.
     const serFifo = winIdx.map(i => feM[i].curRate), serBlend = winIdx.map(i => rsM[i].rate), serArr = winIdx.map(i => feM[i].arrRate);
     const ceArrOn = ceOn && ceMode === 'fifo' && serArr.some(v => v !== null);
-    const allV = [...serFifo, ...serBlend, ...(ceArrOn ? serArr : []), tgtN].filter(v => v !== null && isFinite(v));
+    const mainSer = ceMode === 'fifo' ? serFifo : serBlend;
+    const allV = [...mainSer, ...(ceArrOn ? serArr : []), tgtN].filter(v => v !== null && isFinite(v));
     let yLo = Math.min(...allV), yHi = Math.max(...allV);
     yLo = Math.max(0, Math.floor((yLo - 4) / 5) * 5); yHi = Math.ceil((yHi + 4) / 5) * 5;
     if (yHi - yLo < 10) yHi = yLo + 10;
@@ -1819,9 +1958,8 @@ class Component extends DCLogic {
     const xAt = j => nW === 1 ? (X0 + X1) / 2 : X0 + j * (X1 - X0) / (nW - 1);
     const yAt = v => T0 + (yHi - v) / (yHi - yLo) * (B0 - T0);
     const pathOf = ser => ser.map((v, j) => v === null ? null : xAt(j).toFixed(1) + ',' + yAt(v).toFixed(1)).filter(Boolean).join(' ');
-    const mainSer = ceMode === 'fifo' ? serFifo : serBlend, dimSer = ceMode === 'fifo' ? serBlend : serFifo;
-    const ceMainCol = ceMode === 'fifo' ? GOLD : '#3D64A8', ceDimCol = ceMode === 'fifo' ? '#3D64A8' : GOLD;
-    const cePathMain = pathOf(mainSer), cePathDim = pathOf(dimSer), cePathArr = ceArrOn ? pathOf(serArr) : '';
+    const ceMainCol = ceMode === 'fifo' ? GOLD : '#3D64A8';
+    const cePathMain = pathOf(mainSer), cePathArr = ceArrOn ? pathOf(serArr) : '';
     const gStep = (yHi - yLo) <= 15 ? 5 : (yHi - yLo) <= 30 ? 10 : 20;
     const ceGrid = [], ceGridLabs = [];
     for (let gv2 = Math.ceil(yLo / gStep) * gStep; gv2 <= yHi; gv2 += gStep) {
@@ -1833,29 +1971,37 @@ class Component extends DCLogic {
     const cePts = [], ceLabs = [];
     winIdx.forEach((i, j) => {
       const sel = i === ceMi;
-      const vM = mainSer[j], vD = dimSer[j];
-      if (vD !== null) cePts.push({ cx: xAt(j).toFixed(1), cy: yAt(vD).toFixed(1), r: 2.6, fill: '#FFFFFF', stroke: ceDimCol });
-      if (ceArrOn && serArr[j] !== null) cePts.push({ cx: xAt(j).toFixed(1), cy: yAt(serArr[j]).toFixed(1), r: 2.2, fill: '#FFFFFF', stroke: '#B04A33' });
+      const vM = mainSer[j];
+      const vA = ceArrOn && serArr[j] !== null ? serArr[j] : null;
+      if (vA !== null) cePts.push({ cx: xAt(j).toFixed(1), cy: yAt(vA).toFixed(1), r: 2.2, fill: '#FFFFFF', stroke: '#B04A33' });
       if (vM !== null) {
         cePts.push({ cx: xAt(j).toFixed(1), cy: yAt(vM).toFixed(1), r: sel ? 4.6 : 3.4, fill: sel ? ceMainCol : '#FFFFFF', stroke: ceMainCol });
-        const crowd = vD !== null && Math.abs(yAt(vD) - yAt(vM)) < 14;   // series crossing — lift the label clear
-        ceLabs.push({ leftPct: (xAt(j) / 640 * 100).toFixed(1) + '%', topPct: (yAt(vM) / 200 * 100).toFixed(1) + '%', dy: crowd ? '-175%' : '-135%', col: ceMode === 'fifo' ? GOLDD : '#3D64A8', v: vM.toFixed(1) + '%' });
-        if (sel && vD !== null) ceLabs.push({ leftPct: (xAt(j) / 640 * 100).toFixed(1) + '%', topPct: (yAt(vD) / 200 * 100).toFixed(1) + '%', dy: '45%', col: ceDimCol, v: vD.toFixed(1) + '%' });
+        // label placement: if the arrears dash sits just above this point, the usual above-the-point
+        // label would land on the brick marker — drop it below when the point is a local peak
+        // (clear air under it), else lift it well past the marker.
+        const crowd = vA !== null && vA >= vM && Math.abs(yAt(vA) - yAt(vM)) < 14;
+        const nbs = [j > 0 ? mainSer[j - 1] : null, j < nW - 1 ? mainSer[j + 1] : null].filter(v => v !== null);
+        const peakish = nbs.length > 0 && nbs.every(v => vM >= v - 0.3);
+        ceLabs.push({ leftPct: (xAt(j) / 640 * 100).toFixed(1) + '%', topPct: (yAt(vM) / 200 * 100).toFixed(1) + '%', dy: crowd ? (peakish ? '80%' : '-235%') : '-135%', col: ceMode === 'fifo' ? GOLDD : '#3D64A8', v: vM.toFixed(1) + '%' });
       }
     });
     const slotW = nW === 1 ? (X1 - X0) : (X1 - X0) / (nW - 1);
     const ceHits = winIdx.map((i, j) => ({
       x: Math.max(0, xAt(j) - slotW / 2).toFixed(1), w: slotW.toFixed(1),
-      onClick: () => this.setState({ ceM: i, ceBkt: null, ceDrillAll: false, ceDrillExp: null, ceExp: null }),
+      onClick: () => this.setState({ ceM: i, ceBkt: null, ceDrillAll: false, ceDrillExp: null, ceExp: null, ceCardExp: null }),
     }));
-    const ceMonths = winIdx.map(i => ({ m: mmyy(MO[i]), fw: i === ceMi ? 800 : 600, col: i === ceMi ? NAVY : FAINT, onClick: () => this.setState({ ceM: i, ceBkt: null, ceDrillAll: false, ceExp: null }) }));
-    const ceLegend = ceOn ? [
-      { sw: '2.5px solid ' + GOLD, label: 'This month’s billing (FIFO)', val: fR1(feM[ceMi].curRate), fw: ceMode === 'fifo' ? 800 : 600, tip: 'Collected-for-the-month ÷ the month’s own charges' },
-      { sw: '2px solid #3D64A8', label: 'Your formula (blended)', val: fR1(rsM[ceMi].rate), fw: ceMode === 'blend' ? 800 : 600, tip: '(collections + adv in − adv out) ÷ (invoices + opening due)' },
+    const ceMonths = winIdx.map(i => ({ m: mmyy(MO[i]), fw: i === ceMi ? 800 : 600, col: i === ceMi ? NAVY : FAINT, onClick: () => this.setState({ ceM: i, ceBkt: null, ceDrillAll: false, ceExp: null, ceCardExp: null }) }));
+    const ceLegend = ceOn ? (ceMode === 'fifo' ? [
+      { sw: '2.5px solid ' + GOLD, label: 'This month’s billing (FIFO)', val: fR1(feM[ceMi].curRate), fw: 800, tip: 'Collected-for-the-month ÷ the month’s own charges' },
       ...(ceArrOn ? [{ sw: '2px dashed #B04A33', label: 'Old-dues collection', val: fR1(feM[ceMi].arrRate), fw: 600, tip: 'Applied to prior months’ charges ÷ opening arrears' }] : []),
       { sw: '2px dashed #2A6F4E', label: 'Target', val: tgtN + '%', fw: 600, tip: 'Set the target at the top right of this section' },
-    ] : [];
-    const ceChartFoot = 'Click a month — the whole section follows it. Gold answers “of what we billed this month, how much came in?” (the manager’s controllable number). Blue is your blended formula — old dues keep dragging it until collected or written off. Brick dashes: % of opening arrears collected in the month.';
+    ] : [
+      { sw: '2.5px solid #3D64A8', label: 'Your formula (blended)', val: fR1(rsM[ceMi].rate), fw: 800, tip: '(collections + adv in − adv out) ÷ (invoices + opening due)' },
+      { sw: '2px dashed #2A6F4E', label: 'Target', val: tgtN + '%', fw: 600, tip: 'Set the target at the top right of this section' },
+    ]) : [];
+    const ceChartFoot = ceMode === 'fifo'
+      ? 'Click a month — the whole section follows it. Gold answers “of what we billed this month, how much came in?” (the manager’s controllable number). Brick dashes: % of opening arrears collected in the month. Switch the RATE METHOD above to see your blended formula instead.'
+      : 'Click a month — the whole section follows it. Blue is your formula: actual collection ÷ (invoices + opening due) — old dues keep dragging it until collected or written off. Switch the RATE METHOD above to see the FIFO billing view.';
     // ── aging tiles + drill ──
     const ceAgLab = 'RECEIVABLES BY AGE OF CHARGE — ' + mmyy(MO[ceMi]).toUpperCase() + ' · TOTAL ' + fN(agTot);
     const ceAgTiles = ceOn ? AGL.map((k, bi) => {
@@ -1951,26 +2097,8 @@ class Component extends DCLogic {
         const split = AGL.map((k, b2) => ({ k, kc: b2 >= 2 ? REDD : GOLDD, v: fN(spl[b2]), col: spl[b2] > 0.005 ? (b2 >= 2 ? REDD : NAVY) : FAINT }))
           .filter((_, b2) => spl[b2] > 0.005)
           .concat([{ k: 'TOTAL DUE', kc: MUT, v: fN(g.tot), col: REDD }]);
-        // balance-by-month spark (their pattern)
-        const ser = winIdx.map(i2 => t.close[i2]);
-        let sLo = Math.min(...ser, 0), sHi = Math.max(...ser, 1);
-        if (sHi - sLo < 1) sHi = sLo + 1;
-        const sx = j2 => winIdx.length === 1 ? 120 : 10 + j2 * 220 / (winIdx.length - 1);
-        const sy = v => 8 + (sHi - v) / (sHi - sLo) * 38;
-        const sparkPath = ser.map((v, j2) => sx(j2).toFixed(1) + ',' + sy(v).toFixed(1)).join(' ');
-        const sparkPts = ser.map((v, j2) => ({
-          cx: sx(j2).toFixed(1), cy: sy(v).toFixed(1), r: winIdx[j2] === ceMi ? 3.4 : 2.4,
-          fill: winIdx[j2] === ceMi ? '#B04A33' : '#FFFFFF',
-          onClick: (e) => { if (e && e.stopPropagation) e.stopPropagation(); this.setState({ ceM: winIdx[j2] }); },
-        }));
-        const sparkLabs = ser.map((v, j2) => ({
-          leftPct: (sx(j2) / 240 * 100).toFixed(1) + '%', topPct: (sy(v) / 54 * 100).toFixed(1) + '%',
-          col: winIdx[j2] === ceMi ? REDD : FAINT, v: fK(v),
-        }));
-        const sparkMs = winIdx.map((i2, j2) => ({
-          m: mmyy(MO[i2]).slice(0, 3), fw: i2 === ceMi ? 800 : 600, col: i2 === ceMi ? NAVY : FAINT,
-          onClick: (e) => { if (e && e.stopPropagation) e.stopPropagation(); this.setState({ ceM: i2 }); },
-        }));
+        // balance-by-month spark (their pattern) — shared builder
+        const spark = mkSpark(t);
         return {
           bd: open3 ? GOLD : '#EDEBE2', bg: open3 ? '#FDF9F0' : '#FFFFFF',
           tenant: t.tenant, prop: g.r.d, tot: f2(g.tot), inBkt: f2(g.inBkt),
@@ -1979,14 +2107,14 @@ class Component extends DCLogic {
           open: open3, badges: badges2,
           onClick: () => this.setState({ ceDrillExp: open3 ? null : drKey(g) }),
           split,
-          zeroOn: sLo < -0.005, zeroY: sy(0).toFixed(1),
-          sparkPath, sparkPts, sparkLabs, sparkMs,
+          zeroOn: spark.zeroOn, zeroY: spark.zeroY,
+          sparkPath: spark.sparkPath, sparkPts: spark.sparkPts, sparkLabs: spark.sparkLabs, sparkMs: spark.sparkMs,
           items: g.items.slice().sort((a2, b2) => a2.ds < b2.ds ? -1 : 1).map(x => ({
             d: x.ds === '2025-12-31' ? 'Pre-2026 opening (floor)' : 'charged ' + prettyD(x.ds) + ' · ' + x.days + 'd',
             bkt: AGL[x.bkt], col: x.bkt >= 2 ? REDD : GOLDD, amt: f2(x.rem),
           })),
           txHref: './transactions.dc.html?door=' + esc(g.r.d),
-          onChase: (e) => { if (e && e.stopPropagation) e.stopPropagation(); this.setState({ ceQ: t.tenant, ceExp: rosterKey(g.r), ceAll: false }, jumpRoster); },
+          onChase: (e) => { if (e && e.stopPropagation) e.stopPropagation(); this.setState({ ceQ: t.tenant, ceExp: rosterKey(g.r), ceAll: false }, () => jumpRoster(rosterKey(g.r))); },
           onFocus: (e) => { if (e && e.stopPropagation) e.stopPropagation(); this.setF({ fp: S.fp.length === 1 && S.fp[0] === g.r.d ? [] : [g.r.d] }); },
           focusLab: S.fp.length === 1 && S.fp[0] === g.r.d ? 'RELEASE FOCUS ✕' : 'FOCUS PAGE ⌖',
         };
@@ -1998,14 +2126,16 @@ class Component extends DCLogic {
     const ceFocusLab = gapMet ? 'TARGET MET — PUSH THE STRETCH LIST' : 'TO HIT ' + tgtN + '% — COLLECT THESE';
     const ceFocusCol = gapMet ? GREEND : REDD;
     const ceFocusBg = gapMet ? '#F7FAF6' : '#FDF8F6', ceFocusBd = gapMet ? '#D6E4D2' : '#EAD1C8';
-    const ceFocusCap = mmyy(MO[ceMi]) + ' · ' + modeLab;
+    // owner 2026-07-21 pt 2: the list carries EVERY tenant needed to close the entered target —
+    // it recomputes with the target input — shown ~5 rows tall with an internal scroll.
+    const focRows0 = gapMet ? collectibles : collectibles.filter(c => c.inCut);
+    const ceFocusCap = mmyy(MO[ceMi]) + ' · ' + modeLab + (focRows0.length ? ' · ' + focRows0.length + ' name' + (focRows0.length === 1 ? '' : 's') : '');
     const ceFocusLine = gapMet
-      ? 'At ' + fR1(haveRate) + ', ' + mmyy(MO[ceMi]) + ' clears the ' + tgtN + '% target on ' + modeLab + '. The list below is the stretch — every dollar still on the table.'
-      : 'At ' + fR1(haveRate) + ' against a ' + tgtN + '% target: ' + fN(gapV) + ' more must land' + (ceMode === 'fifo' ? ' on this month’s own charges. ' + (cutN > 0 ? 'The top ' + cutN + ' tenant' + (cutN === 1 ? '' : 's') + ' on this list close it' + (cutN > 7 ? ' (first 7 shown)' : '') + ' — FIFO means an arrears tenant pays old dues first, so their “collect” figure is the full catch-up.' : 'No open current-month charges remain in scope — the gap is not collectible this month.') : '. ' + (cutN > 0 ? 'The ' + cutN + ' largest open balance' + (cutN === 1 ? '' : 's') + (cutN > 7 ? ' (first 7 shown)' : '') + ' cover it.' : 'No open balances remain in scope.'));
+      ? 'At ' + fR1(haveRate) + ', ' + mmyy(MO[ceMi]) + ' clears the ' + tgtN + '% target on ' + modeLab + '. The list below is the stretch — every dollar still on the table (scroll it).'
+      : 'At ' + fR1(haveRate) + ' against a ' + tgtN + '% target: ' + fN(gapV) + ' more must land' + (ceMode === 'fifo' ? ' on this month’s own charges. ' + (cutN > 0 ? 'The ' + cutN + ' tenant' + (cutN === 1 ? '' : 's') + ' below close it — every one is on the list (scroll it). FIFO means an arrears tenant pays old dues first, so their “collect” figure is the full catch-up.' : 'No open current-month charges remain in scope — the gap is not collectible this month.') : '. ' + (cutN > 0 ? 'The ' + cutN + ' largest open balance' + (cutN === 1 ? '' : 's') + ' below cover it — every one is on the list (scroll it).' : 'No open balances remain in scope.'));
     const ceFocusBarW = Math.min(100, needV > 0 ? haveV / needV * 100 : 100).toFixed(1) + '%';
     const ceFocusBarC = gapMet ? '#3E8E63' : GOLD;
-    const focShown = collectibles.slice(0, 7);
-    const ceFocusRows = focShown.map((c, i2) => {
+    const ceFocusRows = focRows0.map((c, i2) => {
       const F3 = c.r.t.flags || [];
       const badges2 = [];
       if (ceMode === 'fifo' && c.oldOpen > 0.005) badges2.push({ t: 'ALSO OWES OLD ' + fK(c.oldOpen), bg: '#FBF6EA', col: GOLDD });
@@ -2019,13 +2149,14 @@ class Component extends DCLogic {
         tenant: c.r.t.tenant, prop: c.r.d,
         get: ceMode === 'fifo' ? fN(c.tot) : fN(c.met),
         badges: badges2.slice(0, 2),
-        cumLab: inCut ? 'running ' + fK(Math.min(c.cumAt, gapV)) + ' of ' + fK(gapV) : (gapMet ? 'stretch' : 'beyond target'),
+        cumLab: inCut ? 'running ' + fK(Math.min(c.cumAt, gapV)) + ' of ' + fK(gapV) : 'stretch',
         cumCol: inCut ? REDD : FAINT,
-        bd: inCut ? '#EAD1C8' : '#EDEBE2', bg: inCut ? '#FFFFFF' : 'transparent', op: inCut || gapMet ? '1' : '0.62',
-        onClick: () => this.setState({ ceQ: c.r.t.tenant, ceExp: rosterKey(c.r), ceAll: false }, jumpRoster),
+        bd: inCut ? '#EAD1C8' : '#EDEBE2', bg: '#FFFFFF', op: '1',
+        onClick: () => this.setState({ ceQ: c.r.t.tenant, ceExp: rosterKey(c.r), ceAll: false }, () => jumpRoster(rosterKey(c.r))),
       };
     });
-    const ceFocusFoot = (collectibles.length > 7 ? '+' + (collectibles.length - 7) + ' more with open ' + (ceMode === 'fifo' ? 'current-month charges' : 'balances') + ' — the roster below has everyone. ' : '') + (ceMode === 'fifo' ? '“Collect” = the tenant’s full open balance; the portion on this month’s charges is what moves the rate. ' : '') + 'Tenants holding advances never appear here — their next charges are pre-funded; do not chase them. Click a row to open the tenant’s ledger below.';
+    const focBeyond = collectibles.length - focRows0.length;
+    const ceFocusFoot = (focBeyond > 0 ? '+' + focBeyond + ' more with open ' + (ceMode === 'fifo' ? 'current-month charges' : 'balances') + ' beyond the target set — the roster below has everyone. ' : '') + (ceMode === 'fifo' ? '“Collect” = the tenant’s full open balance; the portion on this month’s charges is what moves the rate. ' : '') + 'Raise or lower the target above — this list recomputes to close it. Tenants holding advances never appear here — their next charges are pre-funded; do not chase them. Click a row to open the tenant’s ledger below.';
     // ── roster: every tenant balance, from their first charge month ──
     const firstActOf = t => {
       if (Math.abs(t.opening) > 0.005) return 0;
@@ -2076,18 +2207,27 @@ class Component extends DCLogic {
       else if (F3.includes('moved-out')) badges2.push({ t: 'MOVED OUT', bg: '#F0EEE6', col: MUT });
       const chg2 = t.chg[ceMi], cur2 = Array.isArray(t.fifoCur) ? t.fifoCur[ceMi] : 0;
       const pct = chg2 > 0.005 ? cur2 / chg2 * 100 : null;
+      // owner 2026-07-21 pt 4: the plain reconciliation — opening + charged − paid = closing, per month
       const mini2 = winIdx.map(i2 => ({
-        m: mmyy(MO[i2]), chg: f2(t.chg[i2]), cur: f2(t.fifoCur ? t.fifoCur[i2] : 0), arr: f2(t.fifoArr ? t.fifoArr[i2] : 0),
-        adv: f2(t.advUse ? t.advUse[i2] : 0), close: f2(t.close[i2]),
+        m: mmyy(MO[i2]), open: f2(i2 === 0 ? t.opening : t.postSweep[i2 - 1]),
+        chg: f2(t.chg[i2]), coll: f2(t.coll[i2]), close: f2(t.close[i2]),
         closeCol: t.close[i2] > 0.005 ? REDD : (t.close[i2] < -0.005 ? GREEND : MUT),
       }));
+      // …then the age of the LATEST closing balance
+      const agChips = segTot > 0.005
+        ? AGL.map((k, b2) => ({ k, kc: b2 >= 2 ? REDD : GOLDD, v: fN(segSums[b2]), col: b2 >= 2 ? REDD : NAVY, on: segSums[b2] > 0.005 }))
+          .filter(s3 => s3.on).map(s3 => ({ k: s3.k, kc: s3.kc, v: s3.v, col: s3.col }))
+          .concat([{ k: 'TOTAL DUE', kc: MUT, v: fN(segTot), col: REDD }])
+        : [{ k: bal2 < -0.005 ? 'PREPAID — IN CREDIT' : 'SETTLED', kc: bal2 < -0.005 ? GREEND : MUT, v: bal2 < -0.005 ? fN(-bal2) : '$0', col: bal2 < -0.005 ? GREEND : MUT }];
       const itemRows = items2.map(it => { const dd2 = dayDiff(E2, dParse(it[0])); const b2 = bktOf2(dd2); return { d: it[0] === '2025-12-31' ? 'Pre-2026 opening (floor)' : prettyD(it[0]) + ' · ' + dd2 + 'd', bkt: AGL[b2], bg: '#FBF6EA', col: b2 >= 2 ? REDD : GOLDD, amt: f2(it[1]) }; });
       const noteBits = [];
+      if (t.fifoArr && t.fifoArr[ceMi] > 0.005) noteBits.push(f2(t.fifoArr[ceMi]) + ' of this month’s payments cleared older months’ dues (oldest first)');
       if (t.advNew && t.advNew[ceMi] > 0.005) noteBits.push('took ' + f2(t.advNew[ceMi]) + ' in advances this month (applies to future charges)');
       if (t.advUse && t.advUse[ceMi] > 0.005) noteBits.push(f2(t.advUse[ceMi]) + ' of earlier advances covered this month’s charges');
       if (t.crM && t.crM[ceMi] > 0.005) noteBits.push('credits of ' + f2(t.crM[ceMi]) + ' given (forgiveness — in neither rate)');
       if (nsfW) noteBits.push(nsfW + ' payment' + (nsfW === 1 ? '' : 's') + ' reversed in window — re-opened at original charge dates');
       return {
+        rkey: rosterKey(r),
         bd: open2 ? GOLD : '#EDEBE2', bg: open2 ? '#FDF9F0' : 'transparent',
         onClick: () => this.setState({ ceExp: open2 ? null : rosterKey(r) }),
         open: open2, tenant: t.tenant, prop: r.d,
@@ -2095,7 +2235,7 @@ class Component extends DCLogic {
         curPctLab: pct === null ? '· no charges' : '· ' + pct.toFixed(0) + '% COLLECTED', curW: Math.min(100, Math.max(0, pct === null ? 0 : pct)).toFixed(1) + '%',
         agSeg, badges: badges2.slice(0, 3),
         sideLab: (t.fifoArr && t.fifoArr[ceMi] > 0.005 ? 'paid old dues ' + fK(t.fifoArr[ceMi]) : (t.advUse && t.advUse[ceMi] > 0.005 ? 'prepaid covered ' + fK(t.advUse[ceMi]) : '')),
-        mini: mini2, hasItems: itemRows.length > 0, itemsMonth: mmyy(MO[ceMi]).toUpperCase(), items: itemRows,
+        mini: mini2, agChips, hasItems: itemRows.length > 0, itemsMonth: mmyy(MO[ceMi]).toUpperCase(), items: itemRows,
         note: noteBits.length ? noteBits.join(' · ') : 'No advance, credit or reversal activity this month.',
         plHref: './PL%20Story%20-%20Main.dc.html?door=' + esc(r.d), loanHref: './loans.dc.html?door=' + esc(r.d), txHref: './transactions.dc.html?door=' + esc(r.d),
         onFocus: (e) => { if (e && e.stopPropagation) e.stopPropagation(); this.setF({ fp: S.fp.length === 1 && S.fp[0] === r.d ? [] : [r.d] }); },
@@ -2109,7 +2249,7 @@ class Component extends DCLogic {
     const onCeMore = () => this.setState({ ceAll: true });
     const onCeQ = e => this.setState({ ceQ: e && e.target ? e.target.value : '', ceAll: false });
     const ceQVal = S.ceQ || '';
-    const ceFoot = 'Method (locked 2026-07-20): within each tenant, every payment (and every advance) clears the OLDEST open charge first — a stated convention, since the journals don’t record which charge a payment targeted. Collected-for-the-month = cash + advances applied to the month’s own charges; old dues collected = payments applied to earlier months’ charges; the two re-sum to your formula’s actual collection to the cent, for every tenant and month (credit-created advances shown in the strip when present). Advances apply the moment the future charge lands — a prepaid tenant reads 100% on billing, and never appears on the chase list. Credits are forgiveness: they close dues in the aging but count in neither rate. Reversed payments re-open their charges at the ORIGINAL charge date, so bounced rent ages from when it was billed. Aging runs from the date of charge (payment is due on charge); pre-2026 balances age from 31-Dec-25 as a disclosed floor. The blended rate, the telescoped YTD and the sections above are untouched — this section adds the manager’s lens beside them.';
+    const ceFoot = 'Every KPI card above clicks open to the tenants and properties behind its number, and each drill row opens to the tenant’s rent, balance pattern and the exact charges. Method (locked 2026-07-20): within each tenant, every payment (and every advance) clears the OLDEST open charge first — a stated convention, since the journals don’t record which charge a payment targeted. Collected-for-the-month = cash + advances applied to the month’s own charges; old dues collected = payments applied to earlier months’ charges; the two re-sum to your formula’s actual collection to the cent, for every tenant and month (credit-created advances shown in the strip when present). Advances apply the moment the future charge lands — a prepaid tenant reads 100% on billing, and never appears on the chase list. Credits are forgiveness: they close dues in the aging but count in neither rate. Reversed payments re-open their charges at the ORIGINAL charge date, so bounced rent ages from when it was billed. Aging runs from the date of charge (payment is due on charge); pre-2026 balances age from 31-Dec-25 as a disclosed floor. The blended rate, the telescoped YTD and the sections above are untouched — this section adds the manager’s lens beside them.';
 
     // ══ MERGED — gap hero, dual targets, KPI strip, the month's money-stands bar (owner 2026-07-21) ══
     const fR = v => v === null || v === undefined ? '—' : v.toFixed(2) + '%';
@@ -2160,14 +2300,176 @@ class Component extends DCLogic {
     // ── merged KPI strip (6) ──
     const ytdV = (() => { const d0 = rsM[0].od + sum(MO.map((_, i) => i <= ceMi ? rsM[i].inv : 0)); const a0 = sum(MO.map((_, i) => i <= ceMi ? rsM[i].act : 0)); return d0 > 0 ? a0 / d0 * 100 : null; })();
     const ytdDisp = (unfiltered && ytdArr.length) ? ytdArr[ceMi] : ytdV;
+    // owner 2026-07-21 pt 5: every card CLICKS OPEN to the tenants and properties behind its number
+    const ceCard = ['arr', 'recv', 'ytd', 'cl', 'nsf', 'adv'].includes(S.ceCard) ? S.ceCard : null;
+    const cardTog = id => () => this.setState({ ceCard: ceCard === id ? null : id, ceCardExp: null });
+    const onCeCardClose = () => this.setState({ ceCard: null, ceCardExp: null });
+    const mkTile = (id, label, val, sub, col, tip, bg, bd) => {
+      const sel2 = ceCard === id;
+      return { label, val, sub, col: col || NAVY, dcol: FAINT,
+        tip: tip + ' Click the card — it opens to the tenants and properties behind this number.',
+        bg: sel2 ? '#FBF6EA' : (bg || '#FFFFFF'), bd: sel2 ? GOLD : (bd || '#E5E3DC'),
+        chev: sel2 ? '▴' : '▾', onClick: cardTog(id) };
+    };
     const mkpis = [
-      ceTile('Old dues cured', fR1(fe.arrRate), arrMet ? 'clears the ' + arrTgtN + '% cure target' : fN(arrGap) + ' short of ' + arrTgtN + '%', BLUE, 'Cash applied to earlier months’ charges ÷ the opening backlog. Your second target scores the arrears work.'),
-      ceTile('Receivables open', fN(agTot), bigWorst, agTot > 0.005 ? REDD : GREEND, 'Open charges at month-end, aged from the date of charge. Σ ties the closing dues to the cent.', agTot > 0.005 ? '#FBF0ED' : '#F2F7F0', agTot > 0.005 ? '#EAD1C8' : '#D6E4D2'),
-      ceTile('YTD collection rate', fR(ytdDisp), 'telescoped from January — each due counted once', GREEND, 'Σ actual collections ÷ (opening due at Jan 1 + Σ invoices to this month). The outcome number.'),
-      ceTile('Collection loss', fN(spanCL), (CLX.pendingWriteoffs || []).length + ' lease-rule sweeps await June', REDD, 'Signed residual of tenants who moved out — written off between months. Never netted against deposits.'),
-      ceTile('Payments bounced', '' + fe.nsf, fe.nsf ? 'reversed this month (NSF)' : 'none this month', fe.nsf ? REDD : GREEND, 'Buildium Reversed Payment rows — each re-opens the original charge at its original date.'),
-      ceTile('Prepaid — never chased', '' + advHolders.length, 'tenants holding ' + fN(advHeld), GREEND, 'Tenants in credit — their next charges are pre-funded, so they never appear on the chase list.', '#F2F7F0', '#D6E4D2'),
+      mkTile('arr', 'Old dues cured', fR1(fe.arrRate), arrMet ? 'clears the ' + arrTgtN + '% cure target' : fN(arrGap) + ' short of ' + arrTgtN + '%', BLUE, 'Cash applied to earlier months’ charges ÷ the opening backlog. Your second target scores the arrears work.'),
+      mkTile('recv', 'Receivables open', fN(agTot), bigWorst, agTot > 0.005 ? REDD : GREEND, 'Open charges at month-end, aged from the date of charge. Σ ties the closing dues to the cent.', agTot > 0.005 ? '#FBF0ED' : '#F2F7F0', agTot > 0.005 ? '#EAD1C8' : '#D6E4D2'),
+      mkTile('ytd', 'YTD collection rate', fR(ytdDisp), 'telescoped from January — each due counted once', GREEND, 'Σ actual collections ÷ (opening due at Jan 1 + Σ invoices to this month). The outcome number.'),
+      mkTile('cl', 'Collection loss', fN(spanCL), (CLX.pendingWriteoffs || []).length + ' lease-rule sweeps await June', REDD, 'Signed residual of tenants who moved out — written off between months. Never netted against deposits.'),
+      mkTile('nsf', 'Payments bounced', '' + fe.nsf, fe.nsf ? 'reversed this month (NSF)' : 'none this month', fe.nsf ? REDD : GREEND, 'Buildium Reversed Payment rows — each re-opens the original charge at its original date.'),
+      mkTile('adv', 'Prepaid — never chased', '' + advHolders.length, 'tenants holding ' + fN(advHeld), GREEND, 'Tenants in credit — their next charges are pre-funded, so they never appear on the chase list.', '#F2F7F0', '#D6E4D2'),
     ];
+    // ── the card drill: who is behind the clicked number (scoped, month-keyed, Σ ties the card) ──
+    const ceCardOn = !!(ceOn && ceCard);
+    const ceCardMonthsOn = !!(ceCardOn && ceCard === 'ytd');
+    const ceCardRowsOn = !!(ceCardOn && ceCard !== 'ytd');
+    let ceCardLab = '', ceCardSum = '', ceCardFoot = '', ceCardIdFoot = '';
+    let ceCardRows = [], ceCardMonths = [];
+    if (ceCardOn) {
+      const kcKey = r => 'KC||' + rosterKey(r);
+      const mkCardRow = (r, spec) => {
+        const t = r.t, key3 = kcKey(r), open3 = S.ceCardExp === key3;
+        const bal3 = t.close[ceMi];
+        const badges2 = (spec.badges || []).slice();
+        const F3 = t.flags || [];
+        if (!spec.badges) {
+          if (F3.includes('pending-writeoff')) badges2.push({ t: 'CL · JUNE CONFIRMS', bg: '#FBF0ED', col: REDD });
+          else if (F3.includes('written-off')) badges2.push({ t: 'WRITTEN OFF', bg: '#FBF6EA', col: GOLDD });
+          else if (F3.includes('moved-out')) badges2.push({ t: 'MOVED OUT', bg: '#F0EEE6', col: MUT });
+        }
+        const spark = mkSpark(t);
+        return {
+          bd: open3 ? GOLD : '#EDEBE2', bg: open3 ? '#FDF9F0' : '#FFFFFF',
+          onClick: () => this.setState({ ceCardExp: open3 ? null : key3 }),
+          open: open3, tenant: t.tenant, prop: r.d,
+          v: spec.v, vLab: spec.vLab, vCol: spec.vCol || NAVY,
+          sub: spec.sub, exTog: open3 ? 'click to close ▴' : 'click for the detail ▾',
+          badges: badges2.slice(0, 2),
+          facts: [
+            { k: 'MONTHLY RENT', kc: MUT, v: r.rent > 0 ? fN(r.rent) : '—', col: NAVY },
+            { k: 'BALANCE NOW', kc: MUT, v: f2(bal3), col: bal3 > 0.005 ? REDD : (bal3 < -0.005 ? GREEND : MUT) },
+            ...(spec.facts || []),
+          ],
+          zeroOn: spark.zeroOn, zeroY: spark.zeroY,
+          sparkPath: spark.sparkPath, sparkPts: spark.sparkPts, sparkLabs: spark.sparkLabs, sparkMs: spark.sparkMs,
+          hasDetail: !!(spec.detail && spec.detail.length), detailLab: spec.detailLab || '', detail: spec.detail || [],
+          txHref: './transactions.dc.html?door=' + esc(r.d),
+          onChase: (e) => { if (e && e.stopPropagation) e.stopPropagation(); this.setState({ ceQ: t.tenant, ceExp: rosterKey(r), ceAll: false }, () => jumpRoster(rosterKey(r))); },
+          onFocus: (e) => { if (e && e.stopPropagation) e.stopPropagation(); this.setF({ fp: S.fp.length === 1 && S.fp[0] === r.d ? [] : [r.d] }); },
+          focusLab: S.fp.length === 1 && S.fp[0] === r.d ? 'RELEASE FOCUS ✕' : 'FOCUS PAGE ⌖',
+        };
+      };
+      if (ceCard === 'arr') {
+        const rows0 = allRows.filter(r => r.t.fifoArr && r.t.fifoArr[ceMi] > 0.005).sort((a, b) => b.t.fifoArr[ceMi] - a.t.fifoArr[ceMi]);
+        const s0 = sum(rows0.map(r => r.t.fifoArr[ceMi]));
+        ceCardLab = 'WHO PAID OLD DUES — ' + mmyy(MO[ceMi]).toUpperCase();
+        ceCardSum = rows0.length === 0 ? 'no old dues were collected in this scope this month' : rows0.length + ' tenant' + (rows0.length === 1 ? '' : 's') + ' · ' + f2(s0) + ' collected against earlier months — the ' + fR1(fe.arrRate) + ' on the card, to the cent';
+        ceCardRows = rows0.map(r => {
+          const t = r.t;
+          const cures = (t.apps && t.apps[ceMi] ? t.apps[ceMi] : []).slice().sort((a2, b2) => a2[0] < b2[0] ? -1 : 1);
+          return mkCardRow(r, {
+            v: f2(t.fifoArr[ceMi]), vLab: 'OLD DUES PAID', vCol: BLUE,
+            sub: Math.max(0, t.close[ceMi]) > 0.005 ? 'still owes ' + f2(Math.max(0, t.close[ceMi])) : 'backlog fully cleared',
+            facts: [{ k: 'PAID FOR ' + mmyy(MO[ceMi]).toUpperCase(), kc: GOLDD, v: f2(t.fifoCur ? t.fifoCur[ceMi] : 0), col: GOLDD }],
+            detailLab: 'WHICH OLD CHARGES THE MONEY CLEARED — OLDEST FIRST',
+            detail: cures.map(a2 => ({ d: 'charge of ' + prettyD(a2[0]), tag: a2[2] ? 'FORGIVEN · IN NEITHER RATE' : 'CLEARED', tagBg: a2[2] ? '#F2F7F0' : '#FBF6EA', tagCol: a2[2] ? GREEND : GOLDD, amt: f2(a2[1]), amtCol: a2[2] ? GREEND : BLUE })),
+          });
+        });
+        ceCardFoot = 'Every payment clears the tenant’s OLDEST open charge first, so this money cured backlog — it moves the OLD DUES CURED rate, not the month’s billing rate. Rows marked FORGIVEN are credits: they close old charges but count in neither rate. Click a row for the exact charges; OPEN IN ROSTER shows the full ledger.';
+      } else if (ceCard === 'recv') {
+        const byTen2 = new Map();
+        for (const x of agNow) { let g = byTen2.get(x.r); if (!g) { g = { r: x.r, tot: 0, items: [] }; byTen2.set(x.r, g); } g.tot += x.rem; g.items.push(x); }
+        const rows0 = [...byTen2.values()].filter(g => g.tot > 0.005).sort((a, b) => b.tot - a.tot);
+        ceCardLab = 'WHO HOLDS THE OPEN RECEIVABLES — ' + mmyy(MO[ceMi]).toUpperCase();
+        ceCardSum = rows0.length === 0 ? 'nothing open in this scope at ' + mmyy(MO[ceMi]) : rows0.length + ' tenant' + (rows0.length === 1 ? '' : 's') + ' · ' + f2(sum(rows0.map(g => g.tot))) + ' open — the card, to the cent';
+        ceCardRows = rows0.map(g => {
+          const spl = [0, 0, 0, 0]; for (const x of g.items) spl[x.bkt] += x.rem;
+          const oldest = Math.max(...g.items.map(x => x.days));
+          return mkCardRow(g.r, {
+            v: f2(g.tot), vLab: 'TOTAL DUE', vCol: REDD,
+            sub: 'oldest charge ' + oldest + 'd old' + (spl[3] > 0.005 ? ' · ' + fK(spl[3]) + ' past 90 days' : ''),
+            facts: AGL.map((k, b2) => ({ k, kc: b2 >= 2 ? REDD : GOLDD, v: fN(spl[b2]), col: b2 >= 2 ? REDD : NAVY, on: spl[b2] > 0.005 })).filter(f3 => f3.on).map(f3 => ({ k: f3.k, kc: f3.kc, v: f3.v, col: f3.col })),
+            detailLab: 'THE OPEN CHARGES — OLDEST FIRST · THE NEXT PAYMENT CLEARS THE TOP ROW',
+            detail: g.items.slice().sort((a2, b2) => a2.ds < b2.ds ? -1 : 1).map(x => ({ d: x.ds === '2025-12-31' ? 'Pre-2026 opening (floor)' : 'charged ' + prettyD(x.ds) + ' · ' + x.days + 'd', tag: AGL[x.bkt], tagBg: '#FBF6EA', tagCol: x.bkt >= 2 ? REDD : GOLDD, amt: f2(x.rem), amtCol: RED })),
+          });
+        });
+        ceCardFoot = 'Aged from each charge’s date — payment is due on charge; pre-2026 openings age from 31-Dec-25, a disclosed floor. The aging tiles below split these same dollars by bucket; this list is every holder at once, biggest first. Tenants in credit hold no open charges — they sit under PREPAID.';
+      } else if (ceCard === 'ytd') {
+        ceCardLab = 'HOW THE YTD RATE BUILDS — ' + mmyy(MO[0]).toUpperCase() + ' → ' + mmyy(MO[ceMi]).toUpperCase();
+        // audit identity (verified to the cent, any scope): closing due = due-once-counted − collected
+        // − Σ prior months' POSITIVE write-off residuals. Credit residuals leave via the advance side,
+        // which the owner numerator (openAdv − closeAdv) already absorbs — so only the owed side subtracts.
+        let d0 = rsM[0].od, a0 = 0, clPrior = 0;
+        for (const t of rowsAll) for (let i2 = 0; i2 < ceMi; i2++) if (t.cl[i2] > 0.005) clPrior += t.cl[i2];
+        ceCardMonths = [];
+        for (let i2 = 0; i2 <= ceMi; i2++) {
+          d0 += rsM[i2].inv; a0 += rsM[i2].act;
+          const inWin = winIdx.includes(i2);   // months before a narrowed window still show (the walk needs them) but can't navigate
+          ceCardMonths.push({
+            m: mmyy(MO[i2]), inv: fN(rsM[i2].inv), act: fN(rsM[i2].act), rate: fR1(rsM[i2].rate),
+            ytd: d0 > 0 ? (a0 / d0 * 100).toFixed(2) + '%' : '—',
+            fw: i2 === ceMi ? 800 : 600, selBg: i2 === ceMi ? '#FBF6EA' : 'transparent',
+            onClick: inWin ? (() => this.setState({ ceM: i2, ceCardExp: null })) : (() => {}),
+          });
+        }
+        ceCardSum = 'each due counted once · ' + f2(a0) + ' collected of ' + f2(d0) + ' ever due';
+        ceCardIdFoot = 'Why not average the monthly rates? An unpaid January due gets counted again in February — an average double-counts it. The YTD rate counts each due ONCE: opening due ' + f2(rsM[0].od) + ' + every invoice since = ' + f2(d0) + ' ever due · − ' + f2(a0) + ' actually collected · − ' + f2(clPrior) + ' of movers’ dues written off and off the book = ' + f2(d0 - a0 - clPrior) + ' still on it — the RECEIVABLES OPEN card (' + f2(rsM[ceMi].cd) + '), to the cent. Click a month row to move the whole section there.';
+        ceCardFoot = 'The monthly rate keeps the arrears pressure on — old dues drag it every month until collected or written off. The YTD rate is the outcome number: of everything ever due since January, how much actually arrived. Who holds the remainder? Click RECEIVABLES OPEN.';
+      } else if (ceCard === 'cl') {
+        const rows0 = [];
+        for (const r of allRows) {
+          const evs = spanIdx.filter(i2 => Math.abs(r.t.cl[i2]) > 0.005);
+          if (evs.length) rows0.push({ r, evs, tot: sum(evs.map(i2 => r.t.cl[i2])) });
+        }
+        rows0.sort((a, b) => b.tot - a.tot);
+        ceCardLab = 'WHO WAS WRITTEN OFF — ' + spanLab.toUpperCase() + ' · THE MOVERS’ LEDGER';
+        ceCardSum = rows0.length === 0 ? 'no write-offs in this scope in this window' : rows0.length + ' mover' + (rows0.length === 1 ? '' : 's') + ' · ' + f2(sum(rows0.map(g => g.tot))) + ' net loss — the card, to the cent';
+        ceCardRows = rows0.map(g => {
+          const t = g.r.t, sweep = (t.flags || []).includes('pending-writeoff');
+          return mkCardRow(g.r, {
+            v: f2(g.tot), vLab: g.tot < -0.005 ? 'CREDIT LEFT — CUTS THE LOSS' : 'WRITTEN OFF', vCol: g.tot < -0.005 ? GREEND : REDD,
+            sub: 'left the book after ' + g.evs.map(i2 => mmyy(MO[i2])).join(', '),
+            badges: [sweep ? { t: 'LEASE-RULE SWEEP · JUNE CONFIRMS', bg: '#FBF6EA', col: GOLDD } : { t: 'AR-FILE WRITE-OFF', bg: '#F0EEE6', col: MUT }],
+            facts: [{ k: 'NET WRITTEN OFF', kc: REDD, v: f2(g.tot), col: g.tot < -0.005 ? GREEND : REDD }],
+            detailLab: 'THE WRITE-OFF EVENTS',
+            detail: g.evs.map(i2 => ({ d: 'after ' + mmyy(MO[i2]) + '’s close', tag: sweep ? 'LEASE RULE' : 'AR FILE', tagBg: sweep ? '#FBF6EA' : '#F0EEE6', tagCol: sweep ? GOLDD : MUT, amt: f2(t.cl[i2]), amtCol: t.cl[i2] < -0.005 ? GREEND : REDD })),
+          });
+        });
+        ceCardFoot = 'The owner rule: a mover’s signed residual leaves the AR book — money owed adds to the loss, a credit left behind REDUCES it. Pure AR: never netted against the security deposit. LEASE-RULE SWEEP rows were recognised at the window end; the June AR column confirms them. Open a row — the balance chart tells the story that led here.';
+      } else if (ceCard === 'nsf') {
+        const rows0 = allRows.filter(r => r.t.nsfN && r.t.nsfN[ceMi] > 0).sort((a, b) => b.t.nsfN[ceMi] - a.t.nsfN[ceMi] || b.t.close[ceMi] - a.t.close[ceMi]);
+        const n0 = sum(rows0.map(r => r.t.nsfN[ceMi]));
+        ceCardLab = 'WHOSE PAYMENTS BOUNCED — ' + mmyy(MO[ceMi]).toUpperCase();
+        ceCardSum = rows0.length === 0 ? 'no reversed payments in this scope this month' : rows0.length + ' tenant' + (rows0.length === 1 ? '' : 's') + ' · ' + n0 + ' reversed payment' + (n0 === 1 ? '' : 's') + ' — the card’s count';
+        ceCardRows = rows0.map(r => {
+          const t = r.t, E3 = mEnd(ceMi);
+          const its = (Array.isArray(t.items) && t.items[ceMi]) ? t.items[ceMi] : [];
+          return mkCardRow(r, {
+            v: '×' + t.nsfN[ceMi], vLab: 'BOUNCED', vCol: REDD,
+            sub: 'balance now ' + f2(t.close[ceMi]) + ' · bounced rent ages from when it was billed',
+            facts: [{ k: 'BOUNCED THIS MONTH', kc: REDD, v: '×' + t.nsfN[ceMi], col: REDD }, { k: 'BOUNCED IN WINDOW', kc: MUT, v: '×' + sum((t.nsfN || []).slice(0, ceMi + 1)), col: NAVY }],
+            detailLab: 'THEIR OPEN CHARGES — RE-OPENED AT THE ORIGINAL DATES',
+            detail: its.slice().sort((a2, b2) => a2[0] < b2[0] ? -1 : 1).map(it => { const dd2 = dayDiff(E3, dParse(it[0])); const b2 = bktOf2(dd2); return { d: it[0] === '2025-12-31' ? 'Pre-2026 opening (floor)' : 'charged ' + prettyD(it[0]) + ' · ' + dd2 + 'd', tag: AGL[b2], tagBg: '#FBF6EA', tagCol: b2 >= 2 ? REDD : GOLDD, amt: f2(it[1]), amtCol: RED }; }),
+          });
+        });
+        ceCardFoot = 'A reversed (NSF) payment un-applies the tenant’s most recent cash first, and the charges it had covered RE-OPEN at their ORIGINAL charge dates — bounced rent ages from when it was billed, not from the bounce. Read each row with its balance chart: a bouncer whose balance climbs is a different conversation from a one-off.';
+      } else if (ceCard === 'adv') {
+        const rows0 = allRows.filter(r => r.t.close[ceMi] < -0.005).sort((a, b) => a.t.close[ceMi] - b.t.close[ceMi]);
+        ceCardLab = 'WHO HAS PREPAID — NEVER CHASE THESE — ' + mmyy(MO[ceMi]).toUpperCase();
+        ceCardSum = rows0.length === 0 ? 'no tenant holds an advance in this scope this month' : rows0.length + ' tenant' + (rows0.length === 1 ? '' : 's') + ' · ' + f2(-sum(rows0.map(r => r.t.close[ceMi]))) + ' held in advance — the card, to the cent';
+        ceCardRows = rows0.map(r => {
+          const t = r.t, held = -t.close[ceMi];
+          const nxt = ceMi + 1 < NM ? t.chg[ceMi + 1] : null;
+          const cover = (nxt !== null && nxt > 0.005) ? Math.min(100, held / nxt * 100) : null;
+          return mkCardRow(r, {
+            v: f2(held), vLab: 'HELD IN ADVANCE', vCol: GREEND,
+            sub: cover !== null ? 'pre-funds ' + cover.toFixed(0) + '% of ' + mmyy(MO[ceMi + 1]) + '’s ' + fN(nxt) + ' charge' : (r.rent > 0 ? 'about ' + Math.min(999, held / r.rent * 100).toFixed(0) + '% of a month’s rent, paid ahead' : 'applies to their next charges'),
+            facts: [{ k: 'HELD IN ADVANCE', kc: GREEND, v: f2(held), col: GREEND }],
+          });
+        });
+        ceCardFoot = 'A negative balance is money the tenant paid AHEAD. The moment a future charge lands, the advance pool clears it — an advance payer reads 100% on current billing and never appears on the chase list. Advances are never refunded (owner rule): they apply 100% to future charges.';
+      }
+    }
     // ── the month's money stands (blended $ view, keyed to the selected month) ──
     const sbDueV = rsM[ceMi].due, sbActV = rsM[ceMi].act, sbCdV = rsM[ceMi].cd;
     const sbLab = mmyy(MO[ceMi]).toUpperCase() + ' — WHERE THE MONTH’S MONEY STANDS';
@@ -2178,7 +2480,7 @@ class Component extends DCLogic {
     const sbDueRestLab = fN(sbCdV);
     const sbCollTip = 'Actually collected in ' + mmyy(MO[ceMi]) + ': ' + f2(sbActV) + ' (collections + advances applied − advances taken)';
     const sbDueTip = 'Still due at ' + mmyy(MO[ceMi]) + ' close: ' + f2(sbCdV) + ' — click to open the roster below';
-    const sbClickWho = () => this.setState({ ceQ: '', ceAll: true, ceExp: null }, jumpRoster);
+    const sbClickWho = () => this.setState({ ceQ: '', ceAll: true, ceExp: null }, () => jumpRoster());
     const sbFacts = [
       { k: 'OPENING DUE ROLLED IN', v: fN(rsM[ceMi].od), col: NAVY },
       { k: 'INVOICED THIS MONTH', v: fN(rsM[ceMi].inv), col: BLUE },
@@ -2319,10 +2621,11 @@ class Component extends DCLogic {
       sbLab, sbDueLab, sbCollW, sbDueRestW, sbCollLab, sbDueRestLab, sbCollTip, sbDueTip, sbClickWho, sbFacts, sbFoot,
       ceTgtArrVal, onCeTgtArr,
       heroRateLab, heroRate, heroRateCol, heroRateSub, heroGaugeHead, gCollW, gCollCol, gGapW, gStretchW, gFlagLeft, gFlagLab, heroTicks, heroCallout, heroTgtLab, heroTgtBig, heroStatus, heroStatusCol, heroStatusBg, mkpis,
+      ceCardOn, ceCardMonthsOn, ceCardRowsOn, ceCardLab, ceCardSum, ceCardFoot, ceCardIdFoot, ceCardRows, ceCardMonths, onCeCardClose,
       ceSub, ceModeChips, ceTgtVal, onCeTgt, ceOn, ceOff,
-      ceKpis, ceIdLab, ceIdCur, ceIdArr, ceIdCrp, ceIdAct,
+      ceIdLab, ceIdCur, ceIdArr, ceIdCrp, ceIdAct,
       ceLegend, ceGrid, ceGridLabs, ceTgtOn, ceTgtY, ceTgtTopPct, ceTgtLab,
-      ceArrOn, cePathArr, cePathDim, ceDimCol, cePathMain, ceMainCol,
+      ceArrOn, cePathArr, cePathMain, ceMainCol,
       cePts, ceHits, ceLabs, ceMonths, ceChartFoot,
       ceAgLab, onCeRoll, ceRollTog, ceAgTiles, ceAgNote,
       ceRollOn, ceRollLab, ceRollRows, ceRollFoot,
