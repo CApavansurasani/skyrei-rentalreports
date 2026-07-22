@@ -110,15 +110,147 @@ input:focus{outline:2px solid #C9A45C;outline-offset:1px}
       <span style="margin-left:auto;font-size:11px;color:#8A93A6;white-space:nowrap">{{ asOfLine }}</span>
     </div>
 
-    <!-- ══ KPI row ══ -->
-    <div data-sec="kpis" style="margin-top:16px;display:grid;grid-template-columns:repeat(6,1fr);gap:12px">
-      <sc-for list="{{ kpis }}" as="k" hint-placeholder-count="6">
-        <div title="{{ k.tip }}" style="background:{{ k.bg }};border:1px solid {{ k.bd }};border-radius:14px;padding:14px 16px">
+    <!-- ══ KPI row (v9: 6→5 — Owed/Advances live on the Collections page now; DSCR joins; every card clicks to its proving section) ══ -->
+    <div data-sec="kpis" style="margin-top:16px;display:grid;grid-template-columns:repeat(5,1fr);gap:12px">
+      <sc-for list="{{ kpis }}" as="k" hint-placeholder-count="5">
+        <div title="{{ k.tip }}" onClick="{{ k.onClick }}" style-hover="border-color:#C9A45C" style="background:{{ k.bg }};border:1px solid {{ k.bd }};border-radius:14px;padding:14px 16px;cursor:pointer">
           <div style="font-size:9.5px;letter-spacing:0.07em;font-weight:700;color:#5E6B82;text-transform:uppercase;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">{{ k.label }}</div>
           <div style="margin-top:5px;font-family:'Source Serif 4',Georgia,serif;font-size:21px;font-weight:600;color:{{ k.col }};font-variant-numeric:tabular-nums;white-space:nowrap">{{ k.val }}</div>
           <div style="margin-top:3px;font-size:10px;color:{{ k.dcol }};font-weight:600;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">{{ k.sub }}</div>
         </div>
       </sc-for>
+    </div>
+
+    <!-- ══ DSCR — debt service coverage (owner 2026-07-22): two lenses, portfolio + by property ══ -->
+    <div data-sec="dscr" style="margin-top:16px;background:#FFFFFF;border:1px solid #E5E3DC;border-radius:16px;padding:22px 26px">
+      <div style="display:flex;justify-content:space-between;align-items:flex-start;gap:14px;flex-wrap:wrap">
+        <div>
+          <div style="font-family:'Source Serif 4',Georgia,serif;font-size:19px;font-weight:600;color:#16233A">Debt service coverage — can the rent carry the banks?</div>
+          <div style="margin-top:4px;font-size:12px;color:#8A93A6">{{ dsSub }}</div>
+        </div>
+        <div style="display:flex;align-items:center;gap:7px;flex-wrap:wrap" onClick="{{ stopProp }}">
+          <sc-for list="{{ dsChips }}" as="dh" hint-placeholder-count="3">
+            <div onClick="{{ dh.onClick }}" title="{{ dh.tip }}" style-hover="border-color:#C9A45C" style="padding:6px 11px;border-radius:99px;border:1px solid {{ dh.bd }};background:{{ dh.bg }};font-size:10px;letter-spacing:0.05em;font-weight:800;color:{{ dh.col }};cursor:pointer;white-space:nowrap">{{ dh.lab }}</div>
+          </sc-for>
+          <input value="{{ dsQ }}" onInput="{{ onDsQ }}" placeholder="Find a property…" style="padding:7px 12px;border-radius:10px;border:1px solid #D8D4C8;font-size:11.5px;font-family:inherit;color:#16233A;width:168px;background:#FDFCFA">
+        </div>
+      </div>
+      <div style="margin-top:14px;display:grid;grid-template-columns:1fr 1fr;gap:16px;align-items:start">
+        <sc-for list="{{ dsCards }}" as="dm" hint-placeholder-count="2">
+          <div style="border:1px solid #EDEAE0;border-radius:14px;padding:16px 18px;background:#FCFBF8">
+            <div style="display:flex;justify-content:space-between;align-items:flex-start;gap:10px">
+              <div style="min-width:0">
+                <div style="font-size:10px;letter-spacing:0.09em;font-weight:800;color:#96742F">{{ dm.name }}</div>
+                <div style="margin-top:3px;font-size:11px;color:#8A93A6;line-height:1.5">{{ dm.formula }}</div>
+              </div>
+              <div style="text-align:right;flex:none">
+                <div title="{{ dm.bigTip }}" style="font-family:'Source Serif 4',Georgia,serif;font-size:30px;font-weight:700;color:{{ dm.bigCol }};font-variant-numeric:tabular-nums;line-height:1">{{ dm.big }}</div>
+                <div style="margin-top:3px;font-size:10px;color:#9AA3B5">{{ dm.bigSub }}</div>
+              </div>
+            </div>
+            <div title="{{ dm.meterTip }}" style="margin-top:12px;position:relative;height:14px;border-radius:7px;background:#F0EEE6;overflow:hidden">
+              <span style="display:block;height:14px;background:{{ dm.meterC }};width:{{ dm.meterW }}"></span>
+              <span style="position:absolute;top:0;left:40%;width:2px;height:14px;background:#B04A33;opacity:0.7"></span>
+              <span style="position:absolute;top:0;left:50%;width:2px;height:14px;background:#C9A45C;opacity:0.9"></span>
+            </div>
+            <div style="margin-top:3px;position:relative;height:12px;font-size:8.5px;color:#9AA3B5">
+              <span style="position:absolute;left:40%;transform:translateX(-104%);white-space:nowrap">1.00× — every dollar spoken for</span>
+              <span style="position:absolute;left:50%;padding-left:5px;white-space:nowrap;color:#B08A4B;font-weight:700">1.25× — the cushion lenders ask</span>
+            </div>
+            <div style="margin-top:10px">
+              <sc-for list="{{ dm.walk }}" as="dw" hint-placeholder-count="4">
+                <div title="{{ dw.tip }}" style="display:flex;align-items:center;gap:9px;padding:6.5px 6px;border-bottom:1px solid #F0EEE6;background:{{ dw.bg }};border-radius:6px">
+                  <span style="flex:1.5;min-width:0;display:flex;flex-direction:column">
+                    <span style="font-size:11.5px;font-weight:{{ dw.fw }};color:{{ dw.col }};white-space:nowrap;overflow:hidden;text-overflow:ellipsis">{{ dw.k }}</span>
+                    <span style="font-size:9px;color:#9AA3B5;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">{{ dw.sub }}</span>
+                  </span>
+                  <span style="width:112px;flex:none;text-align:right;font-size:12px;font-weight:700;color:{{ dw.vcol }};font-variant-numeric:tabular-nums">{{ dw.v }}</span>
+                </div>
+              </sc-for>
+            </div>
+            <div style="margin-top:10px;display:flex;gap:6px;flex-wrap:wrap">
+              <sc-for list="{{ dm.mos }}" as="dn" hint-placeholder-count="5">
+                <div onClick="{{ dn.onClick }}" title="{{ dn.tip }}" style-hover="border-color:#C9A45C" style="padding:5px 10px;border-radius:9px;border:1px solid {{ dn.bd }};background:{{ dn.bg }};cursor:pointer;text-align:center">
+                  <div style="font-size:8.5px;letter-spacing:0.06em;font-weight:800;color:#8A93A6">{{ dn.lab }}</div>
+                  <div style="margin-top:1px;font-size:12px;font-weight:800;color:{{ dn.col }};font-variant-numeric:tabular-nums">{{ dn.x }}</div>
+                </div>
+              </sc-for>
+            </div>
+            <sc-if value="{{ dm.pendOn }}" hint-placeholder-val="{{ false }}">
+              <div style="margin-top:10px;padding:9px 12px;background:#FBF6EA;border:1px solid #EAD9C0;border-radius:10px;font-size:10.5px;line-height:1.55;color:#96742F">{{ dm.pend }}
+                <sc-if value="{{ dm.retryOn }}" hint-placeholder-val="{{ false }}">
+                  <span onClick="{{ onPlRetry }}" style-hover="background:#16233A;color:#FFFFFF" style="margin-left:8px;display:inline-block;padding:3px 10px;border-radius:7px;background:#FFFFFF;border:1px solid #D8D4C8;color:#16233A;font-size:10px;font-weight:800;cursor:pointer">Retry</span>
+                </sc-if>
+              </div>
+            </sc-if>
+            <div style="margin-top:14px;display:flex;justify-content:space-between;align-items:baseline;gap:8px">
+              <span style="font-size:10px;letter-spacing:0.09em;font-weight:800;color:#96742F">BY PROPERTY</span>
+              <span style="font-size:9.5px;color:#9AA3B5">{{ dm.listCap }}</span>
+            </div>
+            <sc-if value="{{ dm.listOn }}" hint-placeholder-val="{{ true }}">
+              <div class="scr" style="margin-top:6px;max-height:200px;overflow-y:auto;padding-right:4px">
+                <sc-for list="{{ dm.rows }}" as="dr" hint-placeholder-count="6">
+                  <div>
+                    <div onClick="{{ dr.onClick }}" title="{{ dr.tip }}" style-hover="background:#F6F4EC" style="display:flex;align-items:center;gap:9px;padding:6px 4px;border-top:1px solid #F0EEE7;cursor:pointer;background:{{ dr.bg }};border-radius:6px">
+                      <span style="width:12px;flex:none;text-align:center;font-size:9px;font-weight:700;color:{{ dr.chevCol }}">{{ dr.chev }}</span>
+                      <span style="flex:1.5;min-width:0;display:flex;flex-direction:column">
+                        <span style="font-size:11.5px;font-weight:700;color:#16233A;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">{{ dr.name }}</span>
+                        <span style="font-size:9px;color:#9AA3B5;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">{{ dr.sub }}</span>
+                      </span>
+                      <sc-if value="{{ dr.tagOn }}" hint-placeholder-val="{{ false }}">
+                        <span style="padding:2px 8px;border-radius:99px;font-size:8.5px;font-weight:800;background:#F3E2DB;color:#A03E28;white-space:nowrap;flex:none">{{ dr.tag }}</span>
+                      </sc-if>
+                      <span style="flex:1;height:6px;border-radius:3px;background:#F0EDE3;overflow:hidden;position:relative">
+                        <span style="display:block;height:6px;border-radius:3px;background:{{ dr.barC }};width:{{ dr.w }}"></span>
+                        <span style="position:absolute;top:0;left:40%;width:1.5px;height:6px;background:#B04A33;opacity:0.45"></span>
+                      </span>
+                      <span style="width:62px;flex:none;text-align:right;font-size:12px;font-weight:800;color:{{ dr.vcol }};font-variant-numeric:tabular-nums">{{ dr.x }}</span>
+                    </div>
+                    <sc-if value="{{ dr.exp }}" hint-placeholder-val="{{ false }}">
+                      <div style="margin:4px 0 8px 12px;background:#FFFFFF;border:1px solid #EDEAE0;border-radius:10px;padding:9px 12px" onClick="{{ stopProp }}">
+                        <sc-for list="{{ dr.eRows }}" as="dx" hint-placeholder-count="5">
+                          <div title="{{ dx.tip }}" style="display:flex;align-items:center;gap:9px;padding:5px 2px;border-top:1px solid #F4F2EA">
+                            <span style="flex:1.5;min-width:0;display:flex;flex-direction:column">
+                              <span style="font-size:11px;font-weight:{{ dx.fw }};color:{{ dx.col }};white-space:nowrap;overflow:hidden;text-overflow:ellipsis">{{ dx.k }}</span>
+                              <span style="font-size:8.5px;color:#9AA3B5;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">{{ dx.sub }}</span>
+                            </span>
+                            <span style="width:100px;flex:none;text-align:right;font-size:11px;font-weight:700;color:{{ dx.vcol }};font-variant-numeric:tabular-nums">{{ dx.v }}</span>
+                          </div>
+                        </sc-for>
+                        <div style="margin-top:7px;display:flex;gap:5px;flex-wrap:wrap">
+                          <sc-for list="{{ dr.mos }}" as="dg" hint-placeholder-count="5">
+                            <div onClick="{{ dg.onClick }}" title="{{ dg.tip }}" style-hover="border-color:#C9A45C" style="padding:3px 9px;border-radius:8px;border:1px solid {{ dg.bd }};background:{{ dg.bg }};cursor:pointer;font-size:9.5px;font-weight:700;color:{{ dg.col }};font-variant-numeric:tabular-nums;white-space:nowrap">{{ dg.lab }} · {{ dg.x }}</div>
+                          </sc-for>
+                        </div>
+                        <div style="margin-top:8px;display:flex;gap:5px;flex-wrap:wrap;align-items:center">
+                          <sc-for list="{{ dr.links }}" as="dl" hint-placeholder-count="4">
+                            <a href="{{ dl.href }}" onClick="{{ stopProp }}" style-hover="background:#F6ECD9" style="font-size:8px;font-weight:800;letter-spacing:0.04em;color:#96742F;text-decoration:none;border:1px solid #E2D9C4;border-radius:99px;padding:2.5px 8px;flex:none">{{ dl.lab }}</a>
+                          </sc-for>
+                          <span onClick="{{ dr.onSpot }}" style-hover="background:#16233A;color:#FFFFFF" style="font-size:8px;font-weight:800;letter-spacing:0.04em;color:#2A3550;border:1px solid #C7CBD6;border-radius:99px;padding:2.5px 8px;cursor:pointer;flex:none">{{ dr.spotLab }}</span>
+                        </div>
+                        <div style="margin-top:7px;padding-top:6px;border-top:1px solid #F4F2EA;font-size:9.5px;color:#9AA3B5;line-height:1.5">{{ dr.foot }}</div>
+                      </div>
+                    </sc-if>
+                  </div>
+                </sc-for>
+              </div>
+            </sc-if>
+            <sc-if value="{{ dm.emptyOn }}" hint-placeholder-val="{{ false }}">
+              <div style="margin-top:6px;padding:14px;text-align:center;font-size:11px;color:#8A93A6">{{ dm.empty }}</div>
+            </sc-if>
+            <sc-for list="{{ dm.memo }}" as="dz" hint-placeholder-count="1">
+              <div title="{{ dz.tip }}" style="display:flex;align-items:center;gap:9px;padding:5px 4px;border-top:1px solid #F0EEE7">
+                <span style="width:12px;flex:none"></span>
+                <span style="flex:1.5;min-width:0;font-size:10.5px;color:#8A93A6;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">{{ dz.k }}</span>
+                <span style="flex:1"></span>
+                <span style="width:96px;flex:none;text-align:right;font-size:10.5px;font-weight:600;color:{{ dz.vcol }};font-variant-numeric:tabular-nums">{{ dz.v }}</span>
+              </div>
+            </sc-for>
+            <div style="margin-top:9px;padding-top:8px;border-top:1px solid #EDEAE0;font-size:10px;color:#9AA3B5;line-height:1.6">{{ dm.foot }}</div>
+          </div>
+        </sc-for>
+      </div>
+      <div style="margin-top:12px;font-size:10.5px;color:#9AA3B5;line-height:1.65">{{ dsFoot }}</div>
     </div>
 
     <!-- ══ HERO: How rent becomes income — the cash statement walk ══ -->
@@ -607,6 +739,7 @@ class Component extends DCLogic {
     stOpen: null, stQ: '', stGrp: null, stLed: null, stAll: false, ofG: null,
     hmSel: [], hcmp: false, haSel: [], hbSel: [], hbBud: false, hDd: null, heroQ: '',
     txd: null, txErr: false, _txLoading: false, txOpen: null, txAll: false,
+    pld: null, plErr: false, _plLoading: false, dsSort: 'risk', dsQ: '', dsExp: null,
   };
 
   loadData() {
@@ -618,6 +751,18 @@ class Component extends DCLogic {
         this.setState({ cf }, () => this.applyQuery());
       })
       .catch(e => this.setState({ cf: null, loadError: (e && e.message ? e.message : String(e)) }));
+  }
+
+  loadPl() {
+    // lazy 3rd fetch — GL Rental Income feeds the DSCR rent-basis lens (owner 2026-07-22).
+    // Guard accepts any pl.* schema (the cash-on-cash lesson: an exact-schema pin dies on additive bumps).
+    if (this.state.pld || this.state._plLoading) return;
+    if (typeof fetch === 'undefined') return;
+    this.setState({ _plLoading: true, plErr: false });
+    fetch('./pl-data.json')
+      .then(r => { if (!r.ok) throw new Error('HTTP ' + r.status); return r.json(); })
+      .then(pl => { if (!pl || typeof pl.schema !== 'string' || pl.schema.indexOf('pl.') !== 0 || !Array.isArray(pl.rows) || !Array.isArray(pl.periods)) throw new Error('bad pl data'); this.setState({ pld: pl, _plLoading: false }); })
+      .catch(() => this.setState({ plErr: true, _plLoading: false }));
   }
 
   loadTx() {
@@ -663,6 +808,7 @@ class Component extends DCLogic {
 
   componentDidMount() {
     this.loadData();
+    this.loadPl();
     this._doc = () => { const p = {}; if (this.state.ddOpen) p.ddOpen = null; if (this.state.heroQ) p.heroQ = ''; if (this.state.hDd) p.hDd = null; if (Object.keys(p).length) this.setState(p); };
     document.addEventListener('click', this._doc);
   }
@@ -678,6 +824,7 @@ class Component extends DCLogic {
       scopeLine: S.loadError ? 'Data failed to load' : 'Loading…',
       filters: [], hasActive: false, onReset: () => {}, asOfLine: '',
       kpis: [],
+      dsSub: '', dsChips: [], dsQ: '', onDsQ: () => {}, dsCards: [], dsFoot: '', onPlRetry: () => {},
       keptCol: '#2A6F4E', keptBig: '', keptCap: '', keptLab: '', collBig: '', collCap: '', rateCol: '#96742F', rateBig: '', rateCap: '',
       heroSub: '', onCmpToggle: () => {}, cmpBd: '#D8D4C8', cmpBg: '#FFFFFF', cmpOn: false, walkOn: false,
       hvVal: '', hvHint: '', onHvToggle: () => {}, hvOpen: false, hvOpts: [], hvBd: '#D8D4C8', hvBg: '#FFFFFF',
@@ -829,17 +976,226 @@ class Component extends DCLogic {
     const hasActive = !!(S.fm.length || S.fe.length || S.fp.length);
     const onReset = () => this.setF({ fm: [], fe: [], fp: [] });
 
-    // ══ KPI row ══
-    const owed = allRows.reduce((s, r) => s + (r.closeW > 0 ? r.closeW : 0), 0);
-    const credits = allRows.reduce((s, r) => s + (r.closeW < 0 ? r.closeW : 0), 0);
-    const kTile = (label, val, sub, col, tip, bg, bd) => ({ label, val, sub, col: col || NAVY, dcol: FAINT, tip: tip || '', bg: bg || '#FFFFFF', bd: bd || '#E5E3DC' });
+    // ══ DSCR — debt service coverage (owner 2026-07-22): two lenses on one question ══
+    // METHOD 1 · RENT BASIS  = (GL Rental Income − GL statutory: property tax + insurance + HOA) ÷ debt service.
+    //   Rent = the books' own rent line (owner's pick over Buildium billed charges — pl-data.json, eager 3rd fetch).
+    //   Statutory at door grain = the GL series (same basis as the P&L page's income-after-fixed-costs).
+    // METHOD 2 · CASH BASIS  = (cash collected − TOTAL operating spend: opex + CapEx + statutory) ÷ debt service.
+    //   CapEx included on the owner's explicit call (2026-07-22) — the stricter every-dollar view.
+    // Debt service = GL interest + Cashflow.xlsx principal — the statement's own financing basis, so the
+    // portfolio denominator ties NET FINANCING and the outflows I&P group to the cent. Claims and SD refunds
+    // sit OUTSIDE both formulas (not rent, not operating cost). Overhead joins only unfiltered (standing rule).
+    const PLD = S.pld && S.pld.rows ? S.pld : null;
+    const plIdxOf = MO.map(mo => PLD && Array.isArray(PLD.periods) ? PLD.periods.indexOf(mo) : -1);
+    const glMissing = winIdx.filter(i => plIdxOf[i] < 0).map(i => MO[i]);
+    const m1Ready = !!PLD && glMissing.length === 0;
+    const rentByDoor = {};
+    if (PLD) for (const rr of PLD.rows) {
+      if (rr[2] !== 'Rental Income') continue;
+      const arr = rentByDoor[rr[1]] || (rentByDoor[rr[1]] = MO.map(() => 0));
+      for (let i = 0; i < NM; i++) if (plIdxOf[i] >= 0) arr[i] += (rr[3][plIdxOf[i]] || 0);
+    }
+    const dsOfI = (d, i) => DOORS[d].int[i] + (DOORS[d].filePrin[i] || 0);
+    const dCore = {};
+    for (const d of scoped) {
+      const dd = DOORS[d];
+      let dsInt = 0, dsPrin = 0, rent = 0, stat = 0, opx = 0, cpx = 0, col = 0, pt = 0, ins = 0, hoa = 0;
+      for (const i of winIdx) {
+        dsInt += dd.int[i]; dsPrin += (dd.filePrin[i] || 0);
+        stat += dd.stat[i]; opx += dd.opex[i]; cpx += dd.capex[i]; col += dd.coll[i];
+        pt += (dd.statByAcct['Property Tax'] || [])[i] || 0; ins += (dd.statByAcct['Insurance'] || [])[i] || 0; hoa += (dd.statByAcct['HOA Fee'] || [])[i] || 0;
+        if (rentByDoor[d]) rent += rentByDoor[d][i];
+      }
+      dCore[d] = { ds: dsInt + dsPrin, dsInt, dsPrin, rent, stat, opx, cpx, col, pt, ins, hoa, hasGl: !!rentByDoor[d] };
+    }
+    const debtDoors = scoped.filter(d => dCore[d].ds > 0.005);
+    const debtFree = scoped.length - debtDoors.length;
+    const noRentDebt = debtDoors.filter(d => !dCore[d].hasGl);
+    const DW = { ds: 0, int: 0, prin: 0, rent: 0, stat: 0, opx: 0, cpx: 0, col: 0, pt: 0, ins: 0, hoa: 0 };
+    for (const d of scoped) { const c0 = dCore[d]; DW.ds += c0.ds; DW.int += c0.dsInt; DW.prin += c0.dsPrin; DW.rent += c0.rent; DW.stat += c0.stat; DW.opx += c0.opx; DW.cpx += c0.cpx; DW.col += c0.col; DW.pt += c0.pt; DW.ins += c0.ins; DW.hoa += c0.hoa; }
+    const ohOpexW = ohW('opex'), ohCapexW = ohW('capex'), ohStatW = ohW('stat');
+    const m1Num = DW.rent - DW.stat - ohStatW;
+    const m2Num = DW.col - (DW.opx + ohOpexW) - (DW.cpx + ohCapexW) - (DW.stat + ohStatW);
+    const m1x = m1Ready && DW.ds > 0.005 ? m1Num / DW.ds : null;
+    const m2x = DW.ds > 0.005 ? m2Num / DW.ds : null;
+    const fx = x => x === null ? '—' : (x < 0 ? '−' : '') + Math.abs(x).toFixed(2) + '×';
+    const xCol = x => x === null ? FAINT : x >= 1.25 ? GREEND : x >= 1 ? GOLDD : REDD;
+    const DS_SCALE = 2.5;
+    const xW = x => x === null ? '0%' : (Math.max(0, Math.min(1, x / DS_SCALE)) * 100).toFixed(1) + '%';
+    // per-month portfolio series (scoped, month grain)
+    const dsMs = MO.map((_, i) => scoped.reduce((s, d) => s + dsOfI(d, i), 0));
+    const statMsGl = MO.map((_, i) => scoped.reduce((s, d) => s + DOORS[d].stat[i], 0) + (unfiltered ? OH.stat[i] : 0));
+    const rentMs = MO.map((_, i) => plIdxOf[i] >= 0 ? scoped.reduce((s, d) => s + (rentByDoor[d] ? rentByDoor[d][i] : 0), 0) : null);
+    const collMsD = i => scoped.reduce((s, d) => s + DOORS[d].coll[i], 0);
+    const opexMsD = i => scoped.reduce((s, d) => s + DOORS[d].opex[i] + DOORS[d].capex[i], 0) + (unfiltered ? OH.opex[i] + OH.capex[i] : 0);
+    const m1Ms = MO.map((_, i) => (PLD && rentMs[i] !== null && dsMs[i] > 0.005) ? (rentMs[i] - statMsGl[i]) / dsMs[i] : null);
+    const m2Ms = MO.map((_, i) => dsMs[i] > 0.005 ? (collMsD(i) - opexMsD(i) - statMsGl[i]) / dsMs[i] : null);
+    const monClick = i => (e) => { if (e && e.stopPropagation) e.stopPropagation(); const on = S.fm.length === 1 && S.fm[0] === MO[i]; this.setF({ fm: on ? [] : [MO[i]] }); };
+    const jumpSec = sec => () => { try { const el = document.querySelector('[data-sec="' + sec + '"]'); if (el && el.scrollIntoView) el.scrollIntoView({ behavior: 'smooth', block: 'start' }); } catch (e0) {} };
+
+    // ── shared controls ──
+    const dsSort = S.dsSort || 'risk';
+    const dsQv = (S.dsQ || '').trim().toLowerCase();
+    const dsChips = [
+      { key: 'risk', lab: 'RISKIEST FIRST', tip: 'Thinnest coverage on top — the doors whose rent is closest to missing the bank.' },
+      { key: 'best', lab: 'STRONGEST FIRST', tip: 'Fattest coverage on top.' },
+      { key: 'debt', lab: 'BIGGEST DEBT', tip: 'Largest debt service on top — where the most bank money is at stake.' },
+    ].map(c0 => ({ lab: c0.lab, tip: c0.tip, bd: dsSort === c0.key ? GOLD : '#D8D4C8', bg: dsSort === c0.key ? '#FBF6EA' : '#FFFFFF', col: dsSort === c0.key ? GOLDD : MUT, onClick: (e) => { if (e && e.stopPropagation) e.stopPropagation(); this.setState({ dsSort: c0.key }); } }));
+    const onDsQ = e => this.setState({ dsQ: e.target.value });
+    const onPlRetry = (e) => { if (e && e.stopPropagation) e.stopPropagation(); this.setState({ plErr: false, _plLoading: false, pld: null }, () => this.loadPl()); };
+
+    // ── by-property rows per method ──
+    const winMsParam = '&m=' + winIdx.map(i => MO[i]).join(',');
+    const dsLinksOf = d => [
+      { lab: 'P&L', href: './PL%20Story%20-%20Main.dc.html?door=' + esc(d) },
+      { lab: 'BS', href: './investments.dc.html?door=' + esc(d) },
+      { lab: 'LOANS', href: './loans.dc.html?door=' + esc(d) },
+      { lab: 'TXN →', href: './transactions.dc.html?door=' + esc(d) + winMsParam },
+    ];
+    const dsSpot = d => (e) => { if (e && e.stopPropagation) e.stopPropagation(); this.setF({ fp: S.fp.length === 1 && S.fp[0] === d ? [] : [d] }); };
+    const mkDsRows = (mk) => {
+      const out = [];
+      for (const d of debtDoors) {
+        if (dsQv && !d.toLowerCase().includes(dsQv)) continue;
+        const c0 = dCore[d];
+        const num = mk === 'a' ? c0.rent - c0.stat : c0.col - c0.opx - c0.cpx - c0.stat;
+        const x = mk === 'a' && !m1Ready ? null : num / c0.ds;
+        out.push({ d, c0, num, x });
+      }
+      out.sort((a0, b0) => {
+        if (dsSort === 'debt') return b0.c0.ds - a0.c0.ds;
+        if (dsSort === 'best') return (b0.x === null ? -1e9 : b0.x) - (a0.x === null ? -1e9 : a0.x);
+        return (a0.x === null ? 1e9 : a0.x) - (b0.x === null ? 1e9 : b0.x);
+      });
+      return out.map(r0 => {
+        const d = r0.d, c0 = r0.c0, num = r0.num, x = r0.x;
+        const ek = mk + '|' + d, open = S.dsExp === ek;
+        const eRows = mk === 'a' ? [
+          { k: 'Rent billed', sub: 'GL Rental Income · ' + spanLab, v: fN(c0.rent), fw: 600, col: INK, vcol: INK, tip: 'What the books say this door billed in rent for the window.' },
+          { k: '− Statutory bills', sub: 'tax ' + fK(c0.pt) + ' · ins ' + fK(c0.ins) + ' · HOA ' + fK(c0.hoa), v: fN(-c0.stat), fw: 600, col: INK, vcol: REDD, tip: 'The bills that come with owning this door, as booked in the GL.' },
+          { k: '= Left to face the banks', sub: 'rent minus the must-pay bills', v: fN(num), fw: 800, col: NAVY, vcol: num >= 0 ? NAVY : REDD, tip: 'What this door’s rent leaves for its bank payments.' },
+          { k: '÷ Debt service', sub: 'interest ' + fK(c0.dsInt) + ' + principal ' + fK(c0.dsPrin), v: fN(c0.ds), fw: 600, col: INK, vcol: INK, tip: 'What this door’s banks asked for in the window — interest per the GL, principal per Cashflow.xlsx.' },
+          { k: '= Coverage', sub: 'under 1.00× the rest of the portfolio carried it', v: fx(x), fw: 800, col: NAVY, vcol: xCol(x), tip: 'This door’s rent-basis coverage for the window.' },
+        ] : [
+          { k: 'Cash collected', sub: 'Buildium receipts · ' + spanLab, v: fN(c0.col), fw: 600, col: INK, vcol: INK, tip: 'Cash that actually arrived from this door’s tenants in the window.' },
+          { k: '− Total operating spend', sub: 'opex ' + fK(c0.opx) + ' · capex ' + fK(c0.cpx) + ' · statutory ' + fK(c0.stat), v: fN(-(c0.opx + c0.cpx + c0.stat)), fw: 600, col: INK, vcol: REDD, tip: 'Every operating dollar this door consumed — day-to-day costs, capital work, and the statutory bills.' },
+          { k: '= Left to face the banks', sub: 'collections minus every operating dollar', v: fN(num), fw: 800, col: NAVY, vcol: num >= 0 ? NAVY : REDD, tip: 'What this door’s cash leaves for its bank payments.' },
+          { k: '÷ Debt service', sub: 'interest ' + fK(c0.dsInt) + ' + principal ' + fK(c0.dsPrin), v: fN(c0.ds), fw: 600, col: INK, vcol: INK, tip: 'What this door’s banks asked for in the window.' },
+          { k: '= Coverage', sub: 'under 1.00× the rest of the portfolio carried it', v: fx(x), fw: 800, col: NAVY, vcol: xCol(x), tip: 'This door’s cash-basis coverage for the window.' },
+        ];
+        const mosR = MO.map((_, i) => {
+          const dsi = dsOfI(d, i);
+          const xi = mk === 'a'
+            ? (PLD && plIdxOf[i] >= 0 && dsi > 0.005 ? (((rentByDoor[d] || [])[i] || 0) - DOORS[d].stat[i]) / dsi : null)
+            : (dsi > 0.005 ? (DOORS[d].coll[i] - DOORS[d].opex[i] - DOORS[d].capex[i] - DOORS[d].stat[i]) / dsi : null);
+          const on = S.fm.length === 1 && S.fm[0] === MO[i];
+          return { lab: mmyy(MO[i]), x: fx(xi), col: xCol(xi), bd: on ? GOLD : '#E5E1D4', bg: on ? '#FBF6EA' : '#FFFFFF', onClick: monClick(i), tip: on ? 'Click again to go back to all months.' : (xi === null ? 'No bank payment due here this month. Click to focus the page on ' + mmyy(MO[i]) + '.' : 'Coverage ' + fx(xi) + ' in ' + mmyy(MO[i]) + '. Click to focus the whole page on that month.') };
+        });
+        return {
+          name: d, x: fx(x), vcol: xCol(x), barC: x === null ? '#D8D4C8' : x >= 1.25 ? '#4E9F76' : x >= 1 ? GOLD : '#C96A4F', w: xW(x),
+          chev: open ? '▾' : '▸', chevCol: GOLDD, bg: open ? '#FBF6EA' : 'transparent',
+          sub: DOORS[d].entity + ' · debt service ' + fK(c0.ds),
+          tagOn: mk === 'a' && !c0.hasGl && m1Ready, tag: 'NO RENT BOOKED',
+          tip: (mk === 'a'
+            ? 'Rent ' + fK(c0.rent) + ' − statutory ' + fK(c0.stat) + ' = ' + fK(num) + ' vs debt service ' + fK(c0.ds)
+            : 'Collected ' + fK(c0.col) + ' − operating ' + fK(c0.opx + c0.cpx + c0.stat) + ' = ' + fK(num) + ' vs debt service ' + fK(c0.ds)) + ' → ' + fx(x) + '. Click to open the walk.',
+          exp: open, onClick: () => this.setState({ dsExp: open ? null : ek }),
+          eRows, mos: mosR, links: dsLinksOf(d), onSpot: dsSpot(d),
+          spotLab: S.fp.length === 1 && S.fp[0] === d ? 'UNSPOT ✕' : '⌖ SPOTLIGHT',
+          foot: 'Every figure is this door’s own ledger for ' + spanLab + '. Under 1.00×, this door’s ' + (mk === 'a' ? 'rent' : 'cash') + ' didn’t meet its bank payments — the rest of the portfolio carried it.',
+          numRaw: num, dsRaw: c0.ds, xRaw: x,
+        };
+      });
+    };
+
+    // ── the two method cards ──
+    const statSubPieces = 'tax ' + fK(DW.pt) + ' · insurance ' + fK(DW.ins) + ' · HOA ' + fK(DW.hoa) + (ohStatW > 0.005 ? ' · company ' + fK(ohStatW) : '');
+    const dsRowBase = { fw: 600, col: INK, bg: 'transparent' };
+    const mkWalk = (mk) => mk === 'a' ? [
+      { ...dsRowBase, k: 'Rent billed to the books', sub: 'GL Rental Income · ' + spanLab + (m1Ready && noRentDebt.length ? ' · ' + noRentDebt.length + ' debt door' + (noRentDebt.length === 1 ? '' : 's') + ' with no rent booked' : ''), v: m1Ready ? fN(DW.rent) : '—', vcol: INK, tip: 'The rent line straight from the P&L’s books — your pick for this lens. Buildium’s billed charges (rent, SD, fees, utilities) stay on the statement below.' },
+      { ...dsRowBase, k: '− Statutory bills', sub: statSubPieces, v: m1Ready ? fN(-(DW.stat + ohStatW)) : '—', vcol: REDD, tip: 'Property tax, insurance and HOA as booked in the GL — the bills that come with owning, door by door. The statement’s statutory CASH line differs by escrow timing; its note explains.' },
+      { ...dsRowBase, k: '= Left to face the banks', sub: 'rent minus the must-pay bills', v: m1Ready ? fN(m1Num) : '—', vcol: !m1Ready || m1Num >= 0 ? NAVY : REDD, fw: 800, col: NAVY, bg: '#F6F3EA', tip: 'What the window’s booked rent leaves to meet every bank payment.' },
+      { ...dsRowBase, k: '÷ Debt service', sub: 'interest ' + fK(DW.int) + ' + principal repaid ' + fK(DW.prin), v: fN(DW.ds), vcol: INK, tip: 'What the banks asked for in the window — interest per the GL, principal per Cashflow.xlsx. Ties the statement’s NET FINANCING line and the outflows’ Interest & Principal group to the cent.' },
+    ] : [
+      { ...dsRowBase, k: 'Cash collected', sub: 'Buildium receipts · ' + spanLab, v: fN(DW.col), vcol: INK, tip: 'Cash that actually arrived from tenants in the window — the statement’s own collected line.' },
+      { ...dsRowBase, k: '− Total operating spend', sub: 'opex ' + fK(DW.opx + ohOpexW) + ' · capex ' + fK(DW.cpx + ohCapexW) + ' · statutory ' + fK(DW.stat + ohStatW), v: fN(-(DW.col - m2Num)), vcol: REDD, tip: 'Every operating dollar — day-to-day expenses, capital work (your call: CapEx counts), and the statutory bills at GL grain. Insurance claims and deposit refunds sit outside — they are not rent and not operating cost.' },
+      { ...dsRowBase, k: '= Left to face the banks', sub: 'collections minus every operating dollar', v: fN(m2Num), vcol: m2Num >= 0 ? NAVY : REDD, fw: 800, col: NAVY, bg: '#F6F3EA', tip: 'What the window’s cash leaves to meet every bank payment.' },
+      { ...dsRowBase, k: '÷ Debt service', sub: 'interest ' + fK(DW.int) + ' + principal repaid ' + fK(DW.prin), v: fN(DW.ds), vcol: INK, tip: 'What the banks asked for in the window — the same yardstick as the rent lens, so the two × figures compare honestly.' },
+    ];
+    const mkMos = (mk) => MO.map((_, i) => {
+      const xi = mk === 'a' ? m1Ms[i] : m2Ms[i];
+      const on = S.fm.length === 1 && S.fm[0] === MO[i];
+      return { lab: mmyy(MO[i]), x: fx(xi), col: xCol(xi), bd: on ? GOLD : '#E5E1D4', bg: on ? '#FBF6EA' : '#FFFFFF', onClick: monClick(i), tip: (on ? 'Click again to go back to all months. ' : 'Click to focus the whole page on ' + mmyy(MO[i]) + '. ') + (xi === null ? 'No coverage figure for this month here.' : 'Coverage ' + fx(xi) + ' in ' + mmyy(MO[i]) + ' for this scope.') };
+    });
+    const rowsA = mkDsRows('a'), rowsB = mkDsRows('b');
+    // the coverage figure is portfolio-wide: doors with no bank still produce cash that faces the banks.
+    // They get no row (nothing of theirs to cover) — an honest memo row keeps the column summing to the cent.
+    const freeDoors = scoped.filter(d => dCore[d].ds <= 0.005);
+    const freeA = freeDoors.reduce((s, d) => s + (dCore[d].rent - dCore[d].stat), 0);
+    const freeB = freeDoors.reduce((s, d) => s + (dCore[d].col - dCore[d].opx - dCore[d].cpx - dCore[d].stat), 0);
+    const memoA = [], memoB = [];
+    if (m1Ready && debtDoors.length && freeDoors.length && Math.abs(freeA) > 0.005) memoA.push({ k: 'Debt-free doors — no bank of their own, their rent still counts (' + freeDoors.length + ' doors)', v: fN(freeA), rawV: freeA, vcol: FAINT, tip: 'Rent minus statutory bills across the doors that carry no debt. The portfolio coverage counts every door — these doors have no bank payment of their own, so they get no row above.' });
+    if (debtDoors.length && freeDoors.length && Math.abs(freeB) > 0.005) memoB.push({ k: 'Debt-free doors — no bank of their own, their cash still counts (' + freeDoors.length + ' doors)', v: fN(freeB), rawV: freeB, vcol: FAINT, tip: 'Cash left after operating costs across the doors that carry no debt. The portfolio coverage counts every door — these doors have no bank payment of their own, so they get no row above.' });
+    if (unfiltered && ohStatW > 0.005) memoA.push({ k: 'Company statutory — in the portfolio figure, on no single door', v: fN(-ohStatW), rawV: -ohStatW, vcol: FAINT, tip: 'Company-level statutory bills. They reduce the portfolio’s coverage but belong to no door.' });
+    if (unfiltered && (ohOpexW + ohCapexW + ohStatW) > 0.005) memoB.push({ k: 'Company overhead — in the portfolio figure, on no single door', v: fN(-(ohOpexW + ohCapexW + ohStatW)), rawV: -(ohOpexW + ohCapexW + ohStatW), vcol: FAINT, tip: 'Company-level operating spend (property management and company bills). It reduces the portfolio’s coverage but belongs to no door, so the door rows above exclude it.' });
+    const listCapOf = (rows) => {
+      if (dsQv) return rows.length + ' match' + (rows.length === 1 ? '' : 'es') + ' · “' + (S.dsQ || '').trim() + '”';
+      return debtDoors.length + ' door' + (debtDoors.length === 1 ? '' : 's') + ' carry debt · ' + (dsSort === 'risk' ? 'riskiest first' : dsSort === 'best' ? 'strongest first' : 'biggest debt first') + ' · top 5 in view, scroll for the rest';
+    };
+    const tieFootA = m1Ready
+      ? 'The door rows sum to the portfolio walk to the cent' + (memoA.length ? ' once the memo rows below join them' : '') + ': rent ' + f2(DW.rent) + ' − statutory ' + f2(DW.stat + ohStatW) + ' = ' + f2(m1Num) + ', ÷ debt service ' + f2(DW.ds) + ' = ' + fx(m1x) + '.' + (noRentDebt.length ? ' ' + noRentDebt.length + ' debt-carrying door' + (noRentDebt.length === 1 ? ' has' : 's have') + ' no rent booked in the GL (' + fK(noRentDebt.reduce((s, d) => s + dCore[d].ds, 0)) + ' of debt service) — they stay in the figure and wear the NO RENT BOOKED tag.' : '')
+      : 'The rent lens needs the P&L’s books (pl-data.json)' + (glMissing.length && PLD ? ' — the GL hasn’t published ' + glMissing.map(mmyy).join(', ') + ' yet' : '') + '. The cash lens is unaffected.';
+    const tieFootB = 'The door rows sum to the portfolio walk to the cent' + (memoB.length ? ' once the memo rows below join them' : '') + ': collected ' + f2(DW.col) + ' − operating ' + f2(DW.col - m2Num) + ' = ' + f2(m2Num) + ', ÷ debt service ' + f2(DW.ds) + ' = ' + fx(m2x) + '.';
+    const mkCard = (mk) => {
+      const x0 = mk === 'a' ? m1x : m2x;
+      const rows = mk === 'a' ? rowsA : rowsB;
+      const pendOn = mk === 'a' && !m1Ready;
+      return {
+        key: mk,
+        name: mk === 'a' ? 'METHOD 1 · RENT BASIS — THE UNDERWRITING LENS' : 'METHOD 2 · CASH BASIS — WHAT ACTUALLY LANDED',
+        formula: mk === 'a' ? '(rent billed − statutory bills) ÷ debt service' : '(cash collected − total operating spend) ÷ debt service',
+        big: fx(x0), bigCol: xCol(x0),
+        bigSub: mk === 'a' ? 'if every booked rent dollar arrived' : 'from cash that actually landed',
+        bigTip: mk === 'a'
+          ? 'The window’s booked rent, minus the bills that come with owning (property tax, insurance, HOA), divided by what the banks asked for (interest + principal). At 1.00× every rent dollar after those bills is spoken for by the banks; lenders like 1.25× or better.'
+          : 'Cash that actually arrived, minus every operating dollar (day-to-day costs, capital work, statutory bills), divided by what the banks asked for (interest + principal). This is the stricter, lived answer — late rent and heavy repair months pull it down.',
+        meterC: x0 === null ? '#D8D4C8' : x0 >= 1.25 ? '#4E9F76' : x0 >= 1 ? GOLD : '#C96A4F',
+        meterW: xW(x0),
+        meterTip: x0 === null ? 'No coverage figure in this scope.' : 'The bar runs to ' + fx(x0) + ' on a 0–2.50× scale. The brick line is 1.00× — every dollar spoken for; the gold line is 1.25× — the cushion lenders ask.',
+        walk: mkWalk(mk), mos: mkMos(mk),
+        pendOn,
+        pend: pendOn ? (S.plErr ? 'Couldn’t load the P&L’s books (pl-data.json) — the rent lens needs them.' : (PLD && glMissing.length ? 'The GL hasn’t published ' + glMissing.map(mmyy).join(', ') + ' yet — the rent lens waits for the P&L.' : 'Pulling the rent line from the P&L’s books…')) : '',
+        retryOn: pendOn && !!S.plErr,
+        listOn: rows.length > 0 && !(mk === 'a' && !PLD),
+        rows, listCap: listCapOf(rows),
+        emptyOn: false, empty: '',
+        memo: mk === 'a' ? memoA : memoB,
+        foot: mk === 'a' ? tieFootA : tieFootB,
+      };
+    };
+    const dsCardA = mkCard('a'), dsCardB = mkCard('b');
+    for (const c0 of [dsCardA, dsCardB]) {
+      if (c0.key === 'a' && !PLD) continue; // the pend box carries the story
+      if (debtDoors.length === 0) { c0.listOn = false; c0.emptyOn = true; c0.empty = 'No bank debt in this scope — nothing to cover.'; }
+      else if (c0.rows.length === 0) { c0.listOn = false; c0.emptyOn = true; c0.empty = 'No debt-carrying property matches “' + (S.dsQ || '').trim() + '”.'; }
+    }
+    const dsCards = [dsCardA, dsCardB];
+    const dsSub = spanLab + ' · ' + debtDoors.length + ' of ' + scoped.length + ' doors carry bank debt · one question, two honest lenses';
+    const dsFoot = 'DSCR = does the rent cover the bank payments — 1.00× means exactly covered, ' +
+      'under 1.00× the payment came out of somewhere else, 1.25× is the cushion lenders ask for. ' +
+      'Both lenses divide by the same debt service: interest (GL) + principal repaid (Cashflow.xlsx' + ((RC.principal.naCells || []).length ? ' — ' + RC.principal.naCells.length + ' door-months there are NA and count as $0, listed in Checks & balances' : '') + '), ' +
+      'which ties the statement’s NET FINANCING line to the cent. Statutory here is the GL’s door-by-door series (the same basis the P&L uses); the statement’s statutory CASH line (' + fK(statCash) + ') differs by escrow timing — its note explains. ' +
+      'Insurance claims and deposit refunds sit outside both lenses. ' + debtFree + ' debt-free door' + (debtFree === 1 ? '' : 's') + ' need no covering and stay off the lists. ' +
+      'One-off principal events (prepayments, payoffs, releases) live in Financing events, not in debt service — coverage measures the regular bill.';
+
+    // ══ KPI row (v9, owner 2026-07-22: Owed/Advances live on the Collections page now; DSCR joins; cards click to their proving section) ══
+    const kTile = (label, val, sub, col, tip, bg, bd, onClick) => ({ label, val, sub, col: col || NAVY, dcol: FAINT, tip: tip || '', bg: bg || '#FFFFFF', bd: bd || '#E5E3DC', onClick: onClick || (() => {}) });
     const kpis = [
-      kTile('Charges raised', fN(spanInv), spanLab + ' · rent, SD, fees, utilities', BLUE, 'Buildium charge journal for the span (refund rows excluded)'),
-      kTile('Cash collected', fN(spanColl), sum(winIdx.map(i => scoped.reduce((s, d) => s + DOORS[d].nrec[i], 0))) + ' receipts', GOLDD, 'Buildium receipts (refunds outside AR; in-month settlements netted in ledger)'),
-      kTile('Collection rate', spanRate !== null ? spanRate.toFixed(2) + '%' : '—', 'actual collection ÷ due for the span', spanRate !== null && spanRate >= 85 ? GREEND : (spanRate !== null && spanRate >= 75 ? NAVY : REDD), 'Owner formula: (collections + opening advances − closing advances) ÷ (invoices + opening due)'),
-      kTile('Owed by tenants', fN(rsM[lastI].cd), 'at ' + mmyy(MO[lastI]) + ' · gross dues', REDD, 'Sum of positive tenant balances at span end (before that month\u2019s write-offs)'),
-      kTile('Advances held', fN(rsM[lastI].ca), 'prepaid for future months', GREEND, 'Sum of negative tenant balances at span end'),
-      kTile('Cash kept', fN(kept), 'net of all three activities', kept >= 0 ? GREEND : REDD, 'Operating (collections + claims − refunds − operating expenses incl. CapEx − statutory w/ Cashflow.xlsx escrow) + Investing (purchases & sale proceeds — pending) + Financing (− interest − principal repaid per Cashflow.xlsx)', kept >= 0 ? '#F2F7F0' : '#FBF0ED', kept >= 0 ? '#D6E4D2' : '#EAD1C8'),
+      kTile('Charges raised', fN(spanInv), spanLab + ' · rent, SD, fees, utilities', BLUE, 'Buildium charge journal for the span (refund rows excluded). Click to walk the statement.', 0, 0, jumpSec('statement')),
+      kTile('Cash collected', fN(spanColl), sum(winIdx.map(i => scoped.reduce((s, d) => s + DOORS[d].nrec[i], 0))) + ' receipts', GOLDD, 'Buildium receipts (refunds outside AR; in-month settlements netted in ledger). Click to walk the statement.', 0, 0, jumpSec('statement')),
+      kTile('Collection rate', spanRate !== null ? spanRate.toFixed(2) + '%' : '—', 'actual collection ÷ due for the span', spanRate !== null && spanRate >= 85 ? GREEND : (spanRate !== null && spanRate >= 75 ? NAVY : REDD), 'Owner formula: (collections + opening advances − closing advances) ÷ (invoices + opening due). Who owes and who prepaid now lives on the Collections page.', 0, 0, jumpSec('statement')),
+      kTile('DSCR — debt covered', fx(m2x), m2x === null ? 'no bank debt in this scope' : (m1Ready ? 'cash basis · rent basis ' + fx(m1x) : 'cash basis · rent basis pending GL'), m2x === null ? FAINT : xCol(m2x), 'Did the cash the doors produced cover what the banks asked for? Cash basis: (collected − total operating spend) ÷ (interest + principal). The section below walks both lenses, portfolio and door by door. Click to see it.', 0, 0, jumpSec('dscr')),
+      kTile('Cash kept', fN(kept), 'net of all three activities', kept >= 0 ? GREEND : REDD, 'Operating (collections + claims − refunds − operating expenses incl. CapEx − statutory w/ Cashflow.xlsx escrow) + Investing (purchases & sale proceeds — pending) + Financing (− interest − principal repaid per Cashflow.xlsx). Click for where the cash went.', kept >= 0 ? '#F2F7F0' : '#FBF0ED', kept >= 0 ? '#D6E4D2' : '#EAD1C8', jumpSec('outflows')),
     ];
 
     // ══ hero: the statement walk — operating / investing / financing (P&L waterfall idiom) ══
@@ -1667,6 +2023,7 @@ class Component extends DCLogic {
       ready: true, loading: false, loadError: false, retryLoad: () => this.loadData(), stopProp,
       scopeLine, filters, hasActive, onReset, asOfLine,
       kpis, keptCol, keptBig, keptCap, keptLab, collBig, collCap, rateCol, rateBig, rateCap,
+      dsSub, dsChips, dsQ: S.dsQ || '', onDsQ, dsCards, dsFoot, onPlRetry,
       heroSub, onCmpToggle, cmpBd, cmpBg, cmpOn, walkOn: !cmpOn,
       hvVal, hvHint, onHvToggle, hvOpen, hvOpts, hvBd, hvBg,
       haVal, onHaToggle, haOpen, haOpts, haBd, haBg,
