@@ -93,10 +93,18 @@ input:focus{outline:2px solid #C9A45C;outline-offset:1px}
               </sc-if>
               <div class="scr" style="overflow-y:auto;flex:1">
                 <sc-for list="{{ fb.opts }}" as="op" hint-placeholder-count="6">
-                  <div onClick="{{ op.onClick }}" style-hover="background:#F6F4EC" style="padding:7px 10px;border-radius:7px;font-size:12.5px;font-weight:{{ op.fw }};color:#2A3550;cursor:pointer;background:{{ op.bg }};display:flex;justify-content:space-between;align-items:center;gap:10px">
+                  <sc-if value="{{ op.hdr }}" hint-placeholder-val="{{ false }}">
+                    <div onClick="{{ op.onClick }}" style-hover="background:#EDE8DA" style="margin-top:3px;padding:7px 10px;border-radius:7px;font-size:11px;letter-spacing:0.03em;font-weight:800;color:#16233A;cursor:pointer;background:#F4F1E8;border:1px solid #E7E2D4;display:flex;justify-content:space-between;align-items:center;gap:10px">
+                      <span style="white-space:nowrap">{{ op.label }}</span>
+                      <span style="display:flex;gap:8px;align-items:center"><span style="font-size:9.5px;color:#8A93A6">{{ op.n }}</span><span style="color:#3D64A8;font-weight:800;width:12px">{{ op.check }}</span></span>
+                    </div>
+                  </sc-if>
+                  <sc-if value="{{ op.mon }}" hint-placeholder-val="{{ false }}">
+                    <div onClick="{{ op.onClick }}" style-hover="background:#F6F4EC" style="padding:7px 10px;border-radius:7px;font-size:12.5px;font-weight:{{ op.fw }};color:#2A3550;cursor:pointer;background:{{ op.bg }};display:flex;justify-content:space-between;align-items:center;gap:10px">
                     <span style="white-space:nowrap;overflow:hidden;text-overflow:ellipsis">{{ op.label }}</span>
                     <span style="display:flex;gap:8px;align-items:center"><span style="font-size:10.5px;color:#8A93A6">{{ op.n }}</span><span style="color:#96742F;font-weight:700;width:12px">{{ op.check }}</span></span>
                   </div>
+                  </sc-if>
                 </sc-for>
               </div>
             </div>
@@ -766,15 +774,24 @@ class Component extends DCLogic {
     const entOf = d => (DW[d] && DW[d][2]) || (bsBy[d] && bsBy[d].entity) || '—';
     const tcat = l => l.type === 'Hard Money' ? 'Hard Money' : 'Traditional';
 
-    // all months across every schedule (origination → horizon)
+    // all months across every schedule (origination → last note maturity, now projected)
     const mset = new Set();
     for (const l of LNS) for (const rw of l.schedule) mset.add(rw.m);
     const monthsAll = [...mset].sort();
     const glMonths = (S.gl.periods || []).filter(p => p >= M.glWindow[0] && p <= M.glWindow[1]);
+    // Present-month anchor (owner 2026-07): the default reporting month is meta.asOf, clamped to
+    // the axis — NOT the last projected month. Actuals + GL reconcile through glEnd; later months
+    // are scheduled amortization projections (no new releases / prepays / GL).
+    const glEnd = M.glEnd || M.horizonEnd || (monthsAll.length ? monthsAll[monthsAll.length - 1] : '');
+    const axMin = monthsAll[0] || glEnd, axMax = monthsAll[monthsAll.length - 1] || glEnd;
+    const asOf = (M.asOf && M.asOf < axMin) ? axMin : ((M.asOf && M.asOf > axMax) ? axMax : (M.asOf || glEnd));
+    const isProj = m => !!glEnd && m > glEnd;
 
     // ---------- scope ----------
-    const selM = (S.fm.length ? monthsAll.filter(m => S.fm.includes(m)) : monthsAll);
-    const lastM = selM[selM.length - 1] || monthsAll[monthsAll.length - 1];
+    // default (no month filter) = through the present month; future months are opt-in via the filter.
+    const dfltM = monthsAll.filter(m => m <= asOf);
+    const selM = (S.fm.length ? monthsAll.filter(m => S.fm.includes(m)) : dfltM);
+    const lastM = (S.fm.length && selM.length) ? selM[selM.length - 1] : asOf;
     const doorOk = d => (!S.fe.length || S.fe.includes(entOf(d))) && (!S.fd.length || S.fd.includes(d));
     const loanPre = l => (!S.fl.length || S.fl.includes(l.lender || '—')) && (!S.ft.length || S.ft.includes(tcat(l)));
     const doorsOfLoan = {};
@@ -787,17 +804,21 @@ class Component extends DCLogic {
     const scopeDoors = Object.keys(DOORS).filter(d => doorOk(d) && DOORS[d].loans.some(k => inLoanIds.has(k)));
     const scopeSet = new Set(scopeDoors);
 
-    const dMin = {};
+    const dMin = {}, dMax = {}, dLastClose = {};
     for (const d of Object.keys(DOORS)) {
       const ks = Object.keys(DOORS[d].monthly);
-      dMin[d] = ks.length ? ks.reduce((a, b) => a < b ? a : b) : null;
+      if (ks.length) { let lo = ks[0], hi = ks[0]; for (const k of ks) { if (k < lo) lo = k; if (k > hi) hi = k; } dMin[d] = lo; dMax[d] = hi; dLastClose[d] = DOORS[d].monthly[hi].close; }
+      else { dMin[d] = null; dMax[d] = null; dLastClose[d] = 0; }
     }
     const originatedBy = (d, m) => dMin[d] === null || dMin[d] <= m;
     const closeAt = (d, m) => {
       const rec = DOORS[d];
       if (rec.monthly[m]) return rec.monthly[m].close;
-      if (dMin[d] !== null && m >= dMin[d]) return 0;   // paid off / released
-      return 0;                                          // pre-origination or pre-window release
+      if (dMin[d] === null || m < dMin[d]) return 0;     // pre-origination / pre-window release
+      if (m > dMax[d]) return dLastClose[d];             // past the last recorded month: carry the
+      // last close forward — a matured, unpaid note keeps its balance until a payoff row is added
+      // (paid-off and released doors ended at 0, so they stay 0).
+      return 0;
     };
     // cumulative release principal to door d through month m (in-scope loans)
     const relTo = (d, m) => {
@@ -881,7 +902,7 @@ class Component extends DCLogic {
         onClick: ((mv) => () => this.setFilter({ fm: S.fm.length === 1 && S.fm[0] === mv ? [] : [mv] }))(sparkM[i]),
       };
     });
-    const periodTag = selM.length === monthsAll.length ? 'all history' : (selM.length === 1 ? mmyy(selM[0]) : selM.length + ' months');
+    const periodTag = !S.fm.length ? ('through ' + mmyy(asOf)) : (selM.length === 1 ? mmyy(selM[0]) : selM.length + ' months');
     const C_SCH = '#3D64A8', C_PREP = '#57A773', C_REL = '#C9A45C';
     const seg3 = (a, b2, c2) => {
       const t = a + b2 + c2;
@@ -895,9 +916,9 @@ class Component extends DCLogic {
         segs: seg3(tSch, tPrep, tRel),
         legs: [{ bg: C_SCH, txt: 'Monthly ' + fK(tSch) }, { bg: C_PREP, txt: 'Prepay ' + fK(tPrep) }, { bg: C_REL, txt: 'Releases ' + fK(tRel) }],
         sub: pct(tRepaid, tInit) + ' of initial refinance repaid' },
-      { label: 'Outstanding loan', tag: 'at ' + mmyy(lastM), value: fN(tOut), col: '#16233A', span: 4, hasBar: false, hasBar2: false, hasSpark: true,
+      { label: 'Outstanding loan', tag: (isProj(lastM) ? 'projected · ' : 'at ') + mmyy(lastM), value: fN(tOut), col: '#16233A', span: 4, hasBar: false, hasBar2: false, hasSpark: true,
         cols: sparkCols, sparkPath, sparkArea,
-        sub: 'trailing ' + sparkM.length + ' months into ' + mmyy(lastM) + ' · click a point to view that month, click it again for all · ' + inLoans.filter(l => l.outstanding > 0.005).length + ' active notes in scope' },
+        sub: (isProj(lastM) ? 'Projected balance — actuals & GL reconcile through ' + mmyy(glEnd) + '. ' : '') + 'trailing ' + sparkM.length + ' months into ' + mmyy(lastM) + ' · click a point to view that month, click it again for all · ' + inLoans.filter(l => l.outstanding > 0.005).length + ' active notes in scope' },
       { label: 'Initial LTV', tag: 'on bank appraisal', value: ltvInitDen > 0 ? (ltvInitNum / ltvInitDen * 100).toFixed(1) + '%' : '—', col: '#16233A', span: 3, hasBar: false, hasBar2: false, hasSpark: false,
         sub: S.bsMiss ? 'bs-data.json not loaded — appraisals unavailable' : (ltvInitDen > 0 ? fK(ltvInitNum) + ' initial on ' + fK(ltvInitDen) + ' appraised · ' + apprN + ' doors covered' : 'no appraised values in scope') },
       { label: 'Current LTV', tag: 'on ARV', value: ltvCurDen > 0 ? (ltvCurNum / ltvCurDen * 100).toFixed(1) + '%' : '—', col: '#16233A', span: 3, hasBar: false, hasBar2: false, hasSpark: false,
@@ -936,11 +957,55 @@ class Component extends DCLogic {
         value: sel.length ? (sel.length === 1 ? (opts.find(o => o.v === sel[0]) || { label: sel[0] }).label || sel[0] : sel.length + ' selected') : 'All',
         bd: sel.length ? '#C9A45C' : '#D8D4C8', bg: sel.length ? '#FBF6EA' : '#FFFFFF',
         opts: shown.slice(0, 400).map(o => ({
-          label: o.label || o.v, n: o.n, on: sel.includes(o.v),
+          label: o.label || o.v, n: o.n, on: sel.includes(o.v), mon: true, hdr: false,
           check: sel.includes(o.v) ? '✓' : '', fw: sel.includes(o.v) ? 700 : 500,
           bg: sel.includes(o.v) ? '#FBF6EA' : 'transparent',
           onClick: () => set(o.v),
         })),
+      };
+    };
+    // Month filter (owner 2026-07): current year first, then years newest→oldest; months desc
+    // within a year; a per-year header toggles the whole year; search matches a month
+    // (Mar / Mar-27) or a year (2027 / 27). Projected months (after glEnd) wear a "proj" tag.
+    const MNAMES = ['january', 'february', 'march', 'april', 'may', 'june', 'july', 'august', 'september', 'october', 'november', 'december'];
+    const mkMonths = (key, sel, stateKey) => {
+      const sk = stateKey || key;
+      const q = (S.ddOpen === key ? S.fq : '').toLowerCase().trim();
+      const curY = asOf.slice(0, 4);
+      const byYear = {};
+      for (const m of monthsAll) (byYear[m.slice(0, 4)] = byYear[m.slice(0, 4)] || []).push(m);
+      const years = Object.keys(byYear).sort((a, b) => (a === curY ? -1 : b === curY ? 1 : (a < b ? 1 : -1)));
+      const match = m => {
+        if (!q) return true;
+        const lab = mmyy(m).toLowerCase(), yr = m.slice(0, 4), yy = m.slice(2, 4);
+        return lab.includes(q) || MNAMES[+m.slice(5, 7) - 1].includes(q) || yr.includes(q) || q === yy;
+      };
+      const setMonth = v => { const cur = new Set(sel); cur.has(v) ? cur.delete(v) : cur.add(v); this.setFilter({ [sk]: [...cur] }); };
+      const toggleYear = yms => { const cur = new Set(sel); const all = yms.every(m => cur.has(m)); yms.forEach(m => all ? cur.delete(m) : cur.add(m)); this.setFilter({ [sk]: [...cur] }); };
+      const opts = [];
+      for (const y of years) {
+        const yms = byYear[y].filter(match).slice().sort().reverse();
+        if (!yms.length) continue;
+        const nsel = yms.filter(m => sel.includes(m)).length;
+        opts.push({ hdr: true, mon: false, label: y + (y === curY ? '  · current year' : ''), n: yms.length + ' mo',
+          check: nsel === yms.length ? '✓' : (nsel ? '–' : ''), fw: 800, bg: '#F4F1E8', onClick: () => toggleYear(yms) });
+        for (const m of yms) opts.push({ mon: true, hdr: false, v: m, label: mmyy(m), n: isProj(m) ? 'proj' : '',
+          on: sel.includes(m), check: sel.includes(m) ? '✓' : '', fw: sel.includes(m) ? 700 : 500,
+          bg: sel.includes(m) ? '#FBF6EA' : 'transparent', onClick: () => setMonth(m) });
+      }
+      const shownM = opts.filter(o => o.mon).map(o => o.v);
+      const allShown = shownM.length > 0 && shownM.every(v => sel.includes(v));
+      return {
+        label: 'MONTH', allLabel: 'months', w: '270px', hasSearch: true,
+        q: S.ddOpen === key ? S.fq : '', onQ: e => this.setState({ fq: e.target.value }),
+        open: S.ddOpen === key, onToggle: () => this.setState({ ddOpen: S.ddOpen === key ? null : key, fq: '' }),
+        onClear: () => this.setFilter({ [sk]: [] }), allCheck: sel.length ? '' : '✓',
+        selAllShow: !!q && shownM.length > 1,
+        selAllLabel: allShown ? ('Unselect these ' + shownM.length) : ('Select all ' + shownM.length + ' shown'),
+        onSelAll: () => { const cur = new Set(sel); shownM.forEach(v => allShown ? cur.delete(v) : cur.add(v)); this.setFilter({ [sk]: [...cur] }); },
+        value: sel.length ? (sel.length === 1 ? mmyy(sel[0]) : sel.length + ' selected') : 'All',
+        bd: sel.length ? '#C9A45C' : '#D8D4C8', bg: sel.length ? '#FBF6EA' : '#FFFFFF',
+        opts: opts.slice(0, 900),
       };
     };
     const entities = [...new Set([
@@ -950,15 +1015,14 @@ class Component extends DCLogic {
     const entOpts = (entities.length ? entities : ['—']).map(v => ({ v, n: Object.keys(DOORS).filter(d => entOf(d) === v).length }));
     const lenders = [...new Set(LNS.map(l => l.lender || '—'))].sort();
     const allDoors = Object.keys(DOORS).sort();
-    const monthOpts = monthsAll.slice().reverse().map(v => ({ v, label: mmyy(v), n: '' }));
     const filters = [
-      mk('fm', 'MONTH', 'months', monthOpts, S.fm, '200px', true),
+      mkMonths('fm', S.fm),
       mk('fe', 'ENTITY', 'entities', entOpts, S.fe, '220px'),
       mk('fd', 'DOORS', 'properties', allDoors.map(v => ({ v, n: '' })), S.fd, '300px', true),
       mk('fl', 'LENDER', 'lenders', lenders.map(v => ({ v, n: LNS.filter(l => (l.lender || '—') === v).length })), S.fl, '240px'),
       mk('ft', 'LOAN TYPE', 'types', ['Traditional', 'Hard Money'].map(v => ({ v, n: LNS.filter(l => tcat(l) === v).length })), S.ft, '210px'),
     ];
-    const rm = mk('fm2', 'MONTH', 'months', monthOpts, S.fm, '190px', true, 'fm');
+    const rm = mkMonths('fm2', S.fm, 'fm'); rm.w = '230px';
     rm.value = S.fm.length ? (S.fm.length === 1 ? mmyy(S.fm[0]) : S.fm.length + ' sel.') : 'All';
     const nAct = S.fm.length + S.fe.length + S.fd.length + S.fl.length + S.ft.length;
     const clearAll = () => this.setFilter({ fm: [], fe: [], fd: [], fl: [], ft: [], fq: '' });
@@ -978,7 +1042,7 @@ class Component extends DCLogic {
       for (const pc of (l.paymentChanges || [])) if (selM.includes(pc.m))
         attn.push({ icon: '↻', col: '#3D64A8', bg: '#EFF3FA', bd: '#D3DDF0',
           text: 'Note ' + l.displayId + ' EMI recast in ' + mmyy(pc.m) + ': ' + fC(pc.from) + ' → ' + fC(pc.to) });
-      for (const r of l.releases) if (selM.includes(r.m) && r.prop && doorOk(r.prop) && selM.length < monthsAll.length)
+      for (const r of l.releases) if (selM.includes(r.m) && r.prop && doorOk(r.prop) && S.fm.length)
         attn.push({ icon: '⤴', col: '#96742F', bg: '#FBF6EA', bd: '#EADFC4',
           text: r.prop + ' released in ' + mmyy(r.m) + ' — paid ' + fK(r.paid)
             + (r.cuts ? ' (' + fK(r.excess) + ' excess to survivors)'
@@ -1172,7 +1236,7 @@ class Component extends DCLogic {
 
     // ---------- integrated trends & properties (P&L trend-explorer pattern) ----------
     const trYearsAll = [...new Set(monthsAll.map(m => m.slice(0, 4)))].sort();
-    const trendYear = S.trendYear && trYearsAll.includes(S.trendYear) ? S.trendYear : trYearsAll[trYearsAll.length - 1];
+    const trendYear = S.trendYear && trYearsAll.includes(S.trendYear) ? S.trendYear : (trYearsAll.includes(asOf.slice(0, 4)) ? asOf.slice(0, 4) : trYearsAll[trYearsAll.length - 1]);
     const trYears = trYearsAll.map(y => ({
       label: y, bd: y === trendYear ? '#16233A' : '#D8D4C8', bg: y === trendYear ? '#16233A' : '#FFFFFF',
       col: y === trendYear ? '#FFFFFF' : '#2A3550', onClick: () => this.setState({ trendYear: y }),
@@ -1576,7 +1640,7 @@ class Component extends DCLogic {
     const xSub = compared.length + ' door-months compared in scope (ledger covers ' + (glMonths.length ? mmyy(glMonths[0]) + ' → ' + mmyy(glMonths[glMonths.length - 1]) : '—') + ') · ' + flagged.length + ' beyond $25';
     const xFoot = 'Differences are HIGHLIGHTS for case-by-case review — the engine never alters ledger data. ' + (pool.length > CAP ? 'Showing the ' + CAP + ' largest of ' + pool.length + ' rows — narrow the scope. ' : '') + '“One side only” lists engine months with no ledger interest and ledger interest the loan file doesn’t cover.';
 
-    const scopeLine = (nAct ? 'Filtered view · ' : '') + inLoans.length + ' notes · ' + fK(tOut) + ' outstanding at ' + mmyy(lastM) + ' · ' + scopeDoors.length + ' financed properties · published ' + (M.published || '');
+    const scopeLine = (nAct ? 'Filtered view · ' : '') + inLoans.length + ' notes · ' + fK(tOut) + ' outstanding at ' + mmyy(lastM) + (isProj(lastM) ? ' (projected)' : '') + ' · ' + scopeDoors.length + ' financed properties · published ' + (M.published || '');
     const convFoot = 'Scope: a note is in scope when it passes the lender and loan-type filters and finances at least one in-scope property; all figures then sum over in-scope properties, and money columns respect the month filter (balances at the last selected month, flows across all selected months — any month since the first origination can be selected). Initial refinance is each note’s original amount, split by allocation slices; a property financed more than once counts each note, and its repaid figure spans them. Principal repaid = initial − outstanding, split three ways: monthly scheduled payments, prepayments (extra principal, including EMI recasts), and property-release payoffs (a released slice retires at its previous month-end; the excess paid reduces survivors by original proportions). The per-property EMI splits each note’s current payment by live proportions — after a release, survivors carry the payment in their renormalized shares. Initial LTV divides initial refinance by bank-appraised values; current LTV divides outstanding by ARV-primary values — both only over properties carrying that value. Payments are level annuities from note terms (or the lender’s exact payment where entered); interest is in arrears, 30/360 day-weighted, or actual/360 where marked — each verified to the penny against a lender schedule. The ledger cross-check covers the months the ledger itself covers. The sheet’s P&I column is escrow, always separate. Doors marked * carry more than one note; their balances are shown combined.';
 
     return {
